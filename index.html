@@ -631,7 +631,7 @@ async function loadAllData(){
     const callRows = await loadSheet('Call Data');
     CALL={};CALL_M={};
     callRows.forEach(r=>{
-      let team=(r['Team']||'').trim();
+      let team=(r['Team ']||r['Team']||r['team']||'').trim();
       const metric=r['Metric']||'';
       let dtVal3=r['Actual Date']||r['Date']||'';
       let dt='';
