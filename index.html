@@ -512,6 +512,13 @@ async function loadSheet(name){
 }
 
 
+function setProgress(pct, msg){
+  const fill = document.getElementById('loadFill');
+  const text = document.getElementById('loadText');
+  if(fill) fill.style.width = pct + '%';
+  if(text) text.textContent = msg || 'Loading...';
+}
+
 async function loadAllData(){
   document.getElementById('loadingDiv').style.display='flex';
   document.getElementById('mainContent').style.display='none';
