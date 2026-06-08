@@ -1240,93 +1240,75 @@ async function fetchSheet(spreadsheetId, sheetName){
 }
 
 function makeRefTable(rows, vinFilter=''){
-  if(!rows || !rows.length) return '<div style="text-align:center;padding:20px;color:#aaa">No data</div>';
+  if(!rows || !rows.length) return '<div style="text-align:center;padding:40px;color:#aaa;font-size:13px">No data available</div>';
   
   let data = rows.filter(r => Object.values(r).some(v => String(v).trim()));
-  
   if(vinFilter){
     const q = vinFilter.toLowerCase();
     data = data.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(q)));
   }
+  if(!data.length) return '<div style="text-align:center;padding:40px;color:#aaa">No results for "'+vinFilter+'"</div>';
   
-  if(!data.length) return '<div style="text-align:center;padding:20px;color:#aaa">No results</div>';
+  const cols = Object.keys(data[0]).filter(c => c && c.trim() && data.some(r => String(r[c]||'').trim()));
   
-  const cols = Object.keys(data[0]).filter(c => c && c.trim() && c !== '' && 
-    data.some(r => String(r[c]||'').trim()));
-  
-  const fmtVal = (v, q) => {
-    if(!v) return '–';
+  const fv = (v, q) => {
+    if(!v) return '';
     let d = String(v).replace(/\n/g,'<br>');
-    if(d.startsWith('http')) return `<a href="${d}" target="_blank" style="color:#1565c0;text-decoration:none">🔗 Open</a>`;
+    if(d.startsWith('http')) return `<a href="${d}" target="_blank" style="color:#c0272d;font-weight:600;text-decoration:none">🔗 فتح</a>`;
     if(d.includes('@') && d.includes('.') && !d.includes(' ')) return `<a href="mailto:${d}" style="color:#1565c0;text-decoration:none">${d}</a>`;
-    if(q) d = d.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'), m=>`<mark style="background:#fff3cd">${m}</mark>`);
+    if(q) d = d.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'), m=>`<mark style="background:#fff3cd;border-radius:2px;padding:0 2px">${m}</mark>`);
     return d;
   };
-  
-  // Check if this looks like location/branch data (has Region or Branch column)
-  const hasBranch = cols.some(c => c.toLowerCase().includes('branch') || c.toLowerCase().includes('region'));
-  
-  if(hasBranch){
-    // Card layout for branch/location data
-    // Group by region if available
-    const regionCol = cols.find(c => c.toLowerCase().includes('region')) || '';
-    const branchCol = cols.find(c => c.toLowerCase().includes('branch')) || cols[0];
-    const phoneCol = cols.find(c => c.toLowerCase().includes('phone')) || '';
-    const emailCol = cols.find(c => c.toLowerCase().includes('email')) || '';
-    const nameCol = cols.find(c => c.toLowerCase().includes('name') || c.toLowerCase().includes('advisor')) || '';
-    const districtCol = cols.find(c => c.toLowerCase().includes('district') || c.toLowerCase().includes('address')) || '';
-    const hoursCol = cols.find(c => c.toLowerCase().includes('hours') || c.toLowerCase().includes('working')) || '';
-    
-    // Group by region
-    const regions = {};
-    data.forEach(r => {
-      const reg = String(r[regionCol]||'Other').trim() || 'Other';
-      if(!regions[reg]) regions[reg] = [];
-      regions[reg].push(r);
-    });
-    
-    return Object.entries(regions).map(([reg, items]) => `
-      <div style="margin-bottom:16px">
-        ${reg !== 'Other' ? `<div class="ref-region-title">📍 ${reg}</div>` : ''}
-        <div class="ref-cards-grid">
-          ${items.map(r => {
-            const branch = fmtVal(r[branchCol], vinFilter);
-            const phone = '';
-            const email = '';
-            const name = r[nameCol] ? fmtVal(r[nameCol], vinFilter) : '';
-            const district = '';
-            const hours = '';
-            
-            // Other cols
-            const otherCols = cols.filter(c => c !== regionCol && c !== branchCol && c !== phoneCol && c !== emailCol && c !== nameCol && c !== districtCol && c !== hoursCol);
-            const others = otherCols.filter(c => String(r[c]||'').trim()).map(c => 
-              `<div style="font-size:11px;color:#666"><span style="color:#aaa">${c}:</span> ${fmtVal(r[c], vinFilter)}</div>`
-            ).join('');
-            
-            const codeVal = r[cols.find(c=>c.toLowerCase().includes('code'))||''] || '';
-            return `<div class="ref-card">
-              ${codeVal ? `<div class="ref-card-code"># ${codeVal}</div>` : ''}
-              <div class="ref-card-title">${branch}</div>
-              ${name ? `<div class="ref-card-row"><span class="ico">👤</span>${name}</div>` : ''}
-              ${r[phoneCol] ? `<div class="ref-card-row"><span class="ico">📞</span>${fmtVal(r[phoneCol], vinFilter)}</div>` : ''}
-              ${r[emailCol] ? `<div class="ref-card-row"><span class="ico">✉️</span>${fmtVal(r[emailCol], vinFilter)}</div>` : ''}
-              ${r[districtCol] ? `<div class="ref-card-row"><span class="ico">📍</span>${fmtVal(r[districtCol], vinFilter)}</div>` : ''}
-              ${others}
-              ${r[hoursCol] ? `<div class="ref-card-hours">🕐 ${fmtVal(r[hoursCol], vinFilter)}</div>` : ''}
-            </div>`;
-          }).join('')}
-        </div>
+
+  const regionCol = cols.find(c => /region/i.test(c)) || '';
+  const nameCol = cols.find(c => /branch|name/i.test(c)) || cols[0];
+  const phoneCol = cols.find(c => /phone|mobile|number/i.test(c)) || '';
+  const emailCol = cols.find(c => /email/i.test(c)) || '';
+  const advisorCol = cols.find(c => /advisor|manager|contact/i.test(c)) || '';
+  const distCol = cols.find(c => /district|address|location/i.test(c)) || '';
+  const hoursCol = cols.find(c => /hour|working/i.test(c)) || '';
+  const codeCol = cols.find(c => /code/i.test(c)) || '';
+  const otherCols = cols.filter(c => ![regionCol,nameCol,phoneCol,emailCol,advisorCol,distCol,hoursCol,codeCol].includes(c));
+
+  // Group by region
+  const groups = {};
+  data.forEach(r => {
+    const g = String(r[regionCol]||'General').trim() || 'General';
+    if(!groups[g]) groups[g] = [];
+    groups[g].push(r);
+  });
+
+  const REGION_COLORS = {'West':'#c0272d','Central':'#1565c0','Centeral':'#1565c0','East':'#2e7d32','South':'#6a1b9a','North':'#e65100','General':''};
+
+  return Object.entries(groups).map(([grp, items]) => {
+    const color = REGION_COLORS[grp] || '#c0272d';
+    return `
+    <div style="margin-bottom:20px">
+      ${grp !== 'General' ? `
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <span style="width:12px;height:12px;border-radius:50%;background:${color};flex-shrink:0;display:inline-block"></span>
+          <span style="font-size:12px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:.05em">${grp}</span>
+          <span style="font-size:11px;color:#aaa">(${items.length})</span>
+        </div>` : ''}
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px">
+        ${items.map(r => {
+          const title = fv(r[nameCol], vinFilter);
+          const code = r[codeCol] ? `<span style="background:${color}15;color:${color};padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-right:6px">${fv(r[codeCol],vinFilter)}</span>` : '';
+          const advisor = r[advisorCol] ? `<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#555;margin-bottom:5px"><span>👤</span><span>${fv(r[advisorCol],vinFilter)}</span></div>` : '';
+          const phone = r[phoneCol] ? `<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#555;margin-bottom:5px"><span>📞</span><span>${fv(r[phoneCol],vinFilter)}</span></div>` : '';
+          const email = r[emailCol] ? `<div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#555;margin-bottom:5px"><span>✉️</span><span>${fv(r[emailCol],vinFilter)}</span></div>` : '';
+          const dist = r[distCol] ? `<div style="display:flex;align-items:flex-start;gap:6px;font-size:11px;color:#888;margin-bottom:5px"><span>📍</span><span>${fv(r[distCol],vinFilter)}</span></div>` : '';
+          const extras = otherCols.filter(c=>String(r[c]||'').trim()).map(c=>`<div style="font-size:11px;color:#666;margin-bottom:3px"><span style="color:#aaa">${c}:</span> ${fv(r[c],vinFilter)}</div>`).join('');
+          const hours = r[hoursCol] ? `<div style="font-size:10px;color:#888;border-top:1px solid #f5f5f5;padding-top:8px;margin-top:8px;line-height:1.6">🕐 ${fv(r[hoursCol],vinFilter)}</div>` : '';
+          
+          return `<div style="background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid ${color};transition:.15s" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,.07)'">
+            <div style="margin-bottom:10px">${code}<span style="font-size:13px;font-weight:700;color:#1a1a2e">${title}</span></div>
+            ${advisor}${phone}${email}${dist}${extras}${hours}
+          </div>`;
+        }).join('')}
       </div>
-    `).join('');
-  }
-  
-  // Default: clean table for non-location data
-  return `<div style="overflow-x:auto">
-    <table class="ref-tbl">
-      <thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead>
-      <tbody>${data.map(r=>`<tr>${cols.map(c=>`<td>${fmtVal(r[c], vinFilter)}</td>`).join('')}</tr>`).join('')}</tbody>
-    </table>
-  </div><div style="font-size:11px;color:#888;padding:4px">${data.length} records</div>`;
+    </div>`;
+  }).join('');
 }
 
 async function renderRefBrand(brand, tabIdx){
