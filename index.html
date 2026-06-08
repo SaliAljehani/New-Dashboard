@@ -177,119 +177,82 @@ tr:last-child td{border-bottom:none}
 
 
 /* ── REFERENCE PAGE ── */
-.ref-page{display:flex;flex-direction:column;gap:16px}
+.ref-page{display:flex;flex-direction:column;gap:14px;padding-bottom:20px}
 
-/* Global search bar */
-.ref-global-search{background:#fff;border-radius:12px;padding:14px 18px;box-shadow:0 2px 8px rgba(0,0,0,.07);display:flex;align-items:center;gap:12px;border-left:4px solid #c0272d}
-.ref-global-inp{flex:1;padding:10px 16px;border-radius:24px;border:2px solid #e8eaed;font-size:13px;outline:none;transition:.2s;background:#fafafa}
-.ref-global-inp:focus{border-color:#c0272d;background:#fff;box-shadow:0 0 0 3px rgba(192,39,45,.08)}
-.ref-global-clear{padding:8px 16px;background:#f5f5f5;color:#666;border:none;border-radius:20px;font-size:12px;cursor:pointer;font-weight:600}
-.ref-global-clear:hover{background:#fde;color:#c0272d}
+/* Global search */
+.ref-global-search{background:#fff;border-radius:12px;padding:12px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;gap:10px;border-left:4px solid #c0272d}
+.ref-global-inp{flex:1;padding:9px 16px;border-radius:24px;border:1.5px solid #ddd;font-size:13px;outline:none;background:#fafafa}
+.ref-global-inp:focus{border-color:#c0272d;background:#fff}
+.ref-global-clear{padding:7px 16px;background:#f5f5f5;color:#666;border:1px solid #ddd;border-radius:20px;font-size:12px;cursor:pointer;font-weight:600;white-space:nowrap}
+.ref-global-clear:hover{background:#fde;color:#c0272d;border-color:#c0272d}
 
-/* Top info grid */
-.ref-top-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.ref-info-panel{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+/* Panel */
+.ref-info-panel{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .ref-panel-header{padding:12px 16px;font-size:13px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
-.ref-panel-body{padding:10px 14px}
+.ref-panel-body{padding:14px 16px}
 
-/* Contact number cards */
-.ref-contacts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
-.ref-contact-pill{background:#fff;border-radius:10px;padding:12px 14px;border:1.5px solid #f0f0f0;display:flex;flex-direction:column;gap:4px;transition:.2s}
-.ref-contact-pill:hover{border-color:#c0272d;box-shadow:0 2px 8px rgba(192,39,45,.1)}
-.ref-contact-pill-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#aaa}
-.ref-contact-pill-val{font-size:14px;font-weight:700;color:#1a1a2e}
-.ref-contact-pill-sub{font-size:11px;color:#888}
+/* Contact pills */
+.ref-contacts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.ref-contact-pill{background:#fafafa;border-radius:10px;padding:11px 14px;border:1px solid #eee;transition:.15s}
+.ref-contact-pill:hover{border-color:#c0272d;background:#fff}
+.ref-contact-pill-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#aaa;margin-bottom:4px}
+.ref-contact-pill-val{font-size:15px;font-weight:700;color:#1a1a2e;letter-spacing:.02em}
 
-/* Subject/Links table */
-.ref-smart-table{width:100%;border-collapse:collapse;font-size:12px}
-.ref-smart-table th{padding:9px 12px;background:#f5f7fb;border-bottom:2px solid #e8eaed;font-size:11px;font-weight:700;color:#555;text-align:left;white-space:nowrap}
-.ref-smart-table td{padding:8px 12px;border-bottom:1px solid #f5f5f5;vertical-align:top;line-height:1.6;color:#333}
-.ref-smart-table tr:hover td{background:#fef9f9}
-.ref-smart-table tr:last-child td{border-bottom:none}
-.ref-smart-table a{color:#1565c0;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:#e3f2fd;border-radius:6px;font-size:11px;font-weight:600}
-.ref-smart-table a:hover{background:#1565c0;color:#fff}
-.ref-tbl-wrap{overflow-x:auto;max-height:360px;overflow-y:auto;border-radius:8px;border:1px solid #eee}
-
-/* Brand accordion */
-.ref-brand-section{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07);overflow:hidden}
-.ref-brand-header{padding:14px 18px;font-size:14px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;transition:.2s}
-.ref-brand-header:hover{filter:brightness(1.1)}
-.ref-brand-header .chevron{font-size:16px;transition:transform .25s}
-.ref-brand-header.open .chevron{transform:rotate(180deg)}
-.ref-brand-meta{font-size:11px;opacity:.75;margin-top:1px}
-
-/* Sub tabs */
-.ref-sub-tabs{display:flex;gap:6px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid #f0f0f0;background:#fafafa}
-.ref-sub-tab{padding:6px 14px;border-radius:20px;border:1.5px solid #ddd;font-size:11px;font-weight:700;cursor:pointer;background:#fff;transition:.15s;color:#555;white-space:nowrap}
-.ref-sub-tab.active{color:#fff;border-color:transparent;box-shadow:0 2px 6px rgba(0,0,0,.15)}
-.ref-sub-tab:hover:not(.active){border-color:#c0272d;color:#c0272d;background:#fef2f2}
-.ref-tab-content{padding:14px 16px;min-height:80px}
-
-/* Card layout for branch/location */
-.ref-region-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#888;margin-bottom:10px;padding:6px 0;border-bottom:2px solid #eee;display:flex;align-items:center;gap:6px}
-.ref-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-bottom:16px}
-.ref-card{background:#f9fbff;border-radius:10px;padding:14px;border:1.5px solid #e8eaed;transition:.2s}
-.ref-card:hover{border-color:#c0272d;box-shadow:0 3px 10px rgba(192,39,45,.12);background:#fff}
-.ref-card-title{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px;line-height:1.4}
-.ref-card-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:5px;font-size:12px;color:#444}
-.ref-card-row .ico{font-size:13px;flex-shrink:0;margin-top:1px}
-.ref-card-row a{color:#1565c0;text-decoration:none;font-weight:600}
-.ref-card-row a:hover{text-decoration:underline}
-.ref-card-hours{font-size:10px;color:#888;border-top:1px solid #f0f0f0;padding-top:7px;margin-top:7px;line-height:1.6}
-.ref-card-code{display:inline-block;background:#eef2ff;color:#3949ab;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:6px;border:1px solid #c5cae9}
-
-/* Fallback table */
-.ref-tbl{width:100%;border-collapse:collapse;font-size:12px}
-.ref-tbl th{padding:9px 12px;background:#f0f2f7;border-bottom:2px solid #ddd;font-size:11px;font-weight:700;color:#444;text-align:left;position:sticky;top:0;z-index:1;white-space:nowrap}
-.ref-tbl td{padding:8px 10px;border-bottom:1px solid #f5f5f5;vertical-align:top;line-height:1.6;word-break:break-word}
-.ref-tbl tr:hover td{background:#fef2f2}
-.ref-tbl tr:last-child td{border-bottom:none}
-.ref-tbl a{color:#1565c0;text-decoration:none;font-size:11px}
-.ref-tbl a:hover{text-decoration:underline}
-
-/* VIN search */
-.vin-search-box{display:flex;gap:8px;margin:10px 0}
-.vin-inp{flex:1;padding:9px 14px;border-radius:24px;border:2px solid #ddd;font-size:13px;outline:none;transition:.2s}
-.vin-inp:focus{border-color:#c0272d;box-shadow:0 0 0 3px rgba(192,39,45,.08)}
-.vin-search-btn{padding:9px 20px;background:#c0272d;color:#fff;border:none;border-radius:24px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
-.vin-search-btn:hover{background:#a01f24}
-.vin-result-count{font-size:11px;color:#888;margin-bottom:6px;font-weight:600}
-.ref-record-count{font-size:11px;color:#aaa;padding:6px 2px}
-
-/* Contact cards */
-.ref-contact-card{background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-top:3px solid #c0272d}
-.ref-contact-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#888;margin-bottom:10px}
-.ref-contact-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #f5f5f5}
-.ref-contact-item:last-child{border-bottom:none}
-.ref-contact-label{font-size:11px;color:#666;min-width:80px}
-.ref-contact-value{font-size:12px;font-weight:600;color:#1a1a2e}
-
-/* Link badge */
-.ref-link-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:#e3f2fd;color:#1565c0;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none;transition:.15s}
-.ref-link-badge:hover{background:#1565c0;color:#fff}
-
-.ref-search-bar{display:flex;gap:8px;padding:10px 14px;background:#f9f9f9;border-bottom:1px solid #eee}
-.ref-search-inp{flex:1;padding:7px 12px;border-radius:20px;border:1.5px solid #ddd;font-size:12px;outline:none}
-.ref-search-inp:focus{border-color:#c0272d}
+/* Two-col layout */
+.ref-top-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 
 /* Subject groups */
-.ref-subj-group{margin-bottom:16px}
+.ref-subj-group{margin-bottom:14px}
 .ref-subj-group-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:5px 10px;margin-bottom:6px;border-radius:0 6px 6px 0;background:#fafafa}
-.ref-subj-item{padding:8px 10px;border-bottom:1px solid #f5f5f5;border-radius:6px;margin-bottom:4px;background:#fff;transition:.15s}
+.ref-subj-item{padding:8px 10px;border-bottom:1px solid #f5f5f5;background:#fff;transition:.15s;border-radius:4px;margin-bottom:3px}
 .ref-subj-item:hover{background:#fef9f9}
-.ref-subj-subject{font-size:12px;font-weight:700;color:#1a1a2e;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.ref-subj-status{font-size:10px;font-weight:600;padding:2px 7px;border-radius:8px}
-.ref-subj-dept{font-size:11px;color:#666;margin-top:3px}
-.ref-subj-notes{font-size:11px;color:#888;margin-top:3px;font-style:italic}
+.ref-subj-subject{font-size:12px;font-weight:700;color:#1a1a2e;display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px}
+.ref-subj-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:8px}
+.ref-subj-sub{font-size:11px;color:#777;margin-top:2px;line-height:1.5}
+.ref-subj-note{font-size:11px;color:#999;margin-top:2px;font-style:italic}
+.ref-subj-complaints{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.ref-subj-complaint-tag{font-size:10px;background:#fef2f2;color:#c0272d;border:1px solid #fcc;border-radius:6px;padding:2px 8px;font-weight:600}
 
 /* Link cards */
-.ref-link-card{background:#f9fbff;border-radius:10px;padding:11px 14px;border:1px solid #e8eaed;display:flex;align-items:center;gap:10px;transition:.15s}
+.ref-link-card{background:#f9fbff;border-radius:10px;padding:10px 14px;border:1px solid #e8eaed;display:flex;align-items:center;gap:10px;transition:.15s;margin-bottom:6px}
 .ref-link-card:hover{border-color:#1565c0;background:#fff}
 .ref-link-card-name{font-size:13px;font-weight:700;color:#1a1a2e;flex:1}
-.ref-link-open-btn{padding:5px 14px;background:#1565c0;color:#fff;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;transition:.15s}
+.ref-link-open-btn{padding:5px 14px;background:#1565c0;color:#fff;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap}
 .ref-link-open-btn:hover{background:#0d47a1}
-.ref-link-file-badge{padding:5px 12px;background:#f0f2f7;color:#555;border-radius:8px;font-size:11px;font-weight:600;white-space:nowrap}
-.ref-link-pass{font-size:10px;color:#aaa;white-space:nowrap}
+.ref-link-file{font-size:11px;color:#888;background:#f0f2f7;padding:4px 10px;border-radius:8px;white-space:nowrap}
+.ref-link-pass{font-size:10px;color:#bbb;margin-top:2px}
+
+/* Brand accordion */
+.ref-brand-section{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}
+.ref-brand-header{padding:14px 18px;font-size:14px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.ref-brand-header:hover{filter:brightness(1.08)}
+.ref-brand-meta{font-size:11px;opacity:.75;margin-top:2px;font-weight:400}
+.ref-chevron{font-size:14px;transition:transform .25s}
+.ref-chevron.open{transform:rotate(180deg)}
+.ref-sub-tabs{display:flex;gap:6px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid #f0f0f0;background:#fafafa}
+.ref-sub-tab{padding:5px 14px;border-radius:20px;border:1.5px solid #ddd;font-size:11px;font-weight:600;cursor:pointer;background:#fff;color:#555;transition:.15s;white-space:nowrap}
+.ref-sub-tab.active{color:#fff;border-color:transparent}
+.ref-sub-tab:hover:not(.active){border-color:#c0272d;color:#c0272d}
+.ref-tab-content{padding:14px}
+
+/* Branch cards */
+.ref-region-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#888;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #eee;display:flex;align-items:center;gap:6px}
+.ref-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:16px}
+.ref-card{background:#f9fbff;border-radius:10px;padding:14px;border:1px solid #e8eaed;transition:.2s}
+.ref-card:hover{border-color:#c0272d;background:#fff;box-shadow:0 4px 12px rgba(192,39,45,.1)}
+.ref-card-title{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px}
+.ref-card-row{display:flex;align-items:flex-start;gap:7px;margin-bottom:5px;font-size:12px;color:#555}
+.ref-card-code{display:inline-block;background:#eef2ff;color:#3949ab;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:6px}
+.ref-card-hours{font-size:10px;color:#888;border-top:1px solid #f0f0f0;padding-top:7px;margin-top:7px;line-height:1.5}
+
+/* VIN */
+.vin-search-box{display:flex;gap:8px;margin:10px 0}
+.vin-inp{flex:1;padding:9px 16px;border-radius:24px;border:1.5px solid #ddd;font-size:13px;outline:none}
+.vin-inp:focus{border-color:#4a148c}
+.vin-search-btn{padding:9px 20px;background:#4a148c;color:#fff;border:none;border-radius:24px;font-size:12px;font-weight:700;cursor:pointer}
+.vin-result-count{font-size:11px;color:#888;margin-bottom:6px;font-weight:600}
+.ref-search-inp{flex:1;padding:7px 12px;border-radius:20px;border:1.5px solid #ddd;font-size:12px;outline:none}
+.ref-search-inp:focus{border-color:#c0272d}
 
 .att-section{margin-top:4px}
 .month-block{background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:10px}
@@ -1262,7 +1225,7 @@ let REF_DATA = [];
 const REF_SHEETS = {
   main: {
     id: '1FFkOe3_RC7N3MaZ6OQ4MP1qDEHCiHjaQ4MqrFzOa7zo',
-    tabs: ['Subject','Link ','Contact Number']
+    tabs: ['Subject','Links','Contact Number']
   },
   nissan: {
     id: '1lXDeN1iUosG_JSADgdWhnkT5J1t3hhwXoSJdbmb4B88',
@@ -1300,100 +1263,75 @@ async function fetchSheet(spreadsheetId, sheetName){
 }
 
 function makeRefTable(rows, vinFilter=''){
-  if(!rows || !rows.length) return '<div style="text-align:center;padding:20px;color:#aaa;font-size:13px">📭 No data available</div>';
+  if(!rows || !rows.length) return '<div style="text-align:center;padding:40px;color:#aaa;font-size:13px">No data available</div>';
   
   let data = rows.filter(r => Object.values(r).some(v => String(v).trim()));
-  
   if(vinFilter){
     const q = vinFilter.toLowerCase();
     data = data.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(q)));
   }
+  if(!data.length) return '<div style="text-align:center;padding:40px;color:#aaa">No results for "'+vinFilter+'"</div>';
   
-  if(!data.length) return '<div style="text-align:center;padding:20px;color:#aaa;font-size:13px">🔍 No results found</div>';
+  const cols = Object.keys(data[0]).filter(c => c && c.trim() && data.some(r => String(r[c]||'').trim()));
   
-  const cols = Object.keys(data[0]).filter(c => c && c.trim() && c !== '' && 
-    data.some(r => String(r[c]||'').trim()));
-  
-  const fmtVal = (v, q) => {
-    if(!v && v !== 0) return '<span style="color:#ccc">–</span>';
+  const fv = (v, q) => {
+    if(!v) return '';
     let d = String(v).replace(/\n/g,'<br>');
-    if(d.startsWith('http')){
-      const short = d.replace('https://','').replace('http://','').split('/')[0];
-      return `<a href="${d}" target="_blank" class="ref-link-badge">🔗 ${short}</a>`;
-    }
-    if(d.includes('@') && d.includes('.') && !d.includes(' ')){
-      return `<a href="mailto:${d}" style="color:#1565c0;text-decoration:none;font-weight:600">✉️ ${d}</a>`;
-    }
-    if(q) d = d.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'), m=>`<mark style="background:#fff3cd;padding:1px 2px;border-radius:3px">${m}</mark>`);
+    if(d.startsWith('http')) return `<a href="${d}" target="_blank" style="color:#c0272d;font-weight:600;text-decoration:none">🔗 فتح</a>`;
+    if(d.includes('@') && d.includes('.') && !d.includes(' ')) return `<a href="mailto:${d}" style="color:#1565c0;text-decoration:none">${d}</a>`;
+    if(q) d = d.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'), m=>`<mark style="background:#fff3cd;border-radius:2px;padding:0 2px">${m}</mark>`);
     return d;
   };
-  
-  // Detect if this is location/branch data
-  const hasBranch = cols.some(c => c.toLowerCase().includes('branch') || c.toLowerCase().includes('region'));
-  
-  if(hasBranch){
-    const regionCol = cols.find(c => c.toLowerCase().includes('region')) || '';
-    const branchCol = cols.find(c => c.toLowerCase().includes('branch')) || cols[0];
-    const phoneCol = cols.find(c => c.toLowerCase().includes('phone')) || '';
-    const emailCol = cols.find(c => c.toLowerCase().includes('email')) || '';
-    const nameCol = cols.find(c => c.toLowerCase().includes('name') || c.toLowerCase().includes('advisor')) || '';
-    const districtCol = cols.find(c => c.toLowerCase().includes('district') || c.toLowerCase().includes('address')) || '';
-    const hoursCol = cols.find(c => c.toLowerCase().includes('hours') || c.toLowerCase().includes('working')) || '';
-    const codeKey = cols.find(c=>c.toLowerCase().includes('code'))||'';
-    
-    const regions = {};
-    data.forEach(r => {
-      const reg = String(r[regionCol]||'Other').trim() || 'Other';
-      if(!regions[reg]) regions[reg] = [];
-      regions[reg].push(r);
-    });
-    
-    const otherColsList = cols.filter(c => c !== regionCol && c !== branchCol && c !== phoneCol && c !== emailCol && c !== nameCol && c !== districtCol && c !== hoursCol && c !== codeKey);
-    
-    return Object.entries(regions).map(([reg, items]) => `
-      <div style="margin-bottom:18px">
-        ${reg !== 'Other' ? `<div class="ref-region-title">📍 ${reg} <span style="background:#f0f0f0;color:#888;border-radius:10px;padding:1px 8px;font-size:10px;margin-left:4px">${items.length}</span></div>` : ''}
-        <div class="ref-cards-grid">
-          ${items.map(r => {
-            const branch = fmtVal(r[branchCol], vinFilter);
-            const codeVal = codeKey ? r[codeKey] : '';
-            const others = otherColsList.filter(c => String(r[c]||'').trim()).map(c => 
-              `<div class="ref-card-row"><span class="ico">•</span><span style="color:#aaa;font-size:11px">${c}:</span>&nbsp;${fmtVal(r[c], vinFilter)}</div>`
-            ).join('');
-            return `<div class="ref-card">
-              ${codeVal ? `<div class="ref-card-code"># ${codeVal}</div>` : ''}
-              <div class="ref-card-title">${branch}</div>
-              ${r[nameCol] ? `<div class="ref-card-row"><span class="ico">👤</span>${fmtVal(r[nameCol], vinFilter)}</div>` : ''}
-              ${r[phoneCol] ? `<div class="ref-card-row"><span class="ico">📞</span><strong>${fmtVal(r[phoneCol], vinFilter)}</strong></div>` : ''}
-              ${r[emailCol] ? `<div class="ref-card-row"><span class="ico">✉️</span>${fmtVal(r[emailCol], vinFilter)}</div>` : ''}
-              ${r[districtCol] ? `<div class="ref-card-row"><span class="ico">📍</span>${fmtVal(r[districtCol], vinFilter)}</div>` : ''}
-              ${others}
-              ${r[hoursCol] ? `<div class="ref-card-hours">🕐 ${fmtVal(r[hoursCol], vinFilter)}</div>` : ''}
-            </div>`;
-          }).join('')}
-        </div>
+
+  const regionCol = cols.find(c => /region/i.test(c)) || '';
+  const nameCol = cols.find(c => /branch|name/i.test(c)) || cols[0];
+  const phoneCol = cols.find(c => /phone|mobile|number/i.test(c)) || '';
+  const emailCol = cols.find(c => /email/i.test(c)) || '';
+  const advisorCol = cols.find(c => /advisor|manager|contact/i.test(c)) || '';
+  const distCol = cols.find(c => /district|address|location/i.test(c)) || '';
+  const hoursCol = cols.find(c => /hour|working/i.test(c)) || '';
+  const codeCol = cols.find(c => /code/i.test(c)) || '';
+  const otherCols = cols.filter(c => ![regionCol,nameCol,phoneCol,emailCol,advisorCol,distCol,hoursCol,codeCol].includes(c));
+
+  // Group by region
+  const groups = {};
+  data.forEach(r => {
+    const g = String(r[regionCol]||'General').trim() || 'General';
+    if(!groups[g]) groups[g] = [];
+    groups[g].push(r);
+  });
+
+  const REGION_COLORS = {'West':'#c0272d','Central':'#1565c0','Centeral':'#1565c0','East':'#2e7d32','South':'#6a1b9a','North':'#e65100','General':''};
+
+  return Object.entries(groups).map(([grp, items]) => {
+    const color = REGION_COLORS[grp] || '#c0272d';
+    return `
+    <div style="margin-bottom:20px">
+      ${grp !== 'General' ? `
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <span style="width:12px;height:12px;border-radius:50%;background:${color};flex-shrink:0;display:inline-block"></span>
+          <span style="font-size:12px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:.05em">${grp}</span>
+          <span style="font-size:11px;color:#aaa">(${items.length})</span>
+        </div>` : ''}
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px">
+        ${items.map(r => {
+          const title = fv(r[nameCol], vinFilter);
+          const code = r[codeCol] ? `<span style="background:${color}15;color:${color};padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-right:6px">${fv(r[codeCol],vinFilter)}</span>` : '';
+          const advisor = r[advisorCol] ? `<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#555;margin-bottom:5px"><span>👤</span><span>${fv(r[advisorCol],vinFilter)}</span></div>` : '';
+          const phone = r[phoneCol] ? `<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#555;margin-bottom:5px"><span>📞</span><span>${fv(r[phoneCol],vinFilter)}</span></div>` : '';
+          const email = r[emailCol] ? `<div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#555;margin-bottom:5px"><span>✉️</span><span>${fv(r[emailCol],vinFilter)}</span></div>` : '';
+          const dist = r[distCol] ? `<div style="display:flex;align-items:flex-start;gap:6px;font-size:11px;color:#888;margin-bottom:5px"><span>📍</span><span>${fv(r[distCol],vinFilter)}</span></div>` : '';
+          const extras = otherCols.filter(c=>String(r[c]||'').trim()).map(c=>`<div style="font-size:11px;color:#666;margin-bottom:3px"><span style="color:#aaa">${c}:</span> ${fv(r[c],vinFilter)}</div>`).join('');
+          const hours = r[hoursCol] ? `<div style="font-size:10px;color:#888;border-top:1px solid #f5f5f5;padding-top:8px;margin-top:8px;line-height:1.6">🕐 ${fv(r[hoursCol],vinFilter)}</div>` : '';
+          
+          return `<div style="background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid ${color};transition:.15s" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,.07)'">
+            <div style="margin-bottom:10px">${code}<span style="font-size:13px;font-weight:700;color:#1a1a2e">${title}</span></div>
+            ${advisor}${phone}${email}${dist}${extras}${hours}
+          </div>`;
+        }).join('')}
       </div>
-    `).join('');
-  }
-  
-  // Smart table: detect phone columns and style them
-  const isPhoneCol = c => c.toLowerCase().includes('phone') || c.toLowerCase().includes('number') || c.toLowerCase().includes('tel');
-  const isLinkCol  = c => c.toLowerCase().includes('link') || c.toLowerCase().includes('url');
-  
-  return `<div class="ref-tbl-wrap">
-    <table class="ref-smart-table">
-      <thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead>
-      <tbody>${data.map(r=>`<tr>${cols.map(c=>{
-        const raw = String(r[c]||'').trim();
-        let display = fmtVal(r[c], vinFilter);
-        if(isPhoneCol(c) && raw && !raw.startsWith('http')){
-          display = `<span style="font-weight:700;color:#1a1a2e;letter-spacing:.03em">📞 ${raw}</span>`;
-        }
-        return `<td>${display}</td>`;
-      }).join('')}</tr>`).join('')}</tbody>
-    </table>
-  </div>
-  <div class="ref-record-count">${data.length} record${data.length!==1?'s':''}</div>`;
+    </div>`;
+  }).join('');
 }
 
 async function renderRefBrand(brand, tabIdx){
@@ -1404,36 +1342,31 @@ async function renderRefBrand(brand, tabIdx){
   const container = document.getElementById(containerId);
   if(!container) return;
   
-  container.innerHTML = `<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">
-    <div style="font-size:24px;margin-bottom:8px">⏳</div>Loading ${sheetName}…
-  </div>`;
+  container.innerHTML = '<div style="text-align:center;padding:20px;color:#aaa">⏳ Loading...</div>';
   
   try{
     const data = await fetchSheet(cfg.id, sheetName);
-    const q = REF_GLOBAL_SEARCH || '';
     
     if(brand === 'baicRecall'){
       const vinVal = VIN_FILTERS[brand] || '';
-      const searchVal = vinVal || q;
       container.innerHTML = `
         <div class="vin-search-box">
-          <span style="font-size:18px">🔎</span>
-          <input class="vin-inp" type="text" placeholder="Search by VIN / Frame Number..."
+          <input class="vin-inp" type="text" placeholder="🔍 Search by VIN / Frame Number..." 
                  value="${vinVal}"
                  oninput="vinSearch('${brand}', this.value)"
                  id="vin_${brand}">
           <button class="vin-search-btn" onclick="vinSearch('${brand}', document.getElementById('vin_${brand}').value)">Search</button>
         </div>
         <div class="vin-result-count" id="vinCount_${brand}"></div>
-        <div id="vinTable_${brand}">${makeRefTable(Array.isArray(data)?data:(data.rows||[]), searchVal)}</div>`;
+        <div id="vinTable_${brand}">${makeRefTable(data, vinVal)}</div>`;
+        
+      const rows = vinVal ? data.rows.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(vinVal.toLowerCase()))) : data.rows;
+      document.getElementById(`vinCount_${brand}`).textContent = vinVal ? `Found: ${rows.length} records` : '';
     } else {
-      container.innerHTML = makeRefTable(Array.isArray(data)?data:(data.rows||[]), q);
+      container.innerHTML = makeRefTable(Array.isArray(data)?data:(data.rows||[]));
     }
   } catch(e){
-    container.innerHTML = `<div style="color:#c0272d;padding:20px;text-align:center">
-      <div style="font-size:20px;margin-bottom:6px">⚠️</div>
-      Error loading data: ${e.message}
-    </div>`;
+    container.innerHTML = `<div style="color:#c0272d;padding:20px">Error loading data: ${e.message}</div>`;
   }
 }
 
@@ -1442,33 +1375,106 @@ async function vinSearch(brand, value){
   const cfg = REF_SHEETS[brand];
   const sheetName = cfg.tabs[REF_ACTIVE_TABS[brand]];
   const data = await fetchSheet(cfg.id, sheetName);
-  const arr = Array.isArray(data)?data:(data.rows||[]);
   const tbl = document.getElementById(`vinTable_${brand}`);
   const cnt = document.getElementById(`vinCount_${brand}`);
   if(tbl){
-    tbl.innerHTML = makeRefTable(arr, value);
-    if(cnt){
-      const matched = value ? arr.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(value.toLowerCase()))) : arr;
-      cnt.textContent = value ? `🔍 Found: ${matched.length} record${matched.length!==1?'s':''}` : '';
-    }
+    tbl.innerHTML = makeRefTable(data, value);
+    const rows = value ? data.rows.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(value.toLowerCase()))) : data.rows;
+    if(cnt) cnt.textContent = value ? `Found: ${rows.length} records` : '';
   }
 }
 
-let REF_GLOBAL_SEARCH = '';
+
+
+
+
+
+function switchRefTab(brand, idx, btn){
+  REF_ACTIVE_TABS[brand] = idx;
+  const color = {nissan:'#c0272d', stellantis:'#1565c0', baic:'#37474f', baicRecall:'#4a148c'}[brand] || '#c0272d';
+  btn.parentElement.querySelectorAll('.ref-sub-tab').forEach((t,i) => {
+    t.classList.toggle('active', i===idx);
+    t.style.background = i===idx ? color : '';
+    t.style.color = i===idx ? '#fff' : '';
+    t.style.borderColor = i===idx ? color : '';
+  });
+  renderRefBrand(brand, idx);
+}
+
+function toggleRefBrand(id, btn){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const isOpen = el.style.display !== 'none';
+  el.style.display = isOpen ? 'none' : 'block';
+  if(btn){
+    const chev = btn.querySelector('.ref-chevron');
+    if(chev) chev.classList.toggle('open', !isOpen);
+    const meta = btn.querySelector('.ref-brand-meta');
+    if(meta) meta.textContent = !isOpen ? 'Click to collapse' : 'Click to expand';
+  }
+}
+
+async function renderRefBrand(brand, tabIdx){
+  REF_ACTIVE_TABS[brand] = tabIdx;
+  const cfg = REF_SHEETS[brand];
+  const sheetName = cfg.tabs[tabIdx];
+  const container = document.getElementById(`refTab_${brand}`);
+  if(!container) return;
+  container.innerHTML = `<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading ${sheetName}…</div>`;
+  try{
+    const data = await fetchSheet(cfg.id, sheetName);
+    const arr = Array.isArray(data) ? data : (data.rows||[]);
+    if(brand === 'baicRecall'){
+      const vinVal = VIN_FILTERS[brand] || '';
+      container.innerHTML = `
+        <div class="vin-search-box">
+          <input class="vin-inp" type="text" placeholder="🔍 Search by VIN / Frame Number..."
+                 value="${vinVal}" oninput="vinSearch('${brand}',this.value)" id="vin_${brand}">
+          <button class="vin-search-btn" onclick="vinSearch('${brand}',document.getElementById('vin_${brand}').value)">Search</button>
+        </div>
+        <div class="vin-result-count" id="vinCount_${brand}"></div>
+        <div id="vinTable_${brand}">${makeRefTable(arr, vinVal)}</div>`;
+    } else {
+      container.innerHTML = makeRefTable(arr);
+    }
+  } catch(e){
+    container.innerHTML = `<div style="color:#c0272d;padding:20px;text-align:center">⚠️ Error: ${e.message}</div>`;
+  }
+}
+
+async function vinSearch(brand, value){
+  VIN_FILTERS[brand] = value;
+  const cfg = REF_SHEETS[brand];
+  const data = await fetchSheet(cfg.id, cfg.tabs[REF_ACTIVE_TABS[brand]]);
+  const arr = Array.isArray(data) ? data : (data.rows||[]);
+  const tbl = document.getElementById(`vinTable_${brand}`);
+  const cnt = document.getElementById(`vinCount_${brand}`);
+  if(tbl) tbl.innerHTML = makeRefTable(arr, value);
+  if(cnt){
+    const matched = value ? arr.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(value.toLowerCase()))) : arr;
+    cnt.textContent = value ? `🔍 Found: ${matched.length} records` : '';
+  }
+}
 
 async function renderRef(){
   const container = document.getElementById('refContent');
   container.innerHTML = `<div style="text-align:center;padding:40px;color:#aaa">
-    <div style="font-size:32px;margin-bottom:12px">⏳</div>
+    <div style="font-size:30px;margin-bottom:10px">⏳</div>
     <div style="font-size:14px;font-weight:600">Loading reference data...</div>
-    <div style="font-size:12px;color:#bbb;margin-top:6px">Connecting to Google Sheets</div>
   </div>`;
-
   try{
+    // Try both sheet name variants
+    const fetchWithFallback = async (id, names) => {
+      for(const name of names){
+        try{ const r = await fetchSheet(id, name); if(r && (Array.isArray(r)?r.length:(r.rows||[]).length)) return r; }catch(e){}
+      }
+      return [];
+    };
+
     const [subjectData, linksData, contactData] = await Promise.all([
-      fetchSheet(REF_SHEETS.main.id, 'Subject'),
-      fetchSheet(REF_SHEETS.main.id, 'Link '),
-      fetchSheet(REF_SHEETS.main.id, 'Contact Number'),
+      fetchWithFallback(REF_SHEETS.main.id, ['Subject','subject']),
+      fetchWithFallback(REF_SHEETS.main.id, ['Link ','Links','Link']),
+      fetchWithFallback(REF_SHEETS.main.id, ['Contact Number','Contact Numbers','contact number']),
     ]);
 
     const BRAND_CONFIGS = [
@@ -1478,167 +1484,169 @@ async function renderRef(){
       {key:'baicRecall', label:'BAIC Recall — VIN Search', icon:'🔎', color:'#4a148c'},
     ];
 
-    // ── CONTACT NUMBERS ──────────────────────────────────────────────
+    // ── CONTACT NUMBERS ───────────────────────────────────────────
     const contactArr = Array.isArray(contactData) ? contactData : (contactData.rows||[]);
-    // Split into Toll Free and WhatsApp groups based on header rows
-    let currentGroup = '';
-    const tollFree = [], whatsapp = [];
+    const fmtNum = n => {
+      const s = String(n||'').trim();
+      if(s.toUpperCase().includes('E')){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}
+      return s;
+    };
+    let curGroup = 'toll';
+    const tollFree = [], whatsappNums = [];
     contactArr.forEach(r => {
-      const vals = Object.values(r).map(v => String(v||'').trim());
-      const first = vals[0] || vals[1] || '';
-      if(first.toLowerCase().includes('toll free')) { currentGroup = 'toll'; return; }
-      if(first.toLowerCase().includes('whatsapp'))  { currentGroup = 'wa';   return; }
-      const name = vals[0]||vals[1]||'';
-      const num  = vals[1]||vals[2]||'';
-      if(!name || !num || name === num) return;
-      // Format number: remove scientific notation
-      const fmtNum = n => {
-        const raw = String(n).trim();
-        if(raw.includes('E')) {
-          const parsed = parseFloat(raw);
-          if(!isNaN(parsed)) return String(Math.round(parsed));
-        }
-        return raw;
-      };
+      const vals = Object.values(r).map(v=>String(v||'').trim());
+      const joined = vals.join(' ').toLowerCase();
+      if(joined.includes('toll free') || joined.includes('toll-free')){ curGroup='toll'; return; }
+      if(joined.includes('whatsapp')){ curGroup='wa'; return; }
+      const name = vals.find(v=>v&&isNaN(v.replace(/\./g,''))&&!v.toUpperCase().includes('E+')) || '';
+      const num  = vals.find(v=>v&&(v.toUpperCase().includes('E+')||/^\d[\d\s\-\.]+$/.test(v))) || '';
+      if(!name || !num) return;
       const entry = {name, num: fmtNum(num)};
-      if(currentGroup === 'wa') whatsapp.push(entry);
+      if(curGroup==='wa') whatsappNums.push(entry);
       else tollFree.push(entry);
     });
 
-    const makePills = (arr, color) => arr.map(e => `
-      <div class="ref-contact-pill" style="border-left:3px solid ${color}">
-        <div class="ref-contact-pill-label">${e.name}</div>
-        <div class="ref-contact-pill-val">${e.num}</div>
-      </div>`).join('');
+    const makePills = (arr, col) => arr.length
+      ? arr.map(e=>`<div class="ref-contact-pill" style="border-left:3px solid ${col}">
+          <div class="ref-contact-pill-label">${e.name}</div>
+          <div class="ref-contact-pill-val">${e.num}</div>
+        </div>`).join('')
+      : '<div style="color:#aaa;font-size:12px;padding:8px">No data</div>';
 
-    // ── LINKS ────────────────────────────────────────────────────────
+    // ── LINKS ─────────────────────────────────────────────────────
     const linksArr = Array.isArray(linksData) ? linksData : (linksData.rows||[]);
     const linkCards = linksArr.map(r => {
-      const vals = Object.values(r).map(v => String(v||'').trim());
-      const name = vals[1] || vals[0] || '';
-      const url  = vals[2] || vals[1] || '';
-      const pass = vals[3] || '';
+      const vals = Object.values(r).map(v=>String(v||'').trim());
+      const name = vals[1]||vals[0]||'';
+      const url  = vals[2]||vals[1]||'';
+      const pass = vals[3]||'';
       if(!name) return '';
-      const isLink = url.startsWith('http');
+      const isUrl = url.startsWith('http');
+      const isFile = url.endsWith('.xlsx')||url.endsWith('.pdf')||url.endsWith('.docx');
       return `<div class="ref-link-card">
-        <div class="ref-link-card-name">${name}</div>
-        ${isLink
-          ? `<a href="${url}" target="_blank" class="ref-link-open-btn">🔗 Open</a>`
-          : `<span class="ref-link-file-badge">📄 ${url||'File'}</span>`}
-        ${pass ? `<div class="ref-link-pass"><span style="color:#aaa;font-size:10px">Password:</span> ${pass}</div>` : ''}
+        <div style="flex:1">
+          <div class="ref-link-card-name">${name}</div>
+          ${pass?`<div class="ref-link-pass">🔑 ${pass}</div>`:''}
+        </div>
+        ${isUrl?`<a href="${url}" target="_blank" class="ref-link-open-btn">🔗 Open</a>`
+               :isFile?`<span class="ref-link-file">📄 ${url}</span>`:''}
       </div>`;
     }).filter(Boolean).join('');
 
-    // ── SUBJECT ──────────────────────────────────────────────────────
+    // ── SUBJECT ───────────────────────────────────────────────────
     const subjectArr = Array.isArray(subjectData) ? subjectData : (subjectData.rows||[]);
-    // Group by Queue
-    const subjectGroups = {};
+    const QUEUE_COLORS = {
+      'Inquiry':'#2e7d32','Appointment':'#1565c0','FollowUp-Complaints':'#e65100',
+      'Comment':'#6a1b9a','Request':'#00695c','Complaint':'#c0272d',
+      'NA Complaint':'#555','General':'#888'
+    };
+    const groups = {};
     subjectArr.forEach(r => {
-      const vals = Object.values(r);
-      const queue   = String(vals[0]||'').trim();
-      const status  = String(vals[1]||'').trim();
-      const subject = String(vals[2]||'').trim();
-      const dept    = String(vals[3]||'').trim();
-      const desc    = String(vals[4]||'').trim();
-      const notes   = String(vals[6]||'').trim();
+      const v = Object.values(r).map(x=>String(x||'').trim());
+      const queue   = v[0]||'';
+      const status  = v[1]||'';
+      const subject = v[2]||'';
+      const dept    = v[3]||'';
+      const notes   = v[6]||'';
       if(!subject) return;
       const grp = queue || 'General';
-      if(!subjectGroups[grp]) subjectGroups[grp] = [];
-      subjectGroups[grp].push({status, subject, dept, desc, notes});
+      if(!groups[grp]) groups[grp] = [];
+      groups[grp].push({status, subject, dept, notes});
     });
 
-    const queueColors = {
-      'Inquiry':'#2e7d32','Appointment':'#1565c0','FollowUp-Complaints':'#e65100',
-      'Comment':'#6a1b9a','Request':'#00695c','Complaint':'#c0272d','NA Complaint':'#555','General':'#888'
-    };
-    const subjectHTML = Object.entries(subjectGroups).map(([grp, items]) => {
-      const col = queueColors[grp] || '#888';
+    // Special: collect all complaint sub-types under Complaint group
+    const complaintItems = groups['Complaint']||[];
+    const mainComplaint = complaintItems[0] || null;
+    const subComplaints = complaintItems.slice(1).map(i=>i.subject).filter(Boolean);
+
+    const subjectHTML = Object.entries(groups).map(([grp, items]) => {
+      const col = QUEUE_COLORS[grp]||'#888';
+      const isComplaint = grp === 'Complaint';
       return `<div class="ref-subj-group">
         <div class="ref-subj-group-title" style="border-left:4px solid ${col};color:${col}">${grp}</div>
-        ${items.map(it => `<div class="ref-subj-item">
-          <div class="ref-subj-subject">${it.subject}
-            ${it.status ? `<span class="ref-subj-status" style="background:${it.status==='Open'?'#fde':'#e8f5e9'};color:${it.status==='Open'?'#c0272d':'#2e7d32'}">${it.status}</span>` : ''}
-          </div>
-          ${it.dept  ? `<div class="ref-subj-dept">📂 ${it.dept}</div>` : ''}
-          ${it.notes ? `<div class="ref-subj-notes">💡 ${it.notes}</div>` : ''}
-        </div>`).join('')}
+        ${isComplaint && mainComplaint ? `
+          <div class="ref-subj-item">
+            <div class="ref-subj-subject">
+              ${mainComplaint.subject}
+              <span class="ref-subj-badge" style="background:#fde;color:#c0272d">Open</span>
+            </div>
+            ${mainComplaint.dept?`<div class="ref-subj-sub">📂 ${mainComplaint.dept}</div>`:''}
+            ${mainComplaint.notes?`<div class="ref-subj-note">💡 ${mainComplaint.notes}</div>`:''}
+            ${subComplaints.length?`<div class="ref-subj-complaints">${subComplaints.map(s=>`<span class="ref-subj-complaint-tag">${s}</span>`).join('')}</div>`:''}
+          </div>` :
+          items.map(it=>`<div class="ref-subj-item">
+            <div class="ref-subj-subject">
+              ${it.subject}
+              ${it.status?`<span class="ref-subj-badge" style="background:${it.status==='Open'?'#fde':'#e8f5e9'};color:${it.status==='Open'?'#c0272d':'#2e7d32'}">${it.status}</span>`:''}
+            </div>
+            ${it.dept?`<div class="ref-subj-sub">📂 ${it.dept}</div>`:''}
+            ${it.notes?`<div class="ref-subj-note">💡 ${it.notes}</div>`:''}
+          </div>`).join('')}
       </div>`;
     }).join('');
 
-    // ── RENDER PAGE ──────────────────────────────────────────────────
+    // ── RENDER ────────────────────────────────────────────────────
     container.innerHTML = `<div class="ref-page">
 
-      <!-- GLOBAL SEARCH -->
       <div class="ref-global-search">
         <span style="font-size:18px">🔍</span>
-        <input class="ref-global-inp" type="text" placeholder="Search across all reference data…"
-               oninput="refGlobalSearch(this.value)" id="refGlobalInp">
-        <button class="ref-global-clear" onclick="refGlobalSearch('');document.getElementById('refGlobalInp').value=''">✕ Clear</button>
-        <span style="font-size:11px;color:#aaa;white-space:nowrap">يبحث في كل التبويبات</span>
+        <input class="ref-global-inp" type="text" placeholder="Search all reference data…" id="refGlobalInp">
+        <button class="ref-global-clear" onclick="document.getElementById('refGlobalInp').value=''">✕ Clear</button>
+        <span style="font-size:11px;color:#aaa;white-space:nowrap">يبحث في جميع التبويبات</span>
       </div>
 
-      <!-- CONTACT NUMBERS -->
       <div class="ref-info-panel">
         <div class="ref-panel-header" style="background:linear-gradient(135deg,#c0272d,#7b0000)">
-          📞 <span>Contact Numbers</span>
-          <span style="margin-left:auto;font-size:11px;opacity:.75">${tollFree.length + whatsapp.length} contacts</span>
+          📞 Contact Numbers
+          <span style="margin-left:auto;font-size:11px;opacity:.8">${tollFree.length+whatsappNums.length} contacts</span>
         </div>
         <div class="ref-panel-body">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
             <div>
-              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#888;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #eee">📞 Toll Free</div>
-              <div class="ref-contacts-grid" id="refContactsGrid">${makePills(tollFree,'#c0272d')}</div>
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#aaa;margin-bottom:10px;padding-bottom:5px;border-bottom:2px solid #eee">📞 Toll Free</div>
+              <div class="ref-contacts-grid">${makePills(tollFree,'#c0272d')}</div>
             </div>
             <div>
-              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#888;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #eee">💬 WhatsApp</div>
-              <div class="ref-contacts-grid">${makePills(whatsapp,'#2e7d32')}</div>
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#aaa;margin-bottom:10px;padding-bottom:5px;border-bottom:2px solid #eee">💬 WhatsApp</div>
+              <div class="ref-contacts-grid">${makePills(whatsappNums,'#2e7d32')}</div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- SUBJECT + LINKS -->
       <div class="ref-top-row">
         <div class="ref-info-panel">
           <div class="ref-panel-header" style="background:linear-gradient(135deg,#c0272d,#9e1b1b)">📋 Subject Guide</div>
-          <div class="ref-panel-body" id="refSubjectBody" style="max-height:420px;overflow-y:auto">${subjectHTML}</div>
+          <div class="ref-panel-body" style="max-height:480px;overflow-y:auto" id="refSubjectBody">${subjectHTML||'<div style="color:#aaa;padding:20px;text-align:center">No subject data</div>'}</div>
         </div>
         <div class="ref-info-panel">
           <div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1)">🔗 Links & Systems</div>
-          <div class="ref-panel-body" id="refLinksBody">
-            <div style="display:flex;flex-direction:column;gap:8px">${linkCards}</div>
-          </div>
+          <div class="ref-panel-body" id="refLinksBody">${linkCards||'<div style="color:#aaa;padding:20px;text-align:center">No links data</div>'}</div>
         </div>
       </div>
 
-      <!-- BRAND SECTIONS -->
-      ${BRAND_CONFIGS.map(({key, label, icon, color}) => {
+      ${BRAND_CONFIGS.map(({key,label,icon,color})=>{
         const tabs = REF_SHEETS[key].tabs;
-        return `<div class="ref-brand-section" id="refSec_${key}">
+        return `<div class="ref-brand-section">
           <div class="ref-brand-header" style="background:linear-gradient(135deg,${color},${color}bb)"
-               onclick="toggleRefBrand('refBody_${key}',this)" id="refHdr_${key}">
+               onclick="toggleRefBrand('refBody_${key}',this)">
             <div style="display:flex;align-items:center;gap:10px">
               <span style="font-size:20px">${icon}</span>
               <div>
                 <div>${label}</div>
-                <div class="ref-brand-meta">${tabs.length} tab${tabs.length!==1?'s':''} · Click to expand</div>
+                <div class="ref-brand-meta">Click to expand</div>
               </div>
             </div>
-            <span class="chevron">▼</span>
+            <span class="ref-chevron">▼</span>
           </div>
           <div id="refBody_${key}" style="display:none">
             <div class="ref-sub-tabs">
-              ${tabs.map((t,i) => `<button class="ref-sub-tab${i===0?' active':''}"
+              ${tabs.map((t,i)=>`<button class="ref-sub-tab${i===0?' active':''}"
                 style="${i===0?'background:'+color+';color:#fff;border-color:'+color:''}"
                 onclick="switchRefTab('${key}',${i},this)">${t}</button>`).join('')}
             </div>
             <div class="ref-tab-content">
-              <div id="refTab_${key}">
-                <div style="text-align:center;padding:24px;color:#bbb;font-size:13px">
-                  <div style="font-size:24px;margin-bottom:8px">⏳</div>
-                  Loading ${tabs[0]}…
-                </div>
-              </div>
+              <div id="refTab_${key}" style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading ${tabs[0]}…</div>
             </div>
           </div>
         </div>`;
@@ -1647,87 +1655,23 @@ async function renderRef(){
     </div>`;
 
     BRAND_CONFIGS.forEach(({key}) => renderRefBrand(key, 0));
-    const firstHdr = document.getElementById('refHdr_nissan');
-    if(firstHdr) toggleRefBrand('refBody_nissan', firstHdr);
+    const nissanHdr = document.querySelector('[onclick*="refBody_nissan"]');
+    if(nissanHdr) toggleRefBrand('refBody_nissan', nissanHdr);
 
   } catch(e){
     console.error('renderRef error:', e);
-    container.innerHTML = `<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px;margin:8px">
-      <div style="font-size:32px;margin-bottom:12px">⚠️</div>
-      <div style="font-size:14px;font-weight:700">Failed to load reference data</div>
-      <div style="font-size:12px;color:#888;margin-top:6px">${e.message}</div>
+    container.innerHTML = `<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px">
+      <div style="font-size:28px;margin-bottom:8px">⚠️</div>
+      <div style="font-weight:700">Failed to load</div>
+      <div style="font-size:12px;color:#888;margin-top:4px">${e.message}</div>
     </div>`;
   }
 }
 
-function refGlobalSearch(q){
-  REF_GLOBAL_SEARCH = q;
-  // Re-render all loaded tabs
-  Object.keys(REF_CACHE).forEach(cacheKey => {
-    const [id, sheetName] = cacheKey.split('__');
-    // Find which brand+tab this belongs to
-    Object.entries(REF_SHEETS).forEach(([brand, cfg]) => {
-      if(cfg.id === id){
-        const tabIdx = cfg.tabs.indexOf(sheetName);
-        if(tabIdx !== -1 && tabIdx === REF_ACTIVE_TABS[brand]){
-          const container = document.getElementById(`refTab_${brand}`);
-          if(container){
-            const data = REF_CACHE[cacheKey];
-            container.innerHTML = makeRefTable(Array.isArray(data)?data:(data.rows||[]), q);
-          }
-        }
-      }
-    });
-  });
-  // Also refresh subject/links
-  ['refSubjectBody','refLinksBody'].forEach(id => {
-    const el = document.getElementById(id);
-    if(el) {
-      const key = id === 'refSubjectBody' ? 
-        `${REF_SHEETS.main.id}__Subject` : 
-        `${REF_SHEETS.main.id}__Links`;
-      const cached = REF_CACHE[key];
-      if(cached) el.innerHTML = makeRefTable(Array.isArray(cached)?cached:(cached.rows||[]), q);
-    }
-  });
-  // Filter contact pills
-  const grid = document.getElementById('refContactsGrid');
-  if(grid && q){
-    grid.querySelectorAll('.ref-contact-pill').forEach(pill => {
-      const text = pill.textContent.toLowerCase();
-      pill.style.display = text.includes(q.toLowerCase()) ? '' : 'none';
-    });
-  } else if(grid){
-    grid.querySelectorAll('.ref-contact-pill').forEach(p => p.style.display = '');
-  }
-}
 
-function toggleRefBrand(id, btn){
-  const el = document.getElementById(id);
-  if(!el) return;
-  const isOpen = el.style.display !== 'none';
-  el.style.display = isOpen ? 'none' : 'block';
-  if(btn){
-    btn.classList.toggle('open', !isOpen);
-    const meta = btn.querySelector('.ref-brand-meta');
-    if(meta) meta.textContent = !isOpen ? 
-      `${btn.closest('.ref-brand-section').querySelectorAll('.ref-sub-tab').length} tabs · Click to collapse` :
-      `${btn.closest('.ref-brand-section').querySelectorAll('.ref-sub-tab').length} tabs · Click to expand`;
-  }
-}
 
-function switchRefTab(brand, idx, btn){
-  REF_ACTIVE_TABS[brand] = idx;
-  const tabs = btn.parentElement.querySelectorAll('.ref-sub-tab');
-  const color = {nissan:'#c0272d', stellantis:'#1565c0', baic:'#37474f', baicRecall:'#4a148c'}[brand];
-  tabs.forEach((t,i) => {
-    t.classList.toggle('active', i===idx);
-    t.style.background = i===idx ? color : '';
-    t.style.color = i===idx ? '#fff' : '';
-    t.style.borderColor = i===idx ? color : '';
-  });
-  renderRefBrand(brand, idx);
-}
+
+
 
 
 // ── SCHEDULE ─────────────────────────────────────────────────────────
