@@ -204,13 +204,14 @@ tr:last-child td{border-bottom:none}
 /* Subject groups */
 .ref-subj-group{margin-bottom:14px}
 .ref-subj-group-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:5px 10px;margin-bottom:6px;border-radius:0 6px 6px 0;background:#fafafa}
-.ref-subj-item{padding:8px 10px;border-bottom:1px solid #f5f5f5;background:#fff;transition:.15s;border-radius:4px;margin-bottom:3px}
+.ref-subj-item{padding:10px 12px;border-bottom:1px solid #f0f0f0;background:#fff;border-radius:6px;margin-bottom:4px;transition:.15s}
 .ref-subj-item:hover{background:#fef9f9}
-.ref-subj-subject{font-size:12px;font-weight:700;color:#1a1a2e;display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px}
+.ref-subj-subject{font-size:13px;font-weight:700;color:#1a1a2e;display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px}
 .ref-subj-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:8px}
-.ref-subj-sub{font-size:11px;color:#777;margin-top:2px;line-height:1.5}
-.ref-subj-note{font-size:11px;color:#999;margin-top:2px;font-style:italic}
-.ref-subj-complaints{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.ref-subj-row{display:flex;align-items:flex-start;gap:6px;font-size:11px;color:#555;margin-bottom:4px;line-height:1.5}
+.ref-subj-ico{flex-shrink:0;font-size:12px;margin-top:1px}
+.ref-subj-note{color:#888;font-style:italic}
+.ref-subj-complaints{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
 .ref-subj-complaint-tag{font-size:10px;background:#fef2f2;color:#c0272d;border:1px solid #fcc;border-radius:6px;padding:2px 8px;font-weight:600}
 
 /* Link cards */
@@ -244,6 +245,13 @@ tr:last-child td{border-bottom:none}
 .ref-card-row{display:flex;align-items:flex-start;gap:7px;margin-bottom:5px;font-size:12px;color:#555}
 .ref-card-code{display:inline-block;background:#eef2ff;color:#3949ab;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:6px}
 .ref-card-hours{font-size:10px;color:#888;border-top:1px solid #f0f0f0;padding-top:7px;margin-top:7px;line-height:1.5}
+
+/* Brand circles */
+.ref-brand-circles{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.ref-brand-circle{display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;transition:.2s}
+.ref-brand-circle:hover{transform:translateY(-3px)}
+.ref-brand-circle-icon{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 3px 10px rgba(0,0,0,.15)}
+.ref-brand-circle-label{font-size:11px;font-weight:700;text-align:center}
 
 /* VIN */
 .vin-search-box{display:flex;gap:8px;margin:10px 0}
@@ -1389,6 +1397,33 @@ async function vinSearch(brand, value){
 
 
 
+function scrollToRefBrand(bodyId, hdrId){
+  const body = document.getElementById(bodyId);
+  const hdr  = document.getElementById(hdrId);
+  if(!body || !hdr) return;
+  // Open if closed
+  if(body.style.display === 'none') toggleRefBrand(bodyId, hdr);
+  // Scroll smoothly
+  setTimeout(()=>{ hdr.scrollIntoView({behavior:'smooth', block:'start'}); }, 100);
+}
+
+function refGlobalFilter(q){
+  q = q.toLowerCase().trim();
+  // Filter subject items
+  document.querySelectorAll('.ref-subj-item').forEach(el=>{
+    el.style.display = (!q || el.textContent.toLowerCase().includes(q)) ? '' : 'none';
+  });
+  // Filter subject groups (hide group if all items hidden)
+  document.querySelectorAll('.ref-subj-group').forEach(grp=>{
+    const visible = [...grp.querySelectorAll('.ref-subj-item')].some(i=>i.style.display!=='none');
+    grp.style.display = visible ? '' : 'none';
+  });
+  // Filter link cards
+  document.querySelectorAll('.ref-link-card').forEach(el=>{
+    el.style.display = (!q || el.textContent.toLowerCase().includes(q)) ? '' : 'none';
+  });
+}
+
 function switchRefTab(brand, idx, btn){
   REF_ACTIVE_TABS[brand] = idx;
   const color = {nissan:'#c0272d', stellantis:'#1565c0', baic:'#37474f', baicRecall:'#4a148c'}[brand] || '#c0272d';
@@ -1547,89 +1582,90 @@ async function renderRef(){
       const status  = v[1]||'';
       const subject = v[2]||'';
       const dept    = v[3]||'';
+      const descField = v[4]||'';
+      const category  = v[5]||'';
       const notes   = v[6]||'';
       if(!subject) return;
       const grp = queue || 'General';
       if(!groups[grp]) groups[grp] = [];
-      groups[grp].push({status, subject, dept, notes});
+      groups[grp].push({status, subject, dept, descField, category, notes});
     });
 
-    // Special: collect all complaint sub-types under Complaint group
+    // Collect complaint sub-types under main Complaint
     const complaintItems = groups['Complaint']||[];
     const mainComplaint = complaintItems[0] || null;
     const subComplaints = complaintItems.slice(1).map(i=>i.subject).filter(Boolean);
+
+    const renderSubjItem = (it, isMainComplaint=false, subTags=[]) => {
+      const deptLines = it.dept ? it.dept.split(/\n|,/).map(s=>s.trim()).filter(Boolean) : [];
+      const catLines  = it.category ? it.category.split(/\n|,/).map(s=>s.trim()).filter(Boolean) : [];
+      return `<div class="ref-subj-item">
+        <div class="ref-subj-subject">
+          ${it.subject}
+          ${it.status?`<span class="ref-subj-badge" style="background:${it.status==='Open'?'#fde':'#e8f5e9'};color:${it.status==='Open'?'#c0272d':'#2e7d32'}">${it.status}</span>`:''}
+        </div>
+        ${deptLines.length?`<div class="ref-subj-row"><span class="ref-subj-ico">📂</span><span>${deptLines.join(' · ')}</span></div>`:''}
+        ${it.descField?`<div class="ref-subj-row"><span class="ref-subj-ico">✏️</span><span>${it.descField}</span></div>`:''}
+        ${catLines.length?`<div class="ref-subj-row"><span class="ref-subj-ico">🏷️</span><span>${catLines.join(' · ')}</span></div>`:''}
+        ${it.notes?`<div class="ref-subj-row ref-subj-note"><span class="ref-subj-ico">💡</span><span>${it.notes}</span></div>`:''}
+        ${isMainComplaint && subTags.length?`<div class="ref-subj-complaints">${subTags.map(s=>`<span class="ref-subj-complaint-tag">${s}</span>`).join('')}</div>`:''}
+      </div>`;
+    };
 
     const subjectHTML = Object.entries(groups).map(([grp, items]) => {
       const col = QUEUE_COLORS[grp]||'#888';
       const isComplaint = grp === 'Complaint';
       return `<div class="ref-subj-group">
         <div class="ref-subj-group-title" style="border-left:4px solid ${col};color:${col}">${grp}</div>
-        ${isComplaint && mainComplaint ? `
-          <div class="ref-subj-item">
-            <div class="ref-subj-subject">
-              ${mainComplaint.subject}
-              <span class="ref-subj-badge" style="background:#fde;color:#c0272d">Open</span>
-            </div>
-            ${mainComplaint.dept?`<div class="ref-subj-sub">📂 ${mainComplaint.dept}</div>`:''}
-            ${mainComplaint.notes?`<div class="ref-subj-note">💡 ${mainComplaint.notes}</div>`:''}
-            ${subComplaints.length?`<div class="ref-subj-complaints">${subComplaints.map(s=>`<span class="ref-subj-complaint-tag">${s}</span>`).join('')}</div>`:''}
-          </div>` :
-          items.map(it=>`<div class="ref-subj-item">
-            <div class="ref-subj-subject">
-              ${it.subject}
-              ${it.status?`<span class="ref-subj-badge" style="background:${it.status==='Open'?'#fde':'#e8f5e9'};color:${it.status==='Open'?'#c0272d':'#2e7d32'}">${it.status}</span>`:''}
-            </div>
-            ${it.dept?`<div class="ref-subj-sub">📂 ${it.dept}</div>`:''}
-            ${it.notes?`<div class="ref-subj-note">💡 ${it.notes}</div>`:''}
-          </div>`).join('')}
+        ${isComplaint && mainComplaint
+          ? renderSubjItem(mainComplaint, true, subComplaints)
+          : items.map(it => renderSubjItem(it)).join('')}
       </div>`;
     }).join('');
 
     // ── RENDER ────────────────────────────────────────────────────
     container.innerHTML = `<div class="ref-page">
 
-      <div class="ref-global-search">
-        <span style="font-size:18px">🔍</span>
-        <input class="ref-global-inp" type="text" placeholder="Search all reference data…" id="refGlobalInp">
-        <button class="ref-global-clear" onclick="document.getElementById('refGlobalInp').value=''">✕ Clear</button>
-        <span style="font-size:11px;color:#aaa;white-space:nowrap">يبحث في جميع التبويبات</span>
+      <!-- BRAND QUICK LINKS (circles) -->
+      <div class="ref-brand-circles">
+        ${BRAND_CONFIGS.map(({key,label,icon,color})=>`
+          <div class="ref-brand-circle" onclick="scrollToRefBrand('refBody_${key}','refHdr_${key}')"
+               style="border-color:${color}">
+            <div class="ref-brand-circle-icon" style="background:${color}">${icon}</div>
+            <div class="ref-brand-circle-label" style="color:${color}">${label.replace(' — VIN Search','')}</div>
+          </div>`).join('')}
       </div>
 
-      <div class="ref-info-panel">
-        <div class="ref-panel-header" style="background:linear-gradient(135deg,#c0272d,#7b0000)">
-          📞 Contact Numbers
-          <span style="margin-left:auto;font-size:11px;opacity:.8">${tollFree.length+whatsappNums.length} contacts</span>
+      <!-- SEARCH -->
+      <div class="ref-global-search">
+        <span style="font-size:18px">🔍</span>
+        <input class="ref-global-inp" type="text" placeholder="ابحث في المراجع…" id="refGlobalInp"
+               oninput="refGlobalFilter(this.value)">
+        <button class="ref-global-clear" onclick="refGlobalFilter('');document.getElementById('refGlobalInp').value=''">✕ Clear</button>
+      </div>
+
+      <!-- SUBJECT + LINKS -->
+      <div class="ref-top-row">
+        <div class="ref-info-panel">
+          <div class="ref-panel-header" style="background:linear-gradient(135deg,#c0272d,#9e1b1b)">📋 Subject Guide</div>
+          <div class="ref-panel-body" style="max-height:500px;overflow-y:auto" id="refSubjectBody">
+            ${subjectHTML||'<div style="color:#aaa;padding:20px;text-align:center">No data</div>'}
+          </div>
         </div>
-        <div class="ref-panel-body">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-            <div>
-              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#aaa;margin-bottom:10px;padding-bottom:5px;border-bottom:2px solid #eee">📞 Toll Free</div>
-              <div class="ref-contacts-grid">${makePills(tollFree,'#c0272d')}</div>
-            </div>
-            <div>
-              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#aaa;margin-bottom:10px;padding-bottom:5px;border-bottom:2px solid #eee">💬 WhatsApp</div>
-              <div class="ref-contacts-grid">${makePills(whatsappNums,'#2e7d32')}</div>
-            </div>
+        <div class="ref-info-panel">
+          <div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1)">🔗 Links & Systems</div>
+          <div class="ref-panel-body" id="refLinksBody">
+            ${linkCards||'<div style="color:#aaa;padding:20px;text-align:center">No data</div>'}
           </div>
         </div>
       </div>
 
-      <div class="ref-top-row">
-        <div class="ref-info-panel">
-          <div class="ref-panel-header" style="background:linear-gradient(135deg,#c0272d,#9e1b1b)">📋 Subject Guide</div>
-          <div class="ref-panel-body" style="max-height:480px;overflow-y:auto" id="refSubjectBody">${subjectHTML||'<div style="color:#aaa;padding:20px;text-align:center">No subject data</div>'}</div>
-        </div>
-        <div class="ref-info-panel">
-          <div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1)">🔗 Links & Systems</div>
-          <div class="ref-panel-body" id="refLinksBody">${linkCards||'<div style="color:#aaa;padding:20px;text-align:center">No links data</div>'}</div>
-        </div>
-      </div>
-
+      <!-- BRAND SECTIONS -->
       ${BRAND_CONFIGS.map(({key,label,icon,color})=>{
         const tabs = REF_SHEETS[key].tabs;
-        return `<div class="ref-brand-section">
+        return `<div class="ref-brand-section" id="refSec_${key}">
           <div class="ref-brand-header" style="background:linear-gradient(135deg,${color},${color}bb)"
-               onclick="toggleRefBrand('refBody_${key}',this)">
+               onclick="toggleRefBrand('refBody_${key}',this)" id="refHdr_${key}">
             <div style="display:flex;align-items:center;gap:10px">
               <span style="font-size:20px">${icon}</span>
               <div>
@@ -1655,7 +1691,7 @@ async function renderRef(){
     </div>`;
 
     BRAND_CONFIGS.forEach(({key}) => renderRefBrand(key, 0));
-    const nissanHdr = document.querySelector('[onclick*="refBody_nissan"]');
+    const nissanHdr = document.getElementById('refHdr_nissan');
     if(nissanHdr) toggleRefBrand('refBody_nissan', nissanHdr);
 
   } catch(e){
