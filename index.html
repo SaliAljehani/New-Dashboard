@@ -272,6 +272,25 @@ tr:last-child td{border-bottom:none}
 .ref-search-inp{flex:1;padding:7px 12px;border-radius:20px;border:1.5px solid #ddd;font-size:12px;outline:none}
 .ref-search-inp:focus{border-color:#c0272d}
 
+/* Subject groups */
+.ref-subj-group{margin-bottom:16px}
+.ref-subj-group-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:5px 10px;margin-bottom:6px;border-radius:0 6px 6px 0;background:#fafafa}
+.ref-subj-item{padding:8px 10px;border-bottom:1px solid #f5f5f5;border-radius:6px;margin-bottom:4px;background:#fff;transition:.15s}
+.ref-subj-item:hover{background:#fef9f9}
+.ref-subj-subject{font-size:12px;font-weight:700;color:#1a1a2e;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ref-subj-status{font-size:10px;font-weight:600;padding:2px 7px;border-radius:8px}
+.ref-subj-dept{font-size:11px;color:#666;margin-top:3px}
+.ref-subj-notes{font-size:11px;color:#888;margin-top:3px;font-style:italic}
+
+/* Link cards */
+.ref-link-card{background:#f9fbff;border-radius:10px;padding:11px 14px;border:1px solid #e8eaed;display:flex;align-items:center;gap:10px;transition:.15s}
+.ref-link-card:hover{border-color:#1565c0;background:#fff}
+.ref-link-card-name{font-size:13px;font-weight:700;color:#1a1a2e;flex:1}
+.ref-link-open-btn{padding:5px 14px;background:#1565c0;color:#fff;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;transition:.15s}
+.ref-link-open-btn:hover{background:#0d47a1}
+.ref-link-file-badge{padding:5px 12px;background:#f0f2f7;color:#555;border-radius:8px;font-size:11px;font-weight:600;white-space:nowrap}
+.ref-link-pass{font-size:10px;color:#aaa;white-space:nowrap}
+
 .att-section{margin-top:4px}
 .month-block{background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:10px}
 .month-title{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
@@ -1243,7 +1262,7 @@ let REF_DATA = [];
 const REF_SHEETS = {
   main: {
     id: '1FFkOe3_RC7N3MaZ6OQ4MP1qDEHCiHjaQ4MqrFzOa7zo',
-    tabs: ['Subject','Links','Contact Number']
+    tabs: ['Subject','Link ','Contact Number']
   },
   nissan: {
     id: '1lXDeN1iUosG_JSADgdWhnkT5J1t3hhwXoSJdbmb4B88',
@@ -1444,72 +1463,151 @@ async function renderRef(){
     <div style="font-size:14px;font-weight:600">Loading reference data...</div>
     <div style="font-size:12px;color:#bbb;margin-top:6px">Connecting to Google Sheets</div>
   </div>`;
-  
+
   try{
     const [subjectData, linksData, contactData] = await Promise.all([
       fetchSheet(REF_SHEETS.main.id, 'Subject'),
-      fetchSheet(REF_SHEETS.main.id, 'Links'),
+      fetchSheet(REF_SHEETS.main.id, 'Link '),
       fetchSheet(REF_SHEETS.main.id, 'Contact Number'),
     ]);
-    
+
     const BRAND_CONFIGS = [
-      {key:'nissan',     label:'Nissan',                    icon:'🔴', color:'#c0272d', tabs: REF_SHEETS.nissan.tabs.length},
-      {key:'stellantis', label:'Stellantis',                icon:'🔵', color:'#1565c0', tabs: REF_SHEETS.stellantis.tabs.length},
-      {key:'baic',       label:'BAIC',                      icon:'⚫', color:'#37474f', tabs: REF_SHEETS.baic.tabs.length},
-      {key:'baicRecall', label:'BAIC Recall (VIN Search)',  icon:'🔎', color:'#4a148c', tabs: REF_SHEETS.baicRecall.tabs.length},
+      {key:'nissan',     label:'Nissan',                   icon:'🔴', color:'#c0272d'},
+      {key:'stellantis', label:'Stellantis',               icon:'🔵', color:'#1565c0'},
+      {key:'baic',       label:'BAIC',                     icon:'⚫', color:'#37474f'},
+      {key:'baicRecall', label:'BAIC Recall — VIN Search', icon:'🔎', color:'#4a148c'},
     ];
 
-    // Build contact pills
+    // ── CONTACT NUMBERS ──────────────────────────────────────────────
     const contactArr = Array.isArray(contactData) ? contactData : (contactData.rows||[]);
-    const contactCols = contactArr.length ? Object.keys(contactArr[0]).filter(c=>c&&c.trim()) : [];
-    const labelCol  = contactCols[0] || '';
-    const numberCol = contactCols[1] || '';
-    const extraCol  = contactCols[2] || '';
-    const contactPills = contactArr.map(r => {
-      const lbl = String(r[labelCol]||'').trim();
-      const num = String(r[numberCol]||'').trim();
-      const ext = extraCol ? String(r[extraCol]||'').trim() : '';
-      if(!lbl && !num) return '';
-      return `<div class="ref-contact-pill">
-        <div class="ref-contact-pill-label">${lbl||'Contact'}</div>
-        <div class="ref-contact-pill-val">${num||'–'}</div>
-        ${ext ? `<div class="ref-contact-pill-sub">${ext}</div>` : ''}
+    // Split into Toll Free and WhatsApp groups based on header rows
+    let currentGroup = '';
+    const tollFree = [], whatsapp = [];
+    contactArr.forEach(r => {
+      const vals = Object.values(r).map(v => String(v||'').trim());
+      const first = vals[0] || vals[1] || '';
+      if(first.toLowerCase().includes('toll free')) { currentGroup = 'toll'; return; }
+      if(first.toLowerCase().includes('whatsapp'))  { currentGroup = 'wa';   return; }
+      const name = vals[0]||vals[1]||'';
+      const num  = vals[1]||vals[2]||'';
+      if(!name || !num || name === num) return;
+      // Format number: remove scientific notation
+      const fmtNum = n => {
+        const raw = String(n).trim();
+        if(raw.includes('E')) {
+          const parsed = parseFloat(raw);
+          if(!isNaN(parsed)) return String(Math.round(parsed));
+        }
+        return raw;
+      };
+      const entry = {name, num: fmtNum(num)};
+      if(currentGroup === 'wa') whatsapp.push(entry);
+      else tollFree.push(entry);
+    });
+
+    const makePills = (arr, color) => arr.map(e => `
+      <div class="ref-contact-pill" style="border-left:3px solid ${color}">
+        <div class="ref-contact-pill-label">${e.name}</div>
+        <div class="ref-contact-pill-val">${e.num}</div>
+      </div>`).join('');
+
+    // ── LINKS ────────────────────────────────────────────────────────
+    const linksArr = Array.isArray(linksData) ? linksData : (linksData.rows||[]);
+    const linkCards = linksArr.map(r => {
+      const vals = Object.values(r).map(v => String(v||'').trim());
+      const name = vals[1] || vals[0] || '';
+      const url  = vals[2] || vals[1] || '';
+      const pass = vals[3] || '';
+      if(!name) return '';
+      const isLink = url.startsWith('http');
+      return `<div class="ref-link-card">
+        <div class="ref-link-card-name">${name}</div>
+        ${isLink
+          ? `<a href="${url}" target="_blank" class="ref-link-open-btn">🔗 Open</a>`
+          : `<span class="ref-link-file-badge">📄 ${url||'File'}</span>`}
+        ${pass ? `<div class="ref-link-pass"><span style="color:#aaa;font-size:10px">Password:</span> ${pass}</div>` : ''}
       </div>`;
     }).filter(Boolean).join('');
-    
+
+    // ── SUBJECT ──────────────────────────────────────────────────────
+    const subjectArr = Array.isArray(subjectData) ? subjectData : (subjectData.rows||[]);
+    // Group by Queue
+    const subjectGroups = {};
+    subjectArr.forEach(r => {
+      const vals = Object.values(r);
+      const queue   = String(vals[0]||'').trim();
+      const status  = String(vals[1]||'').trim();
+      const subject = String(vals[2]||'').trim();
+      const dept    = String(vals[3]||'').trim();
+      const desc    = String(vals[4]||'').trim();
+      const notes   = String(vals[6]||'').trim();
+      if(!subject) return;
+      const grp = queue || 'General';
+      if(!subjectGroups[grp]) subjectGroups[grp] = [];
+      subjectGroups[grp].push({status, subject, dept, desc, notes});
+    });
+
+    const queueColors = {
+      'Inquiry':'#2e7d32','Appointment':'#1565c0','FollowUp-Complaints':'#e65100',
+      'Comment':'#6a1b9a','Request':'#00695c','Complaint':'#c0272d','NA Complaint':'#555','General':'#888'
+    };
+    const subjectHTML = Object.entries(subjectGroups).map(([grp, items]) => {
+      const col = queueColors[grp] || '#888';
+      return `<div class="ref-subj-group">
+        <div class="ref-subj-group-title" style="border-left:4px solid ${col};color:${col}">${grp}</div>
+        ${items.map(it => `<div class="ref-subj-item">
+          <div class="ref-subj-subject">${it.subject}
+            ${it.status ? `<span class="ref-subj-status" style="background:${it.status==='Open'?'#fde':'#e8f5e9'};color:${it.status==='Open'?'#c0272d':'#2e7d32'}">${it.status}</span>` : ''}
+          </div>
+          ${it.dept  ? `<div class="ref-subj-dept">📂 ${it.dept}</div>` : ''}
+          ${it.notes ? `<div class="ref-subj-notes">💡 ${it.notes}</div>` : ''}
+        </div>`).join('')}
+      </div>`;
+    }).join('');
+
+    // ── RENDER PAGE ──────────────────────────────────────────────────
     container.innerHTML = `<div class="ref-page">
 
       <!-- GLOBAL SEARCH -->
       <div class="ref-global-search">
-        <span style="font-size:20px">🔍</span>
-        <input class="ref-global-inp" type="text" placeholder="Search across all reference data…" 
+        <span style="font-size:18px">🔍</span>
+        <input class="ref-global-inp" type="text" placeholder="Search across all reference data…"
                oninput="refGlobalSearch(this.value)" id="refGlobalInp">
         <button class="ref-global-clear" onclick="refGlobalSearch('');document.getElementById('refGlobalInp').value=''">✕ Clear</button>
-        <span style="font-size:12px;color:#aaa;white-space:nowrap">Search any field across all tabs</span>
+        <span style="font-size:11px;color:#aaa;white-space:nowrap">يبحث في كل التبويبات</span>
       </div>
 
       <!-- CONTACT NUMBERS -->
       <div class="ref-info-panel">
         <div class="ref-panel-header" style="background:linear-gradient(135deg,#c0272d,#7b0000)">
-          <span>📞</span> <span>Contact Numbers</span>
-          <span style="margin-left:auto;font-size:11px;opacity:.75">${contactArr.length} contacts</span>
+          📞 <span>Contact Numbers</span>
+          <span style="margin-left:auto;font-size:11px;opacity:.75">${tollFree.length + whatsapp.length} contacts</span>
         </div>
         <div class="ref-panel-body">
-          <div class="ref-contacts-grid" id="refContactsGrid">
-            ${contactPills || '<div style="color:#aaa;font-size:13px;padding:10px">No contact data</div>'}
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div>
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#888;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #eee">📞 Toll Free</div>
+              <div class="ref-contacts-grid" id="refContactsGrid">${makePills(tollFree,'#c0272d')}</div>
+            </div>
+            <div>
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#888;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #eee">💬 WhatsApp</div>
+              <div class="ref-contacts-grid">${makePills(whatsapp,'#2e7d32')}</div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- SUBJECT + LINKS ROW -->
+      <!-- SUBJECT + LINKS -->
       <div class="ref-top-row">
         <div class="ref-info-panel">
           <div class="ref-panel-header" style="background:linear-gradient(135deg,#c0272d,#9e1b1b)">📋 Subject Guide</div>
-          <div class="ref-panel-body" id="refSubjectBody">${makeRefTable(Array.isArray(subjectData)?subjectData:(subjectData.rows||[]))}</div>
+          <div class="ref-panel-body" id="refSubjectBody" style="max-height:420px;overflow-y:auto">${subjectHTML}</div>
         </div>
         <div class="ref-info-panel">
-          <div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1)">🔗 Links & Resources</div>
-          <div class="ref-panel-body" id="refLinksBody">${makeRefTable(Array.isArray(linksData)?linksData:(linksData.rows||[]))}</div>
+          <div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1)">🔗 Links & Systems</div>
+          <div class="ref-panel-body" id="refLinksBody">
+            <div style="display:flex;flex-direction:column;gap:8px">${linkCards}</div>
+          </div>
         </div>
       </div>
 
@@ -1517,7 +1615,7 @@ async function renderRef(){
       ${BRAND_CONFIGS.map(({key, label, icon, color}) => {
         const tabs = REF_SHEETS[key].tabs;
         return `<div class="ref-brand-section" id="refSec_${key}">
-          <div class="ref-brand-header" style="background:linear-gradient(135deg,${color},${color}cc)" 
+          <div class="ref-brand-header" style="background:linear-gradient(135deg,${color},${color}bb)"
                onclick="toggleRefBrand('refBody_${key}',this)" id="refHdr_${key}">
             <div style="display:flex;align-items:center;gap:10px">
               <span style="font-size:20px">${icon}</span>
@@ -1530,7 +1628,7 @@ async function renderRef(){
           </div>
           <div id="refBody_${key}" style="display:none">
             <div class="ref-sub-tabs">
-              ${tabs.map((t,i) => `<button class="ref-sub-tab${i===0?' active':''}" 
+              ${tabs.map((t,i) => `<button class="ref-sub-tab${i===0?' active':''}"
                 style="${i===0?'background:'+color+';color:#fff;border-color:'+color:''}"
                 onclick="switchRefTab('${key}',${i},this)">${t}</button>`).join('')}
             </div>
@@ -1545,24 +1643,19 @@ async function renderRef(){
           </div>
         </div>`;
       }).join('')}
-      
+
     </div>`;
-    
-    // Auto-open Nissan and auto-load first tab of all brands
-    BRAND_CONFIGS.forEach(({key}) => {
-      renderRefBrand(key, 0);
-    });
-    // Open first brand by default
+
+    BRAND_CONFIGS.forEach(({key}) => renderRefBrand(key, 0));
     const firstHdr = document.getElementById('refHdr_nissan');
     if(firstHdr) toggleRefBrand('refBody_nissan', firstHdr);
-    
+
   } catch(e){
     console.error('renderRef error:', e);
     container.innerHTML = `<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px;margin:8px">
       <div style="font-size:32px;margin-bottom:12px">⚠️</div>
       <div style="font-size:14px;font-weight:700">Failed to load reference data</div>
       <div style="font-size:12px;color:#888;margin-top:6px">${e.message}</div>
-      <div style="font-size:11px;color:#aaa;margin-top:8px">Make sure the Google Sheets are set to "Anyone with link can view"</div>
     </div>`;
   }
 }
