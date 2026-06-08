@@ -1216,49 +1216,53 @@ async function fetchSheet(spreadsheetId, sheetName){
   const key = `${spreadsheetId}__${sheetName}`;
   if(REF_CACHE[key]) return REF_CACHE[key];
   
-  const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
+  // Get GID for this sheet name
+  const url = `https://script.google.com/macros/s/AKfycbyHVElDCcVJDftggbBkeTOh7jOCfXD782HzhOXB5byc8kyh3pdHf7UgfGlpKyPAdaQtiA/exec?id=${spreadsheetId}&sheetName=${encodeURIComponent(sheetName)}`;
   const res = await fetch(url);
-  const text = await res.text();
-  const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
+  const rows = await res.json();
   
-  const cols = json.table.cols.map(c => c.label || '');
-  const rows = (json.table.rows || []).map(r => {
-    const obj = {};
-    (r.c || []).forEach((cell, i) => {
-      obj[cols[i] || `col${i}`] = cell ? (cell.f || cell.v || '') : '';
-    });
-    return obj;
-  }).filter(r => Object.values(r).some(v => String(v).trim()));
-  
-  REF_CACHE[key] = {cols: cols.filter(c=>c), rows};
-  return REF_CACHE[key];
+  REF_CACHE[key] = rows;
+  return rows;
 }
 
-function makeRefTable(data, vinFilter=''){
-  if(!data || !data.rows.length) return '<div style="text-align:center;padding:20px;color:#aaa">No data</div>';
+function makeRefTable(rows, vinFilter=''){
+  if(!rows || !rows.length) return '<div style="text-align:center;padding:20px;color:#aaa">No data</div>';
   
-  let rows = data.rows;
+  // Filter empty rows
+  let data = rows.filter(r => Object.values(r).some(v => String(v).trim()));
+  
   if(vinFilter){
     const q = vinFilter.toLowerCase();
-    rows = rows.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(q)));
+    data = data.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(q)));
   }
   
-  const cols = data.cols.filter(c => c && c !== 'nan');
+  if(!data.length) return '<div style="text-align:center;padding:20px;color:#aaa">No results</div>';
+  
+  const cols = Object.keys(data[0]).filter(c => c && c.trim() && c !== '' && 
+    data.some(r => String(r[c]||'').trim()));
+  
+  const hl = (v, q) => {
+    if(!q || !v) return v;
+    return v.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'), 
+      m => `<mark style="background:#fff3cd;padding:0 2px;border-radius:2px">${m}</mark>`);
+  };
   
   return `<div class="ref-tbl-wrap">
     <table class="ref-tbl">
       <thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead>
-      <tbody>${rows.map(r=>`<tr>${cols.map(c=>{
+      <tbody>${data.map(r=>`<tr>${cols.map(c=>{
         let v = String(r[c]||'').trim();
-        if(v.startsWith('http')) v = `<a href="${v}" target="_blank" rel="noopener noreferrer">🔗 Open</a>`;
-        else if(v.includes('@') && v.includes('.')) v = `<a href="mailto:${v}">${v}</a>`;
-        if(vinFilter && v.toLowerCase().includes(vinFilter.toLowerCase())){
-          v = v.replace(new RegExp(vinFilter.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'), m=>`<mark style="background:#fff3cd;padding:0 2px;border-radius:2px">${m}</mark>`);
-        }
-        return `<td>${v}</td>`;
+        if(!v) return '<td>–</td>';
+        let display = v;
+        if(v.startsWith('http')) display = `<a href="${v}" target="_blank" rel="noopener noreferrer">🔗 Open</a>`;
+        else if(v.includes('@') && v.includes('.') && !v.includes(' ')) display = `<a href="mailto:${v}">${v}</a>`;
+        else if(vinFilter) display = hl(display, vinFilter);
+        // Handle newlines
+        display = display.replace(/\n/g, '<br>');
+        return `<td>${display}</td>`;
       }).join('')}</tr>`).join('')}</tbody>
     </table>
-  </div><div style="font-size:11px;color:#aaa;padding:6px 2px">${rows.length} rows</div>`;
+  </div><div style="font-size:11px;color:#888;padding:6px 4px">${data.length} records</div>`;
 }
 
 async function renderRefBrand(brand, tabIdx){
@@ -1290,7 +1294,7 @@ async function renderRefBrand(brand, tabIdx){
       const rows = vinVal ? data.rows.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(vinVal.toLowerCase()))) : data.rows;
       document.getElementById(`vinCount_${brand}`).textContent = vinVal ? `Found: ${rows.length} records` : '';
     } else {
-      container.innerHTML = makeRefTable(data);
+      container.innerHTML = makeRefTable(Array.isArray(data)?data:(data.rows||[]));
     }
   } catch(e){
     container.innerHTML = `<div style="color:#c0272d;padding:20px">Error loading data: ${e.message}</div>`;
@@ -1341,7 +1345,7 @@ async function renderRefBrand(brand, tabIdx){
       const rows = vinVal ? data.rows.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(vinVal.toLowerCase()))) : data.rows;
       document.getElementById(`vinCount_${brand}`).textContent = vinVal ? `Found: ${rows.length} records` : '';
     } else {
-      container.innerHTML = makeRefTable(data);
+      container.innerHTML = makeRefTable(Array.isArray(data)?data:(data.rows||[]));
     }
   } catch(e){
     container.innerHTML = `<div style="color:#c0272d;padding:20px">Error loading data: ${e.message}</div>`;
