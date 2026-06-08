@@ -534,6 +534,7 @@ async function loadAllData(){
       console.log('AP first row:', JSON.stringify(apRows[0]));
     }
     D={};
+    console.log('Processing', apRows.length, 'AP rows');
     apRows.forEach(r=>{
       const emp=r['Employee']||r['employee'];
       let dtVal=r['Date']||r['date']||'';
@@ -569,7 +570,7 @@ async function loadAllData(){
       D[emp].push([
         dt,
         parseInt(r['Connected Inbound'])||0,
-        parseInt(r['Tickets ']||r['Tickets'])||0,
+        parseInt(r['Tickets ']||r['Tickets']||r['tickets']||0),
         parseInt(r['WhatsApp'])||0,
         parseInt(r['Manual Dials'])||0,
         Math.round(t2s(r['Avg. Talk Time'])),
@@ -582,6 +583,7 @@ async function loadAllData(){
       ]);
     });
 
+    console.log('D keys:', Object.keys(D).length, 'agents:', Object.keys(D).slice(0,3));
     // Load Attendance
     setProgress(40,'Loading Attendance Data...');
     const attRows = await loadSheet('Attendance Data');
