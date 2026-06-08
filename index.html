@@ -771,6 +771,25 @@ function renderAll(){
 }
 
 // ── RENDER AGENT ─────────────────────────────────────────────────────────────
+function fmtH(h){
+  if(!h&&h!==0)return'–';
+  const hh=Math.floor(h);
+  const mm=Math.round((h-hh)*60);
+  return hh+':'+(mm<10?'0':'')+mm+':00';
+}
+function fmtM(m){
+  if(!m&&m!==0)return'–';
+  const h=Math.floor(m/60);
+  const mm=Math.round(m%60);
+  return(h>0?h+':':'0:')+( mm<10?'0':'')+mm+':00';
+}
+function fmtS(s){
+  if(!s&&s!==0)return'–';
+  const h=Math.floor(s/3600);
+  const m=Math.floor((s%3600)/60);
+  const sec=Math.round(s%60);
+  return(h>0?h+':':'')+(m<10&&h>0?'0':'')+m+':'+(sec<10?'0':'')+sec;
+}
 function renderAgent(name){
   const rows=frows(name).slice().sort((a,b)=>a[0].localeCompare(b[0]));
   console.log('renderAgent:', name, 'rows:', rows.length, 'D entries:', (D[name]||[]).length);
