@@ -1582,6 +1582,8 @@ function renderEscalations(){
   container.innerHTML=`<table class="esc-table"><thead><tr><th>#</th><th>Team</th><th>Case</th><th>Date</th><th>Status</th><th>Comments</th></tr></thead><tbody>${ESCALATIONS.map((r,i)=>`<tr><td style="color:#888;font-weight:600">${i+1}</td><td style="font-weight:600">${r['Team']||r['team']||'–'}</td><td style="text-align:left">${r['Case']||r['case']||'–'}</td><td>${r['Date']||r['date']||'–'}</td><td><span class="status-badge ${gc(r['Status']||r['status'])}">${r['Status']||r['status']||'–'}</span></td><td style="text-align:left;color:#666">${r['Comments']||r['comments']||'–'}</td></tr>`).join('')}</tbody></table>`;
 }
 
+// Auto-start on page load
+window.addEventListener('DOMContentLoaded', () => { loadAllData(); });
 </script>
 </body>
 </html>
