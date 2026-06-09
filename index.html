@@ -1611,24 +1611,19 @@ function renderNissanBranchTab(arr, sheetName, brand){
   const regions={};
   const govRows=[];
 
+  const VALID_REGS = new Set(['West','Western','Central','Center','Centeral','East','Eastern','South','North','Riyadh','Jeddah']);
   arr.forEach(r=>{
     const reg=getV(r,regionCol);
-    if(!reg) return;
-    // Skip header-like rows (where branch code is not a number)
-    const code=getV(r,codeCol);
+    if(!reg||!VALID_REGS.has(reg)) return;  // skip TO/CC/empty
     const name=getV(r,branchCol);
-    if(!code&&!name) return;
-    if(reg==='Other'||reg.toLowerCase()==='other') return;
-
-    // Check if this is a gov row (no branch code, just gov data)
-    if(!code&&!name&&govNameCol&&getV(r,govNameCol)) { govRows.push(r); return; }
-
+    if(!name) return;
     if(!regions[reg]) regions[reg]=[];
     regions[reg].push(r);
   });
 
+  const RORD_ALL=['West','Western','Central','Center','Centeral','East','Eastern','South','North','Riyadh','Jeddah'];
   const sortedRegs=Object.keys(regions).sort((a,b)=>{
-    return (RORD.indexOf(a)===-1?99:RORD.indexOf(a))-(RORD.indexOf(b)===-1?99:RORD.indexOf(b));
+    return (RORD_ALL.indexOf(a)===-1?99:RORD_ALL.indexOf(a))-(RORD_ALL.indexOf(b)===-1?99:RORD_ALL.indexOf(b));
   });
 
   // Government Sales — collect all unique gov persons per branch
@@ -1677,11 +1672,10 @@ function renderNissanBranchTab(arr, sheetName, brand){
     const branches={};
     rows.forEach(r=>{
       const code=fmtNum(getV(r,codeCol));
-      const rawName=getV(r,branchCol);
-      // For Spare Parts: include city in branch name
-      const cityCol2=cols.find(c=>c==='City'||c==='city')||'';
-      const cityVal=cityCol2?getV(r,cityCol2):'';
-      const name=rawName?(cityVal&&!rawName.toLowerCase().includes(cityVal.toLowerCase())?cityVal+' — '+rawName:rawName):'';
+      const rawN=getV(r,branchCol);
+      const cityC=cols.find(c=>c==='City'||c==='city')||'';
+      const cityV=cityC?getV(r,cityC):'';
+      const name=rawN?(cityV&&!rawN.toLowerCase().includes(cityV.toLowerCase())?cityV+' — '+rawN:rawN):'';
       if(!code&&!name) return;
       const key=(code||'x')+'__'+(name||'x');
       if(!branches[key]) branches[key]={code,name,district:getV(r,districtCol),persons:[],gov:[]};
