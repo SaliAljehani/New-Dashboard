@@ -1351,6 +1351,155 @@ function makeRefTable(rows, vinFilter=''){
   }).join('');
 }
 
+async function renderRefBrand(brand, tabIdx){
+  REF_ACTIVE_TABS[brand] = tabIdx;
+  const cfg = REF_SHEETS[brand];
+  const sheetName = cfg.tabs[tabIdx];
+  const containerId = `refTab_${brand}`;
+  const container = document.getElementById(containerId);
+  if(!container) return;
+  
+  container.innerHTML = '<div style="text-align:center;padding:20px;color:#aaa">⏳ Loading...</div>';
+  
+  try{
+    const data = await fetchSheet(cfg.id, sheetName);
+    
+    if(brand === 'baicRecall'){
+      const vinVal = VIN_FILTERS[brand] || '';
+      container.innerHTML = `
+        <div class="vin-search-box">
+          <input class="vin-inp" type="text" placeholder="🔍 Search by VIN / Frame Number..." 
+                 value="${vinVal}"
+                 oninput="vinSearch('${brand}', this.value)"
+                 id="vin_${brand}">
+          <button class="vin-search-btn" onclick="vinSearch('${brand}', document.getElementById('vin_${brand}').value)">Search</button>
+        </div>
+        <div class="vin-result-count" id="vinCount_${brand}"></div>
+        <div id="vinTable_${brand}">${makeRefTable(data, vinVal)}</div>`;
+        
+      const rows = vinVal ? data.rows.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(vinVal.toLowerCase()))) : data.rows;
+      document.getElementById(`vinCount_${brand}`).textContent = vinVal ? `Found: ${rows.length} records` : '';
+    } else {
+      container.innerHTML = makeRefTable(Array.isArray(data)?data:(data.rows||[]));
+    }
+  } catch(e){
+    container.innerHTML = `<div style="color:#c0272d;padding:20px">Error loading data: ${e.message}</div>`;
+  }
+}
+
+async function vinSearch(brand, value){
+  VIN_FILTERS[brand] = value;
+  const cfg = REF_SHEETS[brand];
+  const sheetName = cfg.tabs[REF_ACTIVE_TABS[brand]];
+  const data = await fetchSheet(cfg.id, sheetName);
+  const tbl = document.getElementById(`vinTable_${brand}`);
+  const cnt = document.getElementById(`vinCount_${brand}`);
+  if(tbl){
+    tbl.innerHTML = makeRefTable(data, value);
+    const rows = value ? data.rows.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(value.toLowerCase()))) : data.rows;
+    if(cnt) cnt.textContent = value ? `Found: ${rows.length} records` : '';
+  }
+}
+
+
+
+
+
+
+function scrollToRefBrand(bodyId, hdrId){
+  const body = document.getElementById(bodyId);
+  const hdr  = document.getElementById(hdrId);
+  if(!body || !hdr) return;
+  // Open if closed
+  if(body.style.display === 'none') toggleRefBrand(bodyId, hdr);
+  // Scroll smoothly
+  setTimeout(()=>{ hdr.scrollIntoView({behavior:'smooth', block:'start'}); }, 100);
+}
+
+function refGlobalFilter(q){
+  q = q.toLowerCase().trim();
+  // Filter subject items
+  document.querySelectorAll('.ref-subj-item').forEach(el=>{
+    el.style.display = (!q || el.textContent.toLowerCase().includes(q)) ? '' : 'none';
+  });
+  // Filter subject groups (hide group if all items hidden)
+  document.querySelectorAll('.ref-subj-group').forEach(grp=>{
+    const visible = [...grp.querySelectorAll('.ref-subj-item')].some(i=>i.style.display!=='none');
+    grp.style.display = visible ? '' : 'none';
+  });
+  // Filter link cards
+  document.querySelectorAll('.ref-link-card').forEach(el=>{
+    el.style.display = (!q || el.textContent.toLowerCase().includes(q)) ? '' : 'none';
+  });
+}
+
+function switchRefTab(brand, idx, btn){
+  REF_ACTIVE_TABS[brand] = idx;
+  const color = {nissan:'#c0272d', stellantis:'#1565c0', baic:'#37474f', baicRecall:'#4a148c'}[brand] || '#c0272d';
+  btn.parentElement.querySelectorAll('.ref-sub-tab').forEach((t,i) => {
+    t.classList.toggle('active', i===idx);
+    t.style.background = i===idx ? color : '';
+    t.style.color = i===idx ? '#fff' : '';
+    t.style.borderColor = i===idx ? color : '';
+  });
+  renderRefBrand(brand, idx);
+}
+
+function toggleRefBrand(id, btn){
+  const el = document.getElementById(id);
+  if(!el) return;
+  const isOpen = el.style.display !== 'none';
+  el.style.display = isOpen ? 'none' : 'block';
+  if(btn){
+    const chev = btn.querySelector('.ref-chevron');
+    if(chev) chev.classList.toggle('open', !isOpen);
+    const meta = btn.querySelector('.ref-brand-meta');
+    if(meta) meta.textContent = !isOpen ? 'Click to collapse' : 'Click to expand';
+  }
+}
+
+async function renderRefBrand(brand, tabIdx){
+  REF_ACTIVE_TABS[brand] = tabIdx;
+  const cfg = REF_SHEETS[brand];
+  const sheetName = cfg.tabs[tabIdx];
+  const container = document.getElementById(`refTab_${brand}`);
+  if(!container) return;
+  container.innerHTML = `<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading ${sheetName}…</div>`;
+  try{
+    const data = await fetchSheet(cfg.id, sheetName);
+    const arr = Array.isArray(data) ? data : (data.rows||[]);
+    if(brand === 'baicRecall'){
+      const vinVal = VIN_FILTERS[brand] || '';
+      container.innerHTML = `
+        <div class="vin-search-box">
+          <input class="vin-inp" type="text" placeholder="🔍 Search by VIN / Frame Number..."
+                 value="${vinVal}" oninput="vinSearch('${brand}',this.value)" id="vin_${brand}">
+          <button class="vin-search-btn" onclick="vinSearch('${brand}',document.getElementById('vin_${brand}').value)">Search</button>
+        </div>
+        <div class="vin-result-count" id="vinCount_${brand}"></div>
+        <div id="vinTable_${brand}">${makeRefTable(arr, vinVal)}</div>`;
+    } else {
+      container.innerHTML = makeRefTable(arr);
+    }
+  } catch(e){
+    container.innerHTML = `<div style="color:#c0272d;padding:20px;text-align:center">⚠️ Error: ${e.message}</div>`;
+  }
+}
+
+async function vinSearch(brand, value){
+  VIN_FILTERS[brand] = value;
+  const cfg = REF_SHEETS[brand];
+  const data = await fetchSheet(cfg.id, cfg.tabs[REF_ACTIVE_TABS[brand]]);
+  const arr = Array.isArray(data) ? data : (data.rows||[]);
+  const tbl = document.getElementById(`vinTable_${brand}`);
+  const cnt = document.getElementById(`vinCount_${brand}`);
+  if(tbl) tbl.innerHTML = makeRefTable(arr, value);
+  if(cnt){
+    const matched = value ? arr.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(value.toLowerCase()))) : arr;
+    cnt.textContent = value ? `🔍 Found: ${matched.length} records` : '';
+  }
+}
+
 function buildEmailSection(arr){
   if(!arr||!arr.length) return '<div style="color:#aaa;padding:20px;text-align:center">No email data</div>';
   const data = arr.filter(r=>Object.values(r).some(v=>String(v||'').trim()));
@@ -1358,10 +1507,9 @@ function buildEmailSection(arr){
   const cols = Object.keys(data[0]).filter(c=>c&&c.trim());
   const toCol    = cols.find(c=>/^to\s*$/i.test(c.trim()))||'';
   const ccCol    = cols.find(c=>/^cc$/i.test(c.trim()))||'';
-  const labelCol = cols.find(c=>c!==toCol&&c!==ccCol&&!/queue/i.test(c))||cols[0];
   const queueCol = cols.find(c=>/queue/i.test(c))||'';
-  const fmtEmails = v => String(v||'').split(/,|;|
-/).map(e=>{
+  const labelCol = cols.find(c=>c!==toCol&&c!==ccCol&&c!==queueCol)||cols[0];
+  const fmtEmails = v => String(v||'').split(/,|;|\n/).map(e=>{
     const em=e.trim(); if(!em) return '';
     return `<a href="mailto:${em}" style="display:inline-flex;align-items:center;background:#e0f7f4;color:#00695c;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;margin:2px 2px 2px 0">${em}</a>`;
   }).filter(Boolean).join('');
@@ -1374,47 +1522,49 @@ function buildEmailSection(arr){
                        .map(c=>String(r[c]||'').trim()).filter(Boolean).join(' · ');
     if(!label&&!toVal&&!ccVal) return '';
     return `<div class="ref-email-card">
-      ${queue?`<span style="font-size:10px;font-weight:700;background:#eee;color:#555;padding:2px 8px;border-radius:6px;margin-bottom:6px;display:inline-block">${queue}</span>`:''}
-      ${label?`<div class="ref-email-label">${label}</div>`:''}
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap">
+        ${queue?`<span style="font-size:10px;font-weight:700;background:#eee;color:#555;padding:2px 8px;border-radius:6px">${queue}</span>`:''}
+        ${label?`<span style="font-size:12px;font-weight:700;color:#1a1a2e">${label}</span>`:''}
+      </div>
       ${toVal?`<div class="ref-email-row"><span class="ref-email-tag to">TO</span><div style="flex:1;flex-wrap:wrap">${fmtEmails(toVal)}</div></div>`:''}
       ${ccVal?`<div class="ref-email-row"><span class="ref-email-tag cc">CC</span><div style="flex:1;flex-wrap:wrap">${fmtEmails(ccVal)}</div></div>`:''}
-      ${note?`<div style="font-size:11px;color:#aaa;margin-top:4px;padding:6px;background:#fafafa;border-radius:6px">💡 ${note}</div>`:''}
+      ${note?`<div style="font-size:11px;color:#888;margin-top:5px;padding:5px 8px;background:#f9fffe;border-radius:6px;border-left:3px solid #80cbc4">💡 ${note}</div>`:''}
     </div>`;
   }).filter(Boolean).join('')}</div>`;
 }
 
-// ── Brand sub-page navigation ─────────────────────────────────────────────
-let REF_CURRENT_BRAND = null; // null = main page, 'nissan' etc = brand page
+let REF_CURRENT_BRAND = null;
 
 function showRefBrandPage(brand){
   REF_CURRENT_BRAND = brand;
-  const BRAND_CONFIGS = {
-    nissan:     {label:'Nissan',                   icon:'🔴', color:'#c0272d'},
-    stellantis: {label:'Stellantis',               icon:'🔵', color:'#1565c0'},
-    baic:       {label:'BAIC',                     icon:'⚫', color:'#37474f'},
+  const BRAND_META = {
+    nissan:     {label:'Nissan',     icon:'🔴', color:'#c0272d'},
+    stellantis: {label:'Stellantis', icon:'🔵', color:'#1565c0'},
+    baic:       {label:'BAIC',       icon:'⚫', color:'#37474f'},
     baicRecall: {label:'BAIC Recall — VIN Search', icon:'🔎', color:'#4a148c'},
   };
-  const cfg = BRAND_CONFIGS[brand];
+  const meta = BRAND_META[brand];
   const tabs = REF_SHEETS[brand].tabs;
   const container = document.getElementById('refContent');
   container.innerHTML = `
     <div style="margin-bottom:14px">
-      <button onclick="renderRef()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#f5f5f5;border:1px solid #ddd;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;color:#555">
+      <button onclick="renderRef()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:#f5f5f5;border:1.5px solid #ddd;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;color:#555;transition:.15s" onmouseover="this.style.background='#fde'" onmouseout="this.style.background='#f5f5f5'">
         ← Back to References
       </button>
     </div>
-    <div class="ref-brand-section" style="border-top:4px solid ${cfg.color}">
-      <div style="padding:16px 18px;background:linear-gradient(135deg,${cfg.color},${cfg.color}bb);color:#fff;border-radius:8px 8px 0 0;display:flex;align-items:center;gap:12px">
-        <span style="font-size:24px">${cfg.icon}</span>
-        <span style="font-size:16px;font-weight:700">${cfg.label}</span>
+    <div class="ref-brand-section">
+      <div style="padding:16px 20px;background:linear-gradient(135deg,${meta.color},${meta.color}99);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;gap:12px">
+        <span style="font-size:26px">${meta.icon}</span>
+        <span style="font-size:16px;font-weight:700">${meta.label}</span>
+        <span style="margin-left:auto;font-size:11px;opacity:.75">${tabs.length} tabs</span>
       </div>
       <div class="ref-sub-tabs">
         ${tabs.map((t,i)=>`<button class="ref-sub-tab${i===0?' active':''}"
-          style="${i===0?'background:'+cfg.color+';color:#fff;border-color:'+cfg.color:''}"
+          style="${i===0?'background:'+meta.color+';color:#fff;border-color:'+meta.color:''}"
           onclick="switchRefTab('${brand}',${i},this)">${t}</button>`).join('')}
       </div>
       <div class="ref-tab-content">
-        <div id="refTab_${brand}" style="text-align:center;padding:24px;color:#bbb">⏳ Loading...</div>
+        <div id="refTab_${brand}" style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading ${tabs[0]}…</div>
       </div>
     </div>`;
   renderRefBrand(brand, 0);
@@ -1425,9 +1575,9 @@ function switchRefTab(brand, idx, btn){
   const color = {nissan:'#c0272d', stellantis:'#1565c0', baic:'#37474f', baicRecall:'#4a148c'}[brand]||'#c0272d';
   btn.parentElement.querySelectorAll('.ref-sub-tab').forEach((t,i)=>{
     t.classList.toggle('active', i===idx);
-    t.style.background = i===idx ? color : '';
-    t.style.color = i===idx ? '#fff' : '';
-    t.style.borderColor = i===idx ? color : '';
+    t.style.background   = i===idx ? color : '';
+    t.style.color        = i===idx ? '#fff' : '';
+    t.style.borderColor  = i===idx ? color  : '';
   });
   renderRefBrand(brand, idx);
 }
@@ -1462,7 +1612,7 @@ async function renderRefBrand(brand, tabIdx){
 
 async function vinSearch(brand, value){
   VIN_FILTERS[brand] = value;
-  const cfg = REF_SHEETS[brand];
+  const cfg  = REF_SHEETS[brand];
   const data = await fetchSheet(cfg.id, cfg.tabs[REF_ACTIVE_TABS[brand]]);
   const arr  = Array.isArray(data) ? data : (data.rows||[]);
   const tbl  = document.getElementById(`vinTable_${brand}`);
@@ -1475,54 +1625,47 @@ async function vinSearch(brand, value){
 }
 
 function refGlobalFilter(q){
-  q = (q||'').toLowerCase().trim();
+  q=(q||'').toLowerCase().trim();
   document.querySelectorAll('.ref-subj-item').forEach(el=>{
-    el.style.display = (!q||el.textContent.toLowerCase().includes(q)) ? '' : 'none';
+    el.style.display=(!q||el.textContent.toLowerCase().includes(q))?'':'none';
   });
   document.querySelectorAll('.ref-subj-group').forEach(grp=>{
-    const visible = [...grp.querySelectorAll('.ref-subj-item')].some(i=>i.style.display!=='none');
-    grp.style.display = visible ? '' : 'none';
-  });
-  document.querySelectorAll('.ref-link-card').forEach(el=>{
-    el.style.display = (!q||el.textContent.toLowerCase().includes(q)) ? '' : 'none';
+    const vis=[...grp.querySelectorAll('.ref-subj-item')].some(i=>i.style.display!=='none');
+    grp.style.display=vis?'':'none';
   });
   document.querySelectorAll('.ref-email-card').forEach(el=>{
-    el.style.display = (!q||el.textContent.toLowerCase().includes(q)) ? '' : 'none';
+    el.style.display=(!q||el.textContent.toLowerCase().includes(q))?'':'none';
   });
 }
 
 function toggleRefSection(bodyId, iconId){
-  const el  = document.getElementById(bodyId);
-  const ico = document.getElementById(iconId);
+  const el=document.getElementById(bodyId);
+  const ico=document.getElementById(iconId);
   if(!el) return;
-  const isOpen = el.style.display !== 'none';
-  el.style.display = isOpen ? 'none' : 'block';
-  if(ico) ico.textContent = isOpen ? '▼' : '▲';
+  const isOpen=el.style.display!=='none';
+  el.style.display=isOpen?'none':'block';
+  if(ico) ico.textContent=isOpen?'▼':'▲';
 }
 
 async function renderRef(){
-  REF_CURRENT_BRAND = null;
-  const container = document.getElementById('refContent');
-  container.innerHTML = `<div style="text-align:center;padding:40px;color:#aaa">
-    <div style="font-size:30px;margin-bottom:10px">⏳</div>
-    <div style="font-size:14px;font-weight:600">Loading reference data...</div>
-  </div>`;
+  REF_CURRENT_BRAND=null;
+  const container=document.getElementById('refContent');
+  container.innerHTML=`<div style="text-align:center;padding:40px;color:#aaa"><div style="font-size:30px;margin-bottom:10px">⏳</div><div style="font-size:14px;font-weight:600">Loading reference data...</div></div>`;
   try{
-    const fetchFB = async (id, names) => {
+    const fetchFB=async(id,names)=>{
       for(const name of names){
-        try{ const r=await fetchSheet(id,name); if(r&&(Array.isArray(r)?r.length:(r.rows||[]).length)) return r; }catch(e){}
+        try{const r=await fetchSheet(id,name);if(r&&(Array.isArray(r)?r.length:(r.rows||[]).length))return r;}catch(e){}
       }
       return [];
     };
-
-    const [subjectData, linksData, contactData, emailData] = await Promise.all([
-      fetchFB(REF_SHEETS.main.id, ['Subject','subject']),
-      fetchFB(REF_SHEETS.main.id, ['Link ','Links','Link']),
-      fetchFB(REF_SHEETS.main.id, ['Contact Number ','Contact Number','Contact Numbers']),
-      fetchFB(REF_SHEETS.main.id, ['Email','email']),
+    const [subjectData,linksData,contactData,emailData]=await Promise.all([
+      fetchFB(REF_SHEETS.main.id,['Subject','subject']),
+      fetchFB(REF_SHEETS.main.id,['Link ','Links','Link']),
+      fetchFB(REF_SHEETS.main.id,['Contact Number ','Contact Number','Contact Numbers']),
+      fetchFB(REF_SHEETS.main.id,['Email','email']),
     ]);
 
-    const BRAND_CONFIGS = [
+    const BRAND_CONFIGS=[
       {key:'nissan',     label:'Nissan',     icon:'🔴', color:'#c0272d'},
       {key:'stellantis', label:'Stellantis', icon:'🔵', color:'#1565c0'},
       {key:'baic',       label:'BAIC',       icon:'⚫', color:'#37474f'},
@@ -1530,78 +1673,74 @@ async function renderRef(){
     ];
 
     // ── CONTACT NUMBERS ───────────────────────────────────────
-    const contactArr = Array.isArray(contactData) ? contactData : (contactData.rows||[]);
-    const fmtNum = n => {
-      const s = String(n||'').trim();
-      if(/e\+/i.test(s)){ const p=parseFloat(s); if(!isNaN(p)) return String(Math.round(p)); }
+    const contactArr=Array.isArray(contactData)?contactData:(contactData.rows||[]);
+    const fmtNum=n=>{
+      const s=String(n||'').trim();
+      if(/e\+/i.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}
       return s;
     };
     let curGrp='toll';
-    const tollFree=[], waNums=[];
+    const tollFree=[],waNums=[];
     contactArr.forEach(r=>{
-      const vals = Object.values(r).map(v=>String(v||'').trim());
-      const joined = vals.join(' ').toLowerCase();
-      if(joined.includes('toll free')||joined.includes('toll-free')){ curGrp='toll'; return; }
-      if(joined.includes('whatsapp')){ curGrp='wa'; return; }
-      const name = vals.find(v=>v&&isNaN(v.replace(/[.\-\s]/g,''))&&!/e\+/i.test(v))||'';
-      const raw  = vals.find(v=>v&&(/e\+/i.test(v)||/^[\d\s\-\.]{7,}$/.test(v)))||'';
-      if(!name||!raw) return;
-      (curGrp==='wa'?waNums:tollFree).push({name, num:fmtNum(raw)});
+      const vals=Object.values(r).map(v=>String(v||'').trim());
+      const joined=vals.join(' ').toLowerCase();
+      if(joined.includes('toll free')||joined.includes('toll-free')){curGrp='toll';return;}
+      if(joined.includes('whatsapp')){curGrp='wa';return;}
+      const name=vals.find(v=>v&&isNaN(v.replace(/[.\-\s]/g,''))&&!/e\+/i.test(v))||'';
+      const raw =vals.find(v=>v&&(/e\+/i.test(v)||/^[\d\s\-\.]{7,}$/.test(v)))||'';
+      if(!name||!raw)return;
+      (curGrp==='wa'?waNums:tollFree).push({name,num:fmtNum(raw)});
     });
-
-    const makePills = (arr,col) => arr.length
-      ? arr.map(e=>`<div class="ref-contact-pill" style="border-left:3px solid ${col}">
-          <div class="ref-contact-pill-label">${e.name}</div>
-          <div class="ref-contact-pill-val">${e.num}</div>
-        </div>`).join('')
-      : '<div style="color:#aaa;font-size:12px;padding:8px">—</div>';
+    const makePills=(arr,col)=>arr.length
+      ?arr.map(e=>`<div class="ref-contact-pill" style="border-left:3px solid ${col}"><div class="ref-contact-pill-label">${e.name}</div><div class="ref-contact-pill-val">${e.num}</div></div>`).join('')
+      :'<div style="color:#aaa;font-size:12px;padding:8px">—</div>';
 
     // ── LINKS ─────────────────────────────────────────────────
-    const linksArr = Array.isArray(linksData) ? linksData : (linksData.rows||[]);
-    const linkCards = linksArr.map(r=>{
-      const v   = Object.values(r).map(x=>String(x||'').trim());
-      const name= v[1]||v[0]||'';
-      const url = v[2]||'';
-      const pass= v[3]||'';
-      if(!name) return '';
-      const isUrl  = url.startsWith('http');
-      const isFile = /\.(xlsx|pdf|docx)$/i.test(url);
-      return `<div class="ref-link-card">
-        <div style="flex:1">
-          <div class="ref-link-card-name">${name}</div>
-          ${pass?`<div class="ref-link-pass">🔑 ${pass}</div>`:''}
-        </div>
-        ${isUrl ?`<a href="${url}" target="_blank" class="ref-link-open-btn">🔗 Open</a>`
-        :isFile ?`<span class="ref-link-file">📄 ${url}</span>` : ''}
-      </div>`;
+    const linksArr=Array.isArray(linksData)?linksData:(linksData.rows||[]);
+    const linkCards=linksArr.map(r=>{
+      const v=Object.values(r).map(x=>String(x||'').trim());
+      const name=v[1]||v[0]||'';
+      const url=v[2]||'';
+      const pass=v[3]||'';
+      if(!name)return '';
+      const isUrl=url.startsWith('http');
+      const isFile=/\.(xlsx|pdf|docx)$/i.test(url);
+      return `<div class="ref-link-card"><div style="flex:1"><div class="ref-link-card-name">${name}</div>${pass?`<div class="ref-link-pass">🔑 ${pass}</div>`:''}</div>${isUrl?`<a href="${url}" target="_blank" class="ref-link-open-btn">🔗 Open</a>`:isFile?`<span class="ref-link-file">📄 ${url}</span>`:''}</div>`;
     }).filter(Boolean).join('');
 
     // ── SUBJECT ───────────────────────────────────────────────
-    const subjectArr = Array.isArray(subjectData) ? subjectData : (subjectData.rows||[]);
-    const Q_COLORS = {
+    const subjectArr=Array.isArray(subjectData)?subjectData:(subjectData.rows||[]);
+    const Q_COLORS={
       'Inquiry':'#2e7d32','Appointment':'#1565c0','FollowUp-Complaints':'#e65100',
       'Comment':'#6a1b9a','Request':'#00695c','Complaint':'#c0272d','NA Complaint':'#555'
     };
     const sGroups={};
     subjectArr.forEach(r=>{
       const v=Object.values(r).map(x=>String(x||'').trim());
-      const queue=v[0]||'', status=v[1]||'', subject=v[2]||'';
-      const dept=v[3]||'', desc=v[4]||'', cat=v[5]||'', notes=v[6]||'';
-      if(!subject) return;
+      const queue=v[0]||'',status=v[1]||'',subject=v[2]||'';
+      const dept=v[3]||'',desc=v[4]||'',cat=v[5]||'',notes=v[6]||'';
+      if(!subject)return;
       const g=queue||'General';
-      if(!sGroups[g]) sGroups[g]=[];
+      if(!sGroups[g])sGroups[g]=[];
       sGroups[g].push({status,subject,dept,desc,cat,notes});
     });
+
+    // complaint sub-tags
     const cItems=sGroups['Complaint']||[];
     const mainC=cItems[0]||null;
-    const subC=cItems.slice(1).map(i=>i.subject.split('\n')).flat().map(s=>s.trim()).filter(Boolean);
+    const subC=cItems.length>1
+      ? cItems.slice(1).flatMap(i=>i.subject.split('\n')).map(s=>s.trim()).filter(Boolean)
+      : (mainC ? mainC.subject.split('\n').slice(1).map(s=>s.trim()).filter(Boolean) : []);
+    if(mainC && mainC.subject.includes('\n')){
+      mainC.subject = mainC.subject.split('\n')[0];
+    }
 
-    const subjItem = (it, isCMain=false, subTags=[]) => {
-      const depts = it.dept ? it.dept.split(/\n/).map(s=>s.trim()).filter(Boolean) : [];
-      const cats  = it.cat  ? it.cat.split(/\n/).map(s=>s.trim()).filter(Boolean)  : [];
+    const subjItem=(it,isCMain=false,subTags=[])=>{
+      const depts=it.dept?it.dept.split('\n').map(s=>s.trim()).filter(Boolean):[];
+      const cats =it.cat ?it.cat.split('\n').map(s=>s.trim()).filter(Boolean):[];
       return `<div class="ref-subj-item">
         <div class="ref-subj-subject">
-          ${it.subject.split('\n')[0]}
+          ${it.subject}
           ${it.status?`<span class="ref-subj-badge" style="background:${it.status==='Open'?'#fde':'#e8f5e9'};color:${it.status==='Open'?'#c0272d':'#2e7d32'}">${it.status}</span>`:''}
         </div>
         ${depts.length?`<div class="ref-subj-row"><span class="ref-subj-ico">📂</span><span>${depts.join(' · ')}</span></div>`:''}
@@ -1612,17 +1751,46 @@ async function renderRef(){
       </div>`;
     };
 
-    const subjectHTML = Object.entries(sGroups).map(([grp,items])=>{
+    // Build subject in 2-column grid
+    const groupOrder=['Inquiry','Appointment','FollowUp-Complaints','Comment','Request','NA Complaint','Complaint'];
+    const orderedGroups=groupOrder.filter(g=>sGroups[g]).concat(Object.keys(sGroups).filter(g=>!groupOrder.includes(g)));
+    const subjectCols=[[],[]];
+    orderedGroups.forEach((grp,i)=>subjectCols[i%2].push(grp));
+
+    const buildSubjCol=(grpList)=>grpList.map(grp=>{
       const col=Q_COLORS[grp]||'#888';
+      const items=sGroups[grp];
       const isC=grp==='Complaint';
       return `<div class="ref-subj-group">
         <div class="ref-subj-group-title" style="border-left:4px solid ${col};color:${col}">${grp}</div>
-        ${isC&&mainC ? subjItem(mainC,true,subC) : items.map(i=>subjItem(i)).join('')}
+        ${isC&&mainC?subjItem(mainC,true,subC):items.map(i=>subjItem(i)).join('')}
       </div>`;
     }).join('');
 
-    // ── RENDER ────────────────────────────────────────────────
-    container.innerHTML = `<div class="ref-page">
+    // ── RENDER PAGE ───────────────────────────────────────────
+    container.innerHTML=`<div class="ref-page">
+
+      <!-- TOP BAR: search + links button -->
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div class="ref-global-search" style="flex:1;min-width:200px">
+          <span style="font-size:18px">🔍</span>
+          <input class="ref-global-inp" type="text" placeholder="ابحث في المراجع…" id="refGlobalInp"
+                 oninput="refGlobalFilter(this.value)">
+          <button class="ref-global-clear" onclick="refGlobalFilter('');document.getElementById('refGlobalInp').value=''">✕</button>
+        </div>
+        <button onclick="toggleRefSection('refLinksDrawer','refLinksIco')"
+                style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#1565c0;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(21,101,192,.3)">
+          🔗 Links <span id="refLinksIco">▼</span>
+        </button>
+      </div>
+
+      <!-- LINKS DRAWER -->
+      <div id="refLinksDrawer" style="display:none">
+        <div class="ref-info-panel">
+          <div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1)">🔗 Links & Systems</div>
+          <div class="ref-panel-body">${linkCards||'<div style="color:#aaa;padding:16px;text-align:center">No data</div>'}</div>
+        </div>
+      </div>
 
       <!-- BRAND CIRCLES -->
       <div class="ref-brand-circles">
@@ -1633,28 +1801,7 @@ async function renderRef(){
           </div>`).join('')}
       </div>
 
-      <!-- SEARCH -->
-      <div class="ref-global-search">
-        <span style="font-size:18px">🔍</span>
-        <input class="ref-global-inp" type="text" placeholder="ابحث في المراجع…" id="refGlobalInp"
-               oninput="refGlobalFilter(this.value)">
-        <button class="ref-global-clear" onclick="refGlobalFilter('');document.getElementById('refGlobalInp').value=''">✕ Clear</button>
-        <!-- LINKS زر سريع -->
-        <button onclick="toggleRefSection('refLinksDrawer','refLinksIco')"
-                style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:#e3f2fd;color:#1565c0;border:1.5px solid #90caf9;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">
-          🔗 Links <span id="refLinksIco">▼</span>
-        </button>
-      </div>
-
-      <!-- LINKS DRAWER (مخفي بالبداية) -->
-      <div id="refLinksDrawer" style="display:none">
-        <div class="ref-info-panel">
-          <div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1)">🔗 Links & Systems</div>
-          <div class="ref-panel-body">${linkCards||'<div style="color:#aaa;padding:16px;text-align:center">No data</div>'}</div>
-        </div>
-      </div>
-
-      <!-- CONTACT NUMBERS (هيدر طويل) -->
+      <!-- CONTACT NUMBERS -->
       <div class="ref-info-panel">
         <div class="ref-panel-header" style="background:linear-gradient(135deg,#c0272d,#7b0000);cursor:pointer"
              onclick="toggleRefSection('refContactsBody','refContactsIco')">
@@ -1678,7 +1825,7 @@ async function renderRef(){
         </div>
       </div>
 
-      <!-- SUBJECT (يفتح/يغلق) -->
+      <!-- SUBJECT 2-column -->
       <div class="ref-info-panel">
         <div class="ref-panel-header" style="background:linear-gradient(135deg,#c0272d,#9e1b1b);cursor:pointer"
              onclick="toggleRefSection('refSubjectBody','refSubjectIco')">
@@ -1686,13 +1833,16 @@ async function renderRef(){
           <span id="refSubjectIco" style="margin-left:auto">▲</span>
         </div>
         <div id="refSubjectBody">
-          <div class="ref-panel-body" style="max-height:500px;overflow-y:auto">
-            ${subjectHTML||'<div style="color:#aaa;padding:20px;text-align:center">No data</div>'}
+          <div class="ref-panel-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+              <div>${buildSubjCol(subjectCols[0])}</div>
+              <div>${buildSubjCol(subjectCols[1])}</div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- EMAIL (يفتح/يغلق) -->
+      <!-- EMAIL -->
       <div class="ref-info-panel">
         <div class="ref-panel-header" style="background:linear-gradient(135deg,#00695c,#004d40);cursor:pointer"
              onclick="toggleRefSection('refEmailBody','refEmailIco')">
@@ -1708,13 +1858,9 @@ async function renderRef(){
 
     </div>`;
 
-  } catch(e){
-    console.error('renderRef error:', e);
-    container.innerHTML = `<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px">
-      <div style="font-size:28px;margin-bottom:8px">⚠️</div>
-      <div style="font-weight:700">Failed to load</div>
-      <div style="font-size:12px;color:#888;margin-top:4px">${e.message}</div>
-    </div>`;
+  }catch(e){
+    console.error('renderRef error:',e);
+    container.innerHTML=`<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">${e.message}</div></div>`;
   }
 }
 
