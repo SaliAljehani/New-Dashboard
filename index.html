@@ -1772,6 +1772,13 @@ function renderPACTab(arr){
       +'<div style="padding:10px 14px">'+persHTML+rmHTML+locHTML+hoursHTML+'</div></div>';
   }).join('');
 
+  console.log('PAC arr length:', arr.length);
+  console.log('PAC arr[0] keys:', Object.keys(arr[0]||{}));
+  console.log('PAC arr[0] vals:', Object.values(arr[0]||{}).slice(0,5));
+  console.log('PAC arr[1] vals:', Object.values(arr[1]||{}).slice(0,5));
+  console.log('PAC headerRow:', headerRow);
+  console.log('PAC dataRows count:', dataRows.length);
+  if(dataRows[0]) console.log('PAC first dataRow vals:', Object.values(dataRows[0]).slice(0,6));
   var count = Object.keys(branches).length;
   return '<div style="margin-bottom:12px">'
     +'<div style="font-size:14px;font-weight:700;color:#c0272d;text-align:center;padding:10px;background:#fef2f2;border-radius:8px;margin-bottom:14px">🔧 Petromin Auto Care (PAC) — '+count+' workshops</div>'
