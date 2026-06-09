@@ -246,6 +246,15 @@ tr:last-child td{border-bottom:none}
 .ref-card-code{display:inline-block;background:#eef2ff;color:#3949ab;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:6px}
 .ref-card-hours{font-size:10px;color:#888;border-top:1px solid #f0f0f0;padding-top:7px;margin-top:7px;line-height:1.5}
 
+/* Email cards */
+.ref-email-card{background:#f9fffe;border-radius:10px;padding:12px 14px;border:1px solid #b2dfdb;transition:.15s;margin-bottom:4px}
+.ref-email-card:hover{border-color:#00695c;background:#fff}
+.ref-email-label{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px}
+.ref-email-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:5px;flex-wrap:wrap}
+.ref-email-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap;margin-top:2px}
+.ref-email-tag.to{background:#c0272d;color:#fff}
+.ref-email-tag.cc{background:#1565c0;color:#fff}
+
 /* Brand circles */
 .ref-brand-circles{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .ref-brand-circle{display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;transition:.2s}
@@ -1233,7 +1242,7 @@ let REF_DATA = [];
 const REF_SHEETS = {
   main: {
     id: '1FFkOe3_RC7N3MaZ6OQ4MP1qDEHCiHjaQ4MqrFzOa7zo',
-    tabs: ['Subject','Links','Contact Number']
+    tabs: ['Subject','Link ','Contact Number','Email']
   },
   nissan: {
     id: '1lXDeN1iUosG_JSADgdWhnkT5J1t3hhwXoSJdbmb4B88',
@@ -1491,6 +1500,44 @@ async function vinSearch(brand, value){
   }
 }
 
+function buildEmailSection(arr){
+  if(!arr || !arr.length) return '<div style="color:#aaa;padding:20px;text-align:center">No email data</div>';
+  const data = arr.filter(r => Object.values(r).some(v=>String(v||'').trim()));
+  if(!data.length) return '<div style="color:#aaa;padding:20px;text-align:center">No email data</div>';
+
+  const cols = Object.keys(data[0]).filter(c=>c&&c.trim());
+  // Try to detect To / CC / label columns
+  const toCol    = cols.find(c=>/^to$/i.test(c.trim())) || cols.find(c=>/\bto\b/i.test(c)) || '';
+  const ccCol    = cols.find(c=>/^cc$/i.test(c.trim())) || cols.find(c=>/\bcc\b/i.test(c)) || '';
+  const labelCol = cols.find(c=>![toCol,ccCol].includes(c)) || cols[0];
+
+  const fmtEmail = v => {
+    if(!v) return '';
+    return String(v).split(/,|;|\n/).map(e=>{
+      const em = e.trim();
+      if(!em) return '';
+      return `<a href="mailto:${em}" style="display:inline-block;background:#e0f7f4;color:#00695c;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;margin:2px">${em}</a>`;
+    }).filter(Boolean).join(' ');
+  };
+
+  return `<div style="display:flex;flex-direction:column;gap:8px">
+    ${data.map(r=>{
+      const label = String(r[labelCol]||r[cols[0]]||'').trim();
+      const to    = toCol  ? String(r[toCol]||'').trim()  : '';
+      const cc    = ccCol  ? String(r[ccCol]||'').trim()  : '';
+      const extra = cols.filter(c=>c!==labelCol&&c!==toCol&&c!==ccCol)
+                        .map(c=>String(r[c]||'').trim()).filter(Boolean).join(' · ');
+      if(!label && !to && !cc) return '';
+      return `<div class="ref-email-card">
+        ${label?`<div class="ref-email-label">${label}</div>`:''}
+        ${to?`<div class="ref-email-row"><span class="ref-email-tag to">TO</span><span>${fmtEmail(to)}</span></div>`:''}
+        ${cc?`<div class="ref-email-row"><span class="ref-email-tag cc">CC</span><span>${fmtEmail(cc)}</span></div>`:''}
+        ${extra?`<div style="font-size:11px;color:#aaa;margin-top:4px">💡 ${extra}</div>`:''}
+      </div>`;
+    }).filter(Boolean).join('')}
+  </div>`;
+}
+
 async function renderRef(){
   const container = document.getElementById('refContent');
   container.innerHTML = `<div style="text-align:center;padding:40px;color:#aaa">
@@ -1506,10 +1553,11 @@ async function renderRef(){
       return [];
     };
 
-    const [subjectData, linksData, contactData] = await Promise.all([
+    const [subjectData, linksData, contactData, emailData] = await Promise.all([
       fetchWithFallback(REF_SHEETS.main.id, ['Subject','subject']),
       fetchWithFallback(REF_SHEETS.main.id, ['Link ','Links','Link']),
       fetchWithFallback(REF_SHEETS.main.id, ['Contact Number','Contact Numbers','contact number']),
+      fetchWithFallback(REF_SHEETS.main.id, ['Email','email']),
     ]);
 
     const BRAND_CONFIGS = [
@@ -1657,6 +1705,14 @@ async function renderRef(){
           <div class="ref-panel-body" id="refLinksBody">
             ${linkCards||'<div style="color:#aaa;padding:20px;text-align:center">No data</div>'}
           </div>
+        </div>
+      </div>
+
+      <!-- EMAIL SECTION -->
+      <div class="ref-info-panel">
+        <div class="ref-panel-header" style="background:linear-gradient(135deg,#00695c,#004d40)">✉️ Email References</div>
+        <div class="ref-panel-body" id="refEmailBody">
+          ${buildEmailSection(Array.isArray(emailData)?emailData:(emailData.rows||[]))}
         </div>
       </div>
 
