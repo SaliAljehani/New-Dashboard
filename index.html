@@ -1571,7 +1571,16 @@ function renderNissanBranchTab(arr, sheetName, brand){
   const emailCol   = cols[6] || fc('email');
   const hoursCol   = cols[7] || fc('working','hours');
 
-  const gv = (r,c) => c ? String(r[c]||'').trim() : '';
+  // City translation
+  const CITY_AR = {
+    'Jeddah':'جدة','Makkah':'مكة المكرمة','Madinah':'المدينة المنورة',
+    'Riyadh':'الرياض','Dammam':'الدمام','Khobar':'الخبر','Jubail':'الجبيل',
+    'Hassa':'الأحساء','Jizan':'جيزان','Hail':'حائل','Qassim':'القصيم',
+    'Tabuk':'تبوك','Abha':'أبها','Taif':'الطائف','Yanbu':'ينبو',
+    'Najran':'نجران','Baha':'الباحة','Jouf':'الجوف','Arar':'عرعر',
+    'Hafr Al Batin':'حفر الباطن','Madinah Munowa':'المدينة المنورة'
+  };
+  const arCity = c => CITY_AR[c] || CITY_AR[c.trim()] || c;
 
   // Group by region — skip invalid rows
   const regions = {};
@@ -1615,7 +1624,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
       // Branch name — colored header box
       +'<div style="background:'+col_color+'18;border-bottom:2px solid '+col_color+'22;padding:10px 14px;margin-bottom:0">'
       +'<div style="font-size:13px;font-weight:700;color:'+col_color+'">'+b.name+'</div>'
-      +'<div style="font-size:11px;color:#666;margin-top:4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">'+(b.city?'<span>📌 '+b.city+'</span>':'')+(b.district?'<span>📍 '+b.district+'</span>':'')+'</div>'
+      +'<div style="font-size:11px;color:#666;margin-top:4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">'+(b.city?'<span>📌 '+arCity(b.city)+'</span>':'')+(b.district?'<span>📍 '+b.district+'</span>':'')+'</div>'
       +'</div>'
       +'<div style="padding:10px 14px">'
       +persHTML
