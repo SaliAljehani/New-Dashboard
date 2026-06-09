@@ -1507,8 +1507,8 @@ function buildEmailSection(arr){
 
   const cols = Object.keys(data[0]).filter(c=>c&&c.trim());
   // Try to detect To / CC / label columns
-  const toCol    = cols.find(c=>/^to$/i.test(c.trim())) || cols.find(c=>/\bto\b/i.test(c)) || '';
-  const ccCol    = cols.find(c=>/^cc$/i.test(c.trim())) || cols.find(c=>/\bcc\b/i.test(c)) || '';
+  const toCol    = cols.find(c=>/^to\s*$/i.test(c.trim())) || '';
+  const ccCol    = cols.find(c=>/^cc$/i.test(c.trim())) || '';
   const labelCol = cols.find(c=>![toCol,ccCol].includes(c)) || cols[0];
 
   const fmtEmail = v => {
