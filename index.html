@@ -1227,10 +1227,7 @@ async function loadEOM(){
 
 async function fetchCSV(sheetName){
   try{
-    const gid = SHEET_GIDS[sheetName]||SHEET_GIDS[sheetName.trim()]||'';
-    const url = `https://script.google.com/macros/s/AKfycbyHVElDCcVJDftggbBkeTOh7jOCfXD782HzhOXB5byc8kyh3pdHf7UgfGlpKyPAdaQtiA/exec?id=${SHEET_ID}&gid=${gid}`;
-    const res = await fetch(url);
-    return await res.json();
+    return await loadSheet(sheetName);
   }catch(e){ console.warn('fetchCSV failed:', sheetName, e); return []; }
 }
 
