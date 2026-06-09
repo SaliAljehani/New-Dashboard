@@ -1581,6 +1581,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
     'Hafr Al Batin':'حفر الباطن','Madinah Munowa':'المدينة المنورة'
   };
   const arCity = c => CITY_AR[c] || CITY_AR[c.trim()] || c;
+  const gv = (r,c) => c ? String(r[c]||'').trim() : '';
 
   // Group by region — skip invalid rows
   const regions = {};
