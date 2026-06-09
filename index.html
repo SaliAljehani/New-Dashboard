@@ -1894,26 +1894,32 @@ function copyNissanAppForm(){
 function renderSMSTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 
-  // Google Sheets sends only named columns — use Object.values() for positional access
-  // Excel column map (0-indexed, from row 2 onwards):
-  // 3S:  [0]=ApptEN  [1]=ApptAR  [2]=Branch  [3]=LocEN  [4]=LocAR
-  // PAC: [5]=ApptEN  [6]=ApptAR  [7]=Branch  [8]=LocEN  [9]=LocAR
-  // Body:[10]=LocEN  [11]=LocAR
-  function gv(r,i){
-    var vals=Object.values(r);
-    var v=vals[i];
-    return v?String(v).trim():'';
-  }
+  // Google Sheets renames duplicate headers by appending _1, _2...
+  // Expected keys after GSheets processing:
+  // "3S Appointment SMS"   = 3S Appt EN
+  // "3S Appointment SMS_1" = 3S Appt AR
+  // "City - Branch"        = 3S Branch
+  // "Location SMS"         = 3S Loc EN
+  // "Location SMS_1"       = 3S Loc AR
+  // "PAC Appointment SMS"  = PAC Appt EN
+  // "PAC Appointment SMS_1"= PAC Appt AR
+  // "City - Branch_1"      = PAC Branch
+  // "Location SMS_2"       = PAC Loc EN
+  // "Location SMS_3"       = PAC Loc AR
+  // "Body & Paint Location SMS"   = Body Loc EN
+  // "Body & Paint Location SMS_1" = Body Loc AR
+
+  function gv(r,k){ var v=r[k]; return v?String(v).trim():''; }
 
   function mkCopyBtn(id){
-    return '<button onclick="copySMS(\''+id+'\')" style="padding:3px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer;margin-top:4px">&#128203; Copy</button>'
+    return '<button onclick="copySMS(''+id+'')" style="padding:3px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer;margin-top:4px">&#128203; Copy</button>'
       +'<span id="cp_'+id+'" style="font-size:10px;color:#2e7d32;display:none;margin-left:4px">&#10003;</span>';
   }
 
   function mkSmsBox(id,label,text,color){
     if(!text) return '';
     var safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    var isAR=label==='AR';
+    var isAR=/[؀-ۿ]/.test(text.substring(0,30));
     return '<div style="background:#fafafa;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
       +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
       +'<span style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase">'+label+'</span>'
@@ -1924,43 +1930,64 @@ function renderSMSTab(arr, sheetName, brand){
   }
 
   function mkCard(branch, apptEN, apptAR, locEN, locAR, prefix, color){
-    var branchClean=branch.replace(/\n/g,' ').replace(/\s+/g,' ');
-    var hasAppt=apptEN||apptAR;
-    var hasLoc=locEN||locAR;
+    if(!apptEN&&!apptAR&&!locEN&&!locAR) return '';
+    var branchClean=branch?branch.replace(/
+/g,' ').replace(/\s+/g,' '):'—';
     return '<div class="ref-card" style="padding:0;overflow:hidden;text-align:left">'
       +'<div style="background:'+color+'18;border-bottom:2px solid '+color+'22;padding:10px 14px;border-radius:10px 10px 0 0;text-align:center">'
       +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+branchClean+'</div>'
       +'</div>'
       +'<div style="padding:10px 14px">'
-      +(hasAppt?'<div style="font-size:10px;font-weight:700;color:#555;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">&#128197; Appointment SMS</div>':''  )
-      +mkSmsBox(prefix+'a_ar','AR',apptAR,'#c0272d')
-      +mkSmsBox(prefix+'a_en','EN',apptEN,'#1565c0')
-      +(hasLoc?'<div style="font-size:10px;font-weight:700;color:#555;margin:10px 0 6px;text-transform:uppercase;letter-spacing:.05em">&#128205; Location SMS</div>':''  )
-      +mkSmsBox(prefix+'l_ar','AR',locAR,'#c0272d')
-      +mkSmsBox(prefix+'l_en','EN',locEN,'#1565c0')
+      +((apptEN||apptAR)?'<div style="font-size:10px;font-weight:700;color:#555;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">&#128197; Appointment SMS</div>':'')
+      +mkSmsBox(prefix+'a_ar','AR',apptAR,color)
+      +mkSmsBox(prefix+'a_en','EN',apptEN,color)
+      +((locEN||locAR)?'<div style="font-size:10px;font-weight:700;color:#555;margin:10px 0 6px;text-transform:uppercase;letter-spacing:.05em">&#128205; Location SMS</div>':'')
+      +mkSmsBox(prefix+'l_ar','AR',locAR,color)
+      +mkSmsBox(prefix+'l_en','EN',locEN,color)
       +'</div></div>';
   }
 
-  var rows=arr.filter(function(r){return Object.values(r).some(function(v){return v&&String(v).trim();});});
+  var rows=arr.filter(function(r){
+    return Object.values(r).some(function(v){return v&&String(v).trim();});
+  });
 
-  function isValidBranch(name){ return name&&name.length<40&&!name.toLowerCase().startsWith('dear')&&!name.includes('عزيز'); }
-
-  var cards3S=rows.filter(function(r){return isValidBranch(gv(r,2));}).map(function(r,i){
-    return mkCard(gv(r,2),gv(r,0),gv(r,1),gv(r,3),gv(r,4),'ss'+i,'#c0272d');
+  var cards3S=rows.map(function(r,i){
+    return mkCard(
+      gv(r,'City - Branch'),
+      gv(r,'3S Appointment SMS'),
+      gv(r,'3S Appointment SMS_1'),
+      gv(r,'Location SMS'),
+      gv(r,'Location SMS_1'),
+      'ss'+i,'#c0272d'
+    );
   }).join('');
 
-  var cardsPAC=rows.filter(function(r){return isValidBranch(gv(r,7));}).map(function(r,i){
-    return mkCard(gv(r,7),gv(r,5),gv(r,6),gv(r,8),gv(r,9),'pp'+i,'#e65100');
+  var cardsPAC=rows.map(function(r,i){
+    return mkCard(
+      gv(r,'City - Branch_1'),
+      gv(r,'PAC Appointment SMS'),
+      gv(r,'PAC Appointment SMS_1'),
+      gv(r,'Location SMS_2'),
+      gv(r,'Location SMS_3'),
+      'pp'+i,'#e65100'
+    );
   }).join('');
 
-  var cardsBody=rows.filter(function(r){return gv(r,10)||gv(r,11);}).map(function(r,i){
-    var branch=gv(r,2)||'Branch '+(i+1);
-    return mkCard(branch,'','',gv(r,10),gv(r,11),'bb'+i,'#37474f');
+  var cardsBody=rows.filter(function(r){
+    return gv(r,'Body & Paint Location SMS')||gv(r,'Body & Paint Location SMS_1');
+  }).map(function(r,i){
+    var branch=gv(r,'City - Branch')||('Branch '+(i+1));
+    return mkCard(branch,'','',
+      gv(r,'Body & Paint Location SMS'),
+      gv(r,'Body & Paint Location SMS_1'),
+      'bb'+i,'#37474f'
+    );
   }).join('');
 
   function sec(id,title,color,cards){
+    if(!cards) return '';
     return '<div style="margin-bottom:16px">'
-      +'<div onclick="toggleRegion(\''+id+'\')" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:'+color+'12;border-radius:8px;border-left:4px solid '+color+';cursor:pointer;margin-bottom:10px">'
+      +'<div onclick="toggleRegion(''+id+'')" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:'+color+'12;border-radius:8px;border-left:4px solid '+color+';cursor:pointer;margin-bottom:10px">'
       +'<span style="font-size:13px;font-weight:700;color:'+color+'">'+title+'</span>'
       +'<span id="ico_'+id+'" style="color:'+color+'">&#9660;</span>'
       +'</div>'
@@ -1974,72 +2001,6 @@ function renderSMSTab(arr, sheetName, brand){
     +sec('smsbody','&#128663; Body & Paint Location SMS','#37474f',cardsBody)
     +'</div>';
 }
-
-function renderRecallTab(arr){
-  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-
-  var rows = arr.filter(function(r){
-    var vals = Object.values(r);
-    return vals.some(function(v){ return v && String(v).trim(); });
-  });
-
-  var cards = rows.map(function(r,i){
-    var vals = Object.values(r);
-    function gv(i){ return vals[i] ? String(vals[i]).trim() : ''; }
-    var recallNo  = gv(0);
-    var brand     = gv(1);
-    var model     = gv(2);
-    var desc      = gv(3);
-    var ticketDesc= gv(4);
-
-    if(!recallNo && !model) return '';
-
-    var descSafe    = desc.replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    var ticketSafe  = ticketDesc.replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    var uid = 'recall_'+i;
-
-    return '<div style="background:#fff;border-radius:12px;border:1px solid #e8e8e8;box-shadow:0 2px 10px rgba(0,0,0,.07);margin-bottom:16px;overflow:hidden">'
-      // Header
-      +'<div style="background:linear-gradient(135deg,#c0272d,#e53935);padding:14px 18px;display:flex;align-items:center;gap:12px">'
-      +'<div style="background:rgba(255,255,255,.2);border-radius:8px;padding:6px 12px">'
-      +'<div style="font-size:11px;color:rgba(255,255,255,.8);font-weight:600">RECALL NO.</div>'
-      +'<div style="font-size:18px;font-weight:800;color:#fff;letter-spacing:.04em">'+recallNo+'</div>'
-      +'</div>'
-      +'<div>'
-      +'<div style="font-size:16px;font-weight:700;color:#fff">'+model+'</div>'
-      +'<div style="font-size:12px;color:rgba(255,255,255,.8)">'+brand+'</div>'
-      +'</div>'
-      +'</div>'
-      // Body
-      +'<div style="padding:16px 18px">'
-      // Description
-      +(desc ? '<div style="margin-bottom:14px">'
-        +'<div style="font-size:10px;font-weight:700;color:#c0272d;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">📋 تفاصيل الاستدعاء</div>'
-        +'<div style="background:#fff5f5;border-right:3px solid #c0272d;border-radius:0 8px 8px 0;padding:12px 14px;font-size:12px;color:#444;line-height:1.8;white-space:pre-wrap;direction:rtl;text-align:right">'+descSafe+'</div>'
-        +'</div>' : '')
-      // Ticket description
-      +(ticketDesc ? '<div>'
-        +'<div style="font-size:10px;font-weight:700;color:#1565c0;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">🎫 Ticket & Appointment Description</div>'
-        +'<div style="display:flex;align-items:center;justify-content:space-between;background:#f0f4ff;border:1px solid #bbdefb;border-radius:8px;padding:10px 14px">'
-        +'<code style="font-size:13px;font-weight:700;color:#1565c0">'+ticketSafe+'</code>'
-        +'<button onclick="var t=this.previousElementSibling.innerText;navigator.clipboard.writeText(t)" style="padding:5px 14px;background:#1565c0;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">📋 Copy</button>'
-        +'</div>'
-        +'</div>' : '')
-      +'</div>'
-      +'</div>';
-  }).join('');
-
-  return '<div style="padding:4px">'
-    +'<div style="text-align:center;margin-bottom:16px">'
-    +'<div style="display:inline-flex;align-items:center;gap:8px;background:#fff5f5;border:1px solid #ffcdd2;border-radius:20px;padding:8px 20px">'
-    +'<span style="font-size:18px">⚠️</span>'
-    +'<span style="font-size:13px;font-weight:700;color:#c0272d">Nissan Recall Campaigns</span>'
-    +'</div>'
-    +'</div>'
-    + cards
-    +'</div>';
-}
-
 
 function copySMS(id){
   var el=document.getElementById('sms_'+id);
