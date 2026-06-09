@@ -1682,18 +1682,15 @@ function toggleRegion(id){
 
 function renderPACTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  // Exact keys from Google Sheets: City, Branch Code - Branch, Branch Manager, Contact, BM Email, Location, Working hours
   var keys=Object.keys(arr[0]||{});
-  var cityKey='',branchKey='',bmKey='',phoneKey='',emailKey='',locKey='',hoursKey='';
-  keys.forEach(function(k){
-    var kl=k.toLowerCase().replace(/[^a-z]/g,'');
-    if(kl==='city') cityKey=k;
-    else if(kl.includes('branch')&&!kl.includes('manager')) branchKey=k;
-    else if(kl.includes('manager')) bmKey=k;
-    else if(kl.includes('contact')) phoneKey=k;
-    else if(kl.includes('email')) emailKey=k;
-    else if(kl.includes('location')) locKey=k;
-    else if(kl.includes('working')||kl.includes('hours')) hoursKey=k;
-  });
+  var cityKey    = keys[0]||'';
+  var branchKey  = keys[1]||'';
+  var bmKey      = keys[2]||'';
+  var phoneKey   = keys[3]||'';
+  var emailKey   = keys[4]||'';
+  var locKey     = keys[5]||'';
+  var hoursKey   = keys[6]||'';
   function gv(r,k){return k&&r[k]?String(r[k]).trim():'';}
   function mkRow(ico,val){
     if(!val||val==='-') return '';
