@@ -1246,7 +1246,7 @@ const REF_SHEETS = {
   },
   nissan: {
     id: '1lXDeN1iUosG_JSADgdWhnkT5J1t3hhwXoSJdbmb4B88',
-    tabs: ['Showroom','3S','Spare Parts','Body Shop','Nissan PAC','SMS & Location','Nissan App 25-26','Nissan Recall']
+    tabs: ['Showroom','3S','Spare Parts ','Body Shop','Nissan PAC','SMS & Location','Nissan App 25-26','Nissan Recall']
   },
   stellantis: {
     id: '104CXGHd1raokgGijhvHgt6AI2gdsqzANBH74Ehm01dM',
@@ -1504,19 +1504,11 @@ async function vinSearch(brand, value){
 function renderNissanBranchTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 
-  // Brand email info
-  const EMAILS = {
-    nissan:{
-      request:{to:'Manager Branch + sali.aljehani@petromin.com', cc:'cs.agent@petromin.com'},
-      complaint:{to:'Manager Branch + CRTeam@petromin.com', cc:'cs.agent@petromin.com'}
-    },
-    stellantis:{
-      request:{to:'Manager Branch + sali.aljehani@petromin.com', cc:'cs.agent@petromin.com'},
-      complaint:{to:'Manager Branch + CRTeam@petromin.com', cc:'cs.agent@petromin.com, n.alhomrani@petromin.com'}
-    }
+  const fmtNum = n => {
+    const s=String(n||'').trim();
+    if(s.toUpperCase().includes('E+')){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}
+    return s;
   };
-  const em = EMAILS[brand]||EMAILS.nissan;
-  const brandLabel = brand==='nissan'?'Nissan':'Stellantis';
 
   const fmtEmailPills = v => v.split(',').map(e=>{
     const s=e.trim(); if(!s) return '';
@@ -1524,62 +1516,67 @@ function renderNissanBranchTab(arr, sheetName, brand){
     return '<span style="font-size:11px;color:#555;padding:2px 4px;margin:2px">'+s+'</span>';
   }).filter(Boolean).join('');
 
-  const fmtNum = n => {
-    const s=String(n||'').trim();
-    if(s.toUpperCase().includes('E+')){ const p=parseFloat(s); if(!isNaN(p)) return String(Math.round(p)); }
-    return s;
-  };
+  // Email header — no brand name
+  const em = brand==='stellantis'
+    ? {req:{to:'Manager Branch + sali.aljehani@petromin.com',cc:'cs.agent@petromin.com'},
+       com:{to:'Manager Branch + CRTeam@petromin.com',cc:'cs.agent@petromin.com, n.alhomrani@petromin.com'}}
+    : {req:{to:'Manager Branch + sali.aljehani@petromin.com',cc:'cs.agent@petromin.com'},
+       com:{to:'Manager Branch + CRTeam@petromin.com',cc:'cs.agent@petromin.com'}};
 
-  // Email header — Request | Complaint
   const emailHeader =
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">'
     +'<div class="ref-email-card" style="border-left:4px solid #00695c">'
-    +'<div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request — '+brandLabel+'</div>'
-    +'<div class="ref-email-row"><span class="ref-email-tag to">TO</span><div style="flex:1;flex-wrap:wrap">'+fmtEmailPills(em.request.to)+'</div></div>'
-    +'<div class="ref-email-row"><span class="ref-email-tag cc">CC</span><div style="flex:1;flex-wrap:wrap">'+fmtEmailPills(em.request.cc)+'</div></div>'
+    +'<div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
+    +'<div class="ref-email-row"><span class="ref-email-tag to">TO</span><div style="flex:1;flex-wrap:wrap">'+fmtEmailPills(em.req.to)+'</div></div>'
+    +'<div class="ref-email-row"><span class="ref-email-tag cc">CC</span><div style="flex:1;flex-wrap:wrap">'+fmtEmailPills(em.req.cc)+'</div></div>'
     +'</div>'
     +'<div class="ref-email-card" style="border-left:4px solid #c0272d">'
-    +'<div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint — '+brandLabel+'</div>'
-    +'<div class="ref-email-row"><span class="ref-email-tag to">TO</span><div style="flex:1;flex-wrap:wrap">'+fmtEmailPills(em.complaint.to)+'</div></div>'
-    +'<div class="ref-email-row"><span class="ref-email-tag cc">CC</span><div style="flex:1;flex-wrap:wrap">'+fmtEmailPills(em.complaint.cc)+'</div></div>'
+    +'<div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
+    +'<div class="ref-email-row"><span class="ref-email-tag to">TO</span><div style="flex:1;flex-wrap:wrap">'+fmtEmailPills(em.com.to)+'</div></div>'
+    +'<div class="ref-email-row"><span class="ref-email-tag cc">CC</span><div style="flex:1;flex-wrap:wrap">'+fmtEmailPills(em.com.cc)+'</div></div>'
     +'</div>'
     +'</div>';
 
-  // Detect sheet type and map columns
+  // Detect columns based on sheet type
   const cols = Object.keys(arr[0]||{});
   const sh = sheetName.trim().toLowerCase();
-
-  // Column detection helper
-  const col = (...kws) => cols.find(c=>kws.some(kw=>c.toLowerCase().includes(kw.toLowerCase())))||'';
+  const findCol = (...kws) => cols.find(c=>kws.some(kw=>c.toLowerCase().includes(kw.toLowerCase())))||'';
 
   let codeCol, regionCol, branchCol, districtCol, phoneCol, advisorCol, emailCol, hoursCol;
+  let govNameCol='', govPhoneCol='', govEmailCol='';
 
   if(sh==='body shop'){
-    codeCol    = col('cc no','cc#','code');
-    regionCol  = col('region');
-    branchCol  = col('name');
-    districtCol= col('district','address');
-    phoneCol   = col('phone','contact');
-    advisorCol = col('manager');
-    emailCol   = col('email');
-    hoursCol   = col('working','hours');
+    codeCol    = findCol('cc no','cc#','code');
+    regionCol  = findCol('region');
+    branchCol  = findCol('name');
+    districtCol= findCol('district','address');
+    phoneCol   = findCol('phone','contact');
+    advisorCol = findCol('manager');
+    emailCol   = findCol('email');
+    hoursCol   = findCol('working','hours');
   } else {
-    codeCol    = col('branch code','cc no','cc#');
-    regionCol  = col('region');
-    branchCol  = col('branch','name');
-    districtCol= col('district','address','location');
-    phoneCol   = col('phone','contact','mobile');
-    advisorCol = col("advisor","advisor's name");
-    emailCol   = col('email');
-    hoursCol   = col('working','hours');
-  }
+    codeCol    = findCol('branch code','cc no');
+    regionCol  = findCol('region');
+    branchCol  = findCol('branch');
+    districtCol= findCol('district','address','city');
+    phoneCol   = findCol('phone','contact','mobile');
+    advisorCol = findCol("advisor");
+    emailCol   = findCol('email');
+    hoursCol   = findCol('working','hours');
 
-  // Only use the 8 core columns - ignore extras like Government Sales Orders
-  const usedCols = [codeCol,regionCol,branchCol,districtCol,phoneCol,advisorCol,emailCol,hoursCol].filter(Boolean);
+    // Government Sales Orders — only in Showroom (columns 10,11,12)
+    if(sh==='showroom'){
+      const allCols = Object.keys(arr[0]||{});
+      // Col index 9 = Name, 10 = Number, 11 = Email (0-indexed)
+      govNameCol  = allCols[9]||'';
+      govPhoneCol = allCols[10]||'';
+      govEmailCol = allCols[11]||'';
+    }
+  }
 
   const getV = (r,c) => c?String(r[c]||'').trim():'';
 
-  // Group rows by region, then by branch
+  // Region colors
   const REGION_ORDER = ['West','Western','Central','Center','Centeral','East','Eastern','South','North'];
   const REGION_COLORS = {
     'West':'#c0272d','Western':'#c0272d',
@@ -1588,85 +1585,106 @@ function renderNissanBranchTab(arr, sheetName, brand){
     'South':'#6a1b9a','North':'#e65100'
   };
 
+  // Group by region
   const regions = {};
   arr.forEach(r=>{
     const reg = getV(r,regionCol)||'Other';
+    if(reg==='Other'||!reg) return; // skip "Other"
     if(!regions[reg]) regions[reg]=[];
     regions[reg].push(r);
   });
 
-  // Sort regions
   const sortedRegions = Object.keys(regions).sort((a,b)=>{
     const ai=REGION_ORDER.indexOf(a), bi=REGION_ORDER.indexOf(b);
     return (ai===-1?99:ai)-(bi===-1?99:bi);
   });
 
-  const html = sortedRegions.map(reg=>{
+  const regionsHTML = sortedRegions.map((reg,regIdx)=>{
     const rows = regions[reg];
     const col_color = REGION_COLORS[reg]||'#888';
-
-    // Get working hours (same per region usually)
     const hoursRaw = getV(rows[0], hoursCol);
     const hoursDisplay = hoursRaw.split('\n').map(s=>s.trim()).filter(Boolean).join(' · ');
+    const regId = 'reg_'+brand+'_'+reg.replace(/\s/g,'_')+'_'+regIdx;
 
-    // Group by branch (code+name)
+    // Group by branch
     const branches = {};
     rows.forEach(r=>{
       const code = fmtNum(getV(r,codeCol));
       const name = getV(r,branchCol);
-      const key  = code+'||'+name;
+      const key  = (code||name)+'||'+name;
       if(!branches[key]){
-        branches[key]={
-          code,
-          name,
-          district: getV(r,districtCol),
-          hours: getV(r,hoursCol),
-          persons:[]
-        };
+        branches[key]={code, name, district:getV(r,districtCol), persons:[], govPerson:null};
       }
       const phone   = fmtNum(getV(r,phoneCol));
       const advisor = getV(r,advisorCol);
       const email   = getV(r,emailCol);
+      // Government sales
+      const govName  = govNameCol  ? getV(r,govNameCol)  : '';
+      const govPhone = govPhoneCol ? fmtNum(getV(r,govPhoneCol)) : '';
+      const govEmail = govEmailCol ? getV(r,govEmailCol) : '';
+
       if(advisor||phone||email){
         branches[key].persons.push({advisor,phone,email});
+      }
+      if(govName && !branches[key].govPerson){
+        branches[key].govPerson = {name:govName, phone:govPhone, email:govEmail};
       }
     });
 
     const cards = Object.values(branches).map(b=>{
       const personsHTML = b.persons.map(p=>
         '<div style="padding:5px 0;border-bottom:1px solid #f5f5f5">'
-        +(p.advisor?'<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#1a1a2e;font-weight:600;margin-bottom:3px"><span>👤</span>'+p.advisor+'</div>':'')
+        +(p.advisor?'<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#1a1a2e;font-weight:600;margin-bottom:2px"><span>👤</span>'+p.advisor+'</div>':'')
         +(p.phone?'<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#333;margin-bottom:2px"><span>📞</span>'+p.phone+'</div>':'')
         +(p.email?'<div style="display:flex;align-items:center;gap:6px;font-size:11px;margin-bottom:2px"><span>✉️</span><a href="mailto:'+p.email+'" style="color:#1565c0;text-decoration:none">'+p.email+'</a></div>':'')
         +'</div>'
       ).join('');
 
+      const govHTML = b.govPerson
+        ? '<div style="margin-top:8px;padding:8px;background:#fff8e1;border-radius:6px;border-left:3px solid #f9a825">'
+          +'<div style="font-size:10px;font-weight:700;color:#f9a825;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">🏢 Government Sales</div>'
+          +(b.govPerson.name?'<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#1a1a2e;font-weight:600;margin-bottom:2px"><span>👤</span>'+b.govPerson.name+'</div>':'')
+          +(b.govPerson.phone?'<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#333;margin-bottom:2px"><span>📞</span>'+b.govPerson.phone+'</div>':'')
+          +(b.govPerson.email?'<div style="display:flex;align-items:center;gap:6px;font-size:11px"><span>✉️</span><a href="mailto:'+b.govPerson.email+'" style="color:#1565c0;text-decoration:none">'+b.govPerson.email+'</a></div>':'')
+          +'</div>'
+        : '';
+
       return '<div class="ref-card">'
-        // Code + Name header
-        +'<div style="margin-bottom:8px">'
-        +(b.code?'<span style="font-size:12px;font-weight:700;color:'+col_color+';background:'+col_color+'15;padding:2px 8px;border-radius:6px;margin-right:6px">'+b.code+'</span>':'')
-        +'<span style="font-size:14px;font-weight:700;color:#1a1a2e">'+b.name+'</span>'
+        +'<div style="margin-bottom:6px;display:flex;align-items:center;gap:8px">'
+        +(b.code?'<span style="font-size:11px;font-weight:700;color:'+col_color+';background:'+col_color+'18;padding:2px 8px;border-radius:6px">'+b.code+'</span>':'')
+        +'<span style="font-size:13px;font-weight:700;color:#1a1a2e">'+b.name+'</span>'
         +'</div>'
-        // District
-        +(b.district?'<div style="display:flex;align-items:flex-start;gap:6px;font-size:11px;color:#888;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #f0f0f0"><span>📍</span>'+b.district+'</div>':'')
-        // Persons
+        +(b.district?'<div style="display:flex;align-items:flex-start;gap:5px;font-size:11px;color:#888;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #f0f0f0"><span>📍</span>'+b.district+'</div>':'')
         +personsHTML
+        +govHTML
         +'</div>';
     }).join('');
 
-    return '<div style="margin-bottom:24px">'
-      // Region header with hours
-      +'<div style="display:flex;align-items:center;gap:12px;padding:8px 14px;background:'+col_color+'15;border-radius:8px;border-left:4px solid '+col_color+';margin-bottom:12px">'
-      +'<span style="font-size:13px;font-weight:700;color:'+col_color+';text-transform:uppercase;letter-spacing:.05em">'+reg+'</span>'
+    return '<div style="margin-bottom:16px">'
+      // Region header - clickable
+      +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:12px;padding:8px 14px;background:'+col_color+'12;border-radius:8px;border-left:4px solid '+col_color+';margin-bottom:10px;cursor:pointer;user-select:none">'
+      +'<span style="font-size:13px;font-weight:700;color:'+col_color+';text-transform:uppercase;letter-spacing:.04em">'+reg+'</span>'
+      +'<span style="font-size:11px;color:#aaa">('+Object.keys(branches).length+' branches)</span>'
       +(hoursDisplay?'<span style="font-size:11px;color:#888;margin-left:auto">🕐 '+hoursDisplay+'</span>':'')
+      +'<span id="ico_'+regId+'" style="margin-left:8px;color:'+col_color+';font-size:12px">▼</span>'
       +'</div>'
+      +'<div id="'+regId+'">'
       +'<div class="ref-cards-grid">'+cards+'</div>'
+      +'</div>'
       +'</div>';
   }).join('');
 
-  return emailHeader + html;
+  return emailHeader + regionsHTML;
 }
 
+function toggleRegion(id){
+  const el=document.getElementById(id);
+  const ico=document.getElementById('ico_'+id);
+  if(!el)return;
+  const isOpen=el.style.display!=='none';
+  el.style.display=isOpen?'none':'block';
+  if(ico)ico.textContent=isOpen?'▶':'▼';
+}
 
 
 function buildEmailSection(arr){
@@ -1719,7 +1737,7 @@ function showRefBrandPage(brand){
     +'<button onclick="renderRef()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:#f5f5f5;border:1.5px solid #ddd;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;color:#555">'
     +'← Back to References</button></div>'
     +'<div class="ref-brand-section">'
-    +'<div style="padding:16px 20px;background:linear-gradient(135deg,'+meta.color+','+meta.color+'99);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;gap:12px">'
+    +'<div style="padding:16px 20px;background:linear-gradient(135deg,'+meta.color+','+meta.color+'99);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:12px">'
     +'<span style="font-size:26px">'+meta.icon+'</span>'
     +'<span style="font-size:16px;font-weight:700">'+meta.label+'</span>'
     +'<span style="margin-left:auto;font-size:11px;opacity:.75">'+tabs.length+' tabs</span></div>'
