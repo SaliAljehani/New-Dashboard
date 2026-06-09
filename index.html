@@ -1894,32 +1894,43 @@ function copyNissanAppForm(){
 function renderSMSTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 
-  // Google Sheets renames duplicate headers by appending _1, _2...
-  // Expected keys after GSheets processing:
-  // "3S Appointment SMS"   = 3S Appt EN
-  // "3S Appointment SMS_1" = 3S Appt AR
-  // "City - Branch"        = 3S Branch
-  // "Location SMS"         = 3S Loc EN
-  // "Location SMS_1"       = 3S Loc AR
-  // "PAC Appointment SMS"  = PAC Appt EN
-  // "PAC Appointment SMS_1"= PAC Appt AR
-  // "City - Branch_1"      = PAC Branch
-  // "Location SMS_2"       = PAC Loc EN
-  // "Location SMS_3"       = PAC Loc AR
-  // "Body & Paint Location SMS"   = Body Loc EN
-  // "Body & Paint Location SMS_1" = Body Loc AR
+  // Detect section by first key of each row
+  var sections = {s3:[], pac:[], body:[]};
+  var current = null;
 
-  function gv(r,k){ var v=r[k]; return v?String(v).trim():''; }
+  arr.forEach(function(r){
+    var firstKey = Object.keys(r)[0]||'';
+    var fk = firstKey.toLowerCase();
+    if(fk.indexOf('3s') >= 0){ current='s3'; return; }
+    if(fk.indexOf('pac') >= 0){ current='pac'; return; }
+    if(fk.indexOf('body') >= 0){ current='body'; return; }
+    if(!Object.values(r).some(function(v){return v&&String(v).trim();})) return;
+    if(current) sections[current].push(r);
+  });
+
+  // For each row, find keys by partial match
+  function findVal(r, hints){
+    var keys = Object.keys(r);
+    for(var h=0; h<hints.length; h++){
+      for(var k=0; k<keys.length; k++){
+        if(keys[k].toLowerCase().indexOf(hints[h].toLowerCase()) >= 0){
+          var v = r[keys[k]];
+          if(v && String(v).trim()) return String(v).trim();
+        }
+      }
+    }
+    return '';
+  }
 
   function mkCopyBtn(id){
-    return '<button onclick="copySMS(''+id+'')" style="padding:3px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer;margin-top:4px">&#128203; Copy</button>'
+    return '<button onclick="copySMS(&apos;'+id+'&apos;)" style="padding:3px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer;margin-top:4px">&#128203; Copy</button>'
       +'<span id="cp_'+id+'" style="font-size:10px;color:#2e7d32;display:none;margin-left:4px">&#10003;</span>';
   }
 
   function mkSmsBox(id,label,text,color){
     if(!text) return '';
     var safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    var isAR=/[؀-ۿ]/.test(text.substring(0,30));
+    var isAR=/[\u0600-\u06FF]/.test(text.substring(0,30));
     return '<div style="background:#fafafa;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
       +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
       +'<span style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase">'+label+'</span>'
@@ -1931,8 +1942,7 @@ function renderSMSTab(arr, sheetName, brand){
 
   function mkCard(branch, apptEN, apptAR, locEN, locAR, prefix, color){
     if(!apptEN&&!apptAR&&!locEN&&!locAR) return '';
-    var branchClean=branch?branch.replace(/
-/g,' ').replace(/\s+/g,' '):'—';
+    var branchClean=branch?branch.replace(/\n/g,' ').replace(/\s+/g,' '):'—';
     return '<div class="ref-card" style="padding:0;overflow:hidden;text-align:left">'
       +'<div style="background:'+color+'18;border-bottom:2px solid '+color+'22;padding:10px 14px;border-radius:10px 10px 0 0;text-align:center">'
       +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+branchClean+'</div>'
@@ -1947,47 +1957,40 @@ function renderSMSTab(arr, sheetName, brand){
       +'</div></div>';
   }
 
-  var rows=arr.filter(function(r){
-    return Object.values(r).some(function(v){return v&&String(v).trim();});
-  });
-
-  var cards3S=rows.map(function(r,i){
+  var cards3S=sections.s3.map(function(r,i){
     return mkCard(
-      gv(r,'City - Branch'),
-      gv(r,'3S Appointment SMS'),
-      gv(r,'3S Appointment SMS_1'),
-      gv(r,'Location SMS'),
-      gv(r,'Location SMS_1'),
-      'ss'+i,'#c0272d'
-    );
+      findVal(r,['branch','city']),
+      findVal(r,['appt en','appointment en','appt_en','sms en']),
+      findVal(r,['appt ar','appointment ar','appt_ar','sms ar']),
+      findVal(r,['loc en','location en','loc_en']),
+      findVal(r,['loc ar','location ar','loc_ar']),
+      'ss'+i,'#c0272d');
   }).join('');
 
-  var cardsPAC=rows.map(function(r,i){
+  var cardsPAC=sections.pac.map(function(r,i){
     return mkCard(
-      gv(r,'City - Branch_1'),
-      gv(r,'PAC Appointment SMS'),
-      gv(r,'PAC Appointment SMS_1'),
-      gv(r,'Location SMS_2'),
-      gv(r,'Location SMS_3'),
-      'pp'+i,'#e65100'
-    );
+      findVal(r,['branch','city']),
+      findVal(r,['appt en','appointment en','appt_en','sms en']),
+      findVal(r,['appt ar','appointment ar','appt_ar','sms ar']),
+      findVal(r,['loc en','location en','loc_en']),
+      findVal(r,['loc ar','location ar','loc_ar']),
+      'pp'+i,'#e65100');
   }).join('');
 
-  var cardsBody=rows.filter(function(r){
-    return gv(r,'Body & Paint Location SMS')||gv(r,'Body & Paint Location SMS_1');
-  }).map(function(r,i){
-    var branch=gv(r,'City - Branch')||('Branch '+(i+1));
-    return mkCard(branch,'','',
-      gv(r,'Body & Paint Location SMS'),
-      gv(r,'Body & Paint Location SMS_1'),
-      'bb'+i,'#37474f'
-    );
+  var cardsBody=sections.body.map(function(r,i){
+    return mkCard(
+      findVal(r,['branch','city'])||('Branch '+(i+1)),
+      '',
+      '',
+      findVal(r,['en','loc en','location en']),
+      findVal(r,['ar','loc ar','location ar']),
+      'bb'+i,'#37474f');
   }).join('');
 
   function sec(id,title,color,cards){
     if(!cards) return '';
     return '<div style="margin-bottom:16px">'
-      +'<div onclick="toggleRegion(''+id+'')" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:'+color+'12;border-radius:8px;border-left:4px solid '+color+';cursor:pointer;margin-bottom:10px">'
+      +'<div onclick="toggleRegion(&apos;'+id+'&apos;)" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:'+color+'12;border-radius:8px;border-left:4px solid '+color+';cursor:pointer;margin-bottom:10px">'
       +'<span style="font-size:13px;font-weight:700;color:'+color+'">'+title+'</span>'
       +'<span id="ico_'+id+'" style="color:'+color+'">&#9660;</span>'
       +'</div>'
