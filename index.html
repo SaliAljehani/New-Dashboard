@@ -478,24 +478,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
   <div id="refContent"><div style="text-align:center;padding:30px;color:#aaa">⏳ Loading reference data...</div></div>
 </div>
 
-<div id="page5" style="display:none;max-width:1300px;margin:0 auto;padding:18px 24px">
-  <div class="tabs" style="margin-bottom:16px">
-    <button class="tab active" onclick="switchScheduleTab('roster',this)">📋 Daily Off Schedule</button>
-    <button class="tab" onclick="switchScheduleTab('breaks',this)">⏰ Weekly Calls & Break</button>
-  </div>
-  
-  <!-- Daily Off Schedule -->
-  <div id="rosterTab">
-    <div class="week-selector" id="rosterWeekSelector"></div>
-    <div id="rosterContent"><div class="no-schedule">Loading roster...</div></div>
-  </div>
-  
-  <!-- Weekly Calls & Break -->
-  <div id="breaksTab" style="display:none">
-    <div class="week-selector" id="weekSelector"></div>
-    <div id="scheduleContent"><div class="no-schedule">Loading schedule...</div></div>
-  </div>
-</div>
+<div id="page5" style="display:none;max-width:1300px;margin:0 auto;padding:18px 24px"></div>
 </div>
 
 
@@ -2225,13 +2208,21 @@ function renderRoster(){
 
   rows.forEach(function(r,i){
     var dateVal = String(r[dateKey]||'').trim();
-    // Parse date — could be "Sunday, 7 June" or "2026-06-07"
+    // Parse date from "2026-06-07 00:00:00" format
     var parsedDate = new Date(dateVal);
     var isToday = !isNaN(parsedDate) && parsedDate.toDateString()===today;
+    var displayDate = '';
+    if(!isNaN(parsedDate)){
+      var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      displayDate = days[parsedDate.getDay()]+', '+parsedDate.getDate()+' '+months[parsedDate.getMonth()];
+    } else {
+      displayDate = dateVal;
+    }
     var rowBg = isToday ? '#fff3cd' : (i%2===0?'#fff':'#f9f9f9');
     html += '<tr style="background:'+rowBg+'">'
       +'<td style="padding:7px 12px;font-weight:'+(isToday?'700':'500')+';color:'+(isToday?'#c0272d':'#444')+';position:sticky;left:0;background:'+rowBg+';white-space:nowrap">'
-      +dateVal+(isToday?' 📍':'')+'</td>';
+      +displayDate+(isToday?' 📍':'')+'</td>';
     agents.forEach(function(a){
       var v = String(r[a]||'').trim();
       var isOff = v.toLowerCase()==='off';
