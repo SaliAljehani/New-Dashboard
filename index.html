@@ -1766,9 +1766,9 @@ function renderPACTab(arr){
         var city=gv(r,cityKey), rm=gv(r,bmKey), email=gv(r,emailKey);
         if(!city&&!rm) return '';
         return '<tr style="border-bottom:1px solid #f5f5f5">'
-          +'<td style="padding:7px 12px;color:#555">'+city+'</td>'
+          +'<td style="padding:7px 12px;color:#555;text-align:center">'+city+'</td>'
           +'<td style="padding:7px 12px;font-weight:600;color:#1a1a2e">'+rm+'</td>'
-          +'<td style="padding:7px 12px">'+(email?'<a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">'+email+'</a>':'—')+'</td>'
+          +'<td style="padding:7px 12px;text-align:center">'+(email?'<a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">'+email+'</a>':'—')+'</td>'
           +'</tr>';
       }).filter(Boolean).join('')
       +'</tbody></table></div></div>';
@@ -1783,19 +1783,19 @@ function renderPACTab(arr){
     +'<div id="pacRM"><div style="overflow-x:auto;border-radius:10px;border:1px solid #e8eaed">'
     +'<table style="width:100%;border-collapse:collapse;font-size:12px">'
     +'<thead><tr style="background:#e3f2fd">'
-    +'<th style="padding:8px 12px;text-align:left;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c033">City</th>'
-    +'<th style="padding:8px 12px;text-align:left;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c033">Regional Manager</th>'
-    +'<th style="padding:8px 12px;text-align:left;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c033">Email</th>'
+    +'<th style="padding:8px 12px;text-align:center;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c033">City</th>'
+    +'<th style="padding:8px 12px;text-align:center;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c033">Regional Manager</th>'
+    +'<th style="padding:8px 12px;text-align:center;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c033">Email</th>'
     +'</tr></thead><tbody>'
-    +'<tr><td style="padding:7px 12px;color:#555">Sakaka</td><td style="padding:7px 12px;font-weight:600">Mohammed Sallam</td><td style="padding:7px 12px"><a href="mailto:m.sallam@petromin.com" style="color:#1565c0;text-decoration:none">m.sallam@petromin.com</a></td></tr>'
-    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555">Dwadmi</td><td style="padding:7px 12px;font-weight:600">Roummie Palma</td><td style="padding:7px 12px"><a href="mailto:roummie@petromin.com" style="color:#1565c0;text-decoration:none">roummie@petromin.com</a></td></tr>'
-    +'<tr><td style="padding:7px 12px;color:#555">Al Kharj</td><td style="padding:7px 12px;font-weight:600">Roummie Palma</td><td style="padding:7px 12px"><a href="mailto:roummie@petromin.com" style="color:#1565c0;text-decoration:none">roummie@petromin.com</a></td></tr>'
-    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555">Khafji</td><td style="padding:7px 12px;font-weight:600">Sumeet Bhat</td><td style="padding:7px 12px"><a href="mailto:sumeet.bhat@petromin.com" style="color:#1565c0;text-decoration:none">sumeet.bhat@petromin.com</a></td></tr>'
-    +'<tr><td style="padding:7px 12px;color:#555">Mohyail</td><td style="padding:7px 12px;font-weight:600">Chirag Dhingra</td><td style="padding:7px 12px"><a href="mailto:c.dhingra@petromin.com" style="color:#1565c0;text-decoration:none">c.dhingra@petromin.com</a></td></tr>'
-    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555">Khamis Mushait</td><td style="padding:7px 12px;font-weight:600">Chirag Dhingra</td><td style="padding:7px 12px"><a href="mailto:c.dhingra@petromin.com" style="color:#1565c0;text-decoration:none">c.dhingra@petromin.com</a></td></tr>'
-    +'<tr><td style="padding:7px 12px;color:#555">Yanbu</td><td style="padding:7px 12px;font-weight:600">Chirag Dhingra</td><td style="padding:7px 12px"><a href="mailto:c.dhingra@petromin.com" style="color:#1565c0;text-decoration:none">c.dhingra@petromin.com</a></td></tr>'
-    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555">Tabuk</td><td style="padding:7px 12px;font-weight:600">Chirag Dhingra</td><td style="padding:7px 12px"><a href="mailto:c.dhingra@petromin.com" style="color:#1565c0;text-decoration:none">c.dhingra@petromin.com</a></td></tr>'
-    +'<tr><td style="padding:7px 12px;color:#555">Taif</td><td style="padding:7px 12px;font-weight:600">Faizan Shams</td><td style="padding:7px 12px"><a href="mailto:f.shams@petromin.com" style="color:#1565c0;text-decoration:none">f.shams@petromin.com</a></td></tr>'
+    +'<tr><td style="padding:7px 12px;color:#555;text-align:center">Sakaka</td><td style="padding:7px 12px;font-weight:600;text-align:center">Mohammed Sallam</td><td style="padding:7px 12px;text-align:center"><a href="mailto:m.sallam@petromin.com" style="color:#1565c0;text-decoration:none">m.sallam@petromin.com</a></td></tr>'
+    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555;text-align:center">Dwadmi</td><td style="padding:7px 12px;font-weight:600;text-align:center">Roummie Palma</td><td style="padding:7px 12px;text-align:center"><a href="mailto:roummie@petromin.com" style="color:#1565c0;text-decoration:none">roummie@petromin.com</a></td></tr>'
+    +'<tr><td style="padding:7px 12px;color:#555;text-align:center">Al Kharj</td><td style="padding:7px 12px;font-weight:600;text-align:center">Roummie Palma</td><td style="padding:7px 12px;text-align:center"><a href="mailto:roummie@petromin.com" style="color:#1565c0;text-decoration:none">roummie@petromin.com</a></td></tr>'
+    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555;text-align:center">Khafji</td><td style="padding:7px 12px;font-weight:600;text-align:center">Sumeet Bhat</td><td style="padding:7px 12px;text-align:center"><a href="mailto:sumeet.bhat@petromin.com" style="color:#1565c0;text-decoration:none">sumeet.bhat@petromin.com</a></td></tr>'
+    +'<tr><td style="padding:7px 12px;color:#555;text-align:center">Mohyail</td><td style="padding:7px 12px;font-weight:600;text-align:center">Chirag Dhingra</td><td style="padding:7px 12px;text-align:center"><a href="mailto:c.dhingra@petromin.com" style="color:#1565c0;text-decoration:none">c.dhingra@petromin.com</a></td></tr>'
+    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555;text-align:center">Khamis Mushait</td><td style="padding:7px 12px;font-weight:600;text-align:center">Chirag Dhingra</td><td style="padding:7px 12px;text-align:center"><a href="mailto:c.dhingra@petromin.com" style="color:#1565c0;text-decoration:none">c.dhingra@petromin.com</a></td></tr>'
+    +'<tr><td style="padding:7px 12px;color:#555;text-align:center">Yanbu</td><td style="padding:7px 12px;font-weight:600;text-align:center">Chirag Dhingra</td><td style="padding:7px 12px;text-align:center"><a href="mailto:c.dhingra@petromin.com" style="color:#1565c0;text-decoration:none">c.dhingra@petromin.com</a></td></tr>'
+    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555;text-align:center">Tabuk</td><td style="padding:7px 12px;font-weight:600;text-align:center">Chirag Dhingra</td><td style="padding:7px 12px;text-align:center"><a href="mailto:c.dhingra@petromin.com" style="color:#1565c0;text-decoration:none">c.dhingra@petromin.com</a></td></tr>'
+    +'<tr><td style="padding:7px 12px;color:#555;text-align:center">Taif</td><td style="padding:7px 12px;font-weight:600;text-align:center">Faizan Shams</td><td style="padding:7px 12px;text-align:center"><a href="mailto:f.shams@petromin.com" style="color:#1565c0;text-decoration:none">f.shams@petromin.com</a></td></tr>'
     +'</tbody></table></div></div></div>';
 
   return '<div style="margin-bottom:12px">'
@@ -1808,19 +1808,19 @@ function renderPACTab(arr){
     +'<div id="pacRM" style="display:none;margin-bottom:14px"><div style="overflow-x:auto;border-radius:10px;border:1px solid #e8eaed">'
     +'<table style="width:100%;border-collapse:collapse;font-size:12px">'
     +'<thead><tr style="background:#e3f2fd">'
-    +'<th style="padding:8px 12px;text-align:left;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c033">City</th>'
-    +'<th style="padding:8px 12px;text-align:left;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c033">Regional Manager</th>'
-    +'<th style="padding:8px 12px;text-align:left;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c033">Email</th>'
+    +'<th style="padding:8px 12px;text-align:center;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c033">City</th>'
+    +'<th style="padding:8px 12px;text-align:center;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c033">Regional Manager</th>'
+    +'<th style="padding:8px 12px;text-align:center;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c033">Email</th>'
     +'</tr></thead><tbody>'
-    +'<tr><td style="padding:7px 12px;color:#555">Sakaka</td><td style="padding:7px 12px;font-weight:600">Mohammed Sallam</td><td style="padding:7px 12px"><a href="mailto:m.sallam@petromin.com" style="color:#1565c0;text-decoration:none">m.sallam@petromin.com</a></td></tr>'
-    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555">Dwadmi</td><td style="padding:7px 12px;font-weight:600">Roummie Palma</td><td style="padding:7px 12px"><a href="mailto:roummie@petromin.com" style="color:#1565c0;text-decoration:none">roummie@petromin.com</a></td></tr>'
-    +'<tr><td style="padding:7px 12px;color:#555">Al Kharj</td><td style="padding:7px 12px;font-weight:600">Roummie Palma</td><td style="padding:7px 12px"><a href="mailto:roummie@petromin.com" style="color:#1565c0;text-decoration:none">roummie@petromin.com</a></td></tr>'
-    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555">Khafji</td><td style="padding:7px 12px;font-weight:600">Sumeet Bhat</td><td style="padding:7px 12px"><a href="mailto:sumeet.bhat@petromin.com" style="color:#1565c0;text-decoration:none">sumeet.bhat@petromin.com</a></td></tr>'
-    +'<tr><td style="padding:7px 12px;color:#555">Mohyail</td><td style="padding:7px 12px;font-weight:600">Chirag Dhingra</td><td style="padding:7px 12px"><a href="mailto:c.dhingra@petromin.com" style="color:#1565c0;text-decoration:none">c.dhingra@petromin.com</a></td></tr>'
-    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555">Khamis Mushait</td><td style="padding:7px 12px;font-weight:600">Chirag Dhingra</td><td style="padding:7px 12px"><a href="mailto:c.dhingra@petromin.com" style="color:#1565c0;text-decoration:none">c.dhingra@petromin.com</a></td></tr>'
-    +'<tr><td style="padding:7px 12px;color:#555">Yanbu</td><td style="padding:7px 12px;font-weight:600">Chirag Dhingra</td><td style="padding:7px 12px"><a href="mailto:c.dhingra@petromin.com" style="color:#1565c0;text-decoration:none">c.dhingra@petromin.com</a></td></tr>'
-    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555">Tabuk</td><td style="padding:7px 12px;font-weight:600">Chirag Dhingra</td><td style="padding:7px 12px"><a href="mailto:c.dhingra@petromin.com" style="color:#1565c0;text-decoration:none">c.dhingra@petromin.com</a></td></tr>'
-    +'<tr><td style="padding:7px 12px;color:#555">Taif</td><td style="padding:7px 12px;font-weight:600">Faizan Shams</td><td style="padding:7px 12px"><a href="mailto:f.shams@petromin.com" style="color:#1565c0;text-decoration:none">f.shams@petromin.com</a></td></tr>'
+    +'<tr><td style="padding:7px 12px;color:#555;text-align:center">Sakaka</td><td style="padding:7px 12px;font-weight:600;text-align:center">Mohammed Sallam</td><td style="padding:7px 12px;text-align:center"><a href="mailto:m.sallam@petromin.com" style="color:#1565c0;text-decoration:none">m.sallam@petromin.com</a></td></tr>'
+    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555;text-align:center">Dwadmi</td><td style="padding:7px 12px;font-weight:600;text-align:center">Roummie Palma</td><td style="padding:7px 12px;text-align:center"><a href="mailto:roummie@petromin.com" style="color:#1565c0;text-decoration:none">roummie@petromin.com</a></td></tr>'
+    +'<tr><td style="padding:7px 12px;color:#555;text-align:center">Al Kharj</td><td style="padding:7px 12px;font-weight:600;text-align:center">Roummie Palma</td><td style="padding:7px 12px;text-align:center"><a href="mailto:roummie@petromin.com" style="color:#1565c0;text-decoration:none">roummie@petromin.com</a></td></tr>'
+    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555;text-align:center">Khafji</td><td style="padding:7px 12px;font-weight:600;text-align:center">Sumeet Bhat</td><td style="padding:7px 12px;text-align:center"><a href="mailto:sumeet.bhat@petromin.com" style="color:#1565c0;text-decoration:none">sumeet.bhat@petromin.com</a></td></tr>'
+    +'<tr><td style="padding:7px 12px;color:#555;text-align:center">Mohyail</td><td style="padding:7px 12px;font-weight:600;text-align:center">Chirag Dhingra</td><td style="padding:7px 12px;text-align:center"><a href="mailto:c.dhingra@petromin.com" style="color:#1565c0;text-decoration:none">c.dhingra@petromin.com</a></td></tr>'
+    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555;text-align:center">Khamis Mushait</td><td style="padding:7px 12px;font-weight:600;text-align:center">Chirag Dhingra</td><td style="padding:7px 12px;text-align:center"><a href="mailto:c.dhingra@petromin.com" style="color:#1565c0;text-decoration:none">c.dhingra@petromin.com</a></td></tr>'
+    +'<tr><td style="padding:7px 12px;color:#555;text-align:center">Yanbu</td><td style="padding:7px 12px;font-weight:600;text-align:center">Chirag Dhingra</td><td style="padding:7px 12px;text-align:center"><a href="mailto:c.dhingra@petromin.com" style="color:#1565c0;text-decoration:none">c.dhingra@petromin.com</a></td></tr>'
+    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555;text-align:center">Tabuk</td><td style="padding:7px 12px;font-weight:600;text-align:center">Chirag Dhingra</td><td style="padding:7px 12px;text-align:center"><a href="mailto:c.dhingra@petromin.com" style="color:#1565c0;text-decoration:none">c.dhingra@petromin.com</a></td></tr>'
+    +'<tr><td style="padding:7px 12px;color:#555;text-align:center">Taif</td><td style="padding:7px 12px;font-weight:600;text-align:center">Faizan Shams</td><td style="padding:7px 12px;text-align:center"><a href="mailto:f.shams@petromin.com" style="color:#1565c0;text-decoration:none">f.shams@petromin.com</a></td></tr>'
     +'</tbody></table></div></div>'
     +'<div class="ref-cards-grid">'+cards+'</div>'
     +'</div>';
@@ -1876,6 +1876,93 @@ function renderNissanAppTab(arr){
 function copyNissanAppForm(){
   var form='My Nissan App ( CCS ) - Y63\n\nUser Information:\nVIN: ___\nCustomer Name: ___\nPhone number: ___\nCity: ___\nModel Year: ___\nUser ID or Email: ___\nPhone Device Model: ___\nPhone OS: ___\nNissan Mobile App Version: ___\n\nInquiry:\nTitle: ___\nDescription: ___';
   navigator.clipboard.writeText(form).then(function(){var el=document.getElementById('nissanAppCopied');if(el){el.style.display='block';setTimeout(function(){el.style.display='none';},2000);}});
+}
+
+
+function renderSMSTab(arr, sheetName, brand){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+
+  var cols=Object.keys(arr[0]||{});
+  function gv(r,i){var v=cols[i]?r[cols[i]]:null;return v?String(v).trim():'';}
+
+  function mkCopyBtn(id){
+    return '<button onclick="copySMS(\x27'+id+'\x27)" style="padding:3px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer;margin-top:4px">&#128203; Copy</button>'
+      +'<span id="cp_'+id+'" style="font-size:10px;color:#2e7d32;display:none;margin-left:4px">&#10003;</span>';
+  }
+
+  function mkSmsBox(id,label,text,color){
+    if(!text) return '';
+    var safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    var isAR=label==='AR';
+    return '<div style="background:#fafafa;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
+      +'<span style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase">'+label+'</span>'
+      +mkCopyBtn(id)
+      +'</div>'
+      +'<div id="sms_'+id+'" style="font-size:11px;color:#444;line-height:1.6;white-space:pre-wrap;direction:'+(isAR?'rtl':'ltr')+';text-align:'+(isAR?'right':'left')+'">'+safe+'</div>'
+      +'</div>';
+  }
+
+  function mkCard(branch, apptAR, apptEN, locAR, locEN, prefix, color){
+    var branchClean = branch.replace(/\n/g,' ').replace(/\s+/g,' ');
+    return '<div class="ref-card" style="padding:0;overflow:hidden;text-align:left">'
+      +'<div style="background:'+color+'18;border-bottom:2px solid '+color+'22;padding:10px 14px;border-radius:10px 10px 0 0;text-align:center">'
+      +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+branchClean+'</div>'
+      +'</div>'
+      +'<div style="padding:10px 14px">'
+      +(apptAR||apptEN?'<div style="font-size:10px;font-weight:700;color:#555;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">&#128197; Appointment SMS</div>':'')
+      +mkSmsBox(prefix+'a_ar',  'AR', apptAR, '#c0272d')
+      +mkSmsBox(prefix+'a_en',  'EN', apptEN, '#1565c0')
+      +(locAR||locEN?'<div style="font-size:10px;font-weight:700;color:#555;margin:10px 0 6px;text-transform:uppercase;letter-spacing:.05em">&#128205; Location SMS</div>':'')
+      +mkSmsBox(prefix+'l_ar',  'AR', locAR,  '#c0272d')
+      +mkSmsBox(prefix+'l_en',  'EN', locEN,  '#1565c0')
+      +'</div></div>';
+  }
+
+  var rows = arr.filter(function(r){
+    return Object.values(r).some(function(v){return v&&String(v).trim();});
+  });
+
+  // 3S cards: branch=col2, apptEN=col0, apptAR=col1, locEN=col3, locAR=col4
+  var cards3S = rows.filter(function(r){return gv(r,2);}).map(function(r,i){
+    return mkCard(gv(r,2), gv(r,1), gv(r,0), gv(r,4), gv(r,3), 'ss'+i, '#c0272d');
+  }).join('');
+
+  // PAC cards: branch=col8, apptEN=col6, apptAR=col7, locEN=col9, locAR=col10
+  var cardsPAC = rows.filter(function(r){return gv(r,8);}).map(function(r,i){
+    return mkCard(gv(r,8), gv(r,7), gv(r,6), gv(r,10), gv(r,9), 'pp'+i, '#e65100');
+  }).join('');
+
+  // Body & Paint: branch=col8, locEN=col12, locAR=col13
+  var cardsBody = rows.filter(function(r){return gv(r,12)||gv(r,13);}).map(function(r,i){
+    var branch = gv(r,8)||gv(r,2)||('Branch '+(i+1));
+    return mkCard(branch, '', '', gv(r,13), gv(r,12), 'bb'+i, '#37474f');
+  }).join('');
+
+  function sec(id,title,color,cards){
+    return '<div style="margin-bottom:16px">'
+      +'<div onclick="toggleRegion(\x27'+id+'\x27)" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:'+color+'12;border-radius:8px;border-left:4px solid '+color+';cursor:pointer;margin-bottom:10px">'
+      +'<span style="font-size:13px;font-weight:700;color:'+color+'">'+title+'</span>'
+      +'<span id="ico_'+id+'" style="color:'+color+'">&#9660;</span>'
+      +'</div>'
+      +'<div id="'+id+'"><div class="ref-cards-grid">'+cards+'</div></div>'
+      +'</div>';
+  }
+
+  return '<div>'
+    +sec('sms3s','&#128203; 3S — Appointment & Location SMS','#c0272d',cards3S)
+    +sec('smspac','&#128295; PAC — Appointment & Location SMS','#e65100',cardsPAC)
+    +sec('smsbody','&#128663; Body & Paint Location SMS','#37474f',cardsBody)
+    +'</div>';
+}
+
+function copySMS(id){
+  var el=document.getElementById('sms_'+id);
+  if(!el)return;
+  navigator.clipboard.writeText(el.textContent).then(function(){
+    var cp=document.getElementById('cp_'+id);
+    if(cp){cp.style.display='inline';setTimeout(function(){cp.style.display='none';},2000);}
+  });
 }
 
 
@@ -1977,6 +2064,10 @@ async function renderRefBrand(brand,tabIdx){
     }
     if(brand==='nissan' && sheetName.trim()==='Nissan PAC'){
       container.innerHTML=renderPACTab(arr);
+      return;
+    }
+    if(brand==='nissan' && sheetName.trim()==='SMS & Location'){
+      container.innerHTML=renderSMSTab(arr, sheetName, brand);
       return;
     }
     if(brand==='nissan' && sheetName.trim()==='Nissan App 25-26'){
