@@ -1705,17 +1705,10 @@ function renderPACTab(arr){
 
   // Separate workshop rows from RM rows
   // RM rows: have City + "Regional Manager" + "RM Email" pattern (no branch/phone)
-  var workshopRows=[], rmRows=[];
-  arr.forEach(function(r){
-    var branch=gv(r,branchKey);
-    var city=gv(r,cityKey);
-    var bm=gv(r,bmKey);
-    var phone=gv(r,phoneKey);
-    // If has branch code (contains number-name pattern) = workshop row
-    if(branch&&branch.match(/^\d/)) workshopRows.push(r);
-    // If branch is "Regional Manager" text = RM table row
-    else if(branch==='Regional Manager'||branch==='RM Email'||(!branch&&!phone&&bm)) rmRows.push(r);
-    else if(branch&&city&&bm) workshopRows.push(r);
+  // Only show rows that have a location link (actual workshops)
+  var workshopRows = arr.filter(function(r){
+    var loc = gv(r, locKey);
+    return loc && loc.startsWith('http');
   });
 
   // Build workshop cards
@@ -1775,29 +1768,7 @@ function renderPACTab(arr){
   }
 
   // Static RM table
-  var staticRM='<div style="margin-top:16px">'
-    +'<div onclick="toggleRegion(\'pacRM\')" style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:#e3f2fd;border-radius:8px;margin-bottom:10px;cursor:pointer;border-left:4px solid #1565c0">'
-    +'<span style="font-size:13px;font-weight:700;color:#1565c0">&#127970; Regional Managers</span>'
-    +'<span id="ico_pacRM" style="color:#1565c0">&#9660;</span>'
-    +'</div>'
-    +'<div id="pacRM"><div style="overflow-x:auto;border-radius:10px;border:1px solid #e8eaed">'
-    +'<table style="width:100%;border-collapse:collapse;font-size:12px">'
-    +'<thead><tr style="background:#e3f2fd">'
-    +'<th style="padding:8px 12px;text-align:center;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c033">City</th>'
-    +'<th style="padding:8px 12px;text-align:center;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c033">Regional Manager</th>'
-    +'<th style="padding:8px 12px;text-align:center;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c033">Phone</th>'
-    +'<th style="padding:8px 12px;text-align:center;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c033">Email</th>'
-    +'</tr></thead><tbody>'
-    +'<tr style="">'+'<td style="padding:7px 12px;color:#555;text-align:center">Sakaka</td>'+'<td style="padding:7px 12px;font-weight:600;text-align:center">Mohammed Sallam</td>'+'<td style="padding:7px 12px;text-align:center">&#128222; 555047230</td>'+'<td style="padding:7px 12px;text-align:center"><a href="mailto:m.sallam@petromin.com" style="color:#1565c0;text-decoration:none">m.sallam@petromin.com</a></td>'+'</tr>'
-    +'<tr style="background:#f9f9f9;">'+'<td style="padding:7px 12px;color:#555;text-align:center">Dwadmi</td>'+'<td style="padding:7px 12px;font-weight:600;text-align:center">Roummie Palma</td>'+'<td style="padding:7px 12px;text-align:center">&#128222; 539143824</td>'+'<td style="padding:7px 12px;text-align:center"><a href="mailto:roummie@petromin.com" style="color:#1565c0;text-decoration:none">roummie@petromin.com</a></td>'+'</tr>'
-    +'<tr style="">'+'<td style="padding:7px 12px;color:#555;text-align:center">Al Kharj</td>'+'<td style="padding:7px 12px;font-weight:600;text-align:center">Roummie Palma</td>'+'<td style="padding:7px 12px;text-align:center">&#128222; 539143824</td>'+'<td style="padding:7px 12px;text-align:center"><a href="mailto:roummie@petromin.com" style="color:#1565c0;text-decoration:none">roummie@petromin.com</a></td>'+'</tr>'
-    +'<tr style="background:#f9f9f9;">'+'<td style="padding:7px 12px;color:#555;text-align:center">Khafji</td>'+'<td style="padding:7px 12px;font-weight:600;text-align:center">Sumeet Bhat</td>'+'<td style="padding:7px 12px;text-align:center">&#128222; 557554409</td>'+'<td style="padding:7px 12px;text-align:center"><a href="mailto:meet.bhat@petromin.com" style="color:#1565c0;text-decoration:none">meet.bhat@petromin.com</a></td>'+'</tr>'
-    +'<tr style="">'+'<td style="padding:7px 12px;color:#555;text-align:center">Mohyail</td>'+'<td style="padding:7px 12px;font-weight:600;text-align:center">Chirag Dhingra</td>'+'<td style="padding:7px 12px;text-align:center">&#128222; 539200978</td>'+'<td style="padding:7px 12px;text-align:center"><a href="mailto:c.dhingra@petromin.com" style="color:#1565c0;text-decoration:none">c.dhingra@petromin.com</a></td>'+'</tr>'
-    +'<tr style="background:#f9f9f9;">'+'<td style="padding:7px 12px;color:#555;text-align:center">Khamis Mushait</td>'+'<td style="padding:7px 12px;font-weight:600;text-align:center">Chirag Dhingra</td>'+'<td style="padding:7px 12px;text-align:center">&#128222; 539200978</td>'+'<td style="padding:7px 12px;text-align:center"><a href="mailto:c.dhingra@petromin.com" style="color:#1565c0;text-decoration:none">c.dhingra@petromin.com</a></td>'+'</tr>'
-    +'<tr style="">'+'<td style="padding:7px 12px;color:#555;text-align:center">Yanbu</td>'+'<td style="padding:7px 12px;font-weight:600;text-align:center">Chirag Dhingra</td>'+'<td style="padding:7px 12px;text-align:center">&#128222; 539200978</td>'+'<td style="padding:7px 12px;text-align:center"><a href="mailto:c.dhingra@petromin.com" style="color:#1565c0;text-decoration:none">c.dhingra@petromin.com</a></td>'+'</tr>'
-    +'<tr style="background:#f9f9f9;">'+'<td style="padding:7px 12px;color:#555;text-align:center">Tabuk</td>'+'<td style="padding:7px 12px;font-weight:600;text-align:center">Chirag Dhingra</td>'+'<td style="padding:7px 12px;text-align:center">&#128222; 539200978</td>'+'<td style="padding:7px 12px;text-align:center"><a href="mailto:c.dhingra@petromin.com" style="color:#1565c0;text-decoration:none">c.dhingra@petromin.com</a></td>'+'</tr>'
-    +'<tr style="">'+'<td style="padding:7px 12px;color:#555;text-align:center">Taif</td>'+'<td style="padding:7px 12px;font-weight:600;text-align:center">Faizan Shams</td>'+'<td style="padding:7px 12px;text-align:center">&#128222; 550113348</td>'+'<td style="padding:7px 12px;text-align:center"><a href="mailto:f.shams@petromin.com" style="color:#1565c0;text-decoration:none">f.shams@petromin.com</a></td>'+'</tr>'
-    +'</tbody></table></div></div></div>';
+  var staticRM='';
 
   return '<div style="margin-bottom:12px">'
     // Top bar: title + RM button on right
