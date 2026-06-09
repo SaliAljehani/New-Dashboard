@@ -1242,7 +1242,7 @@ let REF_DATA = [];
 const REF_SHEETS = {
   main: {
     id: '1FFkOe3_RC7N3MaZ6OQ4MP1qDEHCiHjaQ4MqrFzOa7zo',
-    tabs: ['Subject','Link ','Contact Number ','Email']
+    tabs: ['Subject','Link ','Contact Number','Email']
   },
   nissan: {
     id: '1lXDeN1iUosG_JSADgdWhnkT5J1t3hhwXoSJdbmb4B88',
@@ -1501,369 +1501,410 @@ async function vinSearch(brand, value){
 }
 
 function buildEmailSection(arr){
-  if(!arr||!arr.length) return '<div style="color:#aaa;padding:20px;text-align:center">No email data</div>';
-  const data = arr.filter(r=>Object.values(r).some(v=>String(v||'').trim()));
+  if(!arr || !arr.length) return '<div style="color:#aaa;padding:20px;text-align:center">No email data</div>';
+  const data = arr.filter(r => Object.values(r).some(v=>String(v||'').trim()));
   if(!data.length) return '<div style="color:#aaa;padding:20px;text-align:center">No email data</div>';
+
   const cols = Object.keys(data[0]).filter(c=>c&&c.trim());
-  const toCol    = cols.find(c=>/^to\s*$/i.test(c.trim()))||'';
-  const ccCol    = cols.find(c=>/^cc$/i.test(c.trim()))||'';
-  const queueCol = cols.find(c=>/queue/i.test(c))||'';
-  const labelCol = cols.find(c=>c!==toCol&&c!==ccCol&&c!==queueCol)||cols[0];
-  const fmtEmails = v => String(v||'').split(/,|;|\n/).map(e=>{
-    const em=e.trim(); if(!em) return '';
-    return `<a href="mailto:${em}" style="display:inline-flex;align-items:center;background:#e0f7f4;color:#00695c;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;margin:2px 2px 2px 0">${em}</a>`;
-  }).filter(Boolean).join('');
-  return `<div style="display:flex;flex-direction:column;gap:8px">${data.map(r=>{
-    const label  = String(r[labelCol]||'').trim();
-    const queue  = queueCol ? String(r[queueCol]||'').trim() : '';
-    const toVal  = toCol  ? String(r[toCol]||'').trim()  : '';
-    const ccVal  = ccCol  ? String(r[ccCol]||'').trim()  : '';
-    const note   = cols.filter(c=>c!==labelCol&&c!==toCol&&c!==ccCol&&c!==queueCol)
-                       .map(c=>String(r[c]||'').trim()).filter(Boolean).join(' · ');
-    if(!label&&!toVal&&!ccVal) return '';
-    return `<div class="ref-email-card">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap">
-        ${queue?`<span style="font-size:10px;font-weight:700;background:#eee;color:#555;padding:2px 8px;border-radius:6px">${queue}</span>`:''}
-        ${label?`<span style="font-size:12px;font-weight:700;color:#1a1a2e">${label}</span>`:''}
-      </div>
-      ${toVal?`<div class="ref-email-row"><span class="ref-email-tag to">TO</span><div style="flex:1;flex-wrap:wrap">${fmtEmails(toVal)}</div></div>`:''}
-      ${ccVal?`<div class="ref-email-row"><span class="ref-email-tag cc">CC</span><div style="flex:1;flex-wrap:wrap">${fmtEmails(ccVal)}</div></div>`:''}
-      ${note?`<div style="font-size:11px;color:#888;margin-top:5px;padding:5px 8px;background:#f9fffe;border-radius:6px;border-left:3px solid #80cbc4">💡 ${note}</div>`:''}
-    </div>`;
-  }).filter(Boolean).join('')}</div>`;
-}
+  // Try to detect To / CC / label columns
+  const toCol    = cols.find(c=>/^to$/i.test(c.trim())) || cols.find(c=>/\bto\b/i.test(c)) || '';
+  const ccCol    = cols.find(c=>/^cc$/i.test(c.trim())) || cols.find(c=>/\bcc\b/i.test(c)) || '';
+  const labelCol = cols.find(c=>![toCol,ccCol].includes(c)) || cols[0];
 
-let REF_CURRENT_BRAND = null;
-
-function showRefBrandPage(brand){
-  REF_CURRENT_BRAND = brand;
-  const BRAND_META = {
-    nissan:     {label:'Nissan',     icon:'🔴', color:'#c0272d'},
-    stellantis: {label:'Stellantis', icon:'🔵', color:'#1565c0'},
-    baic:       {label:'BAIC',       icon:'⚫', color:'#37474f'},
-    baicRecall: {label:'BAIC Recall — VIN Search', icon:'🔎', color:'#4a148c'},
+  const fmtEmail = v => {
+    if(!v) return '';
+    return String(v).split(/,|;|\n/).map(e=>{
+      const em = e.trim();
+      if(!em) return '';
+      return `<a href="mailto:${em}" style="display:inline-block;background:#e0f7f4;color:#00695c;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;margin:2px">${em}</a>`;
+    }).filter(Boolean).join(' ');
   };
-  const meta = BRAND_META[brand];
-  const tabs = REF_SHEETS[brand].tabs;
-  const container = document.getElementById('refContent');
-  container.innerHTML = `
-    <div style="margin-bottom:14px">
-      <button onclick="renderRef()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:#f5f5f5;border:1.5px solid #ddd;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;color:#555;transition:.15s" onmouseover="this.style.background='#fde'" onmouseout="this.style.background='#f5f5f5'">
-        ← Back to References
-      </button>
-    </div>
-    <div class="ref-brand-section">
-      <div style="padding:16px 20px;background:linear-gradient(135deg,${meta.color},${meta.color}99);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;gap:12px">
-        <span style="font-size:26px">${meta.icon}</span>
-        <span style="font-size:16px;font-weight:700">${meta.label}</span>
-        <span style="margin-left:auto;font-size:11px;opacity:.75">${tabs.length} tabs</span>
-      </div>
-      <div class="ref-sub-tabs">
-        ${tabs.map((t,i)=>`<button class="ref-sub-tab${i===0?' active':''}"
-          style="${i===0?'background:'+meta.color+';color:#fff;border-color:'+meta.color:''}"
-          onclick="switchRefTab('${brand}',${i},this)">${t}</button>`).join('')}
-      </div>
-      <div class="ref-tab-content">
-        <div id="refTab_${brand}" style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading ${tabs[0]}…</div>
-      </div>
-    </div>`;
-  renderRefBrand(brand, 0);
-}
 
-function switchRefTab(brand, idx, btn){
-  REF_ACTIVE_TABS[brand] = idx;
-  const color = {nissan:'#c0272d', stellantis:'#1565c0', baic:'#37474f', baicRecall:'#4a148c'}[brand]||'#c0272d';
-  btn.parentElement.querySelectorAll('.ref-sub-tab').forEach((t,i)=>{
-    t.classList.toggle('active', i===idx);
-    t.style.background   = i===idx ? color : '';
-    t.style.color        = i===idx ? '#fff' : '';
-    t.style.borderColor  = i===idx ? color  : '';
-  });
-  renderRefBrand(brand, idx);
-}
-
-async function renderRefBrand(brand, tabIdx){
-  REF_ACTIVE_TABS[brand] = tabIdx;
-  const cfg = REF_SHEETS[brand];
-  const sheetName = cfg.tabs[tabIdx];
-  const container = document.getElementById(`refTab_${brand}`);
-  if(!container) return;
-  container.innerHTML = `<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading ${sheetName}…</div>`;
-  try{
-    const data = await fetchSheet(cfg.id, sheetName);
-    const arr  = Array.isArray(data) ? data : (data.rows||[]);
-    if(brand==='baicRecall'){
-      const vinVal = VIN_FILTERS[brand]||'';
-      container.innerHTML = `
-        <div class="vin-search-box">
-          <input class="vin-inp" type="text" placeholder="🔍 Search by VIN / Frame Number..."
-                 value="${vinVal}" oninput="vinSearch('${brand}',this.value)" id="vin_${brand}">
-          <button class="vin-search-btn" onclick="vinSearch('${brand}',document.getElementById('vin_${brand}').value)">Search</button>
-        </div>
-        <div class="vin-result-count" id="vinCount_${brand}"></div>
-        <div id="vinTable_${brand}">${makeRefTable(arr,vinVal)}</div>`;
-    } else {
-      container.innerHTML = makeRefTable(arr);
-    }
-  } catch(e){
-    container.innerHTML = `<div style="color:#c0272d;padding:20px;text-align:center">⚠️ Error: ${e.message}</div>`;
-  }
-}
-
-async function vinSearch(brand, value){
-  VIN_FILTERS[brand] = value;
-  const cfg  = REF_SHEETS[brand];
-  const data = await fetchSheet(cfg.id, cfg.tabs[REF_ACTIVE_TABS[brand]]);
-  const arr  = Array.isArray(data) ? data : (data.rows||[]);
-  const tbl  = document.getElementById(`vinTable_${brand}`);
-  const cnt  = document.getElementById(`vinCount_${brand}`);
-  if(tbl) tbl.innerHTML = makeRefTable(arr, value);
-  if(cnt){
-    const matched = value ? arr.filter(r=>Object.values(r).some(v=>String(v).toLowerCase().includes(value.toLowerCase()))) : arr;
-    cnt.textContent = value ? `🔍 Found: ${matched.length} records` : '';
-  }
-}
-
-function refGlobalFilter(q){
-  q=(q||'').toLowerCase().trim();
-  document.querySelectorAll('.ref-subj-item').forEach(el=>{
-    el.style.display=(!q||el.textContent.toLowerCase().includes(q))?'':'none';
-  });
-  document.querySelectorAll('.ref-subj-group').forEach(grp=>{
-    const vis=[...grp.querySelectorAll('.ref-subj-item')].some(i=>i.style.display!=='none');
-    grp.style.display=vis?'':'none';
-  });
-  document.querySelectorAll('.ref-email-card').forEach(el=>{
-    el.style.display=(!q||el.textContent.toLowerCase().includes(q))?'':'none';
-  });
-}
-
-function toggleRefSection(bodyId, iconId){
-  const el=document.getElementById(bodyId);
-  const ico=document.getElementById(iconId);
-  if(!el) return;
-  const isOpen=el.style.display!=='none';
-  el.style.display=isOpen?'none':'block';
-  if(ico) ico.textContent=isOpen?'▼':'▲';
+  return `<div style="display:flex;flex-direction:column;gap:8px">
+    ${data.map(r=>{
+      const label = String(r[labelCol]||r[cols[0]]||'').trim();
+      const to    = toCol  ? String(r[toCol]||'').trim()  : '';
+      const cc    = ccCol  ? String(r[ccCol]||'').trim()  : '';
+      const extra = cols.filter(c=>c!==labelCol&&c!==toCol&&c!==ccCol)
+                        .map(c=>String(r[c]||'').trim()).filter(Boolean).join(' · ');
+      if(!label && !to && !cc) return '';
+      return `<div class="ref-email-card">
+        ${label?`<div class="ref-email-label">${label}</div>`:''}
+        ${to?`<div class="ref-email-row"><span class="ref-email-tag to">TO</span><span>${fmtEmail(to)}</span></div>`:''}
+        ${cc?`<div class="ref-email-row"><span class="ref-email-tag cc">CC</span><span>${fmtEmail(cc)}</span></div>`:''}
+        ${extra?`<div style="font-size:11px;color:#aaa;margin-top:4px">💡 ${extra}</div>`:''}
+      </div>`;
+    }).filter(Boolean).join('')}
+  </div>`;
 }
 
 async function renderRef(){
-  REF_CURRENT_BRAND=null;
-  const container=document.getElementById('refContent');
-  container.innerHTML=`<div style="text-align:center;padding:40px;color:#aaa"><div style="font-size:30px;margin-bottom:10px">⏳</div><div style="font-size:14px;font-weight:600">Loading reference data...</div></div>`;
+  const container = document.getElementById('refContent');
+  container.innerHTML = `<div style="text-align:center;padding:40px;color:#aaa">
+    <div style="font-size:30px;margin-bottom:10px">⏳</div>
+    <div style="font-size:14px;font-weight:600">Loading reference data...</div>
+  </div>`;
   try{
-    const fetchFB=async(id,names)=>{
+    // Try both sheet name variants
+    const fetchWithFallback = async (id, names) => {
       for(const name of names){
-        try{const r=await fetchSheet(id,name);if(r&&(Array.isArray(r)?r.length:(r.rows||[]).length))return r;}catch(e){}
+        try{ const r = await fetchSheet(id, name); if(r && (Array.isArray(r)?r.length:(r.rows||[]).length)) return r; }catch(e){}
       }
       return [];
     };
-    const [subjectData,linksData,contactData,emailData]=await Promise.all([
-      fetchFB(REF_SHEETS.main.id,['Subject','subject']),
-      fetchFB(REF_SHEETS.main.id,['Link ','Links','Link']),
-      fetchFB(REF_SHEETS.main.id,['Contact Number ','Contact Number','Contact Numbers']),
-      fetchFB(REF_SHEETS.main.id,['Email','email']),
+
+    const [subjectData, linksData, contactData, emailData] = await Promise.all([
+      fetchWithFallback(REF_SHEETS.main.id, ['Subject','subject']),
+      fetchWithFallback(REF_SHEETS.main.id, ['Link ','Links','Link']),
+      fetchWithFallback(REF_SHEETS.main.id, ['Contact Number','Contact Numbers','contact number']),
+      fetchWithFallback(REF_SHEETS.main.id, ['Email','email']),
     ]);
 
-    const BRAND_CONFIGS=[
-      {key:'nissan',     label:'Nissan',     icon:'🔴', color:'#c0272d'},
-      {key:'stellantis', label:'Stellantis', icon:'🔵', color:'#1565c0'},
-      {key:'baic',       label:'BAIC',       icon:'⚫', color:'#37474f'},
-      {key:'baicRecall', label:'Recall',     icon:'🔎', color:'#4a148c'},
+    const BRAND_CONFIGS = [
+      {key:'nissan',     label:'Nissan',                   icon:'🔴', color:'#c0272d'},
+      {key:'stellantis', label:'Stellantis',               icon:'🔵', color:'#1565c0'},
+      {key:'baic',       label:'BAIC',                     icon:'⚫', color:'#37474f'},
+      {key:'baicRecall', label:'BAIC Recall — VIN Search', icon:'🔎', color:'#4a148c'},
     ];
 
-    // ── CONTACT NUMBERS ───────────────────────────────────────
-    const contactArr=Array.isArray(contactData)?contactData:(contactData.rows||[]);
-    const fmtNum=n=>{
-      const s=String(n||'').trim();
-      if(/e\+/i.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}
+    // ── CONTACT NUMBERS ───────────────────────────────────────────
+    const contactArr = Array.isArray(contactData) ? contactData : (contactData.rows||[]);
+    const fmtNum = n => {
+      const s = String(n||'').trim();
+      if(s.toUpperCase().includes('E')){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}
       return s;
     };
-    let curGrp='toll';
-    const tollFree=[],waNums=[];
-    contactArr.forEach(r=>{
-      const vals=Object.values(r).map(v=>String(v||'').trim());
-      const joined=vals.join(' ').toLowerCase();
-      if(joined.includes('toll free')||joined.includes('toll-free')){curGrp='toll';return;}
-      if(joined.includes('whatsapp')){curGrp='wa';return;}
-      const name=vals.find(v=>v&&isNaN(v.replace(/[.\-\s]/g,''))&&!/e\+/i.test(v))||'';
-      const raw =vals.find(v=>v&&(/e\+/i.test(v)||/^[\d\s\-\.]{7,}$/.test(v)))||'';
-      if(!name||!raw)return;
-      (curGrp==='wa'?waNums:tollFree).push({name,num:fmtNum(raw)});
+    let curGroup = 'toll';
+    const tollFree = [], whatsappNums = [];
+    contactArr.forEach(r => {
+      const vals = Object.values(r).map(v=>String(v||'').trim());
+      const joined = vals.join(' ').toLowerCase();
+      if(joined.includes('toll free') || joined.includes('toll-free')){ curGroup='toll'; return; }
+      if(joined.includes('whatsapp')){ curGroup='wa'; return; }
+      const name = vals.find(v=>v&&isNaN(v.replace(/\./g,''))&&!v.toUpperCase().includes('E+')) || '';
+      const num = vals.find(v => v && (v.toUpperCase().includes('E+') || (v.replace(/[^0-9]/g,'').length >= 7)))  || '';
+      if(!name || !num) return;
+      const entry = {name, num: fmtNum(num)};
+      if(curGroup==='wa') whatsappNums.push(entry);
+      else tollFree.push(entry);
     });
-    const makePills=(arr,col)=>arr.length
-      ?arr.map(e=>`<div class="ref-contact-pill" style="border-left:3px solid ${col}"><div class="ref-contact-pill-label">${e.name}</div><div class="ref-contact-pill-val">${e.num}</div></div>`).join('')
-      :'<div style="color:#aaa;font-size:12px;padding:8px">—</div>';
 
-    // ── LINKS ─────────────────────────────────────────────────
-    const linksArr=Array.isArray(linksData)?linksData:(linksData.rows||[]);
-    const linkCards=linksArr.map(r=>{
-      const v=Object.values(r).map(x=>String(x||'').trim());
-      const name=v[1]||v[0]||'';
-      const url=v[2]||'';
-      const pass=v[3]||'';
-      if(!name)return '';
-      const isUrl=url.startsWith('http');
-      const isFile=/\.(xlsx|pdf|docx)$/i.test(url);
-      return `<div class="ref-link-card"><div style="flex:1"><div class="ref-link-card-name">${name}</div>${pass?`<div class="ref-link-pass">🔑 ${pass}</div>`:''}</div>${isUrl?`<a href="${url}" target="_blank" class="ref-link-open-btn">🔗 Open</a>`:isFile?`<span class="ref-link-file">📄 ${url}</span>`:''}</div>`;
+    const makePills = (arr, col) => arr.length
+      ? arr.map(e=>`<div class="ref-contact-pill" style="border-left:3px solid ${col}">
+          <div class="ref-contact-pill-label">${e.name}</div>
+          <div class="ref-contact-pill-val">${e.num}</div>
+        </div>`).join('')
+      : '<div style="color:#aaa;font-size:12px;padding:8px">No data</div>';
+
+    // ── LINKS ─────────────────────────────────────────────────────
+    const linksArr = Array.isArray(linksData) ? linksData : (linksData.rows||[]);
+    const linkCards = linksArr.map(r => {
+      const vals = Object.values(r).map(v=>String(v||'').trim());
+      const name = vals[1]||vals[0]||'';
+      const url  = vals[2]||vals[1]||'';
+      const pass = vals[3]||'';
+      if(!name) return '';
+      const isUrl = url.startsWith('http');
+      const isFile = url.endsWith('.xlsx')||url.endsWith('.pdf')||url.endsWith('.docx');
+      return `<div class="ref-link-card">
+        <div style="flex:1">
+          <div class="ref-link-card-name">${name}</div>
+          ${pass?`<div class="ref-link-pass">🔑 ${pass}</div>`:''}
+        </div>
+        ${isUrl?`<a href="${url}" target="_blank" class="ref-link-open-btn">🔗 Open</a>`
+               :isFile?`<span class="ref-link-file">📄 ${url}</span>`:''}
+      </div>`;
     }).filter(Boolean).join('');
 
-    // ── SUBJECT ───────────────────────────────────────────────
-    const subjectArr=Array.isArray(subjectData)?subjectData:(subjectData.rows||[]);
-    const Q_COLORS={
+    // ── SUBJECT ───────────────────────────────────────────────────
+    const subjectArr = Array.isArray(subjectData) ? subjectData : (subjectData.rows||[]);
+    const QUEUE_COLORS = {
       'Inquiry':'#2e7d32','Appointment':'#1565c0','FollowUp-Complaints':'#e65100',
-      'Comment':'#6a1b9a','Request':'#00695c','Complaint':'#c0272d','NA Complaint':'#555'
+      'Comment':'#6a1b9a','Request':'#00695c','Complaint':'#c0272d',
+      'NA Complaint':'#555','General':'#888'
     };
-    const sGroups={};
-    subjectArr.forEach(r=>{
-      const v=Object.values(r).map(x=>String(x||'').trim());
-      const queue=v[0]||'',status=v[1]||'',subject=v[2]||'';
-      const dept=v[3]||'',desc=v[4]||'',cat=v[5]||'',notes=v[6]||'';
-      if(!subject)return;
-      const g=queue||'General';
-      if(!sGroups[g])sGroups[g]=[];
-      sGroups[g].push({status,subject,dept,desc,cat,notes});
+    const groups = {};
+    subjectArr.forEach(r => {
+      const v = Object.values(r).map(x=>String(x||'').trim());
+      const queue   = v[0]||'';
+      const status  = v[1]||'';
+      const subject = v[2]||'';
+      const dept    = v[3]||'';
+      const descField = v[4]||'';
+      const category  = v[5]||'';
+      const notes   = v[6]||'';
+      if(!subject) return;
+      const grp = queue || 'General';
+      if(!groups[grp]) groups[grp] = [];
+      groups[grp].push({status, subject, dept, descField, category, notes});
     });
 
-    // complaint sub-tags
-    const cItems=sGroups['Complaint']||[];
-    const mainC=cItems[0]||null;
-    const subC=cItems.length>1
-      ? cItems.slice(1).flatMap(i=>i.subject.split('\n')).map(s=>s.trim()).filter(Boolean)
-      : (mainC ? mainC.subject.split('\n').slice(1).map(s=>s.trim()).filter(Boolean) : []);
-    if(mainC && mainC.subject.includes('\n')){
-      mainC.subject = mainC.subject.split('\n')[0];
-    }
+    // Collect complaint sub-types under main Complaint
+    const complaintItems = groups['Complaint']||[];
+    const mainComplaint = complaintItems[0] || null;
+    const subComplaints = complaintItems.slice(1).map(i=>i.subject).filter(Boolean);
 
-    const subjItem=(it,isCMain=false,subTags=[])=>{
-      const depts=it.dept?it.dept.split('\n').map(s=>s.trim()).filter(Boolean):[];
-      const cats =it.cat ?it.cat.split('\n').map(s=>s.trim()).filter(Boolean):[];
+    const renderSubjItem = (it, isMainComplaint=false, subTags=[]) => {
+      const deptLines = it.dept ? it.dept.split(/\n|,/).map(s=>s.trim()).filter(Boolean) : [];
+      const catLines  = it.category ? it.category.split(/\n|,/).map(s=>s.trim()).filter(Boolean) : [];
       return `<div class="ref-subj-item">
         <div class="ref-subj-subject">
           ${it.subject}
           ${it.status?`<span class="ref-subj-badge" style="background:${it.status==='Open'?'#fde':'#e8f5e9'};color:${it.status==='Open'?'#c0272d':'#2e7d32'}">${it.status}</span>`:''}
         </div>
-        ${depts.length?`<div class="ref-subj-row"><span class="ref-subj-ico">📂</span><span>${depts.join(' · ')}</span></div>`:''}
-        ${it.desc?`<div class="ref-subj-row"><span class="ref-subj-ico">✏️</span><span>${it.desc}</span></div>`:''}
-        ${cats.length?`<div class="ref-subj-row"><span class="ref-subj-ico">🏷️</span><span>${cats.join(' · ')}</span></div>`:''}
+        ${deptLines.length?`<div class="ref-subj-row"><span class="ref-subj-ico">📂</span><span>${deptLines.join(' · ')}</span></div>`:''}
+        ${it.descField?`<div class="ref-subj-row"><span class="ref-subj-ico">✏️</span><span>${it.descField}</span></div>`:''}
+        ${catLines.length?`<div class="ref-subj-row"><span class="ref-subj-ico">🏷️</span><span>${catLines.join(' · ')}</span></div>`:''}
         ${it.notes?`<div class="ref-subj-row ref-subj-note"><span class="ref-subj-ico">💡</span><span>${it.notes}</span></div>`:''}
-        ${isCMain&&subTags.length?`<div class="ref-subj-complaints">${subTags.map(s=>`<span class="ref-subj-complaint-tag">${s}</span>`).join('')}</div>`:''}
+        ${isMainComplaint && subTags.length?`<div class="ref-subj-complaints">${subTags.map(s=>`<span class="ref-subj-complaint-tag">${s}</span>`).join('')}</div>`:''}
       </div>`;
     };
 
-    // Build subject in 2-column grid
-    const groupOrder=['Inquiry','Appointment','FollowUp-Complaints','Comment','Request','NA Complaint','Complaint'];
-    const orderedGroups=groupOrder.filter(g=>sGroups[g]).concat(Object.keys(sGroups).filter(g=>!groupOrder.includes(g)));
-    const subjectCols=[[],[]];
-    orderedGroups.forEach((grp,i)=>subjectCols[i%2].push(grp));
-
-    const buildSubjCol=(grpList)=>grpList.map(grp=>{
-      const col=Q_COLORS[grp]||'#888';
-      const items=sGroups[grp];
-      const isC=grp==='Complaint';
+    const subjectHTML = Object.entries(groups).map(([grp, items]) => {
+      const col = QUEUE_COLORS[grp]||'#888';
+      const isComplaint = grp === 'Complaint';
       return `<div class="ref-subj-group">
         <div class="ref-subj-group-title" style="border-left:4px solid ${col};color:${col}">${grp}</div>
-        ${isC&&mainC?subjItem(mainC,true,subC):items.map(i=>subjItem(i)).join('')}
+        ${isComplaint && mainComplaint
+          ? renderSubjItem(mainComplaint, true, subComplaints)
+          : items.map(it => renderSubjItem(it)).join('')}
       </div>`;
     }).join('');
 
-    // ── RENDER PAGE ───────────────────────────────────────────
-    container.innerHTML=`<div class="ref-page">
+    // ── RENDER ────────────────────────────────────────────────────
+    container.innerHTML = `<div class="ref-page">
 
-      <!-- TOP BAR: search + links button -->
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <div class="ref-global-search" style="flex:1;min-width:200px">
-          <span style="font-size:18px">🔍</span>
-          <input class="ref-global-inp" type="text" placeholder="ابحث في المراجع…" id="refGlobalInp"
-                 oninput="refGlobalFilter(this.value)">
-          <button class="ref-global-clear" onclick="refGlobalFilter('');document.getElementById('refGlobalInp').value=''">✕</button>
-        </div>
-        <button onclick="toggleRefSection('refLinksDrawer','refLinksIco')"
-                style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#1565c0;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(21,101,192,.3)">
-          🔗 Links <span id="refLinksIco">▼</span>
-        </button>
-      </div>
-
-      <!-- LINKS DRAWER -->
-      <div id="refLinksDrawer" style="display:none">
-        <div class="ref-info-panel">
-          <div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1)">🔗 Links & Systems</div>
-          <div class="ref-panel-body">${linkCards||'<div style="color:#aaa;padding:16px;text-align:center">No data</div>'}</div>
-        </div>
-      </div>
-
-      <!-- BRAND CIRCLES -->
+      <!-- BRAND QUICK LINKS (circles) -->
       <div class="ref-brand-circles">
         ${BRAND_CONFIGS.map(({key,label,icon,color})=>`
-          <div class="ref-brand-circle" onclick="showRefBrandPage('${key}')">
+          <div class="ref-brand-circle" onclick="scrollToRefBrand('refBody_${key}','refHdr_${key}')"
+               style="border-color:${color}">
             <div class="ref-brand-circle-icon" style="background:${color}">${icon}</div>
-            <div class="ref-brand-circle-label" style="color:${color}">${label}</div>
+            <div class="ref-brand-circle-label" style="color:${color}">${label.replace(' — VIN Search','')}</div>
           </div>`).join('')}
       </div>
 
-      <!-- CONTACT NUMBERS -->
-      <div class="ref-info-panel">
-        <div class="ref-panel-header" style="background:linear-gradient(135deg,#c0272d,#7b0000);cursor:pointer"
-             onclick="toggleRefSection('refContactsBody','refContactsIco')">
-          📞 Contact Numbers
-          <span style="margin-left:auto;font-size:11px;opacity:.8">${tollFree.length+waNums.length} contacts</span>
-          <span id="refContactsIco" style="margin-left:8px">▲</span>
+      <!-- SEARCH -->
+      <div class="ref-global-search">
+        <span style="font-size:18px">🔍</span>
+        <input class="ref-global-inp" type="text" placeholder="ابحث في المراجع…" id="refGlobalInp"
+               oninput="refGlobalFilter(this.value)">
+        <button class="ref-global-clear" onclick="refGlobalFilter('');document.getElementById('refGlobalInp').value=''">✕ Clear</button>
+      </div>
+
+      <!-- SUBJECT + LINKS -->
+      <div class="ref-top-row">
+        <div class="ref-info-panel">
+          <div class="ref-panel-header" style="background:linear-gradient(135deg,#c0272d,#9e1b1b)">📋 Subject Guide</div>
+          <div class="ref-panel-body" style="max-height:500px;overflow-y:auto" id="refSubjectBody">
+            ${subjectHTML||'<div style="color:#aaa;padding:20px;text-align:center">No data</div>'}
+          </div>
         </div>
-        <div id="refContactsBody">
-          <div class="ref-panel-body">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-              <div>
-                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#aaa;margin-bottom:8px;padding-bottom:5px;border-bottom:2px solid #eee">📞 Toll Free</div>
-                <div class="ref-contacts-grid">${makePills(tollFree,'#c0272d')}</div>
-              </div>
-              <div>
-                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#aaa;margin-bottom:8px;padding-bottom:5px;border-bottom:2px solid #eee">💬 WhatsApp</div>
-                <div class="ref-contacts-grid">${makePills(waNums,'#2e7d32')}</div>
-              </div>
-            </div>
+        <div class="ref-info-panel">
+          <div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1)">🔗 Links & Systems</div>
+          <div class="ref-panel-body" id="refLinksBody">
+            ${linkCards||'<div style="color:#aaa;padding:20px;text-align:center">No data</div>'}
           </div>
         </div>
       </div>
 
-      <!-- SUBJECT 2-column -->
+      <!-- EMAIL SECTION -->
       <div class="ref-info-panel">
-        <div class="ref-panel-header" style="background:linear-gradient(135deg,#c0272d,#9e1b1b);cursor:pointer"
-             onclick="toggleRefSection('refSubjectBody','refSubjectIco')">
-          📋 Subject Guide
-          <span id="refSubjectIco" style="margin-left:auto">▲</span>
-        </div>
-        <div id="refSubjectBody">
-          <div class="ref-panel-body">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
-              <div>${buildSubjCol(subjectCols[0])}</div>
-              <div>${buildSubjCol(subjectCols[1])}</div>
-            </div>
-          </div>
+        <div class="ref-panel-header" style="background:linear-gradient(135deg,#00695c,#004d40)">✉️ Email References</div>
+        <div class="ref-panel-body" id="refEmailBody">
+          ${buildEmailSection(Array.isArray(emailData)?emailData:(emailData.rows||[]))}
         </div>
       </div>
 
-      <!-- EMAIL -->
-      <div class="ref-info-panel">
-        <div class="ref-panel-header" style="background:linear-gradient(135deg,#00695c,#004d40);cursor:pointer"
-             onclick="toggleRefSection('refEmailBody','refEmailIco')">
-          ✉️ Email References
-          <span id="refEmailIco" style="margin-left:auto">▲</span>
-        </div>
-        <div id="refEmailBody">
-          <div class="ref-panel-body">
-            ${buildEmailSection(Array.isArray(emailData)?emailData:(emailData.rows||[]))}
+      <!-- BRAND SECTIONS -->
+      ${BRAND_CONFIGS.map(({key,label,icon,color})=>{
+        const tabs = REF_SHEETS[key].tabs;
+        return `<div class="ref-brand-section" id="refSec_${key}">
+          <div class="ref-brand-header" style="background:linear-gradient(135deg,${color},${color}bb)"
+               onclick="toggleRefBrand('refBody_${key}',this)" id="refHdr_${key}">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:20px">${icon}</span>
+              <div>
+                <div>${label}</div>
+                <div class="ref-brand-meta">Click to expand</div>
+              </div>
+            </div>
+            <span class="ref-chevron">▼</span>
           </div>
-        </div>
-      </div>
+          <div id="refBody_${key}" style="display:none">
+            <div class="ref-sub-tabs">
+              ${tabs.map((t,i)=>`<button class="ref-sub-tab${i===0?' active':''}"
+                style="${i===0?'background:'+color+';color:#fff;border-color:'+color:''}"
+                onclick="switchRefTab('${key}',${i},this)">${t}</button>`).join('')}
+            </div>
+            <div class="ref-tab-content">
+              <div id="refTab_${key}" style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading ${tabs[0]}…</div>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
 
     </div>`;
 
-  }catch(e){
-    console.error('renderRef error:',e);
-    container.innerHTML=`<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">${e.message}</div></div>`;
+    BRAND_CONFIGS.forEach(({key}) => renderRefBrand(key, 0));
+    const nissanHdr = document.getElementById('refHdr_nissan');
+    if(nissanHdr) toggleRefBrand('refBody_nissan', nissanHdr);
+
+  } catch(e){
+    console.error('renderRef error:', e);
+    container.innerHTML = `<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px">
+      <div style="font-size:28px;margin-bottom:8px">⚠️</div>
+      <div style="font-weight:700">Failed to load</div>
+      <div style="font-size:12px;color:#888;margin-top:4px">${e.message}</div>
+    </div>`;
   }
 }
 
+
+
+
+
+
+
+// ── SCHEDULE ─────────────────────────────────────────────────────────
+let SCHEDULE = [];
+let ROSTER = [];
+
+async function loadSchedule(){
+  try{
+    const rows = await loadSheet('Weekly Calls & Break');
+    SCHEDULE = rows.filter(r=>(r['Week']||r['week'])&&(r['Agent Name']||r['agent name']));
+  }catch(e){ console.warn('Schedule load failed:', e); }
+}
+
+async function loadRoster(){
+  try{
+    const rows = await loadSheet('Daily Off Schedule');
+    ROSTER = rows;
+  }catch(e){ console.warn('Roster load failed:', e); }
+}
+
+let ANNOUNCEMENTS = [];
+async function loadAnnouncements(){
+  try{
+    const rows = await loadSheet('Announcement Board');
+    ANNOUNCEMENTS = rows.filter(r=>r['Title']||r['title']||r['Message']||r['message']);
+  }catch(e){ console.warn('Announcements load failed:', e); }
+}
+
+let ESCALATIONS = [];
+async function loadEscalations(){
+  try{
+    const rows = await loadSheet('Escalation');
+    ESCALATIONS = rows.filter(r=>r['Case']||r['case']||r['Team']||r['team']);
+  }catch(e){ console.warn('Escalation load failed:', e); }
+}
+
+let EOM_DATA = [];
+let activeEomMonth = '';
+
+async function loadEOM(){
+  try{
+    const rows = await loadSheet('Employee of the MONTH');
+    EOM_DATA = rows.filter(r=>r['User Name']||r['user name']);
+  }catch(e){ console.warn('EOM load failed:', e); }
+}
+
+function toSeconds(t){
+  if(!t) return 0;
+  const p=t.toString().split(':');
+  if(p.length===3) return +p[0]*3600 + +p[1]*60 + parseFloat(p[2]);
+  if(p.length===2) return +p[0]*60 + parseFloat(p[1]);
+  return 0;
+}
+
+function calcEOMScore(r){
+  const month = r['Month']||'';
+  const monthData = EOM_DATA.filter(x=>(x['Month']||'')=== month && (x['Team']||'')===(r['Team']||''));
+  const allInbound = monthData.map(x=>parseInt(x['Total']||x['total'])||0);
+  const maxInbound = Math.max(...allInbound, 1);
+  const inbound = parseInt(r['Total']||r['total'])||0;
+  const inboundScore = (inbound/maxInbound)*25;
+  const quality = parseFloat((r['Quality']||'0').toString().replace('%',''))||0;
+  const qualityScore = (quality/100)*25;
+  const csat = parseFloat((r['CSAT']||'0').toString().replace('%',''))||0;
+  const csatScore = (csat/100)*20;
+  const aht = toSeconds(r['Avg. Handling Time']||0);
+  const target = 240;
+  const allAHT = monthData.map(x=>toSeconds(x['Avg. Handling Time']||0));
+  const maxDiff = Math.max(...allAHT.map(v=>Math.abs(v-target)), 1);
+  const ahtScore = maxDiff>0? (1 - Math.abs(aht-target)/maxDiff)*15 : 15;
+  const tickets = parseInt(r['Tickets'])||0;
+  const ticketRatio = inbound>0? (tickets/inbound)*100 : 0;
+  const ticketScore = (Math.min(ticketRatio,100)/100)*15;
+  const total = inboundScore + qualityScore + csatScore + ahtScore + ticketScore;
+  return {total:Math.round(total*10)/10, inbound:Math.round(inboundScore*10)/10, quality:Math.round(qualityScore*10)/10, csat:Math.round(csatScore*10)/10, aht:Math.round(ahtScore*10)/10, ticket:Math.round(ticketScore*10)/10};
+}
+
+function goToAgent(name){
+  document.querySelectorAll('.pnav').forEach(b=>{if(b.textContent.includes('Agent Performance'))b.click();});
+  setTimeout(()=>{document.getElementById('agSel').value=name;selAgent(name);}, 200);
+}
+
+function renderEOM(){
+  if(!EOM_DATA.length){document.getElementById('eomWinner').innerHTML='<div style="text-align:center;padding:40px;color:#aaa">No data.</div>';document.getElementById('eomTeams').innerHTML='';return;}
+  const months=[...new Set(EOM_DATA.map(r=>r['Month']||''))].filter(Boolean);
+  if(!activeEomMonth) activeEomMonth=months[months.length-1];
+  document.getElementById('eomMonthBtns').innerHTML=months.map(m=>`<button class="eom-month-btn${m===activeEomMonth?' active':''}" onclick="selectEomMonth('${m}',this)">${m}</button>`).join('');
+  const monthData=EOM_DATA.filter(r=>(r['Month']||'')===activeEomMonth);
+  const teams=[...new Set(monthData.map(r=>r['Team']||''))].filter(Boolean);
+  const scored=monthData.map(r=>({...r,scores:calcEOMScore(r)}));
+  const topPerTeam=[];
+  teams.forEach(team=>{const best=scored.filter(r=>(r['Team']||'')===team).sort((a,b)=>b.scores.total-a.scores.total)[0];if(best)topPerTeam.push(best);});
+  document.getElementById('eomWinner').innerHTML=`<div class="eom-winner-banner" style="padding:16px 20px"><div style="font-size:15px;font-weight:700;margin-bottom:14px;opacity:.9">🏆 Employee of the Month — ${activeEomMonth}</div><div style="display:grid;grid-template-columns:repeat(${topPerTeam.length},1fr);gap:12px">${topPerTeam.map(r=>{const name=r['User Name']||'';const team=r['Team']||'';return`<div style="background:rgba(255,255,255,.15);border-radius:10px;padding:12px;text-align:center;cursor:pointer" onclick="goToAgent('${name}')"><div style="font-size:10px;opacity:.7;margin-bottom:4px">${team}</div><div style="font-size:14px;font-weight:700;margin:6px 0">🥇 ${name}</div><div style="font-size:22px;font-weight:700;color:#FFD700">${r.scores.total}/100</div></div>`;}).join('')}</div></div>`;
+  document.getElementById('eomTeams').innerHTML='';
+}
+
+function selectEomMonth(month,btn){activeEomMonth=month;document.querySelectorAll('.eom-month-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderEOM();}
+
+function renderSchedule(){
+  if(!SCHEDULE.length){document.getElementById('scheduleContent').innerHTML='<div style="text-align:center;padding:40px;color:#aaa">No schedule data.</div>';return;}
+  const weeks=[...new Set(SCHEDULE.map(r=>r['Week']||r['week']))].filter(Boolean);
+  if(!window.activeWeek)window.activeWeek=weeks[weeks.length-1];
+  document.getElementById('weekSelector').innerHTML=weeks.map(w=>`<button class="week-btn${w===window.activeWeek?' active':''}" onclick="selectWeek('${w}',this)">${w}</button>`).join('');
+  const weekRows=SCHEDULE.filter(r=>(r['Week']||r['week'])===window.activeWeek);
+  const byTeam={};
+  weekRows.forEach(r=>{const team=r['Team']||r['team']||'Other';if(!byTeam[team])byTeam[team]=[];byTeam[team].push(r);});
+  let html='';
+  Object.entries(byTeam).forEach(([team,rows])=>{
+    const color={'Multi Campaign':'#c0272d','WhatsApp':'#1565c0'}[team]||'#c0272d';
+    rows.sort((a,b)=>{const to24=t=>{if(!t)return'99:99';const m=t.match(/(\d+):(\d+)\s*(AM|PM)/i);if(!m)return t;let h=parseInt(m[1]);if(m[3].toUpperCase()==='PM'&&h!==12)h+=12;if(m[3].toUpperCase()==='AM'&&h===12)h=0;return String(h).padStart(2,'0')+':'+m[2];};return to24(a['Break Time']||'').localeCompare(to24(b['Break Time']||''));});
+    html+=`<div class="team-schedule"><div class="team-schedule-title" style="color:${color}">${team}</div><table class="schedule-table"><thead><tr><th>#</th><th>Agent Name</th><th>Role</th><th>Break Time</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td style="text-align:center">${i+1}</td><td style="font-weight:600;text-align:center">${r['Agent Name']||''}</td><td style="text-align:center"><span class="${(r['Role']||'').toLowerCase().includes('call')?'role-call':'role-chat'}">${r['Role']||''}</span></td><td class="break-time" style="text-align:center">${r['Break Time']||''}</td></tr>`).join('')}</tbody></table></div>`;
+  });
+  document.getElementById('scheduleContent').innerHTML=html;
+}
+
+function selectWeek(week,btn){window.activeWeek=week;document.querySelectorAll('.week-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderSchedule();}
+
+function renderRoster(){
+  const container=document.getElementById('rosterContent');
+  if(!ROSTER.length){container.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">No roster data.</div>';return;}
+  const headers=Object.keys(ROSTER[0]);
+  const dateCol=headers[0];
+  const agents=headers.slice(1).filter(h=>h&&h!=='undefined'&&h.trim()!=='');
+  const dataRows=ROSTER.filter(r=>{const d=(r[dateCol]||'').toString().trim();return d&&d!=='Date - Agent Name'&&!d.includes('Roster')&&d.length>0;});
+  container.innerHTML=`<div class="team-schedule"><div style="overflow-x:auto"><table class="schedule-table" style="width:100%;min-width:800px"><thead><tr><th style="text-align:center">Date</th>${agents.map(a=>`<th style="text-align:center">${a}</th>`).join('')}</tr></thead><tbody>${dataRows.map(r=>{const date=(r[dateCol]||'').toString().trim();return`<tr><td style="font-weight:600;text-align:center;white-space:nowrap">${date}</td>${agents.map(a=>{const val=(r[a]||'').toString().trim();const isOff=val.toLowerCase()==='off';const isWork=val.toLowerCase()==='work';const isV=val==='V';return`<td style="${isOff?'background:#fde;color:#c0272d;font-weight:700':isWork?'background:#e3f2fd;color:#1565c0;font-weight:600':isV?'background:#fff8e1;color:#f57f17;font-weight:700':''}text-align:center">${val||'–'}</td>`;}).join('')}</tr>`;}).join('')}</tbody></table></div></div>`;
+}
+
+function switchScheduleTab(tab,btn){btn.parentElement.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('rosterTab').style.display=tab==='roster'?'block':'none';document.getElementById('breaksTab').style.display=tab==='breaks'?'block':'none';if(tab==='roster')renderRoster();if(tab==='breaks')renderSchedule();}
+
+function renderAnnouncements(){
+  const container=document.getElementById('announceContent');
+  if(!ANNOUNCEMENTS.length){container.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">No announcements yet.</div>';return;}
+  container.innerHTML=`<div class="announce-grid">${[...ANNOUNCEMENTS].reverse().map(r=>{const priority=(r['Priority']||r['priority']||'medium').toLowerCase();const pClass=priority.includes('high')?'high':priority.includes('low')?'low':'medium';return`<div class="announce-card ${pClass}"><div class="announce-date">📅 ${r['Date']||r['date']||''}</div><div class="announce-title">${r['Title']||r['title']||''}</div><div class="announce-msg">${r['Message']||r['message']||''}</div><span class="announce-priority ${pClass}">${pClass==='high'?'🔴 High':pClass==='low'?'🟢 Low':'🟡 Medium'}</span></div>`;}).join('')}</div>`;
+}
+
+function renderEscalations(){
+  const container=document.getElementById('escalationContent');
+  if(!ESCALATIONS.length){container.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">No escalation cases.</div>';return;}
+  const gc=s=>{const v=(s||'').toLowerCase();if(v.includes('open'))return'status-open';if(v.includes('progress'))return'status-progress';if(v.includes('close')||v.includes('done'))return'status-closed';return'status-pending';};
+  container.innerHTML=`<table class="esc-table"><thead><tr><th>#</th><th>Team</th><th>Case</th><th>Date</th><th>Status</th><th>Comments</th></tr></thead><tbody>${ESCALATIONS.map((r,i)=>`<tr><td style="color:#888;font-weight:600">${i+1}</td><td style="font-weight:600">${r['Team']||r['team']||'–'}</td><td style="text-align:left">${r['Case']||r['case']||'–'}</td><td>${r['Date']||r['date']||'–'}</td><td><span class="status-badge ${gc(r['Status']||r['status'])}">${r['Status']||r['status']||'–'}</span></td><td style="text-align:left;color:#666">${r['Comments']||r['comments']||'–'}</td></tr>`).join('')}</tbody></table>`;
+}
 
 // Auto-start on page load
 window.addEventListener('DOMContentLoaded', () => { loadAllData(); });
