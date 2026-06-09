@@ -239,7 +239,7 @@ tr:last-child td{border-bottom:none}
 /* Branch cards */
 .ref-region-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#888;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #eee;display:flex;align-items:center;gap:6px}
 .ref-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:16px}
-.ref-card{background:#f9fbff;border-radius:10px;padding:14px;border:1px solid #e8eaed;transition:.2s;text-align:center;direction:rtl}
+.ref-card{background:#f9fbff;border-radius:10px;padding:14px;border:1px solid #e8eaed;transition:.2s;text-align:center;direction:ltr}
 .ref-card:hover{border-color:#c0272d;background:#fff;box-shadow:0 4px 12px rgba(192,39,45,.1)}
 .ref-card-title{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px}
 .ref-card-row{display:flex;align-items:flex-start;gap:7px;margin-bottom:5px;font-size:12px;color:#555}
@@ -1680,6 +1680,157 @@ function toggleRegion(id){
 
 
 
+function renderPACTab(arr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+
+  const fmtNum=n=>{const s=String(n||'').trim();if(!s||s==='-')return '';if(s.toUpperCase().includes('E+')){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
+
+  // fetchSheet uses row1 as header → row1="Petromin Auto Care (PAC)", row2="CC#,Branch..."
+  // So arr[0] has keys from row1, arr[1] has the real headers as VALUES
+  // We need to re-map: find the row where first value is "CC#" and use it as header
+  
+  let headerRow = -1;
+  arr.forEach(function(r,i){
+    const vals = Object.values(r).map(function(x){return String(x||'').trim();});
+    if(vals[0]==='CC#') headerRow = i;
+  });
+
+  // Build proper data using real headers
+  let realHeaders = [];
+  let dataRows = [];
+  
+  if(headerRow >= 0){
+    realHeaders = Object.values(arr[headerRow]).map(function(x){return String(x||'').trim();});
+    dataRows = arr.slice(headerRow+1).filter(function(r){
+      const vals = Object.values(r).map(function(x){return String(x||'').trim();});
+      return vals.some(function(v){return v;});
+    });
+  } else {
+    // Fallback: skip obvious header rows
+    dataRows = arr.filter(function(r){
+      const vals = Object.values(r).map(function(x){return String(x||'').trim();});
+      const first = vals[0]||'';
+      return !first.toLowerCase().includes('petromin auto') && first!=='CC#' && (first||vals[1]);
+    });
+    realHeaders = Object.values(arr[0]).map(function(x){return String(x||'').trim();});
+  }
+
+  // Map by position using realHeaders
+  // 0=CC#, 1=Branch, 2=City, 3=Location, 4=BM, 5=Phone, 6=BMEmail, 7=RM, 8=RMPhone, 9=RMEmail, 10=Hours
+  var H = {};
+  realHeaders.forEach(function(h,i){ H[i] = h; });
+  
+  function gc(r, idx){
+    var vals = Object.values(r);
+    var v = vals[idx];
+    return v ? String(v).trim() : '';
+  }
+
+  var branches={};
+  dataRows.forEach(function(r){
+    var code=fmtNum(gc(r,0));
+    var name=gc(r,1);
+    if(!name&&!code) return;
+    var key=(code||'x')+'__'+(name||'x');
+    if(!branches[key]) branches[key]={code:code,name:name,city:gc(r,2),loc:gc(r,3),hours:gc(r,10),persons:[],rm:null};
+    var bm=gc(r,4), ph=fmtNum(gc(r,5)), em=gc(r,6);
+    if(bm||ph||em) branches[key].persons.push({bm:bm,ph:ph,em:em});
+    var rm=gc(r,7), rph=fmtNum(gc(r,8)), rem=gc(r,9);
+    if(rm&&!branches[key].rm) branches[key].rm={name:rm,phone:rph,email:rem};
+  });
+
+  function mkRow(ico,val){
+    if(!val||val==='-') return '';
+    var safe=String(val).trim();
+    if(safe.startsWith('http')) return '<div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:11px;margin-bottom:3px;direction:ltr"><span>'+ico+'</span><a href="'+safe+'" target="_blank" style="color:#1565c0;font-weight:600;text-decoration:none">Open Location</a></div>';
+    if(safe.includes('@')) return '<div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:11px;margin-bottom:3px;direction:ltr"><span>'+ico+'</span><a href="mailto:'+safe+'" style="color:#1565c0;text-decoration:none">'+safe+'</a></div>';
+    return '<div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;margin-bottom:3px;direction:ltr"><span>'+ico+'</span><span>'+safe+'</span></div>';
+  }
+
+  var cards=Object.values(branches).map(function(b){
+    var persHTML=b.persons.map(function(p){
+      return '<div style="padding:5px 0;border-bottom:1px solid #f5f5f5">'+mkRow('👤',p.bm)+mkRow('📞',p.ph)+mkRow('✉️',p.em)+'</div>';
+    }).join('');
+
+    var rmHTML=b.rm
+      ?'<div style="margin-top:8px;padding:7px 10px;background:#e3f2fd;border-radius:6px;border-left:3px solid #1565c0;text-align:center">'
+        +'<div style="font-size:10px;font-weight:700;color:#1565c0;text-transform:uppercase;margin-bottom:5px">🏢 Regional Manager</div>'
+        +mkRow('👤',b.rm.name)+mkRow('📞',b.rm.phone)+mkRow('✉️',b.rm.email)
+        +'</div>'
+      :'';
+
+    var hoursClean=b.hours.split('\n').map(function(s){return s.trim();}).filter(Boolean).join(' - ');
+    var hoursHTML=hoursClean?'<div style="font-size:10px;color:#888;margin-top:8px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+hoursClean+'</div>':'';
+    var locHTML=b.loc&&b.loc.startsWith('http')?'<a href="'+b.loc+'" target="_blank" style="display:inline-flex;align-items:center;gap:4px;background:#e3f2fd;color:#1565c0;padding:4px 12px;border-radius:8px;font-size:11px;font-weight:600;text-decoration:none;margin-top:8px">📍 Open Location</a>':'';
+
+    return '<div class="ref-card" style="text-align:center;padding:0;overflow:hidden">'
+      +'<div style="background:#c0272d18;border-bottom:2px solid #c0272d22;padding:10px 14px;border-radius:10px 10px 0 0">'
+      +(b.code?'<div style="font-size:11px;font-weight:700;color:#c0272d;margin-bottom:3px">'+b.code+'</div>':'')
+      +'<div style="font-size:13px;font-weight:700;color:#c0272d">'+b.name+'</div>'
+      +(b.city?'<div style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;color:#888;margin-top:3px;direction:ltr"><span>📌</span><span>'+b.city+'</span></div>':'')
+      +'</div>'
+      +'<div style="padding:10px 14px">'+persHTML+rmHTML+locHTML+hoursHTML+'</div></div>';
+  }).join('');
+
+  var count = Object.keys(branches).length;
+  return '<div style="margin-bottom:12px">'
+    +'<div style="font-size:14px;font-weight:700;color:#c0272d;text-align:center;padding:10px;background:#fef2f2;border-radius:8px;margin-bottom:14px">🔧 Petromin Auto Care (PAC) — '+count+' workshops</div>'
+    +'<div class="ref-cards-grid">'+cards+'</div></div>';
+}
+
+function renderNissanAppTab(arr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const rows=arr.map(r=>Object.values(r).map(v=>String(v||'').trim()));
+  const emailRaw=rows[0]?.[0]||'';
+  const emailLines=emailRaw.split('\n').map(s=>s.trim()).filter(Boolean);
+  const toEmails=emailLines.find(e=>!e.startsWith('CC'))||'';
+  const ccEmail=(emailLines.find(e=>e.startsWith('CC'))||'').replace('CC:','').trim();
+  const conditions=rows[0]?.[1]||'';
+  const mkPill=e=>{const s=e.trim();if(!s||!s.includes('@'))return '';return '<a href="mailto:'+s+'" style="display:inline-flex;background:#e0f7f4;color:#00695c;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;margin:2px">'+s+'</a>';};
+  const fmtPills=v=>v.split(/,|-/).map(mkPill).filter(Boolean).join('');
+  const userFields=rows.slice(3,13).map(r=>r[0]).filter(f=>f&&f!=='User Information'&&f!=='Detail'&&f!=='Inquiry');
+  const inquiryFields=rows.slice(13,17).map(r=>r[0]).filter(f=>f&&f!=='Inquiry'&&f!=='Detail');
+  const mandatory=new Set(['User ID or Email (ID for App login)','Phone Device Model','Phone OS (iOS or Android, version of it)','Nissan Mobile App Version']);
+  return '<div style="max-width:700px;margin:0 auto">'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+    +'<div class="ref-email-card" style="border-left:4px solid #c0272d;text-align:center">'
+    +'<div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Email</div>'
+    +'<div style="margin-bottom:5px"><span class="ref-email-tag to">TO</span> '+fmtPills(toEmails)+'</div>'
+    +(ccEmail?'<div><span class="ref-email-tag cc">CC</span> '+fmtPills(ccEmail)+'</div>':'')
+    +'</div>'
+    +'<div class="ref-email-card" style="border-left:4px solid #f9a825">'
+    +'<div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:8px;text-align:center">⚠️ Conditions</div>'
+    +'<div style="font-size:11px;color:#555;line-height:1.7">'+conditions.split('\n').map(s=>s.trim()).filter(Boolean).join('<br>')+'</div>'
+    +'</div></div>'
+    +'<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)">'
+    +'<div style="background:#c0272d;color:#fff;padding:12px 16px;font-size:14px;font-weight:700;text-align:center">My Nissan App ( CCS ) - Y63</div>'
+    +'<div style="padding:14px 16px">'
+    +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #f0f0f0">👤 User Information</div>'
+    +userFields.map(f=>'<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f5f5f5">'
+      +'<span style="font-size:12px;color:#444;flex:1">'+f+(mandatory.has(f)?'<span style="color:#c0272d;font-size:10px;font-weight:700;margin-left:4px">*</span>':'')+'</span>'
+      +'<span style="font-size:11px;color:#bbb;background:#f9f9f9;padding:3px 12px;border-radius:6px;border:1px solid #eee;min-width:120px;text-align:center">___</span>'
+      +'</div>').join('')
+    +'</div><div style="padding:14px 16px">'
+    +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #f0f0f0">❓ Inquiry</div>'
+    +inquiryFields.map(f=>'<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f5f5f5">'
+      +'<span style="font-size:12px;color:#444;flex:1">'+f+'</span>'
+      +'<span style="font-size:11px;color:#bbb;background:#f9f9f9;padding:3px 12px;border-radius:6px;border:1px solid #eee;min-width:120px;text-align:center">___</span>'
+      +'</div>').join('')
+    +'</div>'
+    +'<div style="padding:12px 16px;background:#f9f9f9;text-align:center">'
+    +'<button onclick="copyNissanAppForm()" style="padding:8px 24px;background:#c0272d;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer">📋 Copy Form</button>'
+    +'<div id="nissanAppCopied" style="font-size:11px;color:#2e7d32;margin-top:6px;display:none">✅ Copied!</div>'
+    +'</div></div>'
+    +'<div style="font-size:10px;color:#aaa;text-align:center;margin-top:8px">* Mandatory for App issues</div>'
+    +'</div>';
+}
+
+function copyNissanAppForm(){
+  var form='My Nissan App ( CCS ) - Y63\n\nUser Information:\nVIN: ___\nCustomer Name: ___\nPhone number: ___\nCity: ___\nModel Year: ___\nUser ID or Email: ___\nPhone Device Model: ___\nPhone OS: ___\nNissan Mobile App Version: ___\n\nInquiry:\nTitle: ___\nDescription: ___';
+  navigator.clipboard.writeText(form).then(function(){var el=document.getElementById('nissanAppCopied');if(el){el.style.display='block';setTimeout(function(){el.style.display='none';},2000);}});
+}
+
+
 function buildEmailSection(arr){
   if(!arr||!arr.length) return '<div style="color:#aaa;padding:20px;text-align:center">No email data</div>';
   const data=arr.filter(r=>Object.values(r).some(v=>String(v||'').trim()));
@@ -1774,6 +1925,14 @@ async function renderRefBrand(brand,tabIdx){
     }
     if(brand==='stellantis' && branchTabs.some(t=>sheetName.trim()===t.trim())){
       container.innerHTML=renderNissanBranchTab(arr, sheetName, brand);
+      return;
+    }
+    if(brand==='nissan' && sheetName.trim()==='Nissan PAC'){
+      container.innerHTML=renderPACTab(arr);
+      return;
+    }
+    if(brand==='nissan' && sheetName.trim()==='Nissan App 25-26'){
+      container.innerHTML=renderNissanAppTab(arr);
       return;
     }
     if(brand==='baicRecall'){
