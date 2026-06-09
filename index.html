@@ -1682,104 +1682,39 @@ function toggleRegion(id){
 
 function renderPACTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-
-  const fmtNum=n=>{const s=String(n||'').trim();if(!s||s==='-')return '';if(s.toUpperCase().includes('E+')){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
-
-  // fetchSheet uses row1 as header → row1="Petromin Auto Care (PAC)", row2="CC#,Branch..."
-  // So arr[0] has keys from row1, arr[1] has the real headers as VALUES
-  // We need to re-map: find the row where first value is "CC#" and use it as header
-  
-  let headerRow = -1;
-  arr.forEach(function(r,i){
-    const vals = Object.values(r).map(function(x){return String(x||'').trim();});
-    if(vals[0]==='CC#') headerRow = i;
+  var keys=Object.keys(arr[0]||{});
+  var cityKey='',branchKey='',bmKey='',phoneKey='',emailKey='',locKey='',hoursKey='';
+  keys.forEach(function(k){
+    var kl=k.toLowerCase().replace(/[^a-z]/g,'');
+    if(kl==='city') cityKey=k;
+    else if(kl.includes('branchcode')) branchKey=k;
+    else if(kl.includes('branchmanager')) bmKey=k;
+    else if(kl.includes('contact')) phoneKey=k;
+    else if(kl.includes('bmemail')) emailKey=k;
+    else if(kl.includes('location')) locKey=k;
+    else if(kl.includes('workinghours')) hoursKey=k;
   });
-
-  // Build proper data using real headers
-  let realHeaders = [];
-  let dataRows = [];
-  
-  if(headerRow >= 0){
-    realHeaders = Object.values(arr[headerRow]).map(function(x){return String(x||'').trim();});
-    dataRows = arr.slice(headerRow+1).filter(function(r){
-      const vals = Object.values(r).map(function(x){return String(x||'').trim();});
-      return vals.some(function(v){return v;});
-    });
-  } else {
-    // Fallback: skip obvious header rows
-    dataRows = arr.filter(function(r){
-      const vals = Object.values(r).map(function(x){return String(x||'').trim();});
-      const first = vals[0]||'';
-      return !first.toLowerCase().includes('petromin auto') && first!=='CC#' && (first||vals[1]);
-    });
-    realHeaders = Object.values(arr[0]).map(function(x){return String(x||'').trim();});
-  }
-
-  // Map by position using realHeaders
-  // 0=CC#, 1=Branch, 2=City, 3=Location, 4=BM, 5=Phone, 6=BMEmail, 7=RM, 8=RMPhone, 9=RMEmail, 10=Hours
-  var H = {};
-  realHeaders.forEach(function(h,i){ H[i] = h; });
-  
-  function gc(r, idx){
-    var vals = Object.values(r);
-    var v = vals[idx];
-    return v ? String(v).trim() : '';
-  }
-
-  var branches={};
-  dataRows.forEach(function(r){
-    var code=fmtNum(gc(r,0));
-    var name=gc(r,1);
-    if(!name&&!code) return;
-    var key=(code||'x')+'__'+(name||'x');
-    if(!branches[key]) branches[key]={code:code,name:name,city:gc(r,2),loc:gc(r,3),hours:gc(r,10),persons:[],rm:null};
-    var bm=gc(r,4), ph=fmtNum(gc(r,5)), em=gc(r,6);
-    if(bm||ph||em) branches[key].persons.push({bm:bm,ph:ph,em:em});
-    var rm=gc(r,7), rph=fmtNum(gc(r,8)), rem=gc(r,9);
-    if(rm&&!branches[key].rm) branches[key].rm={name:rm,phone:rph,email:rem};
-  });
-
+  function gv(r,k){return k&&r[k]?String(r[k]).trim():'';}
   function mkRow(ico,val){
     if(!val||val==='-') return '';
-    var safe=String(val).trim();
-    if(safe.startsWith('http')) return '<div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:11px;margin-bottom:3px;direction:ltr"><span>'+ico+'</span><a href="'+safe+'" target="_blank" style="color:#1565c0;font-weight:600;text-decoration:none">Open Location</a></div>';
-    if(safe.includes('@')) return '<div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:11px;margin-bottom:3px;direction:ltr"><span>'+ico+'</span><a href="mailto:'+safe+'" style="color:#1565c0;text-decoration:none">'+safe+'</a></div>';
-    return '<div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;margin-bottom:3px;direction:ltr"><span>'+ico+'</span><span>'+safe+'</span></div>';
+    if(val.startsWith('http')) return '<div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:11px;margin-bottom:3px;direction:ltr"><span>'+ico+'</span><a href="'+val+'" target="_blank" style="color:#1565c0;font-weight:600;text-decoration:none">Open Location</a></div>';
+    if(val.includes('@')) return '<div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:11px;margin-bottom:3px;direction:ltr"><span>'+ico+'</span><a href="mailto:'+val+'" style="color:#1565c0;text-decoration:none">'+val+'</a></div>';
+    return '<div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;margin-bottom:3px;direction:ltr"><span>'+ico+'</span><span>'+val+'</span></div>';
   }
-
-  var cards=Object.values(branches).map(function(b){
-    var persHTML=b.persons.map(function(p){
-      return '<div style="padding:5px 0;border-bottom:1px solid #f5f5f5">'+mkRow('👤',p.bm)+mkRow('📞',p.ph)+mkRow('✉️',p.em)+'</div>';
-    }).join('');
-
-    var rmHTML=b.rm
-      ?'<div style="margin-top:8px;padding:7px 10px;background:#e3f2fd;border-radius:6px;border-left:3px solid #1565c0;text-align:center">'
-        +'<div style="font-size:10px;font-weight:700;color:#1565c0;text-transform:uppercase;margin-bottom:5px">🏢 Regional Manager</div>'
-        +mkRow('👤',b.rm.name)+mkRow('📞',b.rm.phone)+mkRow('✉️',b.rm.email)
-        +'</div>'
-      :'';
-
-    var hoursClean=b.hours.split('\n').map(function(s){return s.trim();}).filter(Boolean).join(' - ');
-    var hoursHTML=hoursClean?'<div style="font-size:10px;color:#888;margin-top:8px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+hoursClean+'</div>':'';
-    var locHTML=b.loc&&b.loc.startsWith('http')?'<a href="'+b.loc+'" target="_blank" style="display:inline-flex;align-items:center;gap:4px;background:#e3f2fd;color:#1565c0;padding:4px 12px;border-radius:8px;font-size:11px;font-weight:600;text-decoration:none;margin-top:8px">📍 Open Location</a>':'';
-
+  var cards=arr.filter(function(r){return Object.values(r).some(function(v){return v&&String(v).trim();});}).map(function(r){
+    var branch=gv(r,branchKey),city=gv(r,cityKey),bm=gv(r,bmKey),phone=gv(r,phoneKey),email=gv(r,emailKey),loc=gv(r,locKey),hours=gv(r,hoursKey);
+    if(!branch&&!bm) return '';
+    var hoursClean=hours.split('\n').map(function(s){return s.trim();}).filter(Boolean).join(' - ');
     return '<div class="ref-card" style="text-align:center;padding:0;overflow:hidden">'
       +'<div style="background:#c0272d18;border-bottom:2px solid #c0272d22;padding:10px 14px;border-radius:10px 10px 0 0">'
-      +(b.code?'<div style="font-size:11px;font-weight:700;color:#c0272d;margin-bottom:3px">'+b.code+'</div>':'')
-      +'<div style="font-size:13px;font-weight:700;color:#c0272d">'+b.name+'</div>'
-      +(b.city?'<div style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;color:#888;margin-top:3px;direction:ltr"><span>📌</span><span>'+b.city+'</span></div>':'')
-      +'</div>'
-      +'<div style="padding:10px 14px">'+persHTML+rmHTML+locHTML+hoursHTML+'</div></div>';
-  }).join('');
-
-  console.log('PAC arr[0] keys:', JSON.stringify(Object.keys(arr[0]||{})));
-  console.log('PAC arr[0] full:', JSON.stringify(arr[0]));
-  console.log('PAC arr[1] full:', JSON.stringify(arr[1]));
-  console.log('PAC arr[2] full:', JSON.stringify(arr[2]));
-  var count = Object.keys(branches).length;
-  return '<div style="margin-bottom:12px">'
-    +'<div style="font-size:14px;font-weight:700;color:#c0272d;text-align:center;padding:10px;background:#fef2f2;border-radius:8px;margin-bottom:14px">🔧 Petromin Auto Care (PAC) — '+count+' workshops</div>'
-    +'<div class="ref-cards-grid">'+cards+'</div></div>';
+      +'<div style="font-size:13px;font-weight:700;color:#c0272d">'+branch+'</div>'
+      +(city?'<div style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;color:#888;margin-top:3px;direction:ltr"><span>&#128204;</span><span>'+city+'</span></div>':'')
+      +'</div><div style="padding:10px 14px">'
+      +mkRow('&#128100;',bm)+mkRow('&#128222;',phone)+mkRow('&#9993;',email)+mkRow('&#128205;',loc)
+      +(hoursClean?'<div style="font-size:10px;color:#888;margin-top:8px;padding-top:6px;border-top:1px solid #f0f0f0">&#128336; '+hoursClean+'</div>':'')
+      +'</div></div>';
+  }).filter(Boolean).join('');
+  return '<div style="margin-bottom:12px"><div style="font-size:14px;font-weight:700;color:#c0272d;text-align:center;padding:10px;background:#fef2f2;border-radius:8px;margin-bottom:14px">&#128295; Petromin Auto Care (PAC) &mdash; '+arr.length+' workshops</div><div class="ref-cards-grid">'+cards+'</div></div>';
 }
 
 function renderNissanAppTab(arr){
