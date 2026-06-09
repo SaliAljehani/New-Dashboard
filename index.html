@@ -1501,52 +1501,74 @@ async function vinSearch(brand, value){
 }
 
 
+// Email configs per tab
+const NISSAN_EMAILS = {
+  showroom:{
+    req:{to:'Manager Branch + sali.aljehani@petromin.com', cc:'cs.agent@petromin.com'},
+    com:{to:'Manager Branch + CRTeam@petromin.com',        cc:'cs.agent@petromin.com'}
+  },
+  '3s':{
+    req:{to:'Manager Branch + sali.aljehani@petromin.com', cc:'cs.agent@petromin.com'},
+    com:{to:'Manager Branch + CRTeam@petromin.com',        cc:'cs.agent@petromin.com'}
+  },
+  'spare parts':{
+    req:{to:'Manager Branch + sali.aljehani@petromin.com', cc:'o.alghamdi@petromin.com, cs.agent@petromin.com'},
+    com:{to:'Manager Branch + CRTeam@petromin.com',        cc:'o.alghamdi@petromin.com, cs.agent@petromin.com'}
+  },
+  'body shop':{
+    req:{to:'Manager Branch + sali.aljehani@petromin.com', cc:'cs.agent@petromin.com'},
+    com:{to:'Manager Branch + CRTeam@petromin.com',        cc:'cs.agent@petromin.com'}
+  }
+};
+
 function renderNissanBranchTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 
   const fmtNum = n => {
     const s=String(n||'').trim();
     if(s.toUpperCase().includes('E+')){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}
+    if(s==='-'||s==='') return '';
     return s;
   };
 
-  const fmtEmailPills = v => v.split(',').map(e=>{
+  const mkEmailPill = e => {
     const s=e.trim(); if(!s) return '';
     if(s.includes('@')) return '<a href="mailto:'+s+'" style="display:inline-flex;background:#e0f7f4;color:#00695c;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;margin:2px">'+s+'</a>';
-    return '<span style="font-size:11px;color:#555;padding:2px 4px;margin:2px">'+s+'</span>';
-  }).filter(Boolean).join('');
+    return '<span style="font-size:11px;color:#555;padding:2px 4px;margin:2px;font-weight:600">'+s+'</span>';
+  };
+  const fmtEmailPills = v => v.split(',').map(mkEmailPill).filter(Boolean).join('');
 
-  // Email header — no brand name
-  const em = brand==='stellantis'
-    ? {req:{to:'Manager Branch + sali.aljehani@petromin.com',cc:'cs.agent@petromin.com'},
-       com:{to:'Manager Branch + CRTeam@petromin.com',cc:'cs.agent@petromin.com, n.alhomrani@petromin.com'}}
-    : {req:{to:'Manager Branch + sali.aljehani@petromin.com',cc:'cs.agent@petromin.com'},
-       com:{to:'Manager Branch + CRTeam@petromin.com',cc:'cs.agent@petromin.com'}};
+  // Get email config
+  const shKey = sheetName.trim().toLowerCase().replace(' ','').includes('spare') ? 'spare parts'
+               : sheetName.trim().toLowerCase().includes('body') ? 'body shop'
+               : sheetName.trim().toLowerCase().includes('3s') ? '3s'
+               : 'showroom';
+  const emCfg = NISSAN_EMAILS[shKey] || NISSAN_EMAILS.showroom;
 
+  // Email header centered
   const emailHeader =
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">'
-    +'<div class="ref-email-card" style="border-left:4px solid #00695c">'
-    +'<div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
-    +'<div class="ref-email-row"><span class="ref-email-tag to">TO</span><div style="flex:1;flex-wrap:wrap">'+fmtEmailPills(em.req.to)+'</div></div>'
-    +'<div class="ref-email-row"><span class="ref-email-tag cc">CC</span><div style="flex:1;flex-wrap:wrap">'+fmtEmailPills(em.req.cc)+'</div></div>'
+    +'<div class="ref-email-card" style="border-left:4px solid #00695c;text-align:center">'
+    +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:10px;text-align:center">📧 Request</div>'
+    +'<div class="ref-email-row" style="justify-content:center;flex-wrap:wrap;gap:4px"><span class="ref-email-tag to">TO</span>'+fmtEmailPills(emCfg.req.to)+'</div>'
+    +'<div class="ref-email-row" style="justify-content:center;flex-wrap:wrap;gap:4px;margin-top:6px"><span class="ref-email-tag cc">CC</span>'+fmtEmailPills(emCfg.req.cc)+'</div>'
     +'</div>'
-    +'<div class="ref-email-card" style="border-left:4px solid #c0272d">'
-    +'<div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
-    +'<div class="ref-email-row"><span class="ref-email-tag to">TO</span><div style="flex:1;flex-wrap:wrap">'+fmtEmailPills(em.com.to)+'</div></div>'
-    +'<div class="ref-email-row"><span class="ref-email-tag cc">CC</span><div style="flex:1;flex-wrap:wrap">'+fmtEmailPills(em.com.cc)+'</div></div>'
+    +'<div class="ref-email-card" style="border-left:4px solid #c0272d;text-align:center">'
+    +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:10px;text-align:center">📧 Complaint</div>'
+    +'<div class="ref-email-row" style="justify-content:center;flex-wrap:wrap;gap:4px"><span class="ref-email-tag to">TO</span>'+fmtEmailPills(emCfg.com.to)+'</div>'
+    +'<div class="ref-email-row" style="justify-content:center;flex-wrap:wrap;gap:4px;margin-top:6px"><span class="ref-email-tag cc">CC</span>'+fmtEmailPills(emCfg.com.cc)+'</div>'
     +'</div>'
     +'</div>';
 
-  // Detect columns based on sheet type
+  // Detect columns
   const cols = Object.keys(arr[0]||{});
-  const sh = sheetName.trim().toLowerCase();
-  const findCol = (...kws) => cols.find(c=>kws.some(kw=>c.toLowerCase().includes(kw.toLowerCase())))||'';
+  const findCol = (...kws) => cols.find(c=>kws.some(kw=>c.toLowerCase().replace(/[^a-z]/g,'').includes(kw.toLowerCase().replace(/[^a-z]/g,''))))||'';
 
   let codeCol, regionCol, branchCol, districtCol, phoneCol, advisorCol, emailCol, hoursCol;
   let govNameCol='', govPhoneCol='', govEmailCol='';
 
-  if(sh==='body shop'){
-    codeCol    = findCol('cc no','cc#','code');
+  if(shKey==='body shop'){
+    codeCol    = findCol('ccno','code');
     regionCol  = findCol('region');
     branchCol  = findCol('name');
     districtCol= findCol('district','address');
@@ -1554,137 +1576,148 @@ function renderNissanBranchTab(arr, sheetName, brand){
     advisorCol = findCol('manager');
     emailCol   = findCol('email');
     hoursCol   = findCol('working','hours');
-  } else {
-    codeCol    = findCol('branch code','cc no');
+  } else if(shKey==='spare parts'){
+    codeCol    = findCol('branchcode','code');
     regionCol  = findCol('region');
     branchCol  = findCol('branch');
-    districtCol= findCol('district','address','city');
-    phoneCol   = findCol('phone','contact','mobile');
-    advisorCol = findCol("advisor");
+    districtCol= cols.find(c=>c==='District'||c==='district')||findCol('district');
+    phoneCol   = findCol('phone');
+    advisorCol = findCol('advisor');
     emailCol   = findCol('email');
     hoursCol   = findCol('working','hours');
-
-    // Government Sales Orders — only in Showroom (columns 10,11,12)
-    if(sh==='showroom'){
-      const allCols = Object.keys(arr[0]||{});
-      // Col index 9 = Name, 10 = Number, 11 = Email (0-indexed)
-      govNameCol  = allCols[9]||'';
-      govPhoneCol = allCols[10]||'';
-      govEmailCol = allCols[11]||'';
+  } else {
+    codeCol    = findCol('branchcode','code');
+    regionCol  = findCol('region');
+    branchCol  = findCol('branch');
+    districtCol= findCol('district','address');
+    phoneCol   = findCol('phone');
+    advisorCol = findCol('advisor');
+    emailCol   = findCol('email');
+    hoursCol   = findCol('working','hours');
+    // Government Sales cols (Showroom only) — col index 9,10,11
+    if(shKey==='showroom'){
+      const allC=Object.keys(arr[0]);
+      govNameCol =allC[9]||''; govPhoneCol=allC[10]||''; govEmailCol=allC[11]||'';
     }
   }
 
-  const getV = (r,c) => c?String(r[c]||'').trim():'';
+  const getV=(r,c)=>c?String(r[c]||'').trim():'';
 
   // Region colors
-  const REGION_ORDER = ['West','Western','Central','Center','Centeral','East','Eastern','South','North'];
-  const REGION_COLORS = {
-    'West':'#c0272d','Western':'#c0272d',
-    'Central':'#1565c0','Center':'#1565c0','Centeral':'#1565c0',
-    'East':'#2e7d32','Eastern':'#2e7d32',
-    'South':'#6a1b9a','North':'#e65100'
-  };
+  const RCOLS={West:'#c0272d',Western:'#c0272d',Central:'#1565c0',Center:'#1565c0',Centeral:'#1565c0',East:'#2e7d32',Eastern:'#2e7d32',South:'#6a1b9a',North:'#e65100'};
+  const RORD=['West','Western','Central','Center','Centeral','East','Eastern','South','North'];
 
-  // Group by region
-  const regions = {};
+  // Group by region — skip rows with no region or empty
+  const regions={};
+  const govRows=[];
+
   arr.forEach(r=>{
-    const reg = getV(r,regionCol)||'Other';
-    if(reg==='Other'||!reg) return; // skip "Other"
+    const reg=getV(r,regionCol);
+    if(!reg) return;
+    // Skip header-like rows (where branch code is not a number)
+    const code=getV(r,codeCol);
+    const name=getV(r,branchCol);
+    if(!code&&!name) return;
+    if(reg==='Other'||reg.toLowerCase()==='other') return;
+
+    // Check if this is a gov row (no branch code, just gov data)
+    if(!code&&!name&&govNameCol&&getV(r,govNameCol)) { govRows.push(r); return; }
+
     if(!regions[reg]) regions[reg]=[];
     regions[reg].push(r);
   });
 
-  const sortedRegions = Object.keys(regions).sort((a,b)=>{
-    const ai=REGION_ORDER.indexOf(a), bi=REGION_ORDER.indexOf(b);
-    return (ai===-1?99:ai)-(bi===-1?99:bi);
+  const sortedRegs=Object.keys(regions).sort((a,b)=>{
+    return (RORD.indexOf(a)===-1?99:RORD.indexOf(a))-(RORD.indexOf(b)===-1?99:RORD.indexOf(b));
   });
 
-  const regionsHTML = sortedRegions.map((reg,regIdx)=>{
-    const rows = regions[reg];
-    const col_color = REGION_COLORS[reg]||'#888';
-    const hoursRaw = getV(rows[0], hoursCol);
-    const hoursDisplay = hoursRaw.split('\n').map(s=>s.trim()).filter(Boolean).join(' · ');
-    const regId = 'reg_'+brand+'_'+reg.replace(/\s/g,'_')+'_'+regIdx;
+  // Government Sales — collect all unique gov persons per branch
+  const makeCard=(b,col_color)=>{
+    const persons=b.persons.filter(p=>p.advisor||p.phone||p.email);
+    const personsHTML=persons.map(p=>
+      '<div style="padding:5px 0;border-bottom:1px solid #f5f5f5;text-align:center">'
+      +(p.advisor?'<div style="font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:2px">👤 '+p.advisor+'</div>':'')
+      +(p.phone&&p.phone!=='-'?'<div style="font-size:12px;color:#333;margin-bottom:2px">📞 '+p.phone+'</div>':'')
+      +(p.email?'<div style="font-size:11px;margin-bottom:2px"><a href="mailto:'+p.email+'" style="color:#1565c0;text-decoration:none">✉️ '+p.email+'</a></div>':'')
+      +'</div>'
+    ).join('');
 
-    // Group by branch
-    const branches = {};
+    const govHTML=b.gov&&b.gov.length
+      ?'<div style="margin-top:8px;padding:8px;background:#fff8e1;border-radius:6px;border-left:3px solid #f9a825;text-align:center">'
+        +'<div style="font-size:10px;font-weight:700;color:#f9a825;text-transform:uppercase;margin-bottom:5px">🏢 Gov Sales</div>'
+        +b.gov.map(g=>
+          '<div style="padding:3px 0">'
+          +(g.name?'<div style="font-size:12px;font-weight:600;color:#1a1a2e">👤 '+g.name+'</div>':'')
+          +(g.phone&&g.phone!=='-'?'<div style="font-size:12px;color:#333">📞 '+g.phone+'</div>':'')
+          +(g.email?'<div style="font-size:11px"><a href="mailto:'+g.email+'" style="color:#1565c0;text-decoration:none">✉️ '+g.email+'</a></div>':'')
+          +'</div>'
+        ).join('')
+        +'</div>'
+      :'';
+
+    return '<div class="ref-card" style="text-align:center">'
+      +'<div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:6px">'
+      +(b.code?'<span style="font-size:11px;font-weight:700;color:'+col_color+';background:'+col_color+'18;padding:2px 8px;border-radius:6px">'+b.code+'</span>':'')
+      +'<span style="font-size:13px;font-weight:700;color:#1a1a2e">'+b.name+'</span>'
+      +'</div>'
+      +(b.district?'<div style="font-size:11px;color:#888;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #f0f0f0">📍 '+b.district+'</div>':'')
+      +personsHTML
+      +govHTML
+      +'</div>';
+  };
+
+  const regionsHTML=sortedRegs.map((reg,ri)=>{
+    const rows=regions[reg];
+    const col_color=RCOLS[reg]||'#888';
+    const hoursRaw=getV(rows[0],hoursCol);
+    const hoursDisp=hoursRaw.split('\n').map(s=>s.trim()).filter(s=>s).join(' · ');
+    const regId='rgn_'+brand+'_'+ri;
+
+    // Build branches
+    const branches={};
     rows.forEach(r=>{
-      const code = fmtNum(getV(r,codeCol));
-      const name = getV(r,branchCol);
-      const key  = (code||name)+'||'+name;
-      if(!branches[key]){
-        branches[key]={code, name, district:getV(r,districtCol), persons:[], govPerson:null};
-      }
-      const phone   = fmtNum(getV(r,phoneCol));
-      const advisor = getV(r,advisorCol);
-      const email   = getV(r,emailCol);
-      // Government sales
-      const govName  = govNameCol  ? getV(r,govNameCol)  : '';
-      const govPhone = govPhoneCol ? fmtNum(getV(r,govPhoneCol)) : '';
-      const govEmail = govEmailCol ? getV(r,govEmailCol) : '';
-
-      if(advisor||phone||email){
-        branches[key].persons.push({advisor,phone,email});
-      }
-      if(govName && !branches[key].govPerson){
-        branches[key].govPerson = {name:govName, phone:govPhone, email:govEmail};
+      const code=fmtNum(getV(r,codeCol));
+      const name=getV(r,branchCol);
+      if(!code&&!name) return;
+      const key=(code||'x')+'__'+(name||'x');
+      if(!branches[key]) branches[key]={code,name,district:getV(r,districtCol),persons:[],gov:[]};
+      const phone=fmtNum(getV(r,phoneCol));
+      const advisor=getV(r,advisorCol);
+      const email=getV(r,emailCol);
+      if(advisor||phone||email) branches[key].persons.push({advisor,phone,email});
+      // Gov
+      if(govNameCol){
+        const gn=getV(r,govNameCol),gp=fmtNum(getV(r,govPhoneCol)),ge=getV(r,govEmailCol);
+        if(gn&&gn!=='Name'&&!branches[key].gov.some(g=>g.name===gn)) branches[key].gov.push({name:gn,phone:gp,email:ge});
       }
     });
 
-    const cards = Object.values(branches).map(b=>{
-      const personsHTML = b.persons.map(p=>
-        '<div style="padding:5px 0;border-bottom:1px solid #f5f5f5">'
-        +(p.advisor?'<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#1a1a2e;font-weight:600;margin-bottom:2px"><span>👤</span>'+p.advisor+'</div>':'')
-        +(p.phone?'<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#333;margin-bottom:2px"><span>📞</span>'+p.phone+'</div>':'')
-        +(p.email?'<div style="display:flex;align-items:center;gap:6px;font-size:11px;margin-bottom:2px"><span>✉️</span><a href="mailto:'+p.email+'" style="color:#1565c0;text-decoration:none">'+p.email+'</a></div>':'')
-        +'</div>'
-      ).join('');
+    const bList=Object.values(branches).filter(b=>b.name);
+    const cards=bList.map(b=>makeCard(b,col_color)).join('');
 
-      const govHTML = b.govPerson
-        ? '<div style="margin-top:8px;padding:8px;background:#fff8e1;border-radius:6px;border-left:3px solid #f9a825">'
-          +'<div style="font-size:10px;font-weight:700;color:#f9a825;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">🏢 Government Sales</div>'
-          +(b.govPerson.name?'<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#1a1a2e;font-weight:600;margin-bottom:2px"><span>👤</span>'+b.govPerson.name+'</div>':'')
-          +(b.govPerson.phone?'<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#333;margin-bottom:2px"><span>📞</span>'+b.govPerson.phone+'</div>':'')
-          +(b.govPerson.email?'<div style="display:flex;align-items:center;gap:6px;font-size:11px"><span>✉️</span><a href="mailto:'+b.govPerson.email+'" style="color:#1565c0;text-decoration:none">'+b.govPerson.email+'</a></div>':'')
-          +'</div>'
-        : '';
-
-      return '<div class="ref-card">'
-        +'<div style="margin-bottom:6px;display:flex;align-items:center;gap:8px">'
-        +(b.code?'<span style="font-size:11px;font-weight:700;color:'+col_color+';background:'+col_color+'18;padding:2px 8px;border-radius:6px">'+b.code+'</span>':'')
-        +'<span style="font-size:13px;font-weight:700;color:#1a1a2e">'+b.name+'</span>'
-        +'</div>'
-        +(b.district?'<div style="display:flex;align-items:flex-start;gap:5px;font-size:11px;color:#888;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #f0f0f0"><span>📍</span>'+b.district+'</div>':'')
-        +personsHTML
-        +govHTML
-        +'</div>';
-    }).join('');
-
-    return '<div style="margin-bottom:16px">'
-      // Region header - clickable
-      +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:12px;padding:8px 14px;background:'+col_color+'12;border-radius:8px;border-left:4px solid '+col_color+';margin-bottom:10px;cursor:pointer;user-select:none">'
+    return '<div style="margin-bottom:14px">'
+      +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+col_color+'12;border-radius:8px;border-left:4px solid '+col_color+';cursor:pointer;user-select:none;margin-bottom:10px">'
       +'<span style="font-size:13px;font-weight:700;color:'+col_color+';text-transform:uppercase;letter-spacing:.04em">'+reg+'</span>'
-      +'<span style="font-size:11px;color:#aaa">('+Object.keys(branches).length+' branches)</span>'
-      +(hoursDisplay?'<span style="font-size:11px;color:#888;margin-left:auto">🕐 '+hoursDisplay+'</span>':'')
-      +'<span id="ico_'+regId+'" style="margin-left:8px;color:'+col_color+';font-size:12px">▼</span>'
+      +'<span style="font-size:11px;color:#aaa">('+bList.length+' branches)</span>'
+      +(hoursDisp?'<span style="font-size:11px;color:#888;margin-left:auto">🕐 '+hoursDisp+'</span>':'')
+      +'<span id="ico_'+regId+'" style="margin-left:8px;color:'+col_color+'">▼</span>'
       +'</div>'
-      +'<div id="'+regId+'">'
-      +'<div class="ref-cards-grid">'+cards+'</div>'
-      +'</div>'
+      +'<div id="'+regId+'"><div class="ref-cards-grid">'+cards+'</div></div>'
       +'</div>';
   }).join('');
 
-  return emailHeader + regionsHTML;
+  return emailHeader+regionsHTML;
 }
 
 function toggleRegion(id){
   const el=document.getElementById(id);
   const ico=document.getElementById('ico_'+id);
   if(!el)return;
-  const isOpen=el.style.display!=='none';
-  el.style.display=isOpen?'none':'block';
-  if(ico)ico.textContent=isOpen?'▶':'▼';
+  const open=el.style.display!=='none';
+  el.style.display=open?'none':'block';
+  if(ico)ico.textContent=open?'▶':'▼';
 }
+
 
 
 function buildEmailSection(arr){
