@@ -1676,7 +1676,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
     // Build branches
     const branches={};
     rows.forEach(r=>{
-      const code=fmtNum(gv(r,codeCol));
+      const code=fmtNum(getV(r,codeCol));
       const rawName=getV(r,branchCol);
       // For Spare Parts: include city in branch name
       const cityCol2=cols.find(c=>c==='City'||c==='city')||'';
