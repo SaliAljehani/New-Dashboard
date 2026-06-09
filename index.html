@@ -1501,7 +1501,7 @@ async function vinSearch(brand, value){
 }
 
 
-// Branch tab rendering — Nissan/Stellantis
+// Branch tab — Nissan/Stellantis
 const BRANCH_VALID_REGIONS = new Set([
   'West','Western','Central','Center','Centeral',
   'East','Eastern','South','Southern','North','Northern'
@@ -1522,12 +1522,11 @@ function renderNissanBranchTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 
   const fmtNum = n => {
-    const s = String(n||'').trim();
-    if(!s || s==='-') return '';
-    if(/[eE]\+/.test(s)){ const p=parseFloat(s); if(!isNaN(p)) return String(Math.round(p)); }
+    const s=String(n||'').trim();
+    if(!s||s==='-') return '';
+    if(s.toUpperCase().includes('E+')){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}
     return s;
   };
-
   const mkPill = e => {
     const s=e.trim(); if(!s) return '';
     if(s.includes('@')) return '<a href="mailto:'+s+'" style="display:inline-flex;background:#e0f7f4;color:#00695c;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;margin:2px">'+s+'</a>';
@@ -1535,7 +1534,6 @@ function renderNissanBranchTab(arr, sheetName, brand){
   };
   const pills = v => v.split(',').map(mkPill).filter(Boolean).join('');
 
-  // Email config per sheet
   const sh = sheetName.trim().toLowerCase();
   const isSP = sh.includes('spare');
   const isBP = sh.includes('body');
@@ -1560,34 +1558,28 @@ function renderNissanBranchTab(arr, sheetName, brand){
     +'</div>'
     +'</div>';
 
-  // Detect columns
+  // Detect columns — new structure: Regions, City, Branch Code - Branch, District, Phone, Advisor, Email, Hours
   const cols = Object.keys(arr[0]||{});
   const fc = (...kws) => cols.find(c=>kws.some(k=>c.toLowerCase().replace(/[^a-z]/g,'').includes(k.toLowerCase().replace(/[^a-z]/g,''))))||'';
 
-  const codeCol    = isBP ? fc('ccno','code') : fc('branchcode','code');
-  const regionCol  = fc('region');
-  const branchCol  = isBP ? fc('name') : cols.find(c=>c==='Branch')||fc('branch');
-  const distCol    = isBP ? fc('district','address') : cols.find(c=>c==='District')||fc('district');
-  const phoneCol   = fc('phone','contact');
-  const advisorCol = isBP ? fc('manager') : fc('advisor');
-  const emailCol   = fc('email');
-  const hoursCol   = fc('working','hours');
-  const cityCol    = isSP ? (cols.find(c=>c==='City'||c==='city')||'') : '';
-
-  // Gov Sales cols (Showroom only — cols 9,10,11)
-  const govNameCol  = (!isBP&&!isSP&&sh.includes('show')) ? (cols[9]||'')  : '';
-  const govPhoneCol = (!isBP&&!isSP&&sh.includes('show')) ? (cols[10]||'') : '';
-  const govEmailCol = (!isBP&&!isSP&&sh.includes('show')) ? (cols[11]||'') : '';
+  const regionCol  = cols[0] || fc('region');
+  const cityCol    = cols[1] || fc('city');
+  const branchCol  = cols[2] || fc('branch');  // "Branch Code - Branch"
+  const distCol    = cols[3] || fc('district','address');
+  const phoneCol   = cols[4] || fc('phone');
+  const advisorCol = cols[5] || fc('advisor','manager');
+  const emailCol   = cols[6] || fc('email');
+  const hoursCol   = cols[7] || fc('working','hours');
 
   const gv = (r,c) => c ? String(r[c]||'').trim() : '';
 
-  // Group rows into valid regions only
+  // Group by region — skip invalid rows
   const regions = {};
   arr.forEach(r => {
     const reg = gv(r, regionCol);
     if(!reg || !BRANCH_VALID_REGIONS.has(reg)) return;
-    const name = gv(r, branchCol);
-    if(!name) return;
+    const branch = gv(r, branchCol);
+    if(!branch) return;
     if(!regions[reg]) regions[reg] = [];
     regions[reg].push(r);
   });
@@ -1620,10 +1612,11 @@ function renderNissanBranchTab(arr, sheetName, brand){
       : '';
 
     return '<div class="ref-card">'
-      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'
-      +(b.code?'<span style="font-size:11px;font-weight:700;color:'+col_color+';background:'+col_color+'18;padding:2px 8px;border-radius:6px;white-space:nowrap">'+b.code+'</span>':'')
-      +'<span style="font-size:13px;font-weight:700;color:#1a1a2e">'+b.name+'</span>'
-      +'</div>'
+      // Branch name (already includes code)
+      +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:4px">'+b.name+'</div>'
+      // City
+      +(b.city?'<div style="font-size:11px;color:'+col_color+';font-weight:600;margin-bottom:6px">📌 '+b.city+'</div>':'')
+      // District
       +(b.district?'<div style="font-size:11px;color:#888;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #f0f0f0">📍 '+b.district+'</div>':'')
       +persHTML
       +govHTML
@@ -1635,37 +1628,25 @@ function renderNissanBranchTab(arr, sheetName, brand){
     const col_color = BRANCH_REGION_COLORS[reg]||'#888';
     const hoursRaw = gv(rows[0], hoursCol);
     const hoursDisp = hoursRaw.split('\n').map(s=>s.trim()).filter(Boolean).join(' · ');
-    const regId = 'rgn_'+brand+'_'+reg+'_'+ri;
+    const regId = 'rgn_'+brand+'_'+reg.replace(/\s/g,'')+'_'+ri;
 
-    // Group by branch — use code+name as key
+    // Group by branch name (already has code in it)
     const branches = {};
     rows.forEach(r => {
-      const code = fmtNum(gv(r, codeCol));
-      const rawName = gv(r, branchCol);
-      const city = cityCol ? gv(r, cityCol) : '';
-      // For Spare Parts: prepend city if different from branch name
-      const name = rawName
-        ? (city && !rawName.toLowerCase().includes(city.toLowerCase()) ? city+' — '+rawName : rawName)
-        : '';
+      const name = gv(r, branchCol);
       if(!name) return;
-      // Key: use name only (not code) to avoid duplicates when code repeats
-      const key = name;
-      if(!branches[key]) branches[key] = {code, name, district:gv(r,distCol), persons:[], gov:[]};
+      if(!branches[name]) branches[name] = {
+        name, city:gv(r,cityCol), district:gv(r,distCol), persons:[], gov:[]
+      };
       const phone   = fmtNum(gv(r, phoneCol));
       const advisor = gv(r, advisorCol);
       const email   = gv(r, emailCol);
-      if(advisor||phone||email) branches[key].persons.push({advisor,phone,email});
-      // Gov Sales
-      if(govNameCol){
-        const gn=gv(r,govNameCol), gp=fmtNum(gv(r,govPhoneCol)), ge=gv(r,govEmailCol);
-        if(gn && gn!=='Name' && !branches[key].gov.some(g=>g.name===gn))
-          branches[key].gov.push({name:gn, phone:gp, email:ge});
-      }
+      if(advisor||phone||email) branches[name].persons.push({advisor,phone,email});
     });
 
     const bList = Object.values(branches);
     return '<div style="margin-bottom:14px">'
-      +'<div onclick="toggleRegion(\x27'+regId+'\x27)" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+col_color+'12;border-radius:8px;border-left:4px solid '+col_color+';cursor:pointer;user-select:none;margin-bottom:10px">'
+      +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+col_color+'12;border-radius:8px;border-left:4px solid '+col_color+';cursor:pointer;user-select:none;margin-bottom:10px">'
       +'<span style="font-size:13px;font-weight:700;color:'+col_color+';text-transform:uppercase;letter-spacing:.04em">'+reg+'</span>'
       +'<span style="font-size:11px;color:#aaa">('+bList.length+' branches)</span>'
       +(hoursDisp?'<span style="font-size:11px;color:#888;margin-left:auto">🕐 '+hoursDisp+'</span>':'')
@@ -1686,6 +1667,7 @@ function toggleRegion(id){
   el.style.display=open?'none':'block';
   if(ico)ico.textContent=open?'▶':'▼';
 }
+
 
 
 function buildEmailSection(arr){
