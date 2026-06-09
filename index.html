@@ -1676,8 +1676,12 @@ function renderNissanBranchTab(arr, sheetName, brand){
     // Build branches
     const branches={};
     rows.forEach(r=>{
-      const code=fmtNum(getV(r,codeCol));
-      const name=getV(r,branchCol);
+      const code=fmtNum(gv(r,codeCol));
+      const rawName=getV(r,branchCol);
+      // For Spare Parts: include city in branch name
+      const cityCol2=cols.find(c=>c==='City'||c==='city')||'';
+      const cityVal=cityCol2?getV(r,cityCol2):'';
+      const name=rawName?(cityVal&&!rawName.toLowerCase().includes(cityVal.toLowerCase())?cityVal+' — '+rawName:rawName):'';
       if(!code&&!name) return;
       const key=(code||'x')+'__'+(name||'x');
       if(!branches[key]) branches[key]={code,name,district:getV(r,districtCol),persons:[],gov:[]};
