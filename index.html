@@ -553,7 +553,7 @@ const TEAM_LOGOS={
   'BAIC':'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gAQTGF2YzU4LjkxLjEwMAD/2wBDAA4KCw0LCQ4NDA0QDw4RFiQXFhQUFiwgIRokNC43NjMuMjI6QVNGOj1OPjIySGJJTlZYXV5dOEVmbWVabFNbXVn/2wBDAQ8QEBYTFioXFypZOzI7WVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVn/wAARCABQAI4DASIAAhEBAxEB/8QAGwABAAMAAwEAAAAAAAAAAAAAAAQFBgECAwf/xAAyEAABBAADBAgGAgMAAAAAAAAAAQIDBAUREgYhMVQTFBUWIlGR0UFhcZOhsSPwUoKU/8QAGgEBAAMBAQEAAAAAAAAAAAAAAAECBAMFBv/EACQRAQACAQMDBAMAAAAAAAAAAAABAgMEERJBUaETFSGRFDFx/9oADAMBAAIRAxEAPwD6SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8JbdaF+iWxDG7jk56Ip07Rpc5X+633C3C09EoEXtGlzlf7rfcdo0ucr/db7g4W7JQIvaNLnK/3W+47Rpc5X+633Bwt2LmIVKCMW3YZDrz06l45EXvFhHPw+pn9prS2r7GwwyzxRs3PjiV7VVd65Km7yKbTJyVn/mX3KzL0cWipakWtM7ty3aDCnORrb0Kqq5IiLxLQwWB1nT4tXa+rMxrXa1V8GlN2/ib0mGbU4qYrRWoACWUAAAAADg5IWL2upYVasZ5LHGqt+vBPzkE1rNpiI6vme0FrruOW5UXNuvS36JuT9EizsziNaCSVzYXdE1HPYyRFc1PPIgYWkTsTrdZkRkKSIr3O4ZJvU0s20UNjGZIY2QQ1ppWtlsqqqr2N/Wafs5vp8lsmPjTFHxEKifZy5Wc1s0tRj3KiaFmRF3/ACO79lr7JYoldWWSVfC1JUzXcq5/TcT9orVXEL0OVqk+F8yZuZGqPazh4nfFPkSO16Xea5f6ePo69fRXT/NcuCfknaHH18/GJ67T0+lHPs5iEL4Gtjjm6dysYsT0cmacUXy4L6HW9gF2lB0zuhljR/RuWJ6O0u8lNLDjlCPEaWieKKotd3gY3dDKuSqq/wB8zyw7q0deHC607b08k62ZnRp4cm70TNfiqo38idkfk5o+bR4/v1s0OFz1qtFlRqqnVYsnrlu3cfye7MTrvaxU1+N2lPD8f6pXsoTpJGisdoWLVJ81zVcvXI82VLTWx/wvzZG5f9lMfrZe3h5c48dpmd1s3Ea7q6zNVytRyNyy35qSylbhskdqujWr0Ko10nkjkLs04bXtvzhnyVrG3GQAHZyAAAAAAqtocOnxXDuq15GR6norlfnvRPhu+eRagL0vNLRaP3DA9xbnN1/Rw7i3ebr+jjfAjjDZ7lqO/hge4t3m6/o4dxbvN1/RxvgOMHuWo7+GB7i3ebr+ji52a2bkwe1NPPLHI5zNDdCLu35rx+iGlA2hTJrs2Ss0tPxIcHIJYwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH//2Q=='
 };
 
-const SHEET_GIDS={'Agent':1123791969,'Agent Performance':810269545,'Attendance Data':1979596727,'Call Data':444446733,'Reference':910779499,'Weekly Calls & Break':1429234410,'Daily Off Schedule':1979894769,'Announcement Board':536403637,'Escalation':1827857824,'Employee of the MONTH':1892899267};
+const SHEET_GIDS={'Agent':1123791969,'Agent Performance':810269545,'Attendance Data':1979596727,'Call Data':444446733,'Reference':910779499,'Weekly Calls & Break':1429234410,'Daily Off Schedule':1979894769,'Announcement Board':536403637,'Escalation':1827857824,'Escalation ':1827857824,'Employee of the MONTH':1892899267};
 async function loadSheet(name){
   const gid = SHEET_GIDS[name] || '';
   const url = `https://script.google.com/macros/s/AKfycbyHVElDCcVJDftggbBkeTOh7jOCfXD782HzhOXB5byc8kyh3pdHf7UgfGlpKyPAdaQtiA/exec?id=${SHEET_ID}&gid=${gid}`;
@@ -1195,6 +1195,45 @@ function rf(){
 
 
 // ── DIRECTORY DATA ──────────────────────────────────────────────────────
+let SCHEDULE_DATA = [];
+let ANNOUNCEMENTS = [];
+let ESCALATIONS = [];
+let EOM_DATA = [];
+
+async function loadSchedule(){
+  const rows = await fetchCSV('Daily Off Schedule');
+  SCHEDULE_DATA = rows;
+  renderRoster();
+}
+
+async function loadRoster(){
+  // No separate roster sheet — handled by Schedule
+}
+
+async function loadAnnouncements(){
+  const rows = await fetchCSV('Announcement Board');
+  ANNOUNCEMENTS = rows;
+}
+
+async function loadEscalations(){
+  const rows = await fetchCSV('Escalation');
+  ESCALATIONS = rows;
+}
+
+async function loadEOM(){
+  const rows = await fetchCSV('Employee of the MONTH');
+  EOM_DATA = rows;
+}
+
+async function fetchCSV(sheetName){
+  try{
+    const gid = SHEET_GIDS[sheetName]||SHEET_GIDS[sheetName.trim()]||'';
+    const url = `https://script.google.com/macros/s/AKfycbyHVElDCcVJDftggbBkeTOh7jOCfXD782HzhOXB5byc8kyh3pdHf7UgfGlpKyPAdaQtiA/exec?id=${SHEET_ID}&gid=${gid}`;
+    const res = await fetch(url);
+    return await res.json();
+  }catch(e){ console.warn('fetchCSV failed:', sheetName, e); return []; }
+}
+
 let AGENTS_DIR = [];
 
 async function loadAgentDir(){
@@ -1894,33 +1933,26 @@ function copyNissanAppForm(){
 function renderSMSTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 
-  // Detect section by first key of each row
+  // All data comes under 3S keys — sections separated by header rows
+  // Header rows: values equal their key names (e.g. "PAC Appointment SMS EN" == key "3S Appointment SMS EN")
   var sections = {s3:[], pac:[], body:[]};
-  var current = null;
+  var current = 's3';
 
   arr.forEach(function(r){
-    var firstKey = Object.keys(r)[0]||'';
-    var fk = firstKey.toLowerCase();
-    if(fk.indexOf('3s') >= 0){ current='s3'; return; }
-    if(fk.indexOf('pac') >= 0){ current='pac'; return; }
-    if(fk.indexOf('body') >= 0){ current='body'; return; }
-    if(!Object.values(r).some(function(v){return v&&String(v).trim();})) return;
-    if(current) sections[current].push(r);
+    var vals = Object.values(r);
+    var v0 = vals[0] ? String(vals[0]).trim() : '';
+    // Detect header rows by value content
+    if(v0.indexOf('PAC Appointment') >= 0){ current='pac'; return; }
+    if(v0.indexOf('Body Shop') >= 0 || v0.indexOf('Body & Paint') >= 0){ current='body'; return; }
+    if(!vals.some(function(v){return v&&String(v).trim();})) return;
+    sections[current].push(r);
   });
 
-  // For each row, find keys by partial match
-  function findVal(r, hints){
-    var keys = Object.keys(r);
-    for(var h=0; h<hints.length; h++){
-      for(var k=0; k<keys.length; k++){
-        if(keys[k].toLowerCase().indexOf(hints[h].toLowerCase()) >= 0){
-          var v = r[keys[k]];
-          if(v && String(v).trim()) return String(v).trim();
-        }
-      }
-    }
-    return '';
-  }
+  var keys = Object.keys(arr[0]||{});
+  // k0=ApptEN, k1=ApptAR, k2=Branch, k3=LocEN, k4=LocAR
+  var k0=keys[0]||'', k1=keys[1]||'', k2=keys[2]||'', k3=keys[3]||'', k4=keys[4]||'';
+
+  function gv(r,k){ var v=r[k]; return v?String(v).trim():''; }
 
   function mkCopyBtn(id){
     return '<button onclick="copySMS(&apos;'+id+'&apos;)" style="padding:3px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer;margin-top:4px">&#128203; Copy</button>'
@@ -1957,34 +1989,16 @@ function renderSMSTab(arr, sheetName, brand){
       +'</div></div>';
   }
 
-  var cards3S=sections.s3.map(function(r,i){
-    return mkCard(
-      findVal(r,['branch','city']),
-      findVal(r,['appt en','appointment en','appt_en','sms en']),
-      findVal(r,['appt ar','appointment ar','appt_ar','sms ar']),
-      findVal(r,['loc en','location en','loc_en']),
-      findVal(r,['loc ar','location ar','loc_ar']),
-      'ss'+i,'#c0272d');
+  var cards3S = sections.s3.map(function(r,i){
+    return mkCard(gv(r,k2), gv(r,k0), gv(r,k1), gv(r,k3), gv(r,k4), 'ss'+i, '#c0272d');
   }).join('');
 
-  var cardsPAC=sections.pac.map(function(r,i){
-    return mkCard(
-      findVal(r,['branch','city']),
-      findVal(r,['appt en','appointment en','appt_en','sms en']),
-      findVal(r,['appt ar','appointment ar','appt_ar','sms ar']),
-      findVal(r,['loc en','location en','loc_en']),
-      findVal(r,['loc ar','location ar','loc_ar']),
-      'pp'+i,'#e65100');
+  var cardsPAC = sections.pac.map(function(r,i){
+    return mkCard(gv(r,k2), gv(r,k0), gv(r,k1), gv(r,k3), gv(r,k4), 'pp'+i, '#e65100');
   }).join('');
 
-  var cardsBody=sections.body.map(function(r,i){
-    return mkCard(
-      findVal(r,['branch','city'])||('Branch '+(i+1)),
-      '',
-      '',
-      findVal(r,['en','loc en','location en']),
-      findVal(r,['ar','loc ar','location ar']),
-      'bb'+i,'#37474f');
+  var cardsBody = sections.body.map(function(r,i){
+    return mkCard('Branch '+(i+1), '', '', gv(r,k0), gv(r,k1), 'bb'+i, '#37474f');
   }).join('');
 
   function sec(id,title,color,cards){
@@ -2180,6 +2194,278 @@ function toggleRefSection(bodyId,iconId){
   el.style.display=isOpen?'none':'block';
   if(ico)ico.textContent=isOpen?'▼':'▲';
 }
+
+// ── SCHEDULE / ROSTER ──────────────────────────────────────────────────
+function renderRoster(){
+  const el = document.getElementById('page5');
+  if(!el) return;
+  if(!SCHEDULE_DATA.length){ el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">⏳ Loading schedule...</div>'; return; }
+
+  const rows = SCHEDULE_DATA;
+  const keys = Object.keys(rows[0]||{});
+  const dateKey = keys[0]; // "Date - Agent Name"
+  const agents = keys.slice(1);
+
+  // Today highlight
+  const today = new Date().toISOString().split('T')[0];
+
+  let html = '<div style="overflow-x:auto;padding:4px">'
+    +'<div style="font-size:16px;font-weight:700;color:#c0272d;margin-bottom:12px;text-align:center">📅 Daily Off Schedule</div>'
+    +'<table style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px">'
+    +'<thead><tr style="background:#c0272d;color:#fff">'
+    +'<th style="padding:8px 12px;text-align:left;position:sticky;left:0;background:#c0272d">Date</th>';
+  agents.forEach(function(a){
+    html += '<th style="padding:8px 10px;text-align:center;white-space:nowrap">'+a+'</th>';
+  });
+  html += '</tr></thead><tbody>';
+
+  rows.forEach(function(r,i){
+    var dateVal = r[dateKey]||'';
+    var dateStr = dateVal ? String(dateVal).split(' ')[0].split('T')[0] : '';
+    var isToday = dateStr === today;
+    var rowBg = isToday ? '#fff3cd' : (i%2===0?'#fff':'#f9f9f9');
+    html += '<tr style="background:'+rowBg+'">'
+      +'<td style="padding:7px 12px;font-weight:'+(isToday?'700':'500')+';color:'+(isToday?'#c0272d':'#333')+';position:sticky;left:0;background:'+rowBg+';white-space:nowrap">'+dateStr+(isToday?' 📍':'')+'</td>';
+    agents.forEach(function(a){
+      var v = String(r[a]||'').trim();
+      var isOff = v.toLowerCase()==='off';
+      html += '<td style="padding:7px 10px;text-align:center">'
+        +'<span style="display:inline-block;padding:2px 10px;border-radius:10px;font-weight:600;font-size:11px;background:'+(isOff?'#ffebee':'#e8f5e9')+';color:'+(isOff?'#c0272d':'#2e7d32')+'">'
+        +v+'</span></td>';
+    });
+    html += '</tr>';
+  });
+
+  html += '</tbody></table></div>';
+  el.innerHTML = html;
+}
+
+// ── ANNOUNCEMENTS ──────────────────────────────────────────────────────
+function renderAnnouncements(){
+  const el = document.getElementById('page6');
+  if(!el) return;
+  if(!ANNOUNCEMENTS.length){ el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">📢 No announcements yet.</div>'; return; }
+
+  const priorityColor = {'High':'#c0272d','Medium':'#e65100','Low':'#2e7d32'};
+
+  let html = '<div style="max-width:800px;margin:0 auto;padding:8px">'
+    +'<div style="font-size:16px;font-weight:700;color:#c0272d;margin-bottom:16px;text-align:center">📢 Announcement Board</div>';
+
+  ANNOUNCEMENTS.filter(function(r){ return Object.values(r).some(function(v){return v&&String(v).trim();}); })
+  .forEach(function(r){
+    var keys=Object.keys(r);
+    var date=String(r[keys[0]]||'').split('T')[0].split(' ')[0];
+    var title=String(r[keys[1]]||'').trim();
+    var msg=String(r[keys[2]]||'').trim();
+    var priority=String(r[keys[3]]||'').trim();
+    var color=priorityColor[priority]||'#1565c0';
+    html += '<div style="background:#fff;border-radius:12px;border:1px solid #eee;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:12px;overflow:hidden">'
+      +'<div style="background:'+color+'12;border-left:4px solid '+color+';padding:12px 16px;display:flex;align-items:center;justify-content:space-between">'
+      +'<div style="font-size:14px;font-weight:700;color:'+color+'">'+title+'</div>'
+      +'<div style="display:flex;gap:8px;align-items:center">'
+      +(priority?'<span style="font-size:10px;font-weight:700;padding:2px 10px;background:'+color+';color:#fff;border-radius:10px">'+priority+'</span>':'')
+      +'<span style="font-size:11px;color:#999">'+date+'</span>'
+      +'</div></div>'
+      +(msg?'<div style="padding:12px 16px;font-size:13px;color:#444;line-height:1.7;white-space:pre-wrap">'+msg+'</div>':'')
+      +'</div>';
+  });
+
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ── ESCALATIONS ────────────────────────────────────────────────────────
+function renderEscalations(){
+  const el = document.getElementById('page7');
+  if(!el) return;
+  if(!ESCALATIONS.length){ el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">⚠️ No escalations found.</div>'; return; }
+
+  const statusColor={'Done':'#2e7d32','Pending':'#e65100','Open':'#c0272d','In Progress':'#1565c0'};
+
+  const teams=[...new Set(ESCALATIONS.map(function(r){var k=Object.keys(r)[0];return String(r[k]||'').trim();}))].filter(Boolean);
+  let activeTeam = teams[0]||'';
+
+  function buildTable(team){
+    var filtered = ESCALATIONS.filter(function(r){
+      var k=Object.keys(r)[0]; return String(r[k]||'').trim()===team;
+    });
+    if(!filtered.length) return '<div style="text-align:center;padding:30px;color:#aaa">No escalations for this team.</div>';
+    var keys=Object.keys(filtered[0]);
+    var cols=keys.slice(1); // skip Team column
+    var html='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
+      +'<thead><tr style="background:#c0272d;color:#fff">';
+    cols.forEach(function(c){ html+='<th style="padding:8px 12px;text-align:left;white-space:nowrap">'+c+'</th>'; });
+    html+='</tr></thead><tbody>';
+    filtered.forEach(function(r,i){
+      var status=String(r[keys[3]]||'').trim();
+      var color=statusColor[status]||'#555';
+      html+='<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+'">';
+      cols.forEach(function(c,ci){
+        var v=String(r[c]||'').trim();
+        if(c.toLowerCase()==='status'){
+          html+='<td style="padding:7px 12px"><span style="padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700;background:'+color+'18;color:'+color+'">'+v+'</span></td>';
+        } else if(c.toLowerCase()==='date'){
+          html+='<td style="padding:7px 12px;color:#666;white-space:nowrap">'+v.split('T')[0].split(' ')[0]+'</td>';
+        } else {
+          html+='<td style="padding:7px 12px;color:#444">'+v+'</td>';
+        }
+      });
+      html+='</tr>';
+    });
+    html+='</tbody></table></div>';
+    return html;
+  }
+
+  var teamTabs='<div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">';
+  teams.forEach(function(t){
+    teamTabs+='<button onclick="renderEscalationTeam(''+t+'')" id="etab_'+t.replace(/\s/g,'_')+'" style="padding:7px 18px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:'+(t===activeTeam?'#c0272d':'#f0f0f0')+';color:'+(t===activeTeam?'#fff':'#555')+'">'+t+'</button>';
+  });
+  teamTabs+='</div>';
+
+  el.innerHTML='<div style="padding:4px">'
+    +'<div style="font-size:16px;font-weight:700;color:#c0272d;margin-bottom:12px;text-align:center">⚠️ Escalation Tracker</div>'
+    +teamTabs
+    +'<div id="escalation_table">'+buildTable(activeTeam)+'</div>'
+    +'</div>';
+
+  window._escalationData = ESCALATIONS;
+  window._escalationTeams = teams;
+}
+
+function renderEscalationTeam(team){
+  window._escalationTeams.forEach(function(t){
+    var btn=document.getElementById('etab_'+t.replace(/\s/g,'_'));
+    if(btn){ btn.style.background=t===team?'#c0272d':'#f0f0f0'; btn.style.color=t===team?'#fff':'#555'; }
+  });
+  var filtered=window._escalationData.filter(function(r){
+    var k=Object.keys(r)[0]; return String(r[k]||'').trim()===team;
+  });
+  var keys=Object.keys(filtered[0]||{});
+  var cols=keys.slice(1);
+  var statusColor={'Done':'#2e7d32','Pending':'#e65100','Open':'#c0272d','In Progress':'#1565c0'};
+  var html='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
+    +'<thead><tr style="background:#c0272d;color:#fff">';
+  cols.forEach(function(c){ html+='<th style="padding:8px 12px;text-align:left;white-space:nowrap">'+c+'</th>'; });
+  html+='</tr></thead><tbody>';
+  filtered.forEach(function(r,i){
+    var status=String(r[keys[3]]||'').trim();
+    var color=statusColor[status]||'#555';
+    html+='<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+'">';
+    cols.forEach(function(c){
+      var v=String(r[c]||'').trim();
+      if(c.toLowerCase()==='status'){
+        html+='<td style="padding:7px 12px"><span style="padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700;background:'+color+'18;color:'+color+'">'+v+'</span></td>';
+      } else if(c.toLowerCase()==='date'){
+        html+='<td style="padding:7px 12px;color:#666;white-space:nowrap">'+v.split('T')[0].split(' ')[0]+'</td>';
+      } else {
+        html+='<td style="padding:7px 12px;color:#444">'+v+'</td>';
+      }
+    });
+    html+='</tr>';
+  });
+  html+='</tbody></table></div>';
+  document.getElementById('escalation_table').innerHTML=html;
+}
+
+// ── EMPLOYEE OF THE MONTH ──────────────────────────────────────────────
+function renderEOM(){
+  const el = document.getElementById('page8');
+  if(!el) return;
+  if(!EOM_DATA.length){ el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">🏆 No data yet.</div>'; return; }
+
+  const keys = Object.keys(EOM_DATA[0]||{});
+  const teamKey=keys[0], monthKey=keys[1], nameKey=keys[2];
+
+  // Group by month then team
+  const months=[...new Set(EOM_DATA.map(function(r){return String(r[monthKey]||'').split('T')[0].split(' ')[0].substring(0,7);}))].filter(Boolean).sort().reverse();
+  const teams=[...new Set(EOM_DATA.map(function(r){return String(r[teamKey]||'').trim();}))].filter(Boolean);
+
+  let activeMonth=months[0]||'';
+
+  function buildEOM(month){
+    var filtered=EOM_DATA.filter(function(r){ return String(r[monthKey]||'').includes(month); });
+    var byTeam={};
+    filtered.forEach(function(r){ var t=String(r[teamKey]||'').trim(); if(!byTeam[t]) byTeam[t]=[]; byTeam[t].push(r); });
+
+    var html='';
+    Object.keys(byTeam).forEach(function(team){
+      var rows=byTeam[team];
+      html+='<div style="background:#fff;border-radius:12px;border:1px solid #eee;box-shadow:0 2px 10px rgba(0,0,0,.07);margin-bottom:16px;overflow:hidden">'
+        +'<div style="background:linear-gradient(135deg,#c0272d,#e53935);padding:12px 16px">'
+        +'<div style="font-size:14px;font-weight:700;color:#fff">🏆 '+team+'</div>'
+        +'</div>'
+        +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px">'
+        +'<thead><tr style="background:#f9f9f9">';
+      Object.keys(rows[0]).slice(2).forEach(function(c){
+        html+='<th style="padding:7px 10px;color:#555;font-weight:700;border-bottom:2px solid #eee;white-space:nowrap;text-align:center">'+c+'</th>';
+      });
+      html+='</tr></thead><tbody>';
+      rows.forEach(function(r,i){
+        html+='<tr style="background:'+(i===0?'#fff9c4':(i%2===0?'#fff':'#f9f9f9'))+'">';
+        Object.keys(r).slice(2).forEach(function(c){
+          var v=String(r[c]||'').trim();
+          html+='<td style="padding:7px 10px;text-align:center;color:#333'+(i===0?';font-weight:700':'')+'">'+v+'</td>';
+        });
+        html+='</tr>';
+      });
+      html+='</tbody></table></div></div>';
+    });
+    return html;
+  }
+
+  var monthTabs='<div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;justify-content:center">';
+  months.slice(0,6).forEach(function(m){
+    monthTabs+='<button onclick="renderEOMMonth(''+m+'')" id="emtab_'+m+'" style="padding:6px 16px;border-radius:16px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:'+(m===activeMonth?'#c0272d':'#f0f0f0')+';color:'+(m===activeMonth?'#fff':'#555')+'">'+m+'</button>';
+  });
+  monthTabs+='</div>';
+
+  el.innerHTML='<div style="padding:4px">'
+    +'<div style="font-size:16px;font-weight:700;color:#c0272d;margin-bottom:12px;text-align:center">🏆 Employee of the Month</div>'
+    +monthTabs
+    +'<div id="eom_content">'+buildEOM(activeMonth)+'</div>'
+    +'</div>';
+
+  window._eomData=EOM_DATA;
+  window._eomMonths=months;
+}
+
+function renderEOMMonth(month){
+  window._eomMonths.forEach(function(m){
+    var btn=document.getElementById('emtab_'+m);
+    if(btn){ btn.style.background=m===month?'#c0272d':'#f0f0f0'; btn.style.color=m===month?'#fff':'#555'; }
+  });
+  var filtered=window._eomData.filter(function(r){
+    var k=Object.keys(r)[1]; return String(r[k]||'').includes(month);
+  });
+  var keys=Object.keys(filtered[0]||{});
+  var byTeam={};
+  filtered.forEach(function(r){ var t=String(r[keys[0]]||'').trim(); if(!byTeam[t]) byTeam[t]=[]; byTeam[t].push(r); });
+  var html='';
+  Object.keys(byTeam).forEach(function(team){
+    var rows=byTeam[team];
+    html+='<div style="background:#fff;border-radius:12px;border:1px solid #eee;box-shadow:0 2px 10px rgba(0,0,0,.07);margin-bottom:16px;overflow:hidden">'
+      +'<div style="background:linear-gradient(135deg,#c0272d,#e53935);padding:12px 16px">'
+      +'<div style="font-size:14px;font-weight:700;color:#fff">🏆 '+team+'</div>'
+      +'</div>'
+      +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px">'
+      +'<thead><tr style="background:#f9f9f9">';
+    Object.keys(rows[0]).slice(2).forEach(function(c){
+      html+='<th style="padding:7px 10px;color:#555;font-weight:700;border-bottom:2px solid #eee;white-space:nowrap;text-align:center">'+c+'</th>';
+    });
+    html+='</tr></thead><tbody>';
+    rows.forEach(function(r,i){
+      html+='<tr style="background:'+(i===0?'#fff9c4':(i%2===0?'#fff':'#f9f9f9'))+'">';
+      Object.keys(r).slice(2).forEach(function(c){
+        var v=String(r[c]||'').trim();
+        html+='<td style="padding:7px 10px;text-align:center;color:#333'+(i===0?';font-weight:700':'')+'">'+v+'</td>';
+      });
+      html+='</tr>';
+    });
+    html+='</tbody></table></div></div>';
+  });
+  document.getElementById('eom_content').innerHTML=html;
+}
+
 
 async function renderRef(){
   REF_CURRENT_BRAND=null;
