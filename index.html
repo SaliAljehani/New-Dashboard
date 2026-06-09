@@ -1921,10 +1921,15 @@ async function renderRef(){
     // LINKS
     const linksArr=Array.isArray(linksData)?linksData:(linksData.rows||[]);
     const linkCards=linksArr.map(r=>{
+      const keys=Object.keys(r);
+      // Find by column name first, fallback to index
+      const nameKey = keys.find(k=>k.toLowerCase().includes('program')||k.toLowerCase().includes('name'))||'';
+      const urlKey  = keys.find(k=>k.toLowerCase().includes('link')||k.toLowerCase().includes('url'))||'';
+      const passKey = keys.find(k=>k.toLowerCase().includes('pass')||k.toLowerCase().includes('password'))||'';
       const v=Object.values(r).map(x=>String(x||'').trim());
-      const name=v[1]||v[0]||'';
-      const url=v[2]||'';
-      const pass=v[3]||'';
+      const name = nameKey?String(r[nameKey]||'').trim() : (v[1]||v[0]||'');
+      const url  = urlKey ?String(r[urlKey]||'').trim()  : (v[2]||'');
+      const pass = passKey?String(r[passKey]||'').trim() : (v[3]||'');
       if(!name)return'';
       const isUrl=url.startsWith('http');
       const isFile=/\.(xlsx|pdf|docx)$/i.test(url);
