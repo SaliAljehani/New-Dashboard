@@ -1546,12 +1546,12 @@ function renderNissanBranchTab(arr, sheetName, brand){
 
   const emailHdr =
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">'
-    +'<div class="ref-email-card" style="border-left:4px solid #00695c">'
+    +'<div class="ref-email-card" style="border-left:4px solid #00695c;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
     +'<div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+pills(emCfg.req.to)+'</div>'
     +'<div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+pills(emCfg.req.cc)+'</div>'
     +'</div>'
-    +'<div class="ref-email-card" style="border-left:4px solid #c0272d">'
+    +'<div class="ref-email-card" style="border-left:4px solid #c0272d;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
     +'<div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+pills(emCfg.com.to)+'</div>'
     +'<div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+pills(emCfg.com.cc)+'</div>'
@@ -1611,16 +1611,16 @@ function renderNissanBranchTab(arr, sheetName, brand){
         +'</div>'
       : '';
 
-    return '<div class="ref-card">'
-      // Branch name (already includes code)
-      +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:4px">'+b.name+'</div>'
-      // City
-      +(b.city?'<div style="font-size:11px;color:'+col_color+';font-weight:600;margin-bottom:6px">📌 '+b.city+'</div>':'')
-      // District
-      +(b.district?'<div style="font-size:11px;color:#888;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #f0f0f0">📍 '+b.district+'</div>':'')
+    return '<div class="ref-card" style="padding:0;overflow:hidden">'
+      // Branch name — colored header box
+      +'<div style="background:'+col_color+'18;border-bottom:2px solid '+col_color+'22;padding:10px 14px;margin-bottom:0">'
+      +'<div style="font-size:13px;font-weight:700;color:'+col_color+'">'+b.name+'</div>'
+      +'<div style="font-size:11px;color:#666;margin-top:4px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">'+(b.city?'<span>📌 '+b.city+'</span>':'')+(b.district?'<span>📍 '+b.district+'</span>':'')+'</div>'
+      +'</div>'
+      +'<div style="padding:10px 14px">'
       +persHTML
       +govHTML
-      +'</div>';
+      +'</div></div>';
   };
 
   const regionsHTML = sortedRegs.map((reg, ri) => {
