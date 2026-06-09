@@ -1687,12 +1687,12 @@ function renderPACTab(arr){
   keys.forEach(function(k){
     var kl=k.toLowerCase().replace(/[^a-z]/g,'');
     if(kl==='city') cityKey=k;
-    else if(kl.includes('branchcode')) branchKey=k;
-    else if(kl.includes('branchmanager')) bmKey=k;
+    else if(kl.includes('branch')&&!kl.includes('manager')) branchKey=k;
+    else if(kl.includes('manager')) bmKey=k;
     else if(kl.includes('contact')) phoneKey=k;
-    else if(kl.includes('bmemail')) emailKey=k;
+    else if(kl.includes('email')) emailKey=k;
     else if(kl.includes('location')) locKey=k;
-    else if(kl.includes('workinghours')) hoursKey=k;
+    else if(kl.includes('working')||kl.includes('hours')) hoursKey=k;
   });
   function gv(r,k){return k&&r[k]?String(r[k]).trim():'';}
   function mkRow(ico,val){
