@@ -1588,12 +1588,13 @@ function renderNissanBranchTab(arr, sheetName, brand){
 
   const regionCol  = cols[0] || fc('region');
   const branchCol  = fc('branch') || fc('name') || cols[1];
+  const serviceCol = fc('service advisor','service') || '';
   const distCol    = fc('location','district','address') || cols[2];
-  const advisorCol = fc('bm','advisor','service advisor','manager') || cols[3];
+  const phoneCol   = fc('phone','mobile','contact','number') || '';
+  const advisorCol = fc('branch manager','bm','manager') || fc('advisor') || cols[5];
   const emailCol   = fc('email') || cols[4];
   const hoursCol   = fc('working','hours') || cols[5];
-  const gpsCol     = fc('gps','map') || cols[cols.length-1];
-  const phoneCol   = fc('phone','mobile','contact') || '';
+  const gpsCol     = fc('gps','locaton','map') || cols[cols.length-1];
   const cityCol    = fc('city') || '';
 
   // City translation
@@ -1649,12 +1650,14 @@ function renderNissanBranchTab(arr, sheetName, brand){
     return '<div class="ref-card" style="padding:0;overflow:hidden">'
       // Branch name — colored header box
       +'<div style="background:'+col_color+'18;border-bottom:2px solid '+col_color+'22;padding:10px 14px;margin-bottom:0;text-align:center">'
-      +'<div style="font-size:13px;font-weight:700;color:'+col_color+'">'+b.name+'</div>'
+      +'<div style="font-size:13px;font-weight:700;color:'+col_color+'">'+b.name.replace(/\s*\(.*?\)\s*/g,'').replace(/\n/g,' ').trim()+'</div>'
       +'<div style="font-size:11px;color:#666;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">'+(b.city?'<span>📌 '+arCity(b.city)+'</span>':'')+(b.district?'<span>📍 '+b.district+'</span>':'')+'</div>'
       +'</div>'
       +'<div style="padding:10px 14px;text-align:center">'
+      +(b.service?'<div style="display:inline-block;background:'+col_color+'15;color:'+col_color+';padding:2px 10px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px">'+b.service+'</div>':'')
       +persHTML
       +govHTML
+      +(b.phone&&!b.persons.some(p=>p.phone===b.phone)?'<div style="font-size:12px;margin-bottom:5px">📞 '+b.phone+'</div>':'')
       +(b.gps&&b.gps.startsWith('http')?'<div style="margin-top:8px"><a href="'+b.gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
       +(b.hours?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+b.hours+'</div>':'')
       +'</div></div>';
@@ -1674,7 +1677,8 @@ function renderNissanBranchTab(arr, sheetName, brand){
       if(!name) return;
       if(!branches[name]) branches[name] = {
         name, city:gv(r,cityCol), district:gv(r,distCol), persons:[], gov:[],
-        gps:gv(r,gpsCol), hours:gv(r,hoursCol)
+        gps:gv(r,gpsCol), hours:gv(r,hoursCol),
+        service:gv(r,serviceCol), phone:fmtNum(gv(r,phoneCol))
       };
       const phone   = fmtNum(gv(r, phoneCol));
       const advisor = gv(r, advisorCol);
@@ -1694,9 +1698,9 @@ function renderNissanBranchTab(arr, sheetName, brand){
       +'</div>';
   }).join('');
 
-  // Gov Sales & Area Manager — only for Showroom tab
+  // Gov Sales & Area Manager — only for Nissan Showroom tab
   var govAreaSection = '';
-  if(sh.includes('showroom') || sh === 'showroom'){
+  if(brand === 'nissan' && (sh.includes('showroom') || sh === 'showroom')){
     govAreaSection =
       '<div style="margin-top:10px;margin-bottom:6px">'
       // Gov Sales button
@@ -2271,7 +2275,8 @@ async function renderRefBrand(brand,tabIdx){
       container.innerHTML=renderNissanBranchTab(arr, sheetName, brand);
       return;
     }
-    if(brand==='stellantis' && branchTabs.some(t=>sheetName.trim()===t.trim())){
+    const stellantisBranchTabs=['Showroom','Showroom ','PMS','Spare Parts','Spare Parts ','Body Shop'];
+    if(brand==='stellantis' && stellantisBranchTabs.some(t=>sheetName.trim()===t.trim())){
       container.innerHTML=renderNissanBranchTab(arr, sheetName, brand);
       return;
     }
