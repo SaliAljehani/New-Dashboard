@@ -1927,8 +1927,6 @@ function renderStellantisSparePartsTab(arr){
   const fmtEmails=(v,bg,tc)=>String(v||'').split(/,/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return s?'<span style="font-size:10px;font-weight:600;margin:1px">'+s+'</span>':'';return '<a href="mailto:'+s+'" style="display:inline-flex;background:'+bg+';color:'+tc+';padding:2px 7px;border-radius:5px;font-size:10px;font-weight:600;text-decoration:none;margin:1px">'+s+'</a>';}).filter(Boolean).join('');
 
   // Separate branch rows from email section
-  // Branch rows = rows where column 1 (city) has a real city name (not empty, not TO/CC)
-  const VALID_CITIES = new Set(['Riyadh','Jeddah','Madinah','Makkah','Dammam','Khobar','Jubail','Hail','Hail - Tabouk','Tabouk']);
   const branchRows=[], ccMap={};
   let ccSection=false;
   
@@ -1937,16 +1935,22 @@ function renderStellantisSparePartsTab(arr){
     const c=String(r[cityKey]||'').trim();
     const e=String(r[advisorKey]||'').trim();
     
-    // Detect CC section start
-    if(b.toLowerCase().includes('cc')) { ccSection=true; if(c&&e) ccMap[c]=e; return; }
-    if(ccSection){ if(c&&e) ccMap[c]=e; else if(b&&e) ccMap[b]=e; return; }
+    // CC section starts with row containing 'CC' in first column
+    if(b.toLowerCase().startsWith('cc')) { 
+      ccSection=true; 
+      if(c&&e) ccMap[c]=e; 
+      return; 
+    }
+    if(ccSection){ 
+      if(c&&e) ccMap[c]=e; 
+      return; 
+    }
     
-    // Skip email section rows
-    if(b==='TO'||b===''||b.toLowerCase().includes('for ')||b.toLowerCase().includes('عملاء')) return;
-    if(b===branchKey) return; // skip header row
+    // Skip non-branch rows
+    if(!b || b===branchKey || b==='TO' || b.startsWith('ل') || b.toLowerCase().includes('for ')) return;
     
     // Valid branch row
-    if(b) branchRows.push(r);
+    branchRows.push(r);
   });
 
   // Simple email header
