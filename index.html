@@ -1659,7 +1659,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
       +govHTML
       +(b.phone&&!b.persons.some(p=>p.phone===b.phone)?'<div style="font-size:12px;margin-bottom:5px">📞 '+b.phone+'</div>':'')
       +(b.gps&&b.gps.startsWith('http')?'<div style="margin-top:8px"><a href="'+b.gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-      +(b.hours&&b.hours.trim()!==hoursRaw.trim()?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+b.hours+'</div>':'')
+      +(b.hours&&b.hours.trim()!==(hoursRaw||'').trim()?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+b.hours+'</div>':'')
       +'</div></div>';
   };
 
