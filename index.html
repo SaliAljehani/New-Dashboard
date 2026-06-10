@@ -2467,7 +2467,7 @@ async function renderRefBrand(brand,tabIdx){
       container.innerHTML=renderNissanBranchTab(arr, sheetName, brand);
       return;
     }
-    const stellantisBranchTabs=['Showroom','Showroom ','PMS','Spare Parts','Spare Parts ','Body Shop'];
+    const stellantisBranchTabs=['Showroom','Showroom ','Body Shop'];
     if(brand==='stellantis' && stellantisBranchTabs.some(t=>sheetName.trim()===t.trim())){
       container.innerHTML=renderNissanBranchTab(arr, sheetName, brand);
       return;
