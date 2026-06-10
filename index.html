@@ -1659,7 +1659,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
       +govHTML
       +(b.phone&&!b.persons.some(p=>p.phone===b.phone)?'<div style="font-size:12px;margin-bottom:5px">📞 '+b.phone+'</div>':'')
       +(b.gps&&b.gps.startsWith('http')?'<div style="margin-top:8px"><a href="'+b.gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-      +(b.hours?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+b.hours+'</div>':'')
+      +(b.hours&&b.hours.trim()!==hoursRaw.trim()?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+b.hours+'</div>':'')
       +'</div></div>';
   };
 
@@ -1910,6 +1910,117 @@ function renderSalesTeamTab(arr){
       }).join('')
       +'</tbody></table></div></div>';
   }).join('')+'</div>';
+}
+
+function renderStellantisPMSTab(arr, sheetName){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const color='#1565c0';
+  const keys=Object.keys(arr[0]||{});
+
+  const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
+
+  // Separate branch rows from email section rows
+  const VALID_REGIONS=new Set(['Western','Central','Eastern','Southern','Northern','West','East','South','North']);
+  const branchRows=arr.filter(r=>{
+    const reg=String(r[keys[0]]||'').trim();
+    return reg && VALID_REGIONS.has(reg);
+  });
+
+  // Email section — rows after branches
+  const emailRows=arr.filter(r=>{
+    const reg=String(r[keys[0]]||'').trim();
+    const name=String(r[keys[1]]||'').trim();
+    return (reg==='TO'||reg==='CC'||name==='for Complaint'||name==='for Request'||reg==='');
+  });
+
+  // Build email cards
+  let complaint={to:'',cc:''}, request={to:'',cc:''};
+  let current='';
+  emailRows.forEach(r=>{
+    const reg=String(r[keys[0]]||'').trim();
+    const name=String(r[keys[1]]||'').trim();
+    if(name.toLowerCase().includes('complaint')) current='complaint';
+    else if(name.toLowerCase().includes('request')) current='request';
+    else if(reg==='TO'){
+      if(current==='complaint') complaint.to=name;
+      else if(current==='request') request.to=name;
+    } else if(reg==='CC'){
+      if(current==='complaint') complaint.cc=name;
+      else if(current==='request') request.cc=name;
+    }
+  });
+
+  const fmtEmails=v=>String(v||'').split(/,/).map(e=>{const s=e.trim();if(!s)return'';return s.includes('@')?'<a href="mailto:'+s+'" style="display:inline-flex;background:#fef2f2;color:#c0272d;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;margin:2px">'+s+'</a>':'<span style="font-size:11px;font-weight:600;margin:2px">'+s+'</span>';}).filter(Boolean).join('');
+
+  const emailHtml=(complaint.to||complaint.cc||request.to||request.cc)?
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
+    +'<div style="font-size:12px;font-weight:700;color:#c0272d;margin-bottom:8px">📧 Complaint</div>'
+    +(complaint.to?'<div style="margin-bottom:6px"><span style="background:#c0272d;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:4px">TO</span>'+fmtEmails(complaint.to)+'</div>':'')
+    +(complaint.cc?'<div><span style="background:#1565c0;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:4px">CC</span>'+fmtEmails(complaint.cc)+'</div>':'')
+    +'</div>'
+    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
+    +'<div style="font-size:12px;font-weight:700;color:#2e7d32;margin-bottom:8px">📧 Request</div>'
+    +(request.to?'<div style="margin-bottom:6px"><span style="background:#c0272d;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:4px">TO</span>'+fmtEmails(request.to)+'</div>':'')
+    +(request.cc?'<div><span style="background:#1565c0;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:4px">CC</span>'+fmtEmails(request.cc)+'</div>':'')
+    +'</div></div>'
+    :'';
+
+  // Group by region
+  const regions={};
+  branchRows.forEach(r=>{
+    const reg=String(r[keys[0]]||'').trim();
+    if(!regions[reg])regions[reg]=[];
+    regions[reg].push(r);
+  });
+
+  const REGION_ORDER=['Western','Central','Eastern','Southern','Northern'];
+  const REGION_COLORS={Western:'#c0272d',Central:'#1565c0',Eastern:'#2e7d32',Southern:'#6a1b9a',Northern:'#e65100'};
+
+  const regionsHTML=REGION_ORDER.filter(r=>regions[r]).map(reg=>{
+    const rows=regions[reg];
+    const rc=REGION_COLORS[reg]||color;
+    // Get common hours for region header
+    const commonHours=rows[0]?String(rows[0][keys[7]]||'').trim():'';
+
+    return '<div style="margin-bottom:16px">'
+      +'<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';margin-bottom:10px">'
+      +'<span style="font-size:13px;font-weight:700;color:'+rc+';text-transform:uppercase">'+reg+'</span>'
+      +'<span style="font-size:11px;color:#aaa">('+rows.length+' branches)</span>'
+      +(commonHours?'<span style="font-size:10px;color:#888;margin-left:auto">'+commonHours+'</span>':'')
+      +'</div>'
+      +'<div class="ref-cards-grid">'+rows.map(r=>{
+        const branch=String(r[keys[1]]||'').trim();
+        const service=String(r[keys[2]]||'').trim();
+        const addr=String(r[keys[3]]||'').trim();
+        const phone=fmtNum(String(r[keys[4]]||'').trim());
+        const bm=String(r[keys[5]]||'').trim();
+        const email=String(r[keys[6]]||'').trim();
+        const hours=String(r[keys[7]]||'').trim();
+        const gps=String(r[keys[8]]||'').trim();
+        const hoursDiff=hours && hours!==commonHours;
+
+        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
+          +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
+          +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
+          +(addr?'<div style="font-size:11px;color:#888;margin-top:4px">📍 '+addr+'</div>':'')
+          +'</div>'
+          +'<div style="padding:10px 14px;text-align:center">'
+          +(service?'<div style="display:inline-block;background:'+rc+'15;color:'+rc+';padding:2px 10px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px">'+service+'</div>':'')
+          +(bm?'<div style="font-size:12px;margin-bottom:5px">👤 '+bm+'</div>':'')
+          +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
+          +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">✉️ '+email+'</a></div>':'')
+          +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
+          +(hoursDiff?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+hours+'</div>':'')
+          +'</div></div>';
+      }).join('')+'</div></div>';
+  }).join('');
+
+  return '<div>'+emailHtml+regionsHTML+'</div>';
+}
+
+function renderStellantisPACTab(arr){
+  return renderPACTab(arr);
 }
 
 function renderPACTab(arr){
@@ -2282,6 +2393,10 @@ async function renderRefBrand(brand,tabIdx){
     }
     if(brand==='stellantis' && sheetName.trim()==='PAC'){
       container.innerHTML=renderPACTab(arr);
+      return;
+    }
+    if(brand==='stellantis' && (sheetName.trim()==='PMS' || sheetName.trim()==='Spare Parts' || sheetName.trim()==='Spare Parts ')){
+      container.innerHTML=renderStellantisPMSTab(arr, sheetName.trim());
       return;
     }
     if(brand==='stellantis' && sheetName.trim()==='Tristar'){
