@@ -1274,7 +1274,7 @@ const REF_SHEETS = {
   },
   stellantis: {
     id: '104CXGHd1raokgGijhvHgt6AI2gdsqzANBH74Ehm01dM',
-    tabs: ['Showroom','PMS','Spare Parts ','PAC','Appointment Script & Warranty','Tristar','Showroom Sales Team']
+    tabs: ['Showroom ','PMS','Spare Parts ','PAC','Appointment Script & Warranty','Tristar','Showroom Sales Team']
   },
   baic: {
     id: '1FQaNEkC-gKFIJLT5hBE9qzBL7pXf_m5Aot35h622hR4',
@@ -1587,14 +1587,14 @@ function renderNissanBranchTab(arr, sheetName, brand){
   const fc = (...kws) => cols.find(c=>kws.some(k=>c.toLowerCase().replace(/[^a-z]/g,'').includes(k.toLowerCase().replace(/[^a-z]/g,''))))||'';
 
   const regionCol  = cols[0] || fc('region');
-  const branchCol  = fc('branch','name') || cols[1];
+  const branchCol  = fc('branch') || fc('name') || cols[1];
   const distCol    = fc('location','district','address') || cols[2];
   const advisorCol = fc('bm','advisor','service advisor','manager') || cols[3];
-  const emailCol   = fc('email to','email') || cols[4];
+  const emailCol   = fc('email') || cols[4];
   const hoursCol   = fc('working','hours') || cols[5];
   const gpsCol     = fc('gps','map') || cols[cols.length-1];
-  const phoneCol   = fc('phone','mobile','number') || cols[4];
-  const cityCol    = fc('city') || cols[1];
+  const phoneCol   = fc('phone','mobile','contact') || '';
+  const cityCol    = fc('city') || '';
 
   // City translation
   const CITY_AR = {
