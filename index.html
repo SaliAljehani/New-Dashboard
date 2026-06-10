@@ -1588,13 +1588,13 @@ function renderNissanBranchTab(arr, sheetName, brand){
 
   const regionCol  = cols[0] || fc('region');
   const branchCol  = fc('branch','name') || cols[1];
-  const distCol    = fc('district','address') || cols[3];
+  const distCol    = fc('location','district','address') || cols[2];
+  const advisorCol = fc('bm','advisor','service advisor','manager') || cols[3];
+  const emailCol   = fc('email to','email') || cols[4];
+  const hoursCol   = fc('working','hours') || cols[5];
+  const gpsCol     = fc('gps','map') || cols[cols.length-1];
   const phoneCol   = fc('phone','mobile','number') || cols[4];
-  const advisorCol = fc('advisor','service advisor') || fc('manager') || cols[5];
-  const emailCol   = fc('email to','email') || cols[6];
-  const hoursCol   = fc('working','hours') || cols[7];
   const cityCol    = fc('city') || cols[1];
-  const gpsCol     = fc('gps','location','map') || cols[cols.length-1];
 
   // City translation
   const CITY_AR = {
