@@ -1861,18 +1861,12 @@ function renderPACTab(arr){
 }
 
 function renderNissanAppTab(arr){
-  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const rows=arr.map(r=>Object.values(r).map(v=>String(v||'').trim()));
-
-  // Fixed emails and conditions from the sheet
+  // All data is static — no need to read from sheet
   const toEmails='sara.alwaqdany@nissan-me.ae, arwa.alharbi@nissan-me.ae';
   const ccEmail='marwah.albishri@nissan-me.ae';
   const conditions='My Nissan App for Vehicle model name: only (Nissan Patrol).\nGrades: only (Platinum, Titanium, Pro-4X, NISMO).\nModel year: (2025–2026).\nPurchase source: Petromin or Manahil only.\n\nMy Nissan Ownership - for all other models';
-
   const mkPill=e=>{const s=e.trim();if(!s||!s.includes('@'))return '';return '<a href="mailto:'+s+'" style="display:inline-flex;background:#fff3e0;color:#e65100;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;margin:2px">'+s+'</a>';};
   const fmtPills=v=>v.split(/,/).map(mkPill).filter(Boolean).join('');
-
-  // User fields: VIN + rows 3-11
   const userFields=['VIN','Customre Name','Phone number','City','Model Year','User ID or Email (ID for App login)','Phone Device Model','Phone OS (iOS or Android, version of it)','Nissan Mobile App Version'];
   const inquiryFields=['Title','Description'];
   const mandatory=new Set(['User ID or Email (ID for App login)','Phone Device Model','Phone OS (iOS or Android, version of it)','Nissan Mobile App Version']);
