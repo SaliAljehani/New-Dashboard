@@ -1375,41 +1375,7 @@ function makeRefTable(rows, vinFilter=''){
   }).join('');
 }
 
-async function renderRefBrand(brand, tabIdx){
-  REF_ACTIVE_TABS[brand] = tabIdx;
-  const cfg = REF_SHEETS[brand];
-  const sheetName = cfg.tabs[tabIdx];
-  const containerId = `refTab_${brand}`;
-  const container = document.getElementById(containerId);
-  if(!container) return;
-  
-  container.innerHTML = '<div style="text-align:center;padding:20px;color:#aaa">⏳ Loading...</div>';
-  
-  try{
-    const data = await fetchSheet(cfg.id, sheetName);
-    
-    if(brand === 'baicRecall'){
-      const vinVal = VIN_FILTERS[brand] || '';
-      container.innerHTML = `
-        <div class="vin-search-box">
-          <input class="vin-inp" type="text" placeholder="🔍 Search by VIN / Frame Number..." 
-                 value="${vinVal}"
-                 oninput="vinSearch('${brand}', this.value)"
-                 id="vin_${brand}">
-          <button class="vin-search-btn" onclick="vinSearch('${brand}', document.getElementById('vin_${brand}').value)">Search</button>
-        </div>
-        <div class="vin-result-count" id="vinCount_${brand}"></div>
-        <div id="vinTable_${brand}">${makeRefTable(data, vinVal)}</div>`;
-        
-      const rows = vinVal ? data.rows.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(vinVal.toLowerCase()))) : data.rows;
-      document.getElementById(`vinCount_${brand}`).textContent = vinVal ? `Found: ${rows.length} records` : '';
-    } else {
-      container.innerHTML = makeRefTable(Array.isArray(data)?data:(data.rows||[]));
-    }
-  } catch(e){
-    container.innerHTML = `<div style="color:#c0272d;padding:20px">Error loading data: ${e.message}</div>`;
-  }
-}
+
 
 async function vinSearch(brand, value){
   VIN_FILTERS[brand] = value;
@@ -1482,33 +1448,7 @@ function toggleRefBrand(id, btn){
   }
 }
 
-async function renderRefBrand(brand, tabIdx){
-  REF_ACTIVE_TABS[brand] = tabIdx;
-  const cfg = REF_SHEETS[brand];
-  const sheetName = cfg.tabs[tabIdx];
-  const container = document.getElementById(`refTab_${brand}`);
-  if(!container) return;
-  container.innerHTML = `<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading ${sheetName}…</div>`;
-  try{
-    const data = await fetchSheet(cfg.id, sheetName);
-    const arr = Array.isArray(data) ? data : (data.rows||[]);
-    if(brand === 'baicRecall'){
-      const vinVal = VIN_FILTERS[brand] || '';
-      container.innerHTML = `
-        <div class="vin-search-box">
-          <input class="vin-inp" type="text" placeholder="🔍 Search by VIN / Frame Number..."
-                 value="${vinVal}" oninput="vinSearch('${brand}',this.value)" id="vin_${brand}">
-          <button class="vin-search-btn" onclick="vinSearch('${brand}',document.getElementById('vin_${brand}').value)">Search</button>
-        </div>
-        <div class="vin-result-count" id="vinCount_${brand}"></div>
-        <div id="vinTable_${brand}">${makeRefTable(arr, vinVal)}</div>`;
-    } else {
-      container.innerHTML = makeRefTable(arr);
-    }
-  } catch(e){
-    container.innerHTML = `<div style="color:#c0272d;padding:20px;text-align:center">⚠️ Error: ${e.message}</div>`;
-  }
-}
+
 
 async function vinSearch(brand, value){
   VIN_FILTERS[brand] = value;
@@ -2103,6 +2043,109 @@ function renderStellantisPMSTab(arr, sheetName){
 function renderStellantisPACTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#1565c0';
+  const keys=Object.keys(arr[0]||{});
+  const cityKey=keys[0], branchKey=keys[1], hoursKey=keys[2];
+  const mgrKey=keys[3], mobileKey=keys[4], emailKey=keys[5], gpsKey=keys[6];
+
+  const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
+
+  // Separate branch rows from RM section
+  const branchRows=[], rmRows=[];
+  let rmSection=false;
+
+  arr.forEach(r=>{
+    const city=String(r[cityKey]||'').trim();
+    const branch=String(r[branchKey]||'').trim();
+    const hours=String(r[hoursKey]||'').trim();
+    if(!city && branch && !hours.includes('AM') && !hours.includes('PM') && !hours.includes(':')) {
+      rmSection=true;
+    }
+    if(rmSection){ if(branch) rmRows.push(r); return; }
+    if(city && branch) branchRows.push(r);
+  });
+
+  // Email header
+  const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
+    +'<div style="font-size:12px;font-weight:700;color:#c0272d;margin-bottom:6px">📧 Complaint TO</div>'
+    +'<div style="font-size:11px;color:#555">Manager Branch + <a href="mailto:CRTeam@petromin.com" style="color:#c0272d">CRTeam@petromin.com</a></div>'
+    +'</div>'
+    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
+    +'<div style="font-size:12px;font-weight:700;color:#2e7d32;margin-bottom:6px">📧 Request TO</div>'
+    +'<div style="font-size:11px;color:#555">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="color:#2e7d32">sali.aljehani@petromin.com</a></div>'
+    +'</div></div>';
+
+  // Group branches by city
+  const cities={};
+  const cityOrder=[];
+  branchRows.forEach(r=>{
+    const city=String(r[cityKey]||'').trim();
+    if(!cities[city]){cities[city]=[];cityOrder.push(city);}
+    cities[city].push(r);
+  });
+
+  // Cities with many branches get full width, others side by side
+  const LARGE_CITIES=['Jeddah','Riyadh','Dammam'];
+
+  const branchCard=(r)=>{
+    const branch=String(r[branchKey]||'').trim();
+    const hours=String(r[hoursKey]||'').trim();
+    const mgr=String(r[mgrKey]||'').trim();
+    const mobile=fmtNum(String(r[mobileKey]||'').trim());
+    const email=String(r[emailKey]||'').trim();
+    const gps=String(r[gpsKey]||'').trim();
+    return '<div style="background:#fff;border-radius:10px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-top:2px solid '+color+'">'
+      +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">'+branch+'</div>'
+      +(hours?'<div style="font-size:10px;color:#888;margin-bottom:6px">🕐 '+hours+'</div>':'')
+      +(mgr?'<div style="font-size:12px;margin-bottom:4px">👤 '+mgr+'</div>':'')
+      +(mobile?'<div style="font-size:12px;margin-bottom:4px">📞 '+mobile+'</div>':'')
+      +(email?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">✉️ '+email+'</a></div>':'')
+      +(gps&&gps.startsWith('http')?'<div style="margin-top:4px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
+      +'</div>';
+  };
+
+  const branchCards=cityOrder.map(city=>{
+    const rows=cities[city];
+    const isLarge=LARGE_CITIES.includes(city)||rows.length>3;
+    return '<div style="margin-bottom:14px">'
+      +'<div style="font-size:12px;font-weight:700;color:'+color+';text-transform:uppercase;letter-spacing:.05em;padding:6px 12px;background:'+color+'12;border-radius:6px;margin-bottom:8px;border-left:3px solid '+color+'">📌 '+city+' ('+rows.length+')</div>'
+      +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax('+(isLarge?'250':'300')+'px,1fr));gap:8px">'
+      +rows.map(r=>branchCard(r)).join('')
+      +'</div></div>';
+  }).join('');
+
+  // RM table
+  let rmHTML='';
+  if(rmRows.length){
+    rmHTML='<div style="text-align:right;margin-bottom:16px">'
+      +'<button onclick="toggleRegion(\'stellantisPacRM\')" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:'+color+';color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(21,101,192,.3)">🗺️ Area Manager <span id="ico_stellantisPacRM">▼</span></button>'
+      +'</div>'
+      +'<div id="stellantisPacRM" style="display:none;overflow-x:auto;border-radius:10px;border:1px solid #e8eaed;margin-bottom:16px">'
+      +'<table style="width:100%;border-collapse:collapse;font-size:12px">'
+      +'<thead><tr style="background:'+color+'12">'
+      +'<th style="padding:8px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">Branch</th>'
+      +'<th style="padding:8px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">RM</th>'
+      +'<th style="padding:8px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">Mobile</th>'
+      +'<th style="padding:8px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">Email</th>'
+      +'</tr></thead><tbody>'
+      +rmRows.map((r,i)=>{
+        const branch=String(r[branchKey]||'').trim();
+        const rm=String(r[hoursKey]||'').trim();
+        const mobile=fmtNum(String(r[mgrKey]||'').trim());
+        const email=String(r[mobileKey]||'').trim();
+        return '<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+'">'
+          +'<td style="padding:7px 12px;text-align:center;font-weight:600">'+branch+'</td>'
+          +'<td style="padding:7px 12px;text-align:center">'+rm+'</td>'
+          +'<td style="padding:7px 12px;text-align:center">'+mobile+'</td>'
+          +'<td style="padding:7px 12px;text-align:center">'+(email&&email.includes('@')?'<a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">'+email+'</a>':email)+'</td>'
+          +'</tr>';
+      }).join('')
+      +'</tbody></table></div>';
+  }
+
+  return '<div>'+(rmHTML?rmHTML.replace('<div style="text-align:right;margin-bottom:16px">','<div style="display:flex;justify-content:flex-end;margin-bottom:16px">'):'')
+    +emailHtml+branchCards+'</div>';
+}
   const keys=Object.keys(arr[0]||{});
   // City, Branch Code-Branch, Working Hours, Manager Name, Mobile, Email, CC, GPS
   const cityKey=keys[0], branchKey=keys[1], hoursKey=keys[2];
