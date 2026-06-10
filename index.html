@@ -1932,6 +1932,7 @@ function renderSMSTab(arr, sheetName, brand){
   });
 
   var keys = Object.keys(arr[0]||{});
+  console.log('[SMS] keys:', keys);
   // k0=ApptEN, k1=ApptAR, k2=Branch, k3=LocEN, k4=LocAR
   var k0=keys[0]||'', k1=keys[1]||'', k2=keys[2]||'', k3=keys[3]||'', k4=keys[4]||'';
 
@@ -2187,135 +2188,95 @@ function renderRoster(){
   const keys = Object.keys(SCHEDULE_DATA[0]||{});
   const dateKey = keys[0];
   const agents = keys.slice(1);
-  const today = new Date().toDateString();
+  const today = new Date();
 
-  // Filter out header repeat rows (where value equals agent name)
+  // Filter out header repeat rows
   const rows = SCHEDULE_DATA.filter(function(r){
     var v = String(r[dateKey]||'').trim();
     return v && v !== dateKey && !agents.includes(v);
   });
 
-  // Schedule table
-  let html = '<div style="overflow-x:auto;padding:4px;margin-bottom:20px">'
-    +'<div style="font-size:16px;font-weight:700;color:#c0272d;margin-bottom:12px;text-align:center">📅 Daily Off Schedule</div>'
+  // Build schedule table
+  var tableHTML = '<div style="overflow-x:auto">'
     +'<table style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px">'
     +'<thead><tr style="background:#c0272d;color:#fff">'
-    +'<th style="padding:8px 12px;text-align:left;position:sticky;left:0;background:#c0272d;min-width:130px">Date</th>';
+    +'<th style="padding:8px 12px;text-align:center;min-width:130px">Date</th>';
   agents.forEach(function(a){
-    html += '<th style="padding:8px 10px;text-align:center;white-space:nowrap">'+a+'</th>';
+    tableHTML += '<th style="padding:8px 10px;text-align:center;white-space:nowrap">'+a+'</th>';
   });
-  html += '</tr></thead><tbody>';
+  tableHTML += '</tr></thead><tbody>';
 
   rows.forEach(function(r,i){
     var dateVal = String(r[dateKey]||'').trim();
-    var displayDate = dateVal; // Already formatted e.g. "Sunday, 7 June"
+    var displayDate = dateVal;
     var isToday = false;
-    // Check if today by parsing the date string
     var datePart = dateVal.split(' ')[0].split('T')[0];
     var dp = datePart.split('-');
     if(dp.length===3){
-      // Format: 2026-06-07
       var yr=parseInt(dp[0]),mo=parseInt(dp[1])-1,dy=parseInt(dp[2]);
-      var parsedDate = new Date(yr,mo,dy);
+      var d=new Date(yr,mo,dy);
       var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
       var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      displayDate = days[parsedDate.getDay()]+', '+dy+' '+months[mo];
-      var now=new Date(); isToday=(now.getFullYear()===yr&&now.getMonth()===mo&&now.getDate()===dy);
+      displayDate=days[d.getDay()]+', '+dy+' '+months[mo];
+      isToday=(today.getFullYear()===yr&&today.getMonth()===mo&&today.getDate()===dy);
     } else {
-      // Already a text date like "Sunday, 7 June" — check if today
-      var now=new Date();
-      var todayStr = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][now.getDay()];
-      isToday = dateVal.startsWith(todayStr);
+      var dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      isToday=dateVal.startsWith(dayNames[today.getDay()]);
     }
-    var rowBg = isToday ? '#fff3cd' : (i%2===0?'#fff':'#f9f9f9');
-    html += '<tr style="background:'+rowBg+'">'
-      +'<td style="padding:7px 12px;font-weight:'+(isToday?'700':'500')+';color:'+(isToday?'#c0272d':'#444')+';position:sticky;left:0;background:'+rowBg+';white-space:nowrap">'
+    var rowBg=isToday?'#fff3cd':(i%2===0?'#fff':'#f9f9f9');
+    tableHTML+='<tr style="background:'+rowBg+'">'
+      +'<td style="padding:7px 12px;text-align:center;font-weight:'+(isToday?'700':'500')+';color:'+(isToday?'#c0272d':'#444')+';white-space:nowrap">'
       +displayDate+(isToday?' 📍':'')+'</td>';
     agents.forEach(function(a){
-      var v = String(r[a]||'').trim();
-      var isOff = v.toLowerCase()==='off';
-      var isEmpty = !v || v==='-';
-      html += '<td style="padding:7px 10px;text-align:center">'
-        +(isEmpty?'':('<span style="display:inline-block;padding:2px 10px;border-radius:10px;font-weight:600;font-size:11px;background:'+(isOff?'#ffebee':'#e8f5e9')+';color:'+(isOff?'#c0272d':'#2e7d32')+'">'+v+'</span>'))
+      var v=String(r[a]||'').trim();
+      var isOff=v.toLowerCase()==='off';
+      tableHTML+='<td style="padding:7px 10px;text-align:center">'
+        +(v?'<span style="display:inline-block;padding:2px 10px;border-radius:10px;font-weight:600;font-size:11px;background:'+(isOff?'#ffebee':'#e8f5e9')+';color:'+(isOff?'#c0272d':'#2e7d32')+'">'+v+'</span>':'')
         +'</td>';
     });
-    html += '</tr>';
+    tableHTML+='</tr>';
   });
-  html += '</tbody></table></div>';
+  tableHTML+='</tbody></table></div>';
 
-  // Weekly Calls & Break
+  // Build weekly breaks table
+  var weeklyHTML = '';
   if(WEEKLY_DATA && WEEKLY_DATA.length){
-    var wkeys = Object.keys(WEEKLY_DATA[0]||{});
-    // Split by type (Call Break vs Chat Break)
-    var callRows = WEEKLY_DATA.filter(function(r){ return String(r[wkeys[3]]||'').includes('Call'); });
-    var chatRows = WEEKLY_DATA.filter(function(r){ return String(r[wkeys[3]]||'').includes('Chat'); });
+    var wkeys=Object.keys(WEEKLY_DATA[0]||{});
+    var callRows=WEEKLY_DATA.filter(function(r){return String(r[wkeys[3]]||'').includes('Call');});
+    var chatRows=WEEKLY_DATA.filter(function(r){return String(r[wkeys[3]]||'').includes('Chat');});
 
-    function buildBreakTable(rows, title, color){
-      if(!rows.length) return '';
-      var wk = Object.keys(rows[0]);
-      var html2 = '<div style="background:#fff;border-radius:10px;border:1px solid #eee;overflow:hidden;margin-bottom:12px">'
-        +'<div style="background:'+color+'18;border-left:4px solid '+color+';padding:10px 14px;font-size:13px;font-weight:700;color:'+color+'">'+title+'</div>'
-        +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
-        +'<thead><tr style="background:'+color+'10">';
-      wk.forEach(function(c){ html2+='<th style="padding:7px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:left">'+c+'</th>'; });
-      html2+='</tr></thead><tbody>';
-      rows.forEach(function(r,i){
-        html2+='<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+'">';
-        wk.forEach(function(c){ html2+='<td style="padding:7px 12px;color:#444">'+String(r[c]||'').trim()+'</td>'; });
-        html2+='</tr>';
-      });
-      html2+='</tbody></table></div></div>';
-      return html2;
-    }
-
-    html += '<div style="font-size:16px;font-weight:700;color:#1565c0;margin-bottom:12px;text-align:center">📞 Weekly Calls & Break Schedule</div>';
-    html += buildBreakTable(callRows,'📞 Call Break','#c0272d');
-    html += buildBreakTable(chatRows,'💬 Chat Break','#1565c0');
-  }
-
-  // Two tabs: Daily Off Schedule | Weekly Calls & Break
-  var schedHTML = '<div style="padding:4px">'
-    +'<div style="display:flex;gap:8px;margin-bottom:16px">'
-    +'<button onclick="switchScheduleTab('daily')" id="stab_daily" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#c0272d;color:#fff">📅 Daily Off Schedule</button>'
-    +'<button onclick="switchScheduleTab('weekly')" id="stab_weekly" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555">📞 Weekly Calls & Break</button>'
-    +'</div>'
-    +'<div id="schedule_daily">'+html+'</div>'
-    +'<div id="schedule_weekly" style="display:none">';
-
-  if(WEEKLY_DATA && WEEKLY_DATA.length){
-    var wkeys = Object.keys(WEEKLY_DATA[0]||{});
-    var callRows = WEEKLY_DATA.filter(function(r){ return String(r[wkeys[3]]||'').includes('Call'); });
-    var chatRows = WEEKLY_DATA.filter(function(r){ return String(r[wkeys[3]]||'').includes('Chat'); });
-
-    function buildBreakTable(brows, title, color){
+    function buildBreakTable(brows,title,color){
       if(!brows.length) return '';
-      var wk = Object.keys(brows[0]);
-      var t = '<div style="background:#fff;border-radius:10px;border:1px solid #eee;overflow:hidden;margin-bottom:12px">'
+      var wk=Object.keys(brows[0]);
+      var t='<div style="background:#fff;border-radius:10px;border:1px solid #eee;overflow:hidden;margin-bottom:12px">'
         +'<div style="background:'+color+'18;border-left:4px solid '+color+';padding:10px 14px;font-size:13px;font-weight:700;color:'+color+'">'+title+'</div>'
         +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
         +'<thead><tr style="background:'+color+'10">';
-      wk.forEach(function(c){ t+='<th style="padding:7px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:left">'+c+'</th>'; });
+      wk.forEach(function(c){t+='<th style="padding:7px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">'+c+'</th>';});
       t+='</tr></thead><tbody>';
       brows.forEach(function(r,i){
         t+='<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+'">';
-        wk.forEach(function(c){ t+='<td style="padding:7px 12px;color:#444">'+String(r[c]||'').trim()+'</td>'; });
+        wk.forEach(function(c){t+='<td style="padding:7px 12px;color:#444;text-align:center">'+String(r[c]||'').trim()+'</td>';});
         t+='</tr>';
       });
       t+='</tbody></table></div></div>';
       return t;
     }
-
-    schedHTML += buildBreakTable(callRows,'📞 Call Break','#c0272d');
-    schedHTML += buildBreakTable(chatRows,'💬 Chat Break','#1565c0');
+    weeklyHTML += buildBreakTable(callRows,'📞 Call Break','#c0272d');
+    weeklyHTML += buildBreakTable(chatRows,'💬 Chat Break','#1565c0');
   } else {
-    schedHTML += '<div style="text-align:center;padding:30px;color:#aaa">No weekly data available.</div>';
+    weeklyHTML = '<div style="text-align:center;padding:30px;color:#aaa">No weekly data.</div>';
   }
 
-  schedHTML += '</div></div>';
-  el.innerHTML = schedHTML;
+  el.innerHTML = '<div style="padding:4px">'
+    +'<div style="text-align:center;margin-bottom:16px">'
+    +'<button onclick="switchScheduleTab(&apos;daily&apos;)" id="stab_daily" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#c0272d;color:#fff;margin:4px">📅 Daily Off Schedule</button>'
+    +'<button onclick="switchScheduleTab(&apos;weekly&apos;)" id="stab_weekly" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;margin:4px">📞 Weekly Calls & Break</button>'
+    +'</div>'
+    +'<div id="schedule_daily">'+tableHTML+'</div>'
+    +'<div id="schedule_weekly" style="display:none">'+weeklyHTML+'</div>'
+    +'</div>';
 }
-
-// ── ANNOUNCEMENTS ──────────────────────────────────────────────────────
 
 function switchScheduleTab(tab){
   document.getElementById('schedule_daily').style.display = tab==='daily' ? 'block' : 'none';
@@ -2571,10 +2532,14 @@ async function renderRef(){
     ]);
 
     const BRAND_CONFIGS=[
-      {key:'nissan',    label:'Nissan',    icon:'🔴',color:'#c0272d'},
-      {key:'stellantis',label:'Stellantis',icon:'🔵',color:'#1565c0'},
-      {key:'baic',      label:'BAIC',      icon:'⚫',color:'#37474f'},
-      {key:'baicRecall',label:'Recall',    icon:'🔎',color:'#4a148c'},
+      {key:'petromin',   label:'Petromin',         icon:'⭐', color:'#DAA520'},
+      {key:'baic',       label:'BAIC',             icon:'🟡', color:'#f9a825'},
+      {key:'nissan',     label:'Nissan',           icon:'🚗', color:'#c0272d'},
+      {key:'stellantis', label:'Stellantis',       icon:'🔵', color:'#1565c0'},
+      {key:'foton',      label:'Foton',            icon:'🚛', color:'#546e7a'},
+      {key:'nos',        label:'National Oil Stop',icon:'🟢', color:'#2e7d32'},
+      {key:'electromin', label:'Electromin',       icon:'⚡', color:'#1b5e20'},
+      {key:'baicRecall', label:'Recall',           icon:'⚠️', color:'#4a148c'},
     ];
 
     // CONTACT NUMBERS
@@ -2672,17 +2637,10 @@ async function renderRef(){
     // RENDER
     container.innerHTML='<div class="ref-page">'
 
-      // TOP BAR
-      +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
-      +'<div class="ref-global-search" style="flex:1;min-width:200px">'
-      +'<span style="font-size:18px">🔍</span>'
-      +'<input class="ref-global-inp" type="text" placeholder="ابحث في المراجع…" id="refGlobalInp" oninput="refGlobalFilter(this.value)">'
-      +'<button class="ref-global-clear" onclick="refGlobalFilter(\'\');document.getElementById(\'refGlobalInp\').value=\'\'">✕</button>'
+      // LINKS BUTTON TOP RIGHT
+      +'<div style="display:flex;justify-content:flex-end;margin-bottom:6px">'
+      +'<button onclick="toggleRefSection(\'refLinksDrawer\',\'refLinksIco\')" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#1565c0;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(21,101,192,.3)">🔗 Links <span id="refLinksIco">▼</span></button>'
       +'</div>'
-      +'<button onclick="toggleRefSection(\'refLinksDrawer\',\'refLinksIco\')" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#1565c0;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(21,101,192,.3)">🔗 Links <span id="refLinksIco">▼</span></button>'
-      +'</div>'
-
-      // LINKS DRAWER
       +'<div id="refLinksDrawer" style="display:none">'
       +'<div class="ref-info-panel"><div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1)">🔗 Links & Systems</div>'
       +'<div class="ref-panel-body">'+(linkCards||'<div style="color:#aaa;padding:16px;text-align:center">No data</div>')+'</div></div>'
@@ -2691,27 +2649,35 @@ async function renderRef(){
       // BRAND CIRCLES
       +'<div class="ref-brand-circles">'
       +BRAND_CONFIGS.map(({key,label,icon,color})=>
-        '<div class="ref-brand-circle" onclick="showRefBrandPage(\''+key+'\')">'
-        +'<div class="ref-brand-circle-icon" style="background:'+color+'">'+icon+'</div>'
-        +'<div class="ref-brand-circle-label" style="color:'+color+'">'+label+'</div>'
-        +'</div>').join('')
+        '<div class="ref-brand-circle" onclick="showRefBrandPage(\''+key+'\')">'+
+        '<div class="ref-brand-circle-icon" style="background:'+color+'">'+icon+'</div>'+
+        '<div class="ref-brand-circle-label" style="color:'+color+'">'+label+'</div>'+
+        '</div>').join('')
       +'</div>'
 
-      // CONTACT NUMBERS
+      // CONTACT NUMBERS — two separate boxes
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:0">'
+
       +'<div class="ref-info-panel">'
-      +'<div class="ref-panel-header" style="background:linear-gradient(135deg,#c0272d,#7b0000);cursor:pointer" onclick="toggleRefSection(\'refContactsBody\',\'refContactsIco\')">'
-      +'📞 Contact Numbers'
-      +'<span style="margin-left:auto;font-size:11px;opacity:.8">'+(tollFree.length+waNums.length)+' contacts</span>'
-      +'<span id="refContactsIco" style="margin-left:8px">▲</span>'
+      +'<div class="ref-panel-header" style="background:linear-gradient(135deg,#c0272d,#7b0000)">📞 Toll Free</div>'
+      +'<div class="ref-panel-body"><div class="ref-contacts-grid">'+makePills(tollFree,'#c0272d')+'</div></div>'
       +'</div>'
-      +'<div id="refContactsBody">'
-      +'<div class="ref-panel-body">'
-      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">'
-      +'<div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#aaa;margin-bottom:8px;padding-bottom:5px;border-bottom:2px solid #eee">📞 Toll Free</div>'
-      +'<div class="ref-contacts-grid">'+makePills(tollFree,'#c0272d')+'</div></div>'
-      +'<div><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#aaa;margin-bottom:8px;padding-bottom:5px;border-bottom:2px solid #eee">💬 WhatsApp</div>'
-      +'<div class="ref-contacts-grid">'+makePills(waNums,'#2e7d32')+'</div></div>'
-      +'</div></div></div></div>'
+
+      +'<div class="ref-info-panel">'
+      +'<div class="ref-panel-header" style="background:linear-gradient(135deg,#43a047,#2e7d32)">💬 WhatsApp</div>'
+      +'<div class="ref-panel-body"><div class="ref-contacts-grid">'+makePills(waNums,'#2e7d32')+'</div></div>'
+      +'</div>'
+
+      +'</div>'
+
+      // LINKS BUTTON + DRAWER
+      +'<div style="text-align:right;margin-bottom:4px">'
+      +'<button onclick="toggleRefSection(\'refLinksDrawer\',\'refLinksIco\')" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#1565c0;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(21,101,192,.3)">🔗 Links <span id="refLinksIco">▼</span></button>'
+      +'</div>'
+      +'<div id="refLinksDrawer" style="display:none">'
+      +'<div class="ref-info-panel"><div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1)">🔗 Links & Systems</div>'
+      +'<div class="ref-panel-body">'+(linkCards||'<div style="color:#aaa;padding:16px;text-align:center">No data</div>')+'</div></div>'
+      +'</div>'
 
       // SUBJECT 2-COL
       +'<div class="ref-info-panel">'
