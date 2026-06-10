@@ -1588,7 +1588,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
 
   const regionCol  = cols[0] || fc('region');
   const branchCol  = fc('branch') || fc('name') || cols[1];
-  const serviceCol = fc('service advisor','service') || '';
+  const serviceCol = fc('service type') || fc('service advisor') || '';
   const distCol    = fc('location','district','address') || cols[2];
   const phoneCol   = fc('phone','mobile','contact','number') || '';
   const advisorCol = fc('branch manager','bm','manager') || fc('advisor') || cols[5];
@@ -1659,14 +1659,18 @@ function renderNissanBranchTab(arr, sheetName, brand){
       +govHTML
       +(b.phone&&!b.persons.some(p=>p.phone===b.phone)?'<div style="font-size:12px;margin-bottom:5px">📞 '+b.phone+'</div>':'')
       +(b.gps&&b.gps.startsWith('http')?'<div style="margin-top:8px"><a href="'+b.gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-      +(b.hours&&b.hours.trim()!==(hoursRaw||'').trim()?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+b.hours+'</div>':'')
+      +(b.hours&&b.regHours&&b.hours.trim()!==b.regHours.trim()?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+b.hours+'</div>':'')
       +'</div></div>';
   };
 
   const regionsHTML = sortedRegs.map((reg, ri) => {
     const rows = regions[reg];
     const col_color = BRANCH_REGION_COLORS[reg]||'#888';
-    const hoursRaw = gv(rows[0], hoursCol);
+    // Use most common hours for region header
+    const allHours = rows.map(r=>gv(r,hoursCol)).filter(Boolean);
+    const hoursCounts = {};
+    allHours.forEach(h=>{hoursCounts[h]=(hoursCounts[h]||0)+1;});
+    const hoursRaw = allHours.sort((a,b)=>(hoursCounts[b]||0)-(hoursCounts[a]||0))[0]||'';
     const hoursDisp = hoursRaw.split('\n').map(s=>s.trim()).filter(Boolean).join(' · ');
     const regId = 'rgn_'+brand+'_'+reg.replace(/\s/g,'')+'_'+ri;
 
@@ -1678,7 +1682,8 @@ function renderNissanBranchTab(arr, sheetName, brand){
       if(!branches[name]) branches[name] = {
         name, city:gv(r,cityCol), district:gv(r,distCol), persons:[], gov:[],
         gps:gv(r,gpsCol), hours:gv(r,hoursCol),
-        service:gv(r,serviceCol), phone:fmtNum(gv(r,phoneCol))
+        service:gv(r,serviceCol), phone:fmtNum(gv(r,phoneCol)),
+        regHours:hoursRaw
       };
       const phone   = fmtNum(gv(r, phoneCol));
       const advisor = gv(r, advisorCol);
@@ -1910,6 +1915,88 @@ function renderSalesTeamTab(arr){
       }).join('')
       +'</tbody></table></div></div>';
   }).join('')+'</div>';
+}
+
+function renderStellantisSparePartsTab(arr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const color='#1565c0';
+  const keys=Object.keys(arr[0]||{});
+  const branchKey=keys[0], cityKey=keys[1], streetKey=keys[2], hoursKey=keys[3];
+  const advisorKey=keys[4], emailKey=keys[5], gpsKey=keys[6];
+
+  const fmtEmails=(v,bg,tc)=>String(v||'').split(/,/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return s?'<span style="font-size:10px;font-weight:600;margin:1px">'+s+'</span>':'';return '<a href="mailto:'+s+'" style="display:inline-flex;background:'+bg+';color:'+tc+';padding:2px 7px;border-radius:5px;font-size:10px;font-weight:600;text-decoration:none;margin:1px">'+s+'</a>';}).filter(Boolean).join('');
+
+  // Separate branch rows from email section
+  const branchRows=[], ccMap={};
+  let inCC=false, compTO='', reqTO='';
+  
+  arr.forEach(r=>{
+    const b=String(r[branchKey]||'').trim();
+    const c=String(r[cityKey]||'').trim();
+    const col2=String(r[advisorKey]||'').trim();
+    const col3=String(r[emailKey]||'').trim();
+    
+    if(b==='TO' && c.toLowerCase().includes('complaint')) { compTO=c; return; }
+    if(b==='TO' && c.toLowerCase().includes('request')) { reqTO=c; return; }
+    if(b.toLowerCase().includes('for complaint')||c.toLowerCase().includes('for complaint')) return;
+    if(b.toLowerCase().includes('for request')||c.toLowerCase().includes('for request')) return;
+    if(b==='TO'){
+      if(!compTO) compTO=c;
+      else reqTO=c;
+      return;
+    }
+    if(b.toLowerCase().includes('cc')) { inCC=true; if(col2&&col3) ccMap[col2]=col3; return; }
+    if(inCC){ if(b&&c) ccMap[b]=c; return; }
+    if(b && b!==branchKey) branchRows.push(r);
+  });
+
+  // Re-parse for CC — find rows after "CC for Companit" line
+  let ccSection=false;
+  arr.forEach(r=>{
+    const b=String(r[branchKey]||'').trim();
+    const c=String(r[cityKey]||'').trim();
+    const e=String(r[advisorKey]||'').trim();
+    if(b.toLowerCase().includes('cc')) { ccSection=true; if(c&&e) ccMap[c]=e; return; }
+    if(ccSection && c && e) ccMap[c]=e;
+  });
+
+  // Simple email header
+  const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
+    +'<div style="font-size:12px;font-weight:700;color:#c0272d;margin-bottom:8px">📧 Complaint TO</div>'
+    +'<div style="font-size:11px;color:#555">Manager Branch + <a href="mailto:CRTeam@petromin.com" style="color:#c0272d">CRTeam@petromin.com</a></div>'
+    +'</div>'
+    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
+    +'<div style="font-size:12px;font-weight:700;color:#2e7d32;margin-bottom:8px">📧 Request TO</div>'
+    +'<div style="font-size:11px;color:#555">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="color:#2e7d32">sali.aljehani@petromin.com</a></div>'
+    +'</div></div>';
+
+  const cards=branchRows.map(r=>{
+    const branch=String(r[branchKey]||'').trim();
+    const city=String(r[cityKey]||'').trim();
+    const street=String(r[streetKey]||'').trim();
+    const hours=String(r[hoursKey]||'').trim();
+    const advisor=String(r[advisorKey]||'').trim();
+    const email=String(r[emailKey]||'').trim();
+    const gps=String(r[gpsKey]||'').trim();
+    const cc=ccMap[branch]||'';
+    if(!branch||branch===branchKey) return '';
+
+    return '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+color+';margin-bottom:10px">'
+      +'<div style="background:'+color+'12;padding:10px 16px">'
+      +'<div style="font-size:14px;font-weight:700;color:'+color+'">'+branch+(city?' <span style="font-size:11px;color:#888;font-weight:400">— '+city+'</span>':'')+'</div>'
+      +(street?'<div style="font-size:11px;color:#888;margin-top:2px">📍 '+street+'</div>':'')
+      +(hours?'<div style="font-size:11px;color:#888;margin-top:2px">'+hours+'</div>':'')
+      +'</div>'
+      +'<div style="padding:10px 16px">'
+      +(advisor?'<div style="font-size:12px;margin-bottom:6px">👤 <strong>'+advisor+'</strong></div>':'')
+      +(email?'<div style="margin-bottom:6px"><span style="background:#e8f5e9;color:#2e7d32;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">TO</span>'+fmtEmails(email,'#e8f5e9','#2e7d32')+'</div>':'')
+      +(cc?'<div style="margin-bottom:6px"><span style="background:#e3f2fd;color:#1565c0;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">CC</span>'+fmtEmails(cc,'#e3f2fd','#1565c0')+'</div>':'')
+      +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
+      +'</div></div>';
+  }).filter(Boolean).join('');
+
+  return '<div>'+emailHtml+cards+'</div>';
 }
 
 function renderStellantisPMSTab(arr, sheetName){
@@ -2395,8 +2482,12 @@ async function renderRefBrand(brand,tabIdx){
       container.innerHTML=renderPACTab(arr);
       return;
     }
-    if(brand==='stellantis' && (sheetName.trim()==='PMS' || sheetName.trim()==='Spare Parts' || sheetName.trim()==='Spare Parts ')){
+    if(brand==='stellantis' && sheetName.trim()==='PMS'){
       container.innerHTML=renderStellantisPMSTab(arr, sheetName.trim());
+      return;
+    }
+    if(brand==='stellantis' && sheetName.trim()==='Spare Parts'){
+      container.innerHTML=renderStellantisSparePartsTab(arr);
       return;
     }
     if(brand==='stellantis' && sheetName.trim()==='Tristar'){
