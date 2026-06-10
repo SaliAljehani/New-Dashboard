@@ -2048,6 +2048,128 @@ function renderStellantisPACTab(arr){
   const mgrKey=keys[3], mobileKey=keys[4], emailKey=keys[5], gpsKey=keys[6];
 
   const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
+  const fmtE=(v,bg,tc)=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="background:'+bg+';color:'+tc+';padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;text-decoration:none;margin:1px;display:inline-flex">'+s+'</a>';}).filter(Boolean).join('');
+
+  // Separate branch rows from RM section
+  const branchRows=[], rmRows=[];
+  let rmSection=false;
+
+  arr.forEach(r=>{
+    const city=String(r[cityKey]||'').trim();
+    const branch=String(r[branchKey]||'').trim();
+    const col2=String(r[hoursKey]||'').trim();
+    // RM section: empty city + branch has name + col2 looks like a name
+    if(!city && branch && !col2.includes('AM') && !col2.includes('PM') && col2 && !col2.includes(':')) {
+      rmSection=true;
+    }
+    // Also detect by header row
+    if(branch==='Branch Code - Branch ' || branch==='Branch Code - Branch') { rmSection=true; return; }
+    if(rmSection){ if(branch) rmRows.push(r); return; }
+    if(city && branch) branchRows.push(r);
+  });
+
+  // Email header
+  const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
+    +'<div style="font-size:12px;font-weight:700;color:#c0272d;margin-bottom:6px">📧 Complaint TO</div>'
+    +'<div style="font-size:11px;color:#555">Manager Branch + <a href="mailto:CRTeam@petromin.com" style="color:#c0272d">CRTeam@petromin.com</a></div>'
+    +'</div>'
+    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
+    +'<div style="font-size:12px;font-weight:700;color:#2e7d32;margin-bottom:6px">📧 Request TO</div>'
+    +'<div style="font-size:11px;color:#555">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="color:#2e7d32">sali.aljehani@petromin.com</a></div>'
+    +'</div></div>';
+
+  // Group branches by city
+  const cities={}, cityOrder=[];
+  branchRows.forEach(r=>{
+    const city=String(r[cityKey]||'').trim();
+    if(!cities[city]){cities[city]=[];cityOrder.push(city);}
+    cities[city].push(r);
+  });
+
+  const branchCard=(r)=>{
+    const branch=String(r[branchKey]||'').trim();
+    const hours=String(r[hoursKey]||'').trim();
+    const mgr=String(r[mgrKey]||'').trim();
+    const mobile=fmtNum(String(r[mobileKey]||'').trim());
+    const email=String(r[emailKey]||'').trim();
+    const gps=String(r[gpsKey]||'').trim();
+    return '<div style="background:#fff;border-radius:10px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-top:2px solid '+color+'">'
+      +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">'+branch+'</div>'
+      +(hours?'<div style="font-size:10px;color:#888;margin-bottom:6px">🕐 '+hours+'</div>':'')
+      +(mgr?'<div style="font-size:12px;margin-bottom:4px">👤 '+mgr+'</div>':'')
+      +(mobile?'<div style="font-size:12px;margin-bottom:4px">📞 '+mobile+'</div>':'')
+      +(email?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">✉️ '+email+'</a></div>':'')
+      +(gps&&gps.startsWith('http')?'<div style="margin-top:4px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
+      +'</div>';
+  };
+
+  const LARGE_CITIES=new Set(['Jeddah','Riyadh']);
+  
+  // Separate large cities from single-branch cities
+  const largeCityOrder=cityOrder.filter(c=>LARGE_CITIES.has(c)||cities[c].length>2);
+  const singleCities=cityOrder.filter(c=>!LARGE_CITIES.has(c)&&cities[c].length<=2);
+
+  const makeCitySection=(city)=>{
+    const rows=cities[city];
+    return rows.map(r=>'<div>'
+      +'<div style="font-size:10px;font-weight:700;color:'+color+';margin-bottom:4px">📌 '+city+'</div>'
+      +branchCard(r)
+      +'</div>').join('');
+  };
+
+  const branchCards=largeCityOrder.map(city=>{
+    const rows=cities[city];
+    return '<div style="margin-bottom:14px">'
+      +'<div style="font-size:12px;font-weight:700;color:'+color+';padding:6px 12px;background:'+color+'12;border-radius:6px;margin-bottom:8px;border-left:3px solid '+color+'">📌 '+city+' ('+rows.length+')</div>'
+      +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px">'
+      +rows.map(r=>branchCard(r)).join('')
+      +'</div></div>';
+  }).join('')
+  +(singleCities.length?
+    '<div style="margin-bottom:14px">'
+    +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px">'
+    +singleCities.map(city=>makeCitySection(city)).join('')
+    +'</div></div>'
+  :'');
+
+  // RM table with CC
+  let rmHTML='';
+  if(rmRows.length){
+    const hasCC=rmRows.some(r=>String(r[keys[5]]||'').trim());
+    rmHTML='<div id="stellantisPacRM" style="display:none;overflow-x:auto;border-radius:10px;border:1px solid #e8eaed;margin-bottom:16px">'
+      +'<table style="width:100%;border-collapse:collapse;font-size:11px">'
+      +'<thead><tr style="background:'+color+'12">'
+      +'<th style="padding:8px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22">Branch</th>'
+      +'<th style="padding:8px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22">RM</th>'
+      +'<th style="padding:8px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22">Mobile</th>'
+      +'<th style="padding:8px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22">Email</th>'
+      +(hasCC?'<th style="padding:8px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22">CC</th>':'')
+      +'</tr></thead><tbody>'
+      +rmRows.map((r,i)=>{
+        const branch=String(r[branchKey]||'').trim();
+        const rm=String(r[hoursKey]||'').trim();
+        const mobile=fmtNum(String(r[mgrKey]||'').trim());
+        const email=String(r[mobileKey]||'').trim();
+        const cc=String(r[keys[5]]||'').trim();
+        return '<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+'">'
+          +'<td style="padding:6px 12px;font-weight:600">'+branch+'</td>'
+          +'<td style="padding:6px 12px">'+rm+'</td>'
+          +'<td style="padding:6px 12px">'+mobile+'</td>'
+          +'<td style="padding:6px 12px">'+(email&&email.includes('@')?'<a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">'+email+'</a>':email)+'</td>'
+          +(hasCC?'<td style="padding:6px 12px">'+fmtE(cc,'#e3f2fd','#1565c0')+'</td>':'')
+          +'</tr>';
+      }).join('')
+      +'</tbody></table></div>';
+  }
+
+  return '<div>'
+    +(rmRows.length?'<div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button onclick="toggleRegion(\'stellantisPacRM\')" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:'+color+';color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(21,101,192,.3)">🗺️ Area Manager <span id="ico_stellantisPacRM">▼</span></button></div>'+rmHTML:'')
+    +emailHtml+branchCards
+    +'</div>';
+}
+
+  const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
 
   // Separate branch rows from RM section
   const branchRows=[], rmRows=[];
