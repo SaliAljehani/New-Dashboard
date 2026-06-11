@@ -1866,8 +1866,15 @@ function renderStellantisSparePartsTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#1565c0';
   const keys=Object.keys(arr[0]||{});
-  const branchKey=keys[0], cityKey=keys[1], streetKey=keys[2], hoursKey=keys[3];
-  const advisorKey=keys[4], emailKey=keys[5], gpsKey=keys[6];
+  // Detect columns flexibly
+  const fc=(...kws)=>keys.find(c=>kws.some(k=>c.toLowerCase().includes(k.toLowerCase())))||'';
+  const branchKey=fc('branch','name')||keys[0];
+  const cityKey=fc('city')||keys[1];
+  const streetKey=fc('street','district','address','location')||keys[2];
+  const hoursKey=fc('hour','working')||keys[3];
+  const advisorKey=fc('advisor','manager','contact')||keys[4];
+  const emailKey=fc('email')||keys[5];
+  const gpsKey=fc('gps','map','link')||keys[6];
 
   const fmtEmails=(v,bg,tc)=>String(v||'').split(/,/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return s?'<span style="font-size:10px;font-weight:600;margin:1px">'+s+'</span>':'';return '<a href="mailto:'+s+'" style="display:inline-flex;background:'+bg+';color:'+tc+';padding:2px 7px;border-radius:5px;font-size:10px;font-weight:600;text-decoration:none;margin:1px">'+s+'</a>';}).filter(Boolean).join('');
 
@@ -2061,14 +2068,14 @@ function renderStellantisPACTab(arr){
   });
 
   // Email header
-  const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+    const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
     +'<div class="ref-email-card" style="border-left:4px solid #00695c;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="color:#1565c0;text-decoration:none">sali.aljehani@petromin.com</a></span></div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="color:#1565c0;text-decoration:none">sali.aljehani@petromin.com</a></span></div>'
     +'</div>'
     +'<div class="ref-email-card" style="border-left:4px solid #c0272d;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:CRTeam@petromin.com" style="color:#1565c0;text-decoration:none">CRTeam@petromin.com</a></span></div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:CRTeam@petromin.com" style="color:#1565c0;text-decoration:none">CRTeam@petromin.com</a></span></div>'
     +'</div></div>';
 
   // Group branches by city
@@ -2086,14 +2093,17 @@ function renderStellantisPACTab(arr){
     const mobile=fmtNum(String(r[mobileKey]||'').trim());
     const email=String(r[emailKey]||'').trim();
     const gps=String(r[gpsKey]||'').trim();
-    return '<div style="background:#fff;border-radius:10px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-top:2px solid '+color+'">'
-      +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">'+branch+'</div>'
+    return '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+color+'">'
+      +'<div style="background:'+color+'12;padding:10px 14px;text-align:center">'
+      +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+branch+'</div>'
+      +'</div>'
+      +'<div style="padding:10px 14px;text-align:center">'
       +(hours?'<div style="font-size:10px;color:#888;margin-bottom:6px">🕐 '+hours+'</div>':'')
-      +(mgr?'<div style="font-size:12px;margin-bottom:4px">👤 '+mgr+'</div>':'')
-      +(mobile?'<div style="font-size:12px;margin-bottom:4px">📞 '+mobile+'</div>':'')
+      +(mgr?'<div style="font-size:12px;color:#333;margin-bottom:4px">👤 '+mgr+'</div>':'')
+      +(mobile?'<div style="font-size:12px;color:#333;margin-bottom:4px">📞 '+mobile+'</div>':'')
       +(email?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">✉️ '+email+'</a></div>':'')
-      +(gps&&gps.startsWith('http')?'<div style="margin-top:4px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-      +'</div>';
+      +(gps&&gps.startsWith('http')?'<div style="margin-top:4px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px">🗺️ Location</a></div>':'')
+      +'</div></div>';
   };
 
   const LARGE_CITIES=new Set(['Jeddah','Riyadh']);
@@ -2104,39 +2114,19 @@ function renderStellantisPACTab(arr){
 
   const makeCitySection=(city)=>{
     const rows=cities[city];
-    return rows.map(r=>{
-      const branch=String(r[branchKey]||'').trim();
-      const hours=String(r[hoursKey]||'').trim();
-      const mgr=String(r[mgrKey]||'').trim();
-      const mobile=fmtNum(String(r[mobileKey]||'').trim());
-      const email=String(r[emailKey]||'').trim();
-      const gps=String(r[gpsKey]||'').trim();
-      return '<div style="background:#fff;border-radius:10px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-top:2px solid '+color+'">'
-        +'<div style="font-size:10px;font-weight:700;color:'+color+';margin-bottom:4px">📌 '+city+'</div>'
-        +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">'+branch+'</div>'
-        +(hours?'<div style="font-size:10px;color:#888;margin-bottom:6px">🕐 '+hours+'</div>':'')
-        +(mgr?'<div style="font-size:12px;margin-bottom:4px">👤 '+mgr+'</div>':'')
-        +(mobile?'<div style="font-size:12px;margin-bottom:4px">📞 '+mobile+'</div>':'')
-        +(email?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">✉️ '+email+'</a></div>':'')
-        +(gps&&gps.startsWith('http')?'<div style="margin-top:4px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-        +'</div>';
-    }).join('');
+    return rows.map(r=>branchCard(r)).join('');
   };
 
-  const branchCards=largeCityOrder.map(city=>{
+  const allCityOrder=[...largeCityOrder,...singleCities];
+  const branchCards=allCityOrder.map(city=>{
     const rows=cities[city];
+    const cityId='pac_'+city.replace(/\s/g,'');
     return '<div style="margin-bottom:14px">'
-      +'<div style="font-size:12px;font-weight:700;color:'+color+';padding:6px 12px;background:'+color+'12;border-radius:6px;margin-bottom:8px;border-left:3px solid '+color+'">📌 '+city+' ('+rows.length+')</div>'
-      +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px">'
+      +'<div onclick="toggleRegion(\''+cityId+'\')" style="font-size:12px;font-weight:700;color:'+color+';padding:8px 14px;background:'+color+'12;border-radius:8px;margin-bottom:8px;border-left:3px solid '+color+';cursor:pointer;display:flex;align-items:center">📌 '+city+' ('+rows.length+')<span id="ico_'+cityId+'" style="margin-left:auto">▼</span></div>'
+      +'<div id="'+cityId+'"><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px">'
       +rows.map(r=>branchCard(r)).join('')
-      +'</div></div>';
-  }).join('')
-  +(singleCities.length?
-    '<div style="margin-bottom:14px">'
-    +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px">'
-    +singleCities.map(city=>makeCitySection(city)).join('')
-    +'</div></div>'
-  :'');
+      +'</div></div></div>';
+  }).join('');
 
   // RM table with CC
   let rmHTML='';
@@ -2855,15 +2845,15 @@ function renderRoster(){
   // Build weekly breaks table
   var weeklyHTML = '';
   if(WEEKLY_DATA && WEEKLY_DATA.length){
-    var wkeys=Object.keys(WEEKLY_DATA[0]||{});
     var callRows=[], chatRows=[], wSection='call';
     WEEKLY_DATA.forEach(function(r){
-      var wkeys2=Object.keys(WEEKLY_DATA[0]||{});
-      var wk0=wkeys2[0]||'', wk1=wkeys2[1]||'', wk2=wkeys2[2]||'';
-      var wv0=String(r[wk0]||'').trim(), wv1=String(r[wk1]||'').trim(), wv2=String(r[wk2]||'').trim();
-      if(wv0==='Week'||wv2==='Break Time') return;
-      if(wv1==='WhatsApp'||wv0==='WhatsApp'){wSection='chat';return;}
-      if(wv0||wv1||wv2){ if(wSection==='call')callRows.push(r); else chatRows.push(r); }
+      var vals=Object.values(r).map(function(v){return String(v||'').trim();});
+      var v0=vals[0]||'', v1=vals[1]||'', v2=vals[2]||'';
+      if(v0==='Week'||v0==='week') return;
+      if(v1==='WhatsApp'||v0==='WhatsApp'||v2==='WhatsApp'){wSection='chat';return;}
+      if(!v0&&!v1&&!v2) return;
+      var row={week:v0, agent:v1, brk:v2};
+      if(wSection==='call') callRows.push(row); else chatRows.push(row);
     });
 
     function fmtTime(v){
@@ -2885,13 +2875,15 @@ function renderRoster(){
         +'<th style="padding:7px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">Break Time</th>'
         +'</tr></thead><tbody>';
       brows.forEach(function(r,i){
-        var vals=Object.values(r).map(function(v){return String(v||'').trim();});
-        var week=vals[0]||'', agent=vals[1]||'', brk=vals[2]||'';
+        var week=String(r.week||'').trim();
+        var agent=String(r.agent||'').trim();
+        var brk=String(r.brk||'').trim();
         if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(brk)) brk=fmtTime(brk);
+        if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(agent)&&!brk){brk=fmtTime(agent);agent='';}
         t+='<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+'">'
           +'<td style="padding:7px 12px;color:#444;text-align:center">'+week+'</td>'
           +'<td style="padding:7px 12px;color:#444;text-align:center">'+agent+'</td>'
-          +'<td style="padding:7px 12px;color:#444;text-align:center">'+brk+'</td>'
+          +'<td style="padding:7px 12px;font-weight:600;color:#2e7d32;text-align:center">'+brk+'</td>'
           +'</tr>';
       });
       t+='</tbody></table></div></div>';
