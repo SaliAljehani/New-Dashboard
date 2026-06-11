@@ -2496,12 +2496,12 @@ function showRefBrandPage(brand){
     +'<button onclick="renderRef()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:#f5f5f5;border:1.5px solid #ddd;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;color:#555">'
     +'← Back to References</button></div>'
     +'<div class="ref-brand-section">'
-    +'<div style="padding:16px 20px;background:linear-gradient(135deg,'+meta.color+','+meta.color+'99);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:12px">'\
-    +'<span style="font-size:26px">'+meta.icon+'</span>'\
-    +'<span style="font-size:16px;font-weight:700">'+meta.label+'</span>'\
-    +'<span style="margin-left:auto;font-size:11px;opacity:.75">'+tabs.length+' tabs</span>'\
-    +(brand==='stellantis'?'<button onclick="toggleRegion(\'stellantisWarrantyGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:8px">🛡️ Warranty <span id="ico_stellantisWarrantyGlobal">▼</span></button>':'')\
-    +'</div>'\
+    +'<div style="padding:16px 20px;background:linear-gradient(135deg,'+meta.color+','+meta.color+'99);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:12px">'
+    +'<span style="font-size:26px">'+meta.icon+'</span>'
+    +'<span style="font-size:16px;font-weight:700">'+meta.label+'</span>'
+    +'<span style="margin-left:auto;font-size:11px;opacity:.75">'+tabs.length+' tabs</span>'
+    +(brand==='stellantis'?'<button onclick="toggleRegion(\'stellantisWarrantyGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:8px">🛡️ Warranty <span id="ico_stellantisWarrantyGlobal">▼</span></button>':'')
+    +'</div>'
     +(brand==='stellantis'?'<div id="stellantisWarrantyGlobal" style="display:none;background:#fff;border-radius:0;overflow-x:auto;border-bottom:2px solid #e8eaed"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e8f5e9"><th style="padding:9px 14px;color:#2e7d32;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">ضمان</th><th style="padding:9px 14px;color:#2e7d32;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">CHRYSLER, DODGE, JEEP, RAM</th><th style="padding:9px 14px;color:#2e7d32;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">FIAT, ABARTH, ALFA ROMEO</th></tr></thead><tbody><tr style="background:#fff"><td style="padding:8px 14px;font-weight:600;color:#333">الضمان الأساسي + بطارية المصنع</td><td style="padding:8px 14px;text-align:center">3 years / 60,000 km</td><td style="padding:8px 14px;text-align:center">2 years / unlimited mileage</td></tr><tr style="background:#f9fbff"><td style="padding:8px 14px;font-weight:600;color:#333">الضمان الممتد</td><td style="padding:8px 14px;text-align:center">5 years / 100,000 km</td><td style="padding:8px 14px;text-align:center">5 years / 120,000 km</td></tr><tr style="background:#fff"><td style="padding:8px 14px;font-weight:600;color:#333">ضمان قطع الغيار</td><td style="padding:8px 14px;text-align:center">1 year / 20,000 km</td><td style="padding:8px 14px;text-align:center">1 year / 20,000 km</td></tr></tbody></table></div>':'')
     +'<div class="ref-sub-tabs" style="justify-content:center">'
     +tabs.map((t,i)=>'<button class="ref-sub-tab'+(i===0?' active':'')+'" '
