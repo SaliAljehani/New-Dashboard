@@ -1270,11 +1270,11 @@ const REF_SHEETS = {
   },
   nissan: {
     id: '1lXDeN1iUosG_JSADgdWhnkT5J1t3hhwXoSJdbmb4B88',
-    tabs: ['Showroom','3S','Spare Parts ','Nissan PAC','SMS & Location','Nissan App 25-26']
+    tabs: ['Warranty','Showroom','service','Spare Parts ','PAC','SMS & Location','Nissan APP 25-26']
   },
   stellantis: {
     id: '104CXGHd1raokgGijhvHgt6AI2gdsqzANBH74Ehm01dM',
-    tabs: ['Showroom ','PMS','Spare Parts ','PAC','Tristar','Showroom Sales Team']
+    tabs: ['Showroom ','Service','Spare Parts ','PAC','Tristar','Showroom Sales Team']
   },
   bodyshop: {
     id: '1_Z8Ry4-Y7kNFYnhXNvn7QP8jt1S_n9JHdVC2zT6R6WE',
@@ -1988,12 +1988,14 @@ function renderStellantisPMSTab(arr, sheetName){
   const regHTML=REGION_ORDER.filter(r=>regions[r]).map(reg=>{
     const rows=regions[reg];
     const rc=REGION_COLORS[reg]||color;
+    const regId='pms_'+reg.replace(/\s/g,'');
     return '<div style="margin-bottom:16px">'
-      +'<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';margin-bottom:10px">'
+      +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';margin-bottom:10px;cursor:pointer">'
       +'<span style="font-size:13px;font-weight:700;color:'+rc+'">'+reg+'</span><span style="font-size:11px;color:#aaa">('+rows.length+')</span>'
       +(commonH?'<span style="font-size:10px;color:#888;margin-left:auto">🕐 '+commonH+'</span>':'')
+      +'<span id="ico_'+regId+'" style="color:'+rc+'">▼</span>'
       +'</div>'
-      +'<div class="ref-cards-grid">'+rows.map(r=>{
+      +'<div id="'+regId+'"><div class="ref-cards-grid">'+rows.map(r=>{
         const b=String(r[keys[1]]||'').trim();
         const svc=String(r[keys[2]]||'').trim();
         const addr=String(r[keys[3]]||'').trim();
@@ -2014,7 +2016,7 @@ function renderStellantisPMSTab(arr, sheetName){
           +(gps&&gps.startsWith('http')?'<div style="margin-top:8px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
           +(h&&h!==commonH?'<div style="font-size:10px;color:#888;margin-top:6px;border-top:1px solid #f0f0f0;padding-top:6px">🕐 '+h+'</div>':'')
           +'</div></div>';
-      }).join('')+'</div></div>';
+      }).join('')+'</div></div></div>';
   }).join('');
 
   return '<div>'+emailHtml+regHTML+'</div>';
@@ -2181,7 +2183,7 @@ function renderPACTab(arr){
     if(!val||val==='-') return '';
     if(val.startsWith('http')) return '<div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:11px;margin-bottom:3px;direction:ltr"><span>'+ico+'</span><a href="'+val+'" target="_blank" style="color:#1565c0;font-weight:600;text-decoration:none">Open Location</a></div>';
     if(val.includes('@')) return '<div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:11px;margin-bottom:3px;direction:ltr"><span>'+ico+'</span><a href="mailto:'+val+'" style="color:#1565c0;text-decoration:none">'+val+'</a></div>';
-    return '<div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;margin-bottom:3px;direction:ltr"><span>'+ico+'</span><span>'+val+'</span></div>';
+    return '<div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;font-weight:600;color:#222;margin-bottom:3px;direction:ltr"><span>'+ico+'</span><span>'+val+'</span></div>';
   }
 
   // Separate workshop rows from RM rows
@@ -2599,7 +2601,7 @@ function showRefBrandPage(brand){
     +(brand==='bodyshop'?'<div id="bodyshopInstruction" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px;direction:rtl;text-align:right"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-right:4px solid #7b0000"><div style="font-size:13px;font-weight:700;color:#7b0000;margin-bottom:8px">📋 الإجراءات (قبل)</div><div style="font-size:11px;color:#555;line-height:1.8">يلزم توفير المستندات التالية:<br>1- استمارة المركبة<br>2- تقرير الجهة المباشرة للحادث (نجم أو المرور)<br>3- الرقم المرجعي لمطالبة التأمين<br><br>يُشترط حضور وتسليم المركبة من مالكها أو المفوّض رسميًا.<br>في حال تعذّر الحضور يجب تقديم تفويض خطي.</div></div><div style="background:#fff9f0;border-radius:10px;padding:14px;border-right:4px solid #e65100"><div style="font-size:13px;font-weight:700;color:#e65100;margin-bottom:8px">💰 التسعيرة</div><div style="font-size:11px;color:#555;line-height:1.8">يستغرق فحص المركبة وإرسال التسعيرة لشركة التأمين من 7 إلى 14 يوم عمل.<br><br>• قابلة للقيادة: تُسلَّم بعد الفحص<br>• غير قابلة للقيادة: تُحجز بالفرع لحين الإصلاح</div></div><div style="background:#f0fff4;border-radius:10px;padding:14px;border-right:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 الإصلاح</div><div style="font-size:11px;color:#555;line-height:1.8">يبدأ الإصلاح بعد موافقة التأمين، بحد أقصى 90 يوم عمل.<br><br>سيتم توفير قطع الغيار خلال هذه الفترة، وإشعاركم برسالة نصية عند توفرها.</div></div></div></div>':'')
     +'<div class="ref-sub-tabs" style="justify-content:center">'
     +tabs.map((t,i)=>{
-      const TAB_LABELS={'3S':'Service','Nissan PAC':'PAC','PMS':'Service','Appointment Script':'Appointment Script'};
+      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','PMS':'Service','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script'};
       const label=TAB_LABELS[t]||t;
       return '<button class="ref-sub-tab'+(i===0?' active':'')+'" '
         +'style="'+(i===0?'background:'+meta.color+';color:#fff;border-color:'+meta.color:'')+'" '
@@ -3140,6 +3142,7 @@ async function renderRef(){
       {key:'baic',       label:'BAIC',             icon:'🟡', color:'#f9a825'},
       {key:'nissan',     label:'Nissan',           icon:'🚗', color:'#c0272d'},
       {key:'stellantis', label:'Stellantis',       icon:'🔵', color:'#1565c0'},
+      {key:'bodyshop',   label:'Body Shop & Paint',icon:'🔴', color:'#7b0000'},
       {key:'foton',      label:'Foton',            icon:'🚛', color:'#546e7a'},
       {key:'nos',        label:'National Oil Stop',icon:'🟢', color:'#2e7d32'},
       {key:'electromin', label:'Electromin',       icon:'⚡', color:'#1b5e20'},
