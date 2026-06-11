@@ -2827,6 +2827,14 @@ function renderRoster(){
     var callRows=WEEKLY_DATA.filter(function(r){return String(r[wkeys[3]]||'').includes('Call');});
     var chatRows=WEEKLY_DATA.filter(function(r){return String(r[wkeys[3]]||'').includes('Chat');});
 
+    function fmtTime(v){
+      var s=String(v||'').trim();
+      var m=s.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
+      if(!m) return s;
+      var h=parseInt(m[1]),min=m[2],ampm=h>=12?'PM':'AM';
+      h=h%12||12;
+      return h+':'+min+' '+ampm;
+    }
     function buildBreakTable(brows,title,color){
       if(!brows.length) return '';
       var wk=Object.keys(brows[0]);
@@ -2838,7 +2846,11 @@ function renderRoster(){
       t+='</tr></thead><tbody>';
       brows.forEach(function(r,i){
         t+='<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+'">';
-        wk.forEach(function(c){t+='<td style="padding:7px 12px;color:#444;text-align:center">'+String(r[c]||'').trim()+'</td>';});
+        wk.forEach(function(c){
+          var val=String(r[c]||'').trim();
+          if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(val)) val=fmtTime(val);
+          t+='<td style="padding:7px 12px;color:#444;text-align:center">'+val+'</td>';
+        });
         t+='</tr>';
       });
       t+='</tbody></table></div></div>';
