@@ -1746,6 +1746,84 @@ function renderTristarTab(arr){
 function renderStellantisAppointmentTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#1565c0';
+  
+  // Split into Appointment Script rows and Warranty rows
+  const apptRows=[], warrantyRows=[];
+  let section='appt';
+  
+  arr.forEach(r=>{
+    const vals=Object.values(r).map(v=>String(v||'').trim());
+    const first=vals[0];
+    if(first==='Warranty'){ section='warranty'; return; }
+    if(first==='Appointment Script'||first==='Service') return; // skip headers
+    if(vals.every(v=>!v)) return; // skip empty rows
+    if(section==='appt') apptRows.push(r);
+    else warrantyRows.push(r);
+  });
+
+  const keys=arr.length?Object.keys(arr[0]):[];
+
+  // Source colors
+  const SRC_COLOR={'Call Center':'#c0272d','WhatsApp':'#2e7d32','Online':'#1565c0'};
+  const SRC_BG={'Call Center':'#fef2f2','WhatsApp':'#e8f5e9','Online':'#e3f2fd'};
+
+  // Group by Service
+  const services={}, svcOrder=[];
+  apptRows.forEach(r=>{
+    const svc=String(r[keys[0]]||'').trim();
+    if(!svc) return;
+    if(!services[svc]){services[svc]=[];svcOrder.push(svc);}
+    services[svc].push(r);
+  });
+
+  const apptHTML='<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:16px">'
+    +'<div style="background:'+color+';padding:12px 16px;color:#fff;font-size:13px;font-weight:700">📋 Appointment Script</div>'
+    +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
+    +'<thead><tr style="background:'+color+'15">'
+    +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:left">Service</th>'
+    +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:left">Source</th>'
+    +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:left">Service Advisor</th>'
+    +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:left">Description (Eg.)</th>'
+    +'</tr></thead><tbody>'
+    +apptRows.map((r,i)=>{
+      const svc=String(r[keys[0]]||'').trim();
+      const src=String(r[keys[1]]||'').trim();
+      const adv=String(r[keys[2]]||'').trim();
+      const desc=String(r[keys[3]]||'').trim();
+      const srcColor=SRC_COLOR[src]||'#555';
+      const srcBg=SRC_BG[src]||'#f5f5f5';
+      return '<tr style="background:'+(i%2===0?'#fff':'#f9fbff')+';border-bottom:1px solid #f0f0f0">'
+        +(svc?'<td style="padding:8px 14px;font-weight:700;color:'+color+'">'
+          +'<span style="background:'+color+'15;color:'+color+';padding:2px 8px;border-radius:6px;font-size:11px">'+svc+'</span></td>'
+          :'<td style="padding:8px 14px"></td>')
+        +'<td style="padding:8px 14px"><span style="background:'+srcBg+';color:'+srcColor+';padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600">'+src+'</span></td>'
+        +'<td style="padding:8px 14px;color:#555">'+adv+'</td>'
+        +'<td style="padding:8px 14px;color:#333;font-family:monospace;font-size:11px">'+desc+'</td>'
+        +'</tr>';
+    }).join('')
+    +'</tbody></table></div></div>';
+
+  // Warranty table
+  let warrantyHTML='';
+  if(warrantyRows.length){
+    const wkeys=Object.keys(warrantyRows[0]||{});
+    warrantyHTML='<div style="display:flex;justify-content:flex-end;margin-bottom:12px">'
+      +'<button onclick="toggleRegion(\'stellantisWarranty\')" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#2e7d32;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(46,125,50,.3)">🛡️ Warranty <span id="ico_stellantisWarranty">▼</span></button>'
+      +'</div>'
+      +'<div id="stellantisWarranty" style="display:none;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:16px">'
+      +'<div style="background:#2e7d32;padding:12px 16px;color:#fff;font-size:13px;font-weight:700">🛡️ Warranty</div>'
+      +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
+      +'<thead><tr style="background:#e8f5e9">'
+      +wkeys.map(k=>'<th style="padding:9px 14px;color:#2e7d32;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">'+k+'</th>').join('')
+      +'</tr></thead><tbody>'
+      +warrantyRows.map((r,i)=>'<tr style="background:'+(i%2===0?'#fff':'#f9fbff')+';border-bottom:1px solid #f0f0f0">'
+        +wkeys.map(k=>'<td style="padding:8px 14px;text-align:center;color:#333">'+String(r[k]||'').trim()+'</td>').join('')
+        +'</tr>').join('')
+      +'</tbody></table></div></div>';
+  }
+
+  return '<div>'+warrantyHTML+apptHTML+'</div>';
+}
   // Split into 3 sections: Appointment Script, Warranty, Queue/Email
   let apptRows=[], warrantyRows=[], queueRows=[];
   let section='appt';
@@ -1956,90 +2034,6 @@ function renderStellantisPMSTab(arr, sheetName){
 
   // Build email cards
   let complaint={to:'',cc:''}, request={to:'',cc:''};
-  let current='';
-  emailRows.forEach(r=>{
-    const reg=String(r[keys[0]]||'').trim();
-    const name=String(r[keys[1]]||'').trim();
-    if(name.toLowerCase().includes('complaint')) current='complaint';
-    else if(name.toLowerCase().includes('request')) current='request';
-    else if(reg==='TO'){
-      if(current==='complaint') complaint.to=name;
-      else if(current==='request') request.to=name;
-    } else if(reg==='CC'){
-      if(current==='complaint') complaint.cc=name;
-      else if(current==='request') request.cc=name;
-    }
-  });
-
-  const fmtEmails=v=>String(v||'').split(/,/).map(e=>{const s=e.trim();if(!s)return'';return s.includes('@')?'<a href="mailto:'+s+'" style="display:inline-flex;background:#fef2f2;color:#c0272d;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;margin:2px">'+s+'</a>':'<span style="font-size:11px;font-weight:600;margin:2px">'+s+'</span>';}).filter(Boolean).join('');
-
-  const emailHtml=(complaint.to||complaint.cc||request.to||request.cc)?
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
-    +'<div style="font-size:12px;font-weight:700;color:#c0272d;margin-bottom:8px">📧 Complaint</div>'
-    +(complaint.to?'<div style="margin-bottom:6px"><span style="background:#c0272d;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:4px">TO</span>'+fmtEmails(complaint.to)+'</div>':'')
-    +(complaint.cc?'<div><span style="background:#1565c0;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:4px">CC</span>'+fmtEmails(complaint.cc)+'</div>':'')
-    +'</div>'
-    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
-    +'<div style="font-size:12px;font-weight:700;color:#2e7d32;margin-bottom:8px">📧 Request</div>'
-    +(request.to?'<div style="margin-bottom:6px"><span style="background:#c0272d;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:4px">TO</span>'+fmtEmails(request.to)+'</div>':'')
-    +(request.cc?'<div><span style="background:#1565c0;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:4px">CC</span>'+fmtEmails(request.cc)+'</div>':'')
-    +'</div></div>'
-    :'';
-
-  // Group by region
-  const regions={};
-  branchRows.forEach(r=>{
-    const reg=String(r[keys[0]]||'').trim();
-    if(!regions[reg])regions[reg]=[];
-    regions[reg].push(r);
-  });
-
-  const REGION_ORDER=['Western','Central','Eastern','Southern','Northern'];
-  const REGION_COLORS={Western:'#c0272d',Central:'#1565c0',Eastern:'#2e7d32',Southern:'#6a1b9a',Northern:'#e65100'};
-
-  const regionsHTML=REGION_ORDER.filter(r=>regions[r]).map(reg=>{
-    const rows=regions[reg];
-    const rc=REGION_COLORS[reg]||color;
-    // Get common hours for region header
-    const commonHours=rows[0]?String(rows[0][keys[7]]||'').trim():'';
-
-    return '<div style="margin-bottom:16px">'
-      +'<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';margin-bottom:10px">'
-      +'<span style="font-size:13px;font-weight:700;color:'+rc+';text-transform:uppercase">'+reg+'</span>'
-      +'<span style="font-size:11px;color:#aaa">('+rows.length+' branches)</span>'
-      +(commonHours?'<span style="font-size:10px;color:#888;margin-left:auto">'+commonHours+'</span>':'')
-      +'</div>'
-      +'<div class="ref-cards-grid">'+rows.map(r=>{
-        const branch=String(r[keys[1]]||'').trim();
-        const service=String(r[keys[2]]||'').trim();
-        const addr=String(r[keys[3]]||'').trim();
-        const phone=fmtNum(String(r[keys[4]]||'').trim());
-        const bm=String(r[keys[5]]||'').trim();
-        const email=String(r[keys[6]]||'').trim();
-        const hours=String(r[keys[7]]||'').trim();
-        const gps=String(r[keys[8]]||'').trim();
-        const hoursDiff=hours && hours!==commonHours;
-
-        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
-          +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
-          +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
-          +(addr?'<div style="font-size:11px;color:#888;margin-top:4px">📍 '+addr+'</div>':'')
-          +'</div>'
-          +'<div style="padding:10px 14px;text-align:center">'
-          +(service?'<div style="display:inline-block;background:'+rc+'15;color:'+rc+';padding:2px 10px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px">'+service+'</div>':'')
-          +(bm?'<div style="font-size:12px;margin-bottom:5px">👤 '+bm+'</div>':'')
-          +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
-          +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">✉️ '+email+'</a></div>':'')
-          +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-          +(hoursDiff?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+hours+'</div>':'')
-          +'</div></div>';
-      }).join('')+'</div></div>';
-  }).join('');
-
-  return '<div>'+emailHtml+regionsHTML+'</div>';
-}
-
 function renderStellantisPACTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#1565c0';
@@ -2502,10 +2496,13 @@ function showRefBrandPage(brand){
     +'<button onclick="renderRef()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:#f5f5f5;border:1.5px solid #ddd;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;color:#555">'
     +'← Back to References</button></div>'
     +'<div class="ref-brand-section">'
-    +'<div style="padding:16px 20px;background:linear-gradient(135deg,'+meta.color+','+meta.color+'99);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:12px">'
-    +'<span style="font-size:26px">'+meta.icon+'</span>'
-    +'<span style="font-size:16px;font-weight:700">'+meta.label+'</span>'
-    +'<span style="margin-left:auto;font-size:11px;opacity:.75">'+tabs.length+' tabs</span></div>'
+    +'<div style="padding:16px 20px;background:linear-gradient(135deg,'+meta.color+','+meta.color+'99);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:12px">'\
+    +'<span style="font-size:26px">'+meta.icon+'</span>'\
+    +'<span style="font-size:16px;font-weight:700">'+meta.label+'</span>'\
+    +'<span style="margin-left:auto;font-size:11px;opacity:.75">'+tabs.length+' tabs</span>'\
+    +(brand==='stellantis'?'<button onclick="toggleRegion(\'stellantisWarrantyGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:8px">🛡️ Warranty <span id="ico_stellantisWarrantyGlobal">▼</span></button>':'')\
+    +'</div>'\
+    +(brand==='stellantis'?'<div id="stellantisWarrantyGlobal" style="display:none;background:#fff;border-radius:0;overflow-x:auto;border-bottom:2px solid #e8eaed"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e8f5e9"><th style="padding:9px 14px;color:#2e7d32;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">ضمان</th><th style="padding:9px 14px;color:#2e7d32;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">CHRYSLER, DODGE, JEEP, RAM</th><th style="padding:9px 14px;color:#2e7d32;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">FIAT, ABARTH, ALFA ROMEO</th></tr></thead><tbody><tr style="background:#fff"><td style="padding:8px 14px;font-weight:600;color:#333">الضمان الأساسي + بطارية المصنع</td><td style="padding:8px 14px;text-align:center">3 years / 60,000 km</td><td style="padding:8px 14px;text-align:center">2 years / unlimited mileage</td></tr><tr style="background:#f9fbff"><td style="padding:8px 14px;font-weight:600;color:#333">الضمان الممتد</td><td style="padding:8px 14px;text-align:center">5 years / 100,000 km</td><td style="padding:8px 14px;text-align:center">5 years / 120,000 km</td></tr><tr style="background:#fff"><td style="padding:8px 14px;font-weight:600;color:#333">ضمان قطع الغيار</td><td style="padding:8px 14px;text-align:center">1 year / 20,000 km</td><td style="padding:8px 14px;text-align:center">1 year / 20,000 km</td></tr></tbody></table></div>':'')
     +'<div class="ref-sub-tabs" style="justify-content:center">'
     +tabs.map((t,i)=>'<button class="ref-sub-tab'+(i===0?' active':'')+'" '
       +'style="'+(i===0?'background:'+meta.color+';color:#fff;border-color:'+meta.color:'')+'" '
