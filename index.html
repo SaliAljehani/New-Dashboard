@@ -2300,7 +2300,11 @@ function renderBodyShopTab(arr){
 
   // Email section
   const VALID_REGIONS=new Set(['Western','Central','Eastern','Southern','Northern','West','East','South','North','Central ','Western ']);
-  const branchRows=arr.filter(r=>VALID_REGIONS.has(String(r[regionCol]||'').trim()));
+  const branchRows=arr.filter(r=>{
+    const reg=String(r[regionCol]||'').trim();
+    // Accept any row that has a branch name and non-empty region that's not a header
+    return reg && reg!=='Region' && String(r[branchCol]||'').trim();
+  });
 
   // Email header
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
@@ -2314,8 +2318,8 @@ function renderBodyShopTab(arr){
     +'</div></div>';
 
   // Group by region
-  const regions={}, REGION_ORDER=['Western','West','Central','East','Eastern','Southern','South','Northern','North'];
-  const REGION_COLORS={Western:'#c0272d',West:'#c0272d',Central:'#1565c0',East:'#2e7d32',Eastern:'#2e7d32',Southern:'#6a1b9a',South:'#6a1b9a',Northern:'#e65100',North:'#e65100'};
+  const regions={}, REGION_ORDER=['Western','West','Central','Center','East','Eastern','Southern','South','Northern','North'];
+  const REGION_COLORS={Western:'#c0272d',West:'#c0272d',Central:'#1565c0',Center:'#1565c0',East:'#2e7d32',Eastern:'#2e7d32',Southern:'#6a1b9a',South:'#6a1b9a',Northern:'#e65100',North:'#e65100'};
   branchRows.forEach(r=>{const reg=String(r[regionCol]||'').trim();if(!regions[reg])regions[reg]=[];regions[reg].push(r);});
 
   // Common hours
