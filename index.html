@@ -2605,7 +2605,7 @@ function showRefBrandPage(brand){
   const META={
     nissan:    {label:'Nissan',    icon:'🔴',color:'#c0272d'},
     stellantis:{label:'Stellantis',icon:'🔵',color:'#1565c0'},
-    bodyshop:  {label:'Body Shop', icon:'🔴',color:'#7b0000'},
+    bodyshop:  {label:'& Paint', icon:'🔴',color:'#7b0000'},
     baic:      {label:'BAIC',      icon:'⚫',color:'#37474f'},
     baicRecall:{label:'BAIC Recall — VIN Search',icon:'🔎',color:'#4a148c'},
   };
@@ -2638,14 +2638,15 @@ function showRefBrandPage(brand){
     +(brand==='nissan'?'<div id="nissanWarrantyGlobal" style="display:none;background:#fff;border-radius:0;overflow-x:auto;border-bottom:2px solid #eee;padding:14px 16px;direction:rtl;text-align:right"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-left:4px solid #c0272d"><div style="font-size:13px;font-weight:700;color:#c0272d;margin-bottom:8px">🛡️ الضمان الأساسي</div><div style="font-size:12px;color:#555;line-height:1.8">📅 يسري من تاريخ إصدار اللوحات<br>⏱️ 3 سنوات أو 100,000 كم<br>✅ يتفعل تلقائياً بدون إجراء<br>🔧 يشترط الصيانة في مراكز معتمدة</div></div><div style="background:#fef9f9;border-radius:10px;padding:14px;border-left:4px solid #c0272d"><div style="font-size:13px;font-weight:700;color:#c0272d;margin-bottom:8px">🔋 ضمان البطارية</div><div style="font-size:12px;color:#555;line-height:1.8">📅 يسري من تاريخ إصدار اللوحات<br>السنة الأولى: تغيير مجاني ✅<br>السنة الثانية: خصم 50٪<br>السنة الثالثة: خصم 25٪<br>🏢 في مراكز بترومين نيسان فقط</div></div><div style="background:#f9fffe;border-radius:10px;padding:14px;border-left:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 جدول الصيانة</div><div style="font-size:12px;color:#555;line-height:1.8">🆓 فحص مجاني: 1,000 - 2,000 كم<br>⏱️ صيانة دورية: كل 10,000 كم أو 6 أشهر<br>مجانية لسيارات 2025-2026 داخل الوكالة</div></div><div style="background:#f9fffe;border-radius:10px;padding:14px;border-left:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">⚙️ زيت القير</div><div style="font-size:12px;color:#555;line-height:1.8">🔧 يُوصى بالتغيير بعد 40,000 - 60,000 كم<br>حسب ظروف القيادة والاستخدام</div></div></div></div>':'')
     +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e3f2fd"><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South · North</td><td style="padding:7px 12px;text-align:center"><a href="mailto:s.alsulami@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alsulami@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr><tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">simon.white@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">z.bakhurji@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr></tbody></table></div>':'')
     +(brand==='bodyshop'?'<div id="bodyshopInstruction" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px;direction:rtl;text-align:right"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-right:4px solid #7b0000"><div style="font-size:13px;font-weight:700;color:#7b0000;margin-bottom:8px">📋 الإجراءات (قبل)</div><div style="font-size:11px;color:#555;line-height:1.8">يلزم توفير المستندات التالية:<br>1- استمارة المركبة<br>2- تقرير الجهة المباشرة للحادث (نجم أو المرور)<br>3- الرقم المرجعي لمطالبة التأمين<br><br>يُشترط حضور وتسليم المركبة من مالكها أو المفوّض رسميًا.<br>في حال تعذّر الحضور يجب تقديم تفويض خطي.</div></div><div style="background:#fff9f0;border-radius:10px;padding:14px;border-right:4px solid #e65100"><div style="font-size:13px;font-weight:700;color:#e65100;margin-bottom:8px">💰 التسعيرة</div><div style="font-size:11px;color:#555;line-height:1.8">يستغرق فحص المركبة وإرسال التسعيرة لشركة التأمين من 7 إلى 14 يوم عمل.<br><br>• قابلة للقيادة: تُسلَّم بعد الفحص<br>• غير قابلة للقيادة: تُحجز بالفرع لحين الإصلاح</div></div><div style="background:#f0fff4;border-radius:10px;padding:14px;border-right:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 الإصلاح</div><div style="font-size:11px;color:#555;line-height:1.8">يبدأ الإصلاح بعد موافقة التأمين، بحد أقصى 90 يوم عمل.<br><br>سيتم توفير قطع الغيار خلال هذه الفترة، وإشعاركم برسالة نصية عند توفرها.</div></div></div></div>':'')
-    +(tabs.length>1?'<div class="ref-sub-tabs" style="justify-content:center">':'')
-    +(tabs.length>1?tabs.map((t,i)=>{
+    +'<div class="ref-sub-tabs" style="justify-content:center">'
+    +tabs.map((t,i)=>{
       const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','PMS':'Service','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script'};
       const label=TAB_LABELS[t]||t;
       return '<button class="ref-sub-tab'+(i===0?' active':'')+'" '
         +'style="'+(i===0?'background:'+meta.color+';color:#fff;border-color:'+meta.color:'')+'" '
         +'onclick="switchRefTab(\''+brand+'\','+i+',this)">'+label+'</button>';
-    }).join('')+'</div>':'')
+    }).join('')
+    +'</div>'
     +'<div class="ref-tab-content"><div id="refTab_'+brand+'" style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading '+tabs[0]+'...</div></div>'
     +'</div>';
   renderRefBrand(brand,0);
@@ -2868,17 +2869,11 @@ function renderRoster(){
   var weeklyHTML = '';
   if(WEEKLY_DATA && WEEKLY_DATA.length){
     var wkeys=Object.keys(WEEKLY_DATA[0]||{});
-    // Columns: "Multi Campaign" (Week), "" (Agent Name), "Break Time"
-    var weekCol=wkeys[0]||'Multi Campaign';
-    var agentCol=wkeys[1]||'';
-    var breakCol=wkeys[2]||'Break Time';
     var callRows=[], chatRows=[], wSection='call';
     WEEKLY_DATA.forEach(function(r){
-      var week=String(r[weekCol]||'').trim();
-      var agent=String(r[agentCol]||'').trim();
-      var brk=String(r[breakCol]||'').trim();
-      if(agent==='WhatsApp'||week==='WhatsApp'){wSection='chat';return;}
-      if(week||agent||brk){ if(wSection==='call')callRows.push(r); else chatRows.push(r); }
+      var vals=Object.values(r).map(function(v){return String(v||'').trim();});
+      if(vals.some(function(v){return v==='WhatsApp';})){wSection='chat';return;}
+      if(vals.some(function(v){return v&&v!=='WhatsApp';})){ if(wSection==='call')callRows.push(r); else chatRows.push(r); }
     });
 
     function fmtTime(v){
@@ -2891,22 +2886,21 @@ function renderRoster(){
     }
     function buildBreakTable(brows,title,color){
       if(!brows.length) return '';
-      var wkeys2=Object.keys(WEEKLY_DATA[0]||{});
-      var wk=[
-        {key:wkeys2[0]||'', label:'Week'},
-        {key:wkeys2[1]||'', label:'Agent Name'},
-        {key:wkeys2[2]||'Break Time', label:'Break Time'}
-      ];
+      // Use actual column names from data
+      var allKeys={};
+      brows.forEach(function(r){Object.keys(r).forEach(function(k){if(k)allKeys[k]=1;});});
+      var wk=Object.keys(allKeys);
+      if(!wk.length) wk=['Week','Agent Name','Break Time'];
       var t='<div style="background:#fff;border-radius:10px;border:1px solid #eee;overflow:hidden;margin-bottom:12px">'
         +'<div style="background:'+color+'18;border-left:4px solid '+color+';padding:10px 14px;font-size:13px;font-weight:700;color:'+color+'">'+title+'</div>'
         +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
         +'<thead><tr style="background:'+color+'10">';
-      wk.forEach(function(c){t+='<th style="padding:7px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">'+c.label+'</th>';});
+      wk.forEach(function(c){t+='<th style="padding:7px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">'+c+'</th>';});
       t+='</tr></thead><tbody>';
       brows.forEach(function(r,i){
         t+='<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+'">';
         wk.forEach(function(c){
-          var val=String(r[c.key]||'').trim();
+          var val=String(r[c]||'').trim();
           if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(val)) val=fmtTime(val);
           t+='<td style="padding:7px 12px;color:#444;text-align:center">'+val+'</td>';
         });
@@ -3189,7 +3183,7 @@ async function renderRef(){
       {key:'baic',       label:'BAIC',             icon:'🟡', color:'#f9a825'},
       {key:'nissan',     label:'Nissan',           icon:'🚗', color:'#c0272d'},
       {key:'stellantis', label:'Stellantis',       icon:'🔵', color:'#1565c0'},
-      {key:'bodyshop',   label:'Body Shop',icon:'🔴', color:'#7b0000'},
+      {key:'bodyshop',   label:'& Paint',icon:'🔴', color:'#7b0000'},
       {key:'foton',      label:'Foton',            icon:'🚛', color:'#546e7a'},
       {key:'nos',        label:'National Oil Stop',icon:'🟢', color:'#2e7d32'},
       {key:'electromin', label:'Electromin',       icon:'⚡', color:'#1b5e20'},
