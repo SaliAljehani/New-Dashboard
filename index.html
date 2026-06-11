@@ -17,7 +17,7 @@ body{font-family:'Inter',system-ui,sans-serif;font-size:12px;background:#e2e4ed;
 .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px}
 .spinner{width:48px;height:48px;border:4px solid #f0f0f0;border-top-color:#c0272d;border-radius:50%;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.load-text{font-size:14px;color:#444}
+.load-text{font-size:14px;color:#888}
 .load-bar{width:300px;height:6px;background:#f0f0f0;border-radius:3px;overflow:hidden}
 .load-fill{height:100%;background:linear-gradient(90deg,#c0272d,#e65100);border-radius:3px;transition:width .4s;width:0%}
 .err{background:#fde;color:#c0272d;padding:16px 24px;border-radius:10px;margin:20px;font-size:14px;display:flex;align-items:center;gap:10px}
@@ -125,7 +125,7 @@ tr:last-child td{border-bottom:none}
 .role-call{background:#fef2f2;color:#c0272d;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600}
 .role-chat{background:#e3f2fd;color:#1565c0;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600}
 .break-time{font-weight:700;color:#2e7d32}
-.no-schedule{text-align:center;padding:40px;color:#555;font-size:14px}
+.no-schedule{text-align:center;padding:40px;color:#aaa;font-size:14px}
 
 
 
@@ -139,12 +139,12 @@ tr:last-child td{border-bottom:none}
 .eom-podium{display:flex;flex-direction:column;gap:10px}
 .eom-rank{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;background:#f9f9f9;border:1px solid #eee}
 .eom-rank.gold{background:linear-gradient(135deg,#fff8e1,#fff3cd);border-color:#DAA520}
-.eom-rank.silver{background:linear-gradient(135deg,#f5f5f5,#ececec);border-color:#555}
+.eom-rank.silver{background:linear-gradient(135deg,#f5f5f5,#ececec);border-color:#aaa}
 .eom-rank.bronze{background:linear-gradient(135deg,#fff3e0,#ffe0b2);border-color:#cd7f32}
 .eom-medal{font-size:24px;flex-shrink:0}
 .eom-name{font-size:13px;font-weight:700;color:#1a1a2e}
 .eom-score{font-size:18px;font-weight:700;color:#c0272d}
-.eom-details{font-size:10px;color:#444;margin-top:2px}
+.eom-details{font-size:10px;color:#888;margin-top:2px}
 .eom-breakdown{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
 .eom-pill{font-size:10px;padding:2px 7px;border-radius:8px;background:#f0f0f0;color:#555}
 .eom-winner-banner{background:linear-gradient(135deg,#c0272d,#7b0000);border-radius:14px;padding:20px;text-align:center;color:#fff;margin-bottom:20px}
@@ -158,7 +158,7 @@ tr:last-child td{border-bottom:none}
 .announce-card.high{border-left-color:#c0272d}
 .announce-card.medium{border-left-color:#DAA520}
 .announce-card.low{border-left-color:#2e7d32}
-.announce-date{font-size:10px;color:#444;margin-bottom:6px;font-weight:500}
+.announce-date{font-size:10px;color:#999;margin-bottom:6px;font-weight:500}
 .announce-title{font-size:14px;font-weight:700;color:#1a1a2e;margin-bottom:8px}
 .announce-msg{font-size:12px;color:#555;line-height:1.6}
 .announce-priority{display:inline-block;padding:2px 10px;border-radius:10px;font-size:10px;font-weight:700;margin-top:8px}
@@ -195,7 +195,7 @@ tr:last-child td{border-bottom:none}
 .ref-contacts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
 .ref-contact-pill{background:#fafafa;border-radius:10px;padding:11px 14px;border:1px solid #eee;transition:.15s}
 .ref-contact-pill:hover{border-color:#c0272d;background:#fff}
-.ref-contact-pill-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#555;margin-bottom:4px}
+.ref-contact-pill-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#aaa;margin-bottom:4px}
 .ref-contact-pill-val{font-size:15px;font-weight:700;color:#1a1a2e;letter-spacing:.02em}
 
 /* Two-col layout */
@@ -210,7 +210,7 @@ tr:last-child td{border-bottom:none}
 .ref-subj-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:8px}
 .ref-subj-row{display:flex;align-items:flex-start;gap:6px;font-size:11px;color:#555;margin-bottom:4px;line-height:1.5}
 .ref-subj-ico{flex-shrink:0;font-size:12px;margin-top:1px}
-.ref-subj-note{color:#444;font-style:italic}
+.ref-subj-note{color:#888;font-style:italic}
 .ref-subj-complaints{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
 .ref-subj-complaint-tag{font-size:10px;background:#fef2f2;color:#c0272d;border:1px solid #fcc;border-radius:6px;padding:2px 8px;font-weight:600}
 
@@ -220,7 +220,7 @@ tr:last-child td{border-bottom:none}
 .ref-link-card-name{font-size:13px;font-weight:700;color:#1a1a2e;flex:1}
 .ref-link-open-btn{padding:5px 14px;background:#1565c0;color:#fff;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap}
 .ref-link-open-btn:hover{background:#0d47a1}
-.ref-link-file{font-size:11px;color:#444;background:#f0f2f7;padding:4px 10px;border-radius:8px;white-space:nowrap}
+.ref-link-file{font-size:11px;color:#888;background:#f0f2f7;padding:4px 10px;border-radius:8px;white-space:nowrap}
 .ref-link-pass{font-size:10px;color:#bbb;margin-top:2px}
 
 /* Brand accordion */
@@ -237,14 +237,14 @@ tr:last-child td{border-bottom:none}
 .ref-tab-content{padding:14px}
 
 /* Branch cards */
-.ref-region-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#444;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #eee;display:flex;align-items:center;gap:6px}
+.ref-region-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#888;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #eee;display:flex;align-items:center;gap:6px}
 .ref-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:16px}
 .ref-card{background:#f9fbff;border-radius:10px;padding:14px;border:1px solid #e8eaed;transition:.2s;text-align:center;direction:ltr}
 .ref-card:hover{border-color:#c0272d;background:#fff;box-shadow:0 4px 12px rgba(192,39,45,.1)}
 .ref-card-title{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px}
 .ref-card-row{display:flex;align-items:flex-start;gap:7px;margin-bottom:5px;font-size:12px;color:#555}
 .ref-card-code{display:inline-block;background:#eef2ff;color:#3949ab;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:6px}
-.ref-card-hours{font-size:10px;color:#444;border-top:1px solid #f0f0f0;padding-top:7px;margin-top:7px;line-height:1.5}
+.ref-card-hours{font-size:10px;color:#888;border-top:1px solid #f0f0f0;padding-top:7px;margin-top:7px;line-height:1.5}
 
 /* Email cards */
 .ref-email-card{background:#f9fffe;border-radius:10px;padding:12px 14px;border:1px solid #b2dfdb;transition:.15s;margin-bottom:4px;text-align:center}
@@ -267,7 +267,7 @@ tr:last-child td{border-bottom:none}
 .vin-inp{flex:1;padding:9px 16px;border-radius:24px;border:1.5px solid #ddd;font-size:13px;outline:none}
 .vin-inp:focus{border-color:#4a148c}
 .vin-search-btn{padding:9px 20px;background:#4a148c;color:#fff;border:none;border-radius:24px;font-size:12px;font-weight:700;cursor:pointer}
-.vin-result-count{font-size:11px;color:#444;margin-bottom:6px;font-weight:600}
+.vin-result-count{font-size:11px;color:#888;margin-bottom:6px;font-weight:600}
 .ref-search-inp{flex:1;padding:7px 12px;border-radius:20px;border:1.5px solid #ddd;font-size:12px;outline:none}
 .ref-search-inp:focus{border-color:#c0272d}
 
@@ -306,7 +306,7 @@ tr:last-child td{border-bottom:none}
 .comp-team{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
 .comp-stat{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f5f5f5;font-size:12px}
 .comp-stat:last-child{border-bottom:none}
-.comp-stat .lbl{color:#444}.comp-stat .val{font-weight:700}
+.comp-stat .lbl{color:#888}.comp-stat .val{font-weight:700}
 .team-toggle{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
 .ttn{padding:5px 14px;border-radius:20px;border:1.5px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#666}
 .ttn.active{color:#fff;border-color:transparent}
@@ -469,13 +469,13 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 <div id="page3" style="display:none;max-width:1300px;margin:0 auto;padding:18px 24px">
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
     <input class="dir-search" type="text" placeholder="🔍 Search agent name..." oninput="filterDir(this.value)" id="dirSearch">
-    <span style="font-size:12px;color:#555" id="dirCount"></span>
+    <span style="font-size:12px;color:#aaa" id="dirCount"></span>
   </div>
   <div class="dir-grid" id="dirGrid"></div>
 </div>
 
 <div id="page4" style="display:none;max-width:1300px;margin:0 auto;padding:18px 24px">
-  <div id="refContent"><div style="text-align:center;padding:30px;color:#555">⏳ Loading reference data...</div></div>
+  <div id="refContent"><div style="text-align:center;padding:30px;color:#aaa">⏳ Loading reference data...</div></div>
 </div>
 
 <div id="page5" style="display:none;max-width:1300px;margin:0 auto;padding:18px 24px"></div>
@@ -485,17 +485,17 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 <div id="page6" style="display:none;max-width:1300px;margin:0 auto;padding:18px 24px">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
     <div style="font-size:16px;font-weight:700;color:#1a1a2e">📢 Announcement Board</div>
-    <div style="font-size:12px;color:#444">Updates from Google Sheets automatically</div>
+    <div style="font-size:12px;color:#888">Updates from Google Sheets automatically</div>
   </div>
-  <div id="announceContent"><div style="text-align:center;padding:40px;color:#555">Loading announcements...</div></div>
+  <div id="announceContent"><div style="text-align:center;padding:40px;color:#aaa">Loading announcements...</div></div>
 </div>
 
 <div id="page7" style="display:none;max-width:1300px;margin:0 auto;padding:18px 24px">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
     <div style="font-size:16px;font-weight:700;color:#1a1a2e">⚠️ Escalation Cases</div>
-    <div style="font-size:12px;color:#444">Updates from Google Sheets automatically</div>
+    <div style="font-size:12px;color:#888">Updates from Google Sheets automatically</div>
   </div>
-  <div id="escalationContent"><div style="text-align:center;padding:40px;color:#555">Loading escalations...</div></div>
+  <div id="escalationContent"><div style="text-align:center;padding:40px;color:#aaa">Loading escalations...</div></div>
 </div>
 
 <div id="page8" style="display:none;max-width:1300px;margin:0 auto;padding:18px 24px">
@@ -782,7 +782,7 @@ function renderAll(){
       return`<div class="ac${nm===CA?' sel':''}" onclick="selAgent('${nm}')">
         <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px">
           <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#c0272d,#7b0000);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">${init}</div>
-          <div><div class="acn">${nm}</div><div style="font-size:10px;color:#555">#${i+1} · ${a.days} days</div></div>
+          <div><div class="acn">${nm}</div><div style="font-size:10px;color:#aaa">#${i+1} · ${a.days} days</div></div>
         </div>
         <div class="acs">
           <div class="acp">In <span>${N(a.I)}</span></div>
@@ -835,7 +835,7 @@ function renderAgent(name){
   if(!rows.length){
     document.getElementById('vAgent').style.display='block';
     document.getElementById('vAll').style.display='none';
-    document.getElementById('dtbody').innerHTML='<tr><td colspan="11" style="text-align:center;padding:20px;color:#555">No data found for this agent in the selected period.</td></tr>';
+    document.getElementById('dtbody').innerHTML='<tr><td colspan="11" style="text-align:center;padding:20px;color:#aaa">No data found for this agent in the selected period.</td></tr>';
     return;
   }
   const a=ag(rows);
@@ -924,7 +924,7 @@ function renderAgent(name){
     const avgAht=s.ahtN?s.aht/s.ahtN:0;
     const rc='background:#fde;color:#c0272d;font-weight:700';
     summaryHtml+=`<tr style="background:#e8f4fd;border-top:2px solid #1565c0">
-      <td style="font-weight:700;color:#1565c0;white-space:nowrap">📊 ${MNAMES2[m]||m}<br><span style="font-size:10px;color:#444">${s.days} days</span></td>
+      <td style="font-weight:700;color:#1565c0;white-space:nowrap">📊 ${MNAMES2[m]||m}<br><span style="font-size:10px;color:#888">${s.days} days</span></td>
       <td class="tr" style="${avgLogin<9?rc:''}">${fmtH(avgLogin)}</td>
       <td class="tr" style="${avgReady<8?rc:''}">${fmtH(avgReady)}</td>
       <td class="tr">${fmtS(s.days?s.acof/s.days:0)}</td>
@@ -954,10 +954,10 @@ function mnm(m){const ns=['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Se
 function renderAttendance(name){
   const{f,t}=gf();
   const ag=ATT[name];
-  if(!ag){document.getElementById('attContent').innerHTML='<div style="text-align:center;padding:30px;color:#555">No attendance data for this agent.</div>';return;}
+  if(!ag){document.getElementById('attContent').innerHTML='<div style="text-align:center;padding:30px;color:#aaa">No attendance data for this agent.</div>';return;}
   const rows={};
   Object.entries(ag).forEach(([d,s])=>{if(d>=f&&d<=t)rows[d]=s;});
-  if(!Object.keys(rows).length){document.getElementById('attContent').innerHTML='<div style="text-align:center;padding:30px;color:#555">No attendance in selected period.</div>';return;}
+  if(!Object.keys(rows).length){document.getElementById('attContent').innerHTML='<div style="text-align:center;padding:30px;color:#aaa">No attendance in selected period.</div>';return;}
   const tot={Office:0,Remote:0,Off:0,Vacation:0,Sick:0,Absent:0,EL:0};
   Object.values(rows).forEach(s=>{if(s in tot)tot[s]++;});
   const byM={};
@@ -967,7 +967,7 @@ function renderAttendance(name){
     <div class="ms-card" style="border-left-color:#1565c0"><div class="ms-name">🏠 Remote</div><div class="ms-val">${tot.Remote}</div></div>
     <div class="ms-card" style="border-left-color:#6a1b9a"><div class="ms-name">🌴 Vacation</div><div class="ms-val">${tot.Vacation}</div></div>
     <div class="ms-card" style="border-left-color:#e65100"><div class="ms-name">🤒 Sick Leave</div><div class="ms-val">${tot.Sick}</div></div>
-    <div class="ms-card" style="border-left-color:#444"><div class="ms-name">– Off</div><div class="ms-val">${tot.Off}</div></div>
+    <div class="ms-card" style="border-left-color:#888"><div class="ms-name">– Off</div><div class="ms-val">${tot.Off}</div></div>
     <div class="ms-card" style="border-left-color:#c0272d"><div class="ms-name">❌ Absent</div><div class="ms-val">${tot.Absent}</div></div>
   </div>`;
   Object.keys(byM).sort().forEach(m=>{
@@ -1270,19 +1270,19 @@ const REF_SHEETS = {
   },
   nissan: {
     id: '1lXDeN1iUosG_JSADgdWhnkT5J1t3hhwXoSJdbmb4B88',
-    tabs: ['Showroom','Service','Spare Parts ','PAC','SMS & Location','Nissan APP 25-26']
+    tabs: ['Warranty','Showroom','service','Spare Parts ','PAC','SMS & Location','Nissan APP 25-26']
   },
   stellantis: {
     id: '104CXGHd1raokgGijhvHgt6AI2gdsqzANBH74Ehm01dM',
-    tabs: ['Showroom ','Service','Spare Parts ','PAC','Tristar','Showroom Sales Team']
+    tabs: ['Stellantis Vehicle','Showroom ','Service','Spare Parts ','PAC','Tristar','Showroom Sales Team']
   },
   bodyshop: {
     id: '1_Z8Ry4-Y7kNFYnhXNvn7QP8jt1S_n9JHdVC2zT6R6WE',
-    tabs: ['Body Shop']
+    tabs: ['Body Shop & Paint']
   },
   baic: {
     id: '1FQaNEkC-gKFIJLT5hBE9qzBL7pXf_m5Aot35h622hR4',
-    tabs: ['Aftersales','Appointment Script','Car Models','BAIC Location']
+    tabs: ['BAIC Vehicle','Aftersales','Appointment Script','Car Models','BAIC Location']
   },
   baicRecall: {
     id: '1pUqPaAXpKBjuBI6ABvgtd9Iuxo0IQ0sEbHX--3QMtpY',
@@ -1308,14 +1308,14 @@ async function fetchSheet(spreadsheetId, sheetName){
 }
 
 function makeRefTable(rows, vinFilter=''){
-  if(!rows || !rows.length) return '<div style="text-align:center;padding:40px;color:#555;font-size:13px">No data available</div>';
+  if(!rows || !rows.length) return '<div style="text-align:center;padding:40px;color:#aaa;font-size:13px">No data available</div>';
   
   let data = rows.filter(r => Object.values(r).some(v => String(v).trim()));
   if(vinFilter){
     const q = vinFilter.toLowerCase();
     data = data.filter(r => Object.values(r).some(v => String(v).toLowerCase().includes(q)));
   }
-  if(!data.length) return '<div style="text-align:center;padding:40px;color:#555">No results for "'+vinFilter+'"</div>';
+  if(!data.length) return '<div style="text-align:center;padding:40px;color:#aaa">No results for "'+vinFilter+'"</div>';
   
   const cols = Object.keys(data[0]).filter(c => c && c.trim() && data.some(r => String(r[c]||'').trim()));
   
@@ -1356,7 +1356,7 @@ function makeRefTable(rows, vinFilter=''){
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
           <span style="width:12px;height:12px;border-radius:50%;background:${color};flex-shrink:0;display:inline-block"></span>
           <span style="font-size:12px;font-weight:700;color:${color};text-transform:uppercase;letter-spacing:.05em">${grp}</span>
-          <span style="font-size:11px;color:#555">(${items.length})</span>
+          <span style="font-size:11px;color:#aaa">(${items.length})</span>
         </div>` : ''}
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px">
         ${items.map(r => {
@@ -1365,9 +1365,9 @@ function makeRefTable(rows, vinFilter=''){
           const advisor = r[advisorCol] ? `<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#555;margin-bottom:5px"><span>👤</span><span>${fv(r[advisorCol],vinFilter)}</span></div>` : '';
           const phone = r[phoneCol] ? `<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#555;margin-bottom:5px"><span>📞</span><span>${fv(r[phoneCol],vinFilter)}</span></div>` : '';
           const email = r[emailCol] ? `<div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#555;margin-bottom:5px"><span>✉️</span><span>${fv(r[emailCol],vinFilter)}</span></div>` : '';
-          const dist = r[distCol] ? `<div style="display:flex;align-items:flex-start;gap:6px;font-size:11px;color:#444;margin-bottom:5px"><span>📍</span><span>${fv(r[distCol],vinFilter)}</span></div>` : '';
-          const extras = otherCols.filter(c=>String(r[c]||'').trim()).map(c=>`<div style="font-size:11px;color:#666;margin-bottom:3px"><span style="color:#555">${c}:</span> ${fv(r[c],vinFilter)}</div>`).join('');
-          const hours = r[hoursCol] ? `<div style="font-size:10px;color:#444;border-top:1px solid #f5f5f5;padding-top:8px;margin-top:8px;line-height:1.6">🕐 ${fv(r[hoursCol],vinFilter)}</div>` : '';
+          const dist = r[distCol] ? `<div style="display:flex;align-items:flex-start;gap:6px;font-size:11px;color:#888;margin-bottom:5px"><span>📍</span><span>${fv(r[distCol],vinFilter)}</span></div>` : '';
+          const extras = otherCols.filter(c=>String(r[c]||'').trim()).map(c=>`<div style="font-size:11px;color:#666;margin-bottom:3px"><span style="color:#aaa">${c}:</span> ${fv(r[c],vinFilter)}</div>`).join('');
+          const hours = r[hoursCol] ? `<div style="font-size:10px;color:#888;border-top:1px solid #f5f5f5;padding-top:8px;margin-top:8px;line-height:1.6">🕐 ${fv(r[hoursCol],vinFilter)}</div>` : '';
           
           return `<div style="background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid ${color};transition:.15s" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,.07)'">
             <div style="margin-bottom:10px">${code}<span style="font-size:13px;font-weight:700;color:#1a1a2e">${title}</span></div>
@@ -1487,7 +1487,7 @@ const BRANCH_REGION_COLORS = {
 };
 
 function renderNissanBranchTab(arr, sheetName, brand){
-  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#555">No data</div>';
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 
   const fmtNum = n => {
     const s=String(n||'').trim();
@@ -1603,7 +1603,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
       +govHTML
       +(b.phone&&!b.persons.some(p=>p.phone===b.phone)?'<div style="font-size:12px;margin-bottom:5px">📞 '+b.phone+'</div>':'')
       +(b.gps&&b.gps.startsWith('http')?'<div style="margin-top:8px"><a href="'+b.gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-      +(b.hours&&b.regHours&&b.hours.trim()!==b.regHours.trim()?'<div style="font-size:10px;color:#444;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+b.hours+'</div>':'')
+      +(b.hours&&b.regHours&&b.hours.trim()!==b.regHours.trim()?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+b.hours+'</div>':'')
       +'</div></div>';
   };
 
@@ -1639,8 +1639,8 @@ function renderNissanBranchTab(arr, sheetName, brand){
     return '<div style="margin-bottom:14px">'
       +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+col_color+'12;border-radius:8px;border-left:4px solid '+col_color+';cursor:pointer;user-select:none;margin-bottom:10px">'
       +'<span style="font-size:13px;font-weight:700;color:'+col_color+';text-transform:uppercase;letter-spacing:.04em">'+reg+'</span>'
-      +'<span style="font-size:11px;color:#555">('+bList.length+' branches)</span>'
-      +(hoursDisp?'<span style="font-size:11px;color:#444;margin-left:auto">🕐 '+hoursDisp+'</span>':'')
+      +'<span style="font-size:11px;color:#aaa">('+bList.length+' branches)</span>'
+      +(hoursDisp?'<span style="font-size:11px;color:#888;margin-left:auto">🕐 '+hoursDisp+'</span>':'')
       +'<span id="ico_'+regId+'" style="margin-left:8px;color:'+col_color+'">▼</span>'
       +'</div>'
       +'<div id="'+regId+'"><div class="ref-cards-grid">'+bList.map(b=>makeCard(b,col_color)).join('')+'</div></div>'
@@ -1707,7 +1707,7 @@ function toggleRegion(id){
 
 
 function renderTristarTab(arr){
-  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#555">No data</div>';
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#1565c0';
   const keys=Object.keys(arr[0]||{});
   // Columns: Name, Region, Warranty, Name(Arabic), District, Hours, Manager, Email, Phone, CC, GPS
@@ -1735,37 +1735,35 @@ function renderTristarTab(arr){
     return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
       +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
       +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+name+'</div>'
-      +(arName?'<div style="font-size:12px;color:#444;margin-top:2px">'+arName+'</div>':'')
-      +(dist?'<div style="font-size:11px;color:#444;margin-top:3px">📍 '+dist+'</div>':'')
+      +(arName?'<div style="font-size:12px;color:#888;margin-top:2px">'+arName+'</div>':'')
+      +(dist?'<div style="font-size:11px;color:#888;margin-top:3px">📍 '+dist+'</div>':'')
       +'</div>'
       +'<div style="padding:10px 14px;text-align:center">'
       +(mgr?'<div style="font-size:12px;margin-bottom:5px">👤 '+mgr+'</div>':'')
       +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
       +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">✉️ '+email+'</a></div>':'')
       +(cc?'<div style="margin-bottom:5px;flex-wrap:wrap;display:flex;justify-content:center;gap:2px">'+fmtCC(cc)+'</div>':'')
-      +(hours?'<div style="font-size:10px;color:#444;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+hours+'</div>':'')
+      +(hours?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+hours+'</div>':'')
       +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
       +'</div></div>';
   };
 
   const warrantyHTML=warrantyRows.length?
     '<div style="margin-bottom:16px">'
-    +'<div onclick="toggleRegion(\'tristarWarranty\')" style="font-size:12px;font-weight:700;color:#2e7d32;padding:6px 12px;background:#e8f5e9;border-radius:6px;margin-bottom:8px;border-left:3px solid #2e7d32;cursor:pointer;display:flex;align-items:center">✅ Warranty ('+warrantyRows.length+')<span id="ico_tristarWarranty" style="margin-left:auto">▼</span></div>'
-    +'<div id="tristarWarranty">'
-    +'<div class="ref-cards-grid">'+warrantyRows.map(r=>makeCard(r,'#2e7d32')).join('')+'</div></div></div>'
+    +'<div style="font-size:12px;font-weight:700;color:#2e7d32;padding:6px 12px;background:#e8f5e9;border-radius:6px;margin-bottom:8px;border-left:3px solid #2e7d32">✅ Warranty ('+warrantyRows.length+')</div>'
+    +'<div class="ref-cards-grid">'+warrantyRows.map(r=>makeCard(r,'#2e7d32')).join('')+'</div></div>'
     :'';
 
   const noWarrantyHTML=noWarrantyRows.length?
     '<div style="margin-bottom:16px">'
-    +'<div onclick="toggleRegion(\'tristarNoWarranty\')" style="font-size:12px;font-weight:700;color:#e65100;padding:6px 12px;background:#fff3e0;border-radius:6px;margin-bottom:8px;border-left:3px solid #e65100;cursor:pointer;display:flex;align-items:center">❌ No Warranty ('+noWarrantyRows.length+')<span id="ico_tristarNoWarranty" style="margin-left:auto">▼</span></div>'
-    +'<div id="tristarNoWarranty">'
-    +'<div class="ref-cards-grid">'+noWarrantyRows.map(r=>makeCard(r,'#e65100')).join('')+'</div></div></div>'
+    +'<div style="font-size:12px;font-weight:700;color:#e65100;padding:6px 12px;background:#fff3e0;border-radius:6px;margin-bottom:8px;border-left:3px solid #e65100">❌ No Warranty ('+noWarrantyRows.length+')</div>'
+    +'<div class="ref-cards-grid">'+noWarrantyRows.map(r=>makeCard(r,'#e65100')).join('')+'</div></div>'
     :'';
 
   return '<div>'+warrantyHTML+noWarrantyHTML+'</div>';
 }
 function renderStellantisAppointmentTab(arr){
-  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#555">No data</div>';
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#1565c0';
   const keys=arr.length?Object.keys(arr[0]):[];
   const svcKey=keys[0]; // "Appointment Script" column = Service values
@@ -1818,7 +1816,7 @@ function renderStellantisAppointmentTab(arr){
   return '<div>'+apptHTML+'</div>';
 }
 function renderSalesTeamTab(arr){
-  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#555">No data</div>';
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#1565c0';
   const keys=Object.keys(arr[0]||{});
   const REGION_COLORS={WEST:'#c0272d',Western:'#c0272d',CENTRAL:'#1565c0',Central:'#1565c0',EAST:'#2e7d32',Eastern:'#2e7d32',SOUTH:'#6a1b9a',Southern:'#6a1b9a',NORTH:'#e65100',Northern:'#e65100'};
@@ -1838,7 +1836,7 @@ function renderSalesTeamTab(arr){
     return '<div style="margin-bottom:12px">'
       +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px">'
       +'<span style="font-size:13px;font-weight:700;color:'+rc+'">'+reg+'</span>'
-      +'<span style="font-size:11px;color:#555">('+rows.length+')</span>'
+      +'<span style="font-size:11px;color:#aaa">('+rows.length+')</span>'
       +'<span id="ico_'+regId+'" style="margin-left:auto;color:'+rc+'">▼</span>'
       +'</div>'
       +'<div id="'+regId+'">'
@@ -1868,7 +1866,7 @@ function renderSalesTeamTab(arr){
   }).join('')+'</div>';
 }
 function renderStellantisSparePartsTab(arr){
-  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#555">No data</div>';
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#1565c0';
   const keys=Object.keys(arr[0]||{});
   const branchKey=keys[0], cityKey=keys[1], streetKey=keys[2], hoursKey=keys[3];
@@ -1915,7 +1913,7 @@ function renderStellantisSparePartsTab(arr){
     +'<div style="font-size:11px;color:#555">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="color:#2e7d32">sali.aljehani@petromin.com</a></div>'
     +'</div></div>';
 
-  const cards='<div class="ref-cards-grid">'+branchRows.map(r=>{
+  const cards=branchRows.map(r=>{
     const branch=String(r[branchKey]||'').trim();
     const city=String(r[cityKey]||'').trim();
     const street=String(r[streetKey]||'').trim();
@@ -1925,12 +1923,12 @@ function renderStellantisSparePartsTab(arr){
     const gps=String(r[gpsKey]||'').trim();
     const cc=ccMap[branch]||'';
     if(!branch||branch===branchKey) return '';
-    return '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+color+'">'
+
+    return '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+color+';margin-bottom:10px">'
       +'<div style="background:'+color+'12;padding:10px 16px">'
-      +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+branch+'</div>'
-      +(city?'<div style="font-size:11px;color:#444;font-weight:600;margin-top:2px">📌 '+city+'</div>':'')
-      +(street?'<div style="font-size:11px;color:#444;font-weight:600;margin-top:2px">📍 '+street+'</div>':'')
-      +(hours?'<div style="font-size:10px;color:#555;margin-top:2px">'+hours+'</div>':'')
+      +'<div style="font-size:14px;font-weight:700;color:'+color+'">'+branch+(city?' <span style="font-size:11px;color:#888;font-weight:400">— '+city+'</span>':'')+'</div>'
+      +(street?'<div style="font-size:11px;color:#888;margin-top:2px">📍 '+street+'</div>':'')
+      +(hours?'<div style="font-size:11px;color:#888;margin-top:2px">'+hours+'</div>':'')
       +'</div>'
       +'<div style="padding:10px 16px">'
       +(advisor?'<div style="font-size:12px;margin-bottom:6px">👤 <strong>'+advisor+'</strong></div>':'')
@@ -1938,13 +1936,13 @@ function renderStellantisSparePartsTab(arr){
       +(cc?'<div style="margin-bottom:6px"><span style="background:#e3f2fd;color:#1565c0;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">CC</span>'+fmtEmails(cc,'#e3f2fd','#1565c0')+'</div>':'')
       +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
       +'</div></div>';
-  }).filter(Boolean).join('')+'</div>';
+  }).filter(Boolean).join('');
 
   return '<div>'+emailHtml+cards+'</div>';
 }
 
 function renderStellantisPMSTab(arr, sheetName){
-  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#555">No data</div>';
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#1565c0';
   const keys=Object.keys(arr[0]||{});
   const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
@@ -1979,7 +1977,7 @@ function renderStellantisPMSTab(arr, sheetName){
     :'';
 
   const regions={};
-  const REGION_ORDER=['Western','Central','Eastern','Southern','Northern'];
+  const REGION_ORDER=['West','Western','Central','Center','East','Eastern','South','Southern','North','Northern'];
   const REGION_COLORS={Western:'#c0272d',Central:'#1565c0',Eastern:'#2e7d32',Southern:'#6a1b9a',Northern:'#e65100'};
   branchRows.forEach(r=>{const reg=String(r[keys[0]]||'').trim();if(!regions[reg])regions[reg]=[];regions[reg].push(r);});
 
@@ -1993,8 +1991,8 @@ function renderStellantisPMSTab(arr, sheetName){
     const regId='pms_'+reg.replace(/\s/g,'');
     return '<div style="margin-bottom:16px">'
       +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';margin-bottom:10px;cursor:pointer">'
-      +'<span style="font-size:13px;font-weight:700;color:'+rc+'">'+reg+'</span><span style="font-size:11px;color:#555">('+rows.length+')</span>'
-      +(commonH?'<span style="font-size:10px;color:#444;margin-left:auto">🕐 '+commonH+'</span>':'')
+      +'<span style="font-size:13px;font-weight:700;color:'+rc+'">'+reg+'</span><span style="font-size:11px;color:#aaa">('+rows.length+')</span>'
+      +(commonH?'<span style="font-size:10px;color:#888;margin-left:auto">🕐 '+commonH+'</span>':'')
       +'<span id="ico_'+regId+'" style="color:'+rc+'">▼</span>'
       +'</div>'
       +'<div id="'+regId+'"><div class="ref-cards-grid">'+rows.map(r=>{
@@ -2009,52 +2007,23 @@ function renderStellantisPMSTab(arr, sheetName){
         return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
           +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
           +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+b+'</div>'
-          +(addr?'<div style="font-size:11px;color:#555;font-weight:600;margin-top:4px">📍 '+addr+'</div>':'')
+          +(addr?'<div style="font-size:11px;color:#888;margin-top:4px">📍 '+addr+'</div>':'')
           +'</div><div style="padding:10px 14px;text-align:center">'
           +(svc?'<div style="display:inline-block;background:'+rc+'15;color:'+rc+';padding:2px 10px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px">'+svc+'</div>':'')
           +(bm?'<div style="font-size:12px;margin-bottom:5px">👤 '+bm+'</div>':'')
           +(ph?'<div style="font-size:12px;margin-bottom:5px">📞 '+ph+'</div>':'')
           +(em?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+em+'" style="color:#1565c0;text-decoration:none">✉️ '+em+'</a></div>':'')
           +(gps&&gps.startsWith('http')?'<div style="margin-top:8px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-          +(h&&h!==commonH?'<div style="font-size:10px;color:#444;margin-top:6px;border-top:1px solid #f0f0f0;padding-top:6px">🕐 '+h+'</div>':'')
+          +(h&&h!==commonH?'<div style="font-size:10px;color:#888;margin-top:6px;border-top:1px solid #f0f0f0;padding-top:6px">🕐 '+h+'</div>':'')
           +'</div></div>';
       }).join('')+'</div></div></div>';
   }).join('');
 
-  const apptDrawer='<div style="margin-bottom:12px">'
-    +'<button onclick="toggleRegion(\'stApptScript\')" style="width:100%;padding:10px 16px;background:#f5f5f5;border:1px solid #e0e0e0;border-radius:8px;font-size:12px;font-weight:700;color:#333;cursor:pointer;text-align:left;display:flex;align-items:center">📋 Appointment Script <span id="ico_stApptScript" style="margin-left:auto">▼</span></button>'
-    +'<div id="stApptScript" style="display:none;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 8px 8px;overflow-x:auto">'
-    +'<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#1565c015">'
-    +'<th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c022">Service</th>'
-    +'<th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c022">Source</th>'
-    +'<th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c022">Service Advisor</th>'
-    +'<th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c022">Description (Eg.)</th>'
-    +'</tr></thead><tbody>'
-    +[['GR','Call Center','Service Advisor GR','CC - GR - Engine Failure - Jeep Wrangler'],
-      ['GR','WhatsApp','Service Advisor GR','WA - GR - Engine Failure - Jeep Wrangler'],
-      ['GR','Online','Service Advisor GR','OL - GR - Engine Failure - Jeep Wrangler'],
-      ['PMS','Call Center','Service Advisor PMS','CC - PMS - 10000K - Jeep Wrangler'],
-      ['PMS','WhatsApp','Service Advisor PMS','WA - PMS - 10000K - Jeep Wrangler'],
-      ['PMS','Online','Service Advisor PMS','OL - PMS - 10000K - Jeep Wrangler'],
-      ['Recall','Call Center','Service Advisor PMS','CC - Recall - Jeep Wrangler'],
-      ['Recall','WhatsApp','Service Advisor PMS','WA - Recall - Jeep Wrangler'],
-      ['Emergency','Call Center','Service Advisor PMS','CC - Emergency - Jeep Wrangler'],
-      ['Emergency','WhatsApp','Service Advisor PMS','WA - Emergency - Jeep Wrangler']].map(function(row,i){
-        const SRC={'Call Center':'#fef2f2;color:#c0272d','WhatsApp':'#e8f5e9;color:#2e7d32','Online':'#e3f2fd;color:#1565c0'};
-        const sc=SRC[row[1]]||'#f5f5f5;color:#555';
-        return '<tr style="background:'+(i%2===0?'#fff':'#f9fbff')+'">'
-          +'<td style="padding:7px 12px"><span style="background:#1565c015;color:#1565c0;padding:2px 7px;border-radius:5px;font-size:11px">'+row[0]+'</span></td>'
-          +'<td style="padding:7px 12px"><span style="background:'+sc+';padding:2px 7px;border-radius:5px;font-size:11px">'+row[1]+'</span></td>'
-          +'<td style="padding:7px 12px;color:#555">'+row[2]+'</td>'
-          +'<td style="padding:7px 12px;font-family:monospace;font-size:11px">'+row[3]+'</td>'
-          +'</tr>';
-      }).join('')
-    +'</tbody></table></div></div>';
-  return '<div>'+emailHtml+apptDrawer+regHTML+'</div>';
+  return '<div>'+emailHtml+regHTML+'</div>';
 }
 
 function renderStellantisPACTab(arr){
-  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#555">No data</div>';
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#1565c0';
   const keys=Object.keys(arr[0]||{});
   const cityKey=keys[0], branchKey=keys[1], hoursKey=keys[2];
@@ -2109,7 +2078,7 @@ function renderStellantisPACTab(arr){
     const gps=String(r[gpsKey]||'').trim();
     return '<div style="background:#fff;border-radius:10px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-top:2px solid '+color+'">'
       +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">'+branch+'</div>'
-      +(hours?'<div style="font-size:10px;color:#444;margin-bottom:6px">🕐 '+hours+'</div>':'')
+      +(hours?'<div style="font-size:10px;color:#888;margin-bottom:6px">🕐 '+hours+'</div>':'')
       +(mgr?'<div style="font-size:12px;margin-bottom:4px">👤 '+mgr+'</div>':'')
       +(mobile?'<div style="font-size:12px;margin-bottom:4px">📞 '+mobile+'</div>':'')
       +(email?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">✉️ '+email+'</a></div>':'')
@@ -2135,7 +2104,7 @@ function renderStellantisPACTab(arr){
       return '<div style="background:#fff;border-radius:10px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-top:2px solid '+color+'">'
         +'<div style="font-size:10px;font-weight:700;color:'+color+';margin-bottom:4px">📌 '+city+'</div>'
         +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">'+branch+'</div>'
-        +(hours?'<div style="font-size:10px;color:#444;margin-bottom:6px">🕐 '+hours+'</div>':'')
+        +(hours?'<div style="font-size:10px;color:#888;margin-bottom:6px">🕐 '+hours+'</div>':'')
         +(mgr?'<div style="font-size:12px;margin-bottom:4px">👤 '+mgr+'</div>':'')
         +(mobile?'<div style="font-size:12px;margin-bottom:4px">📞 '+mobile+'</div>':'')
         +(email?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">✉️ '+email+'</a></div>':'')
@@ -2146,13 +2115,11 @@ function renderStellantisPACTab(arr){
 
   const branchCards=largeCityOrder.map(city=>{
     const rows=cities[city];
-    const cityId='pac_'+city.replace(/\s/g,'');
     return '<div style="margin-bottom:14px">'
-      +'<div onclick="toggleRegion(\''+cityId+'\')" style="font-size:12px;font-weight:700;color:'+color+';padding:6px 12px;background:'+color+'12;border-radius:6px;margin-bottom:8px;border-left:3px solid '+color+';cursor:pointer;display:flex;align-items:center">📌 '+city+' ('+rows.length+')<span id="ico_'+cityId+'" style="margin-left:auto">▼</span></div>'
-      +'<div id="'+cityId+'">'
+      +'<div style="font-size:12px;font-weight:700;color:'+color+';padding:6px 12px;background:'+color+'12;border-radius:6px;margin-bottom:8px;border-left:3px solid '+color+'">📌 '+city+' ('+rows.length+')</div>'
       +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px">'
       +rows.map(r=>branchCard(r)).join('')
-      +'</div></div></div>';
+      +'</div></div>';
   }).join('')
   +(singleCities.length?
     '<div style="margin-bottom:14px">'
@@ -2197,7 +2164,7 @@ function renderStellantisPACTab(arr){
     +'</div>';
 }
 function renderPACTab(arr){
-  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#555">No data</div>';
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 
   // Keys from actual Google Sheets data:
   // City, "Branch Code - Branch ", "Branch Manager", "Contact 📞", "BM Email", "📍 Location", "Working hours"
@@ -2317,7 +2284,7 @@ function renderPACTab(arr){
 }
 
 function renderBodyShopTab(arr){
-  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#555">No data</div>';
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#7b0000';
   const keys=Object.keys(arr[0]||{});
   const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
@@ -2369,8 +2336,8 @@ function renderBodyShopTab(arr){
     return '<div style="margin-bottom:14px">'
       +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px">'
       +'<span style="font-size:13px;font-weight:700;color:'+rc+'">'+reg+'</span>'
-      +'<span style="font-size:11px;color:#555">('+rows.length+')</span>'
-      +(commonH?'<span style="font-size:10px;color:#444;margin-left:auto">🕐 '+commonH+'</span>':'')
+      +'<span style="font-size:11px;color:#aaa">('+rows.length+')</span>'
+      +(commonH?'<span style="font-size:10px;color:#888;margin-left:auto">🕐 '+commonH+'</span>':'')
       +'<span id="ico_'+regId+'" style="color:'+rc+'">▼</span>'
       +'</div>'
       +'<div id="'+regId+'"><div class="ref-cards-grid">'+rows.map(r=>{
@@ -2384,14 +2351,14 @@ function renderBodyShopTab(arr){
         return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
           +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
           +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+name+'</div>'
-          +(dist?'<div style="font-size:11px;color:#444;margin-top:3px">📍 '+dist+'</div>':'')
+          +(dist?'<div style="font-size:11px;color:#888;margin-top:3px">📍 '+dist+'</div>':'')
           +'</div>'
           +'<div style="padding:10px 14px;text-align:center">'
           +(mgr?'<div style="font-size:12px;margin-bottom:5px">👤 '+mgr+'</div>':'')
           +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
           +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">✉️ '+email+'</a></div>':'')
           +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-          +(hours&&hours!==commonH?'<div style="font-size:10px;color:#444;margin-top:6px;border-top:1px solid #f0f0f0;padding-top:6px">🕐 '+hours+'</div>':'')
+          +(hours&&hours!==commonH?'<div style="font-size:10px;color:#888;margin-top:6px;border-top:1px solid #f0f0f0;padding-top:6px">🕐 '+hours+'</div>':'')
           +'</div></div>';
       }).join('')+'</div></div></div>';
   }).join('');
@@ -2400,7 +2367,7 @@ function renderBodyShopTab(arr){
 }
 
 function renderNissanWarrantyTab(arr){
-  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#555">No data</div>';
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const keys=Object.keys(arr[0]||{});
   const titleKey=keys[0], descKey=keys[1];
   const colors=['#c0272d','#1565c0','#2e7d32','#e65100'];
@@ -2441,13 +2408,13 @@ function renderNissanAppTab(arr){
     +'<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)">'
     +'<div style="background:#c0272d;color:#fff;padding:12px 16px;font-size:14px;font-weight:700;text-align:center">My Nissan App ( CCS ) - Y63</div>'
     +'<div style="padding:14px 16px">'
-    +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#444;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #f0f0f0">👤 User Information</div>'
+    +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #f0f0f0">👤 User Information</div>'
     +userFields.map(f=>'<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f5f5f5">'
       +'<span style="font-size:12px;color:#444;flex:1;text-align:left">'+f+(mandatory.has(f)?'<span style="color:#c0272d;font-size:10px;font-weight:700;margin-left:4px">*</span>':'')+'</span>'
       +'<span style="font-size:11px;color:#bbb;background:#f9f9f9;padding:3px 12px;border-radius:6px;border:1px solid #eee;min-width:120px;text-align:center">___</span>'
       +'</div>').join('')
     +'</div><div style="padding:14px 16px">'
-    +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#444;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #f0f0f0">Inquiry</div>'
+    +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #f0f0f0">Inquiry</div>'
     +inquiryFields.map(f=>'<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f5f5f5">'
       +'<span style="font-size:12px;color:#444;flex:1;text-align:left">'+f+'</span>'
       +'<span style="font-size:11px;color:#bbb;background:#f9f9f9;padding:3px 12px;border-radius:6px;border:1px solid #eee;min-width:120px;text-align:center">___</span>'
@@ -2457,7 +2424,7 @@ function renderNissanAppTab(arr){
     +'<button onclick="copyNissanAppForm()" style="padding:8px 24px;background:#c0272d;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer">📋 Copy Form</button>'
     +'<div id="nissanAppCopied" style="font-size:11px;color:#2e7d32;margin-top:6px;display:none">✅ Copied!</div>'
     +'</div></div>'
-    +'<div style="font-size:10px;color:#555;text-align:center;margin-top:8px">* Mandatory for App issues</div>'
+    +'<div style="font-size:10px;color:#aaa;text-align:center;margin-top:8px">* Mandatory for App issues</div>'
     +'</div>';
 }
 
@@ -2468,7 +2435,7 @@ function copyNissanAppForm(){
 
 
 function renderSMSTab(arr, sheetName, brand){
-  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#555">No data</div>';
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 
   // All data comes under 3S keys — sections separated by header rows
   // Header rows: values equal their key names (e.g. "PAC Appointment SMS EN" == key "3S Appointment SMS EN")
@@ -2567,9 +2534,9 @@ function copySMS(id){
 
 
 function buildEmailSection(arr){
-  if(!arr||!arr.length) return '<div style="color:#555;padding:20px;text-align:center">No email data</div>';
+  if(!arr||!arr.length) return '<div style="color:#aaa;padding:20px;text-align:center">No email data</div>';
   const data=arr.filter(r=>Object.values(r).some(v=>String(v||'').trim()));
-  if(!data.length) return '<div style="color:#555;padding:20px;text-align:center">No email data</div>';
+  if(!data.length) return '<div style="color:#aaa;padding:20px;text-align:center">No email data</div>';
   const cols=Object.keys(data[0]).filter(c=>c&&c.trim());
   const toCol   =cols.find(c=>/^to\s*$/i.test(c.trim()))||'';
   const ccCol   =cols.find(c=>/^cc$/i.test(c.trim()))||'';
@@ -2593,7 +2560,7 @@ function buildEmailSection(arr){
       +'</div>'
       +(toVal?'<div class="ref-email-row"><span class="ref-email-tag to">TO</span><div style="flex:1;flex-wrap:wrap">'+fmtEmails(toVal)+'</div></div>':'')
       +(ccVal?'<div class="ref-email-row"><span class="ref-email-tag cc">CC</span><div style="flex:1;flex-wrap:wrap">'+fmtEmails(ccVal)+'</div></div>':'')
-      +(note?'<div style="font-size:11px;color:#444;margin-top:5px;padding:5px 8px;background:#f9fffe;border-radius:6px;border-left:3px solid #80cbc4">💡 '+note+'</div>':'')
+      +(note?'<div style="font-size:11px;color:#888;margin-top:5px;padding:5px 8px;background:#f9fffe;border-radius:6px;border-left:3px solid #80cbc4">💡 '+note+'</div>':'')
       +'</div>';
   }).filter(Boolean).join('')+'</div>';
 }
@@ -2605,7 +2572,7 @@ function showRefBrandPage(brand){
   const META={
     nissan:    {label:'Nissan',    icon:'🔴',color:'#c0272d'},
     stellantis:{label:'Stellantis',icon:'🔵',color:'#1565c0'},
-    bodyshop:  {label:'& Paint', icon:'🔴',color:'#7b0000'},
+    bodyshop:  {label:'Body Shop & Paint', icon:'🔴',color:'#7b0000'},
     baic:      {label:'BAIC',      icon:'⚫',color:'#37474f'},
     baicRecall:{label:'BAIC Recall — VIN Search',icon:'🔎',color:'#4a148c'},
   };
@@ -2621,22 +2588,16 @@ function showRefBrandPage(brand){
     +'<span style="font-size:26px">'+meta.icon+'</span>'
     +'<span style="font-size:16px;font-weight:700">'+meta.label+'</span>'
     +'<span style="margin-left:auto;font-size:11px;opacity:.75">'+tabs.length+' tabs</span>'
-    +(brand==='stellantis'?'<button onclick="loadVehicleModels(\'stellantis\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Stellantis Models <span id="ico_stellantisModels">▼</span></button>':'')
     +(brand==='stellantis'?'<button onclick="toggleRegion(\'stellantisWarrantyGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:8px">🛡️ Warranty <span id="ico_stellantisWarrantyGlobal">▼</span></button>':'')
-    +(brand==='nissan'?'<button onclick="loadVehicleModels(\'nissan\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Nissan Models <span id="ico_nissanModels">▼</span></button>':'')
     +(brand==='nissan'?'<button onclick="toggleRegion(\'nissanWarrantyGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🛡️ Warranty <span id="ico_nissanWarrantyGlobal">▼</span></button>':'')
     +(brand==='nissan'?'<button onclick="toggleRegion(\'nissanAreaMgrGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🗺️ Area Manager <span id="ico_nissanAreaMgrGlobal">▼</span></button>':'')
-    +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e3f2fd"><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South · North</td><td style="padding:7px 12px;text-align:center"><a href="mailto:s.alsulami@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alsulami@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr><tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">simon.white@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">z.bakhurji@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr></tbody></table></div>':'')
-    +(brand==='baic'?'<button onclick="loadVehicleModels(\'baic\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 BAIC Models <span id="ico_baicModels">▼</span></button>':'')
+    +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e3f2fd"><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="color:#1565c0;text-decoration:none">ahmed.ateeq@petromin.com</a></td></tr><tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central · North</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="color:#1565c0;text-decoration:none">simon.white@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="color:#1565c0;text-decoration:none">z.bakhurji@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr></tbody></table></div>':'')
     +(brand==='bodyshop'?'<button onclick="toggleRegion(\'bodyshopInstruction\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">📋 Instruction <span id="ico_bodyshopInstruction">▼</span></button>':'')
     
     +'</div>'
     +(brand==='stellantis'?'<div id="stellantisWarrantyGlobal" style="display:none;background:#fff;border-radius:0;overflow-x:auto;border-bottom:2px solid #e8eaed"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e8f5e9"><th style="padding:9px 14px;color:#2e7d32;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">ضمان</th><th style="padding:9px 14px;color:#2e7d32;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">CHRYSLER, DODGE, JEEP, RAM</th><th style="padding:9px 14px;color:#2e7d32;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">FIAT, ABARTH, ALFA ROMEO</th></tr></thead><tbody><tr style="background:#fff"><td style="padding:8px 14px;font-weight:600;color:#333">الضمان الأساسي + بطارية المصنع</td><td style="padding:8px 14px;text-align:center">3 years / 60,000 km</td><td style="padding:8px 14px;text-align:center">2 years / unlimited mileage</td></tr><tr style="background:#f9fbff"><td style="padding:8px 14px;font-weight:600;color:#333">الضمان الممتد</td><td style="padding:8px 14px;text-align:center">5 years / 100,000 km</td><td style="padding:8px 14px;text-align:center">5 years / 120,000 km</td></tr><tr style="background:#fff"><td style="padding:8px 14px;font-weight:600;color:#333">ضمان قطع الغيار</td><td style="padding:8px 14px;text-align:center">1 year / 20,000 km</td><td style="padding:8px 14px;text-align:center">1 year / 20,000 km</td></tr></tbody></table></div>':'')
-    +(brand==='nissan'?'<div id="nissanModelsDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:12px 16px"><div id="nissanModelsContent" style="text-align:center;color:#555;font-size:12px">⏳ Loading...</div></div>':'')
-    +(brand==='stellantis'?'<div id="stellantisModelsDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:12px 16px"><div id="stellantisModelsContent" style="text-align:center;color:#555;font-size:12px">⏳ Loading...</div></div>':'')
-    +(brand==='baic'?'<div id="baicModelsDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:12px 16px"><div id="baicModelsContent" style="text-align:center;color:#555;font-size:12px">⏳ Loading...</div></div>':'')
     +(brand==='nissan'?'<div id="nissanWarrantyGlobal" style="display:none;background:#fff;border-radius:0;overflow-x:auto;border-bottom:2px solid #eee;padding:14px 16px;direction:rtl;text-align:right"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-left:4px solid #c0272d"><div style="font-size:13px;font-weight:700;color:#c0272d;margin-bottom:8px">🛡️ الضمان الأساسي</div><div style="font-size:12px;color:#555;line-height:1.8">📅 يسري من تاريخ إصدار اللوحات<br>⏱️ 3 سنوات أو 100,000 كم<br>✅ يتفعل تلقائياً بدون إجراء<br>🔧 يشترط الصيانة في مراكز معتمدة</div></div><div style="background:#fef9f9;border-radius:10px;padding:14px;border-left:4px solid #c0272d"><div style="font-size:13px;font-weight:700;color:#c0272d;margin-bottom:8px">🔋 ضمان البطارية</div><div style="font-size:12px;color:#555;line-height:1.8">📅 يسري من تاريخ إصدار اللوحات<br>السنة الأولى: تغيير مجاني ✅<br>السنة الثانية: خصم 50٪<br>السنة الثالثة: خصم 25٪<br>🏢 في مراكز بترومين نيسان فقط</div></div><div style="background:#f9fffe;border-radius:10px;padding:14px;border-left:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 جدول الصيانة</div><div style="font-size:12px;color:#555;line-height:1.8">🆓 فحص مجاني: 1,000 - 2,000 كم<br>⏱️ صيانة دورية: كل 10,000 كم أو 6 أشهر<br>مجانية لسيارات 2025-2026 داخل الوكالة</div></div><div style="background:#f9fffe;border-radius:10px;padding:14px;border-left:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">⚙️ زيت القير</div><div style="font-size:12px;color:#555;line-height:1.8">🔧 يُوصى بالتغيير بعد 40,000 - 60,000 كم<br>حسب ظروف القيادة والاستخدام</div></div></div></div>':'')
-    +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e3f2fd"><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South · North</td><td style="padding:7px 12px;text-align:center"><a href="mailto:s.alsulami@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alsulami@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr><tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">simon.white@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">z.bakhurji@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr></tbody></table></div>':'')
+    +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e3f2fd"><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="color:#1565c0;text-decoration:none">ahmed.ateeq@petromin.com</a></td></tr><tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central · North</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="color:#1565c0;text-decoration:none">simon.white@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="color:#1565c0;text-decoration:none">z.bakhurji@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr></tbody></table></div>':'')
     +(brand==='bodyshop'?'<div id="bodyshopInstruction" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px;direction:rtl;text-align:right"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-right:4px solid #7b0000"><div style="font-size:13px;font-weight:700;color:#7b0000;margin-bottom:8px">📋 الإجراءات (قبل)</div><div style="font-size:11px;color:#555;line-height:1.8">يلزم توفير المستندات التالية:<br>1- استمارة المركبة<br>2- تقرير الجهة المباشرة للحادث (نجم أو المرور)<br>3- الرقم المرجعي لمطالبة التأمين<br><br>يُشترط حضور وتسليم المركبة من مالكها أو المفوّض رسميًا.<br>في حال تعذّر الحضور يجب تقديم تفويض خطي.</div></div><div style="background:#fff9f0;border-radius:10px;padding:14px;border-right:4px solid #e65100"><div style="font-size:13px;font-weight:700;color:#e65100;margin-bottom:8px">💰 التسعيرة</div><div style="font-size:11px;color:#555;line-height:1.8">يستغرق فحص المركبة وإرسال التسعيرة لشركة التأمين من 7 إلى 14 يوم عمل.<br><br>• قابلة للقيادة: تُسلَّم بعد الفحص<br>• غير قابلة للقيادة: تُحجز بالفرع لحين الإصلاح</div></div><div style="background:#f0fff4;border-radius:10px;padding:14px;border-right:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 الإصلاح</div><div style="font-size:11px;color:#555;line-height:1.8">يبدأ الإصلاح بعد موافقة التأمين، بحد أقصى 90 يوم عمل.<br><br>سيتم توفير قطع الغيار خلال هذه الفترة، وإشعاركم برسالة نصية عند توفرها.</div></div></div></div>':'')
     +'<div class="ref-sub-tabs" style="justify-content:center">'
     +tabs.map((t,i)=>{
@@ -2709,6 +2670,20 @@ async function renderRefBrand(brand,tabIdx){
       container.innerHTML=renderSalesTeamTab(arr);
       return;
     }
+    const VEHICLE_TABS2={'Nissan Vehicle':'Nissan Model','Stellantis Vehicle':'Stellantis Model','BAIC Vehicle':'BAIC Model'};
+    if(VEHICLE_TABS2[sheetName]){
+      const vdata=await fetchSheet('1VLZ3UL4jXlN-z0-yN86ouA_IDl326VAFYSjyHJV0MZU',VEHICLE_TABS2[sheetName]);
+      const varr=Array.isArray(vdata)?vdata:(vdata.rows||[]);
+      if(!varr.length){container.innerHTML='<div style="text-align:center;padding:24px;color:#555">No data</div>';return;}
+      const vkeys=Object.keys(varr[0]);
+      const colors={nissan:'#c0272d',stellantis:'#1565c0',baic:'#37474f'};
+      const vc=colors[brand]||'#333';
+      container.innerHTML='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
+        +'<thead><tr style="background:'+vc+'15">'+vkeys.map(k=>'<th style="padding:9px 14px;color:'+vc+';font-weight:700;border-bottom:2px solid '+vc+'22;text-align:center">'+k+'</th>').join('')+'</tr></thead><tbody>'
+        +varr.map((r,i)=>'<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+'">'+vkeys.map(k=>'<td style="padding:7px 14px;color:#333;text-align:center;font-size:11px">'+String(r[k]||'').trim()+'</td>').join('')+'</tr>').join('')
+        +'</tbody></table></div>';
+      return;
+    }
     if(brand==='bodyshop'){
       container.innerHTML=renderBodyShopTab(arr);
       return;
@@ -2725,7 +2700,7 @@ async function renderRefBrand(brand,tabIdx){
       container.innerHTML=renderSMSTab(arr, sheetName, brand);
       return;
     }
-    if(brand==='nissan' && sheetName.trim()==='Nissan APP 25-26'||sheetName.trim()==='Nissan App 25-26'){
+    if(brand==='nissan' && sheetName.trim()==='Nissan App 25-26'){
       container.innerHTML=renderNissanAppTab(arr);
       return;
     }
@@ -2791,7 +2766,7 @@ function toggleRefSection(bodyId,iconId){
 function renderRoster(){
   const el = document.getElementById('page5');
   if(!el) return;
-  if(!SCHEDULE_DATA.length){ el.innerHTML='<div style="text-align:center;padding:40px;color:#555">⏳ Loading schedule...</div>'; return; }
+  if(!SCHEDULE_DATA.length){ el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">⏳ Loading schedule...</div>'; return; }
 
   const keys = Object.keys(SCHEDULE_DATA[0]||{});
   const dateKey = keys[0];
@@ -2871,9 +2846,14 @@ function renderRoster(){
     var wkeys=Object.keys(WEEKLY_DATA[0]||{});
     var callRows=[], chatRows=[], wSection='call';
     WEEKLY_DATA.forEach(function(r){
-      var vals=Object.values(r).map(function(v){return String(v||'').trim();});
-      if(vals.some(function(v){return v==='WhatsApp';})){wSection='chat';return;}
-      if(vals.some(function(v){return v&&v!=='WhatsApp';})){ if(wSection==='call')callRows.push(r); else chatRows.push(r); }
+      var wkeys2=Object.keys(WEEKLY_DATA[0]||{});
+      var weekCol2=wkeys2[0]||''; var agentCol2=wkeys2[1]||''; var breakCol2=wkeys2[2]||'';
+      var week2=String(r[weekCol2]||'').trim();
+      var agent2=String(r[agentCol2]||'').trim();
+      var brk2=String(r[breakCol2]||'').trim();
+      if(week2==='Week'||brk2==='Break Time'||week2===weekCol2) return;
+      if(agent2==='WhatsApp'||week2==='WhatsApp'){wSection='chat';return;}
+      if(week2||agent2||brk2){ if(wSection==='call')callRows.push(r); else chatRows.push(r); }
     });
 
     function fmtTime(v){
@@ -2886,11 +2866,9 @@ function renderRoster(){
     }
     function buildBreakTable(brows,title,color){
       if(!brows.length) return '';
-      // Use actual column names from data
       var allKeys={};
       brows.forEach(function(r){Object.keys(r).forEach(function(k){if(k)allKeys[k]=1;});});
       var wk=Object.keys(allKeys);
-      if(!wk.length) wk=['Week','Agent Name','Break Time'];
       var t='<div style="background:#fff;border-radius:10px;border:1px solid #eee;overflow:hidden;margin-bottom:12px">'
         +'<div style="background:'+color+'18;border-left:4px solid '+color+';padding:10px 14px;font-size:13px;font-weight:700;color:'+color+'">'+title+'</div>'
         +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
@@ -2912,7 +2890,7 @@ function renderRoster(){
     weeklyHTML += buildBreakTable(callRows,'📞 Multi Campaign','#c0272d');
     weeklyHTML += buildBreakTable(chatRows,'💬 WhatsApp','#1565c0');
   } else {
-    weeklyHTML = '<div style="text-align:center;padding:30px;color:#555">No weekly data.</div>';
+    weeklyHTML = '<div style="text-align:center;padding:30px;color:#aaa">No weekly data.</div>';
   }
 
   el.innerHTML = '<div style="padding:4px">'
@@ -2937,7 +2915,7 @@ function switchScheduleTab(tab){
 function renderAnnouncements(){
   const el = document.getElementById('page6');
   if(!el) return;
-  if(!ANNOUNCEMENTS.length){ el.innerHTML='<div style="text-align:center;padding:40px;color:#555">📢 No announcements yet.</div>'; return; }
+  if(!ANNOUNCEMENTS.length){ el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">📢 No announcements yet.</div>'; return; }
 
   const priorityColor = {'High':'#c0272d','Medium':'#e65100','Low':'#2e7d32'};
 
@@ -2957,7 +2935,7 @@ function renderAnnouncements(){
       +'<div style="font-size:14px;font-weight:700;color:'+color+'">'+title+'</div>'
       +'<div style="display:flex;gap:8px;align-items:center">'
       +(priority?'<span style="font-size:10px;font-weight:700;padding:2px 10px;background:'+color+';color:#fff;border-radius:10px">'+priority+'</span>':'')
-      +'<span style="font-size:11px;color:#444">'+date+'</span>'
+      +'<span style="font-size:11px;color:#999">'+date+'</span>'
       +'</div></div>'
       +(msg?'<div style="padding:12px 16px;font-size:13px;color:#444;line-height:1.7;white-space:pre-wrap">'+msg+'</div>':'')
       +'</div>';
@@ -2971,7 +2949,7 @@ function renderAnnouncements(){
 function renderEscalations(){
   const el = document.getElementById('page7');
   if(!el) return;
-  if(!ESCALATIONS.length){ el.innerHTML='<div style="text-align:center;padding:40px;color:#555">⚠️ No escalations found.</div>'; return; }
+  if(!ESCALATIONS.length){ el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">⚠️ No escalations found.</div>'; return; }
 
   const statusColor={'Done':'#2e7d32','Pending':'#e65100','Open':'#c0272d','In Progress':'#1565c0'};
 
@@ -2982,7 +2960,7 @@ function renderEscalations(){
     var filtered = ESCALATIONS.filter(function(r){
       var k=Object.keys(r)[0]; return String(r[k]||'').trim()===team;
     });
-    if(!filtered.length) return '<div style="text-align:center;padding:30px;color:#555">No escalations for this team.</div>';
+    if(!filtered.length) return '<div style="text-align:center;padding:30px;color:#aaa">No escalations for this team.</div>';
     var keys=Object.keys(filtered[0]);
     var cols=keys.slice(1); // skip Team column
     var html='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
@@ -3064,7 +3042,7 @@ function renderEscalationTeam(team){
 function renderEOM(){
   const el = document.getElementById('page8');
   if(!el) return;
-  if(!EOM_DATA.length){ el.innerHTML='<div style="text-align:center;padding:40px;color:#555">🏆 No data yet.</div>'; return; }
+  if(!EOM_DATA.length){ el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">🏆 No data yet.</div>'; return; }
 
   const keys = Object.keys(EOM_DATA[0]||{});
   const teamKey=keys[0], monthKey=keys[1], nameKey=keys[2];
@@ -3163,7 +3141,7 @@ function renderEOMMonth(month){
 async function renderRef(){
   REF_CURRENT_BRAND=null;
   const container=document.getElementById('refContent');
-  container.innerHTML='<div style="text-align:center;padding:40px;color:#555"><div style="font-size:30px;margin-bottom:10px">⏳</div><div style="font-size:14px;font-weight:600">Loading reference data...</div></div>';
+  container.innerHTML='<div style="text-align:center;padding:40px;color:#aaa"><div style="font-size:30px;margin-bottom:10px">⏳</div><div style="font-size:14px;font-weight:600">Loading reference data...</div></div>';
   try{
     const fetchFB=async(id,names)=>{
       for(const name of names){
@@ -3183,7 +3161,7 @@ async function renderRef(){
       {key:'baic',       label:'BAIC',             icon:'🟡', color:'#f9a825'},
       {key:'nissan',     label:'Nissan',           icon:'🚗', color:'#c0272d'},
       {key:'stellantis', label:'Stellantis',       icon:'🔵', color:'#1565c0'},
-      {key:'bodyshop',   label:'& Paint',icon:'🔴', color:'#7b0000'},
+      {key:'bodyshop',   label:'Body Shop & Paint',icon:'🔴', color:'#7b0000'},
       {key:'foton',      label:'Foton',            icon:'🚛', color:'#546e7a'},
       {key:'nos',        label:'National Oil Stop',icon:'🟢', color:'#2e7d32'},
       {key:'electromin', label:'Electromin',       icon:'⚡', color:'#1b5e20'},
@@ -3211,7 +3189,7 @@ async function renderRef(){
     });
     const makePills=(arr,col)=>arr.length
       ?arr.map(e=>'<div class="ref-contact-pill" style="border-left:3px solid '+col+'"><div class="ref-contact-pill-label">'+e.name+'</div><div class="ref-contact-pill-val">'+e.num+'</div></div>').join('')
-      :'<div style="color:#555;font-size:12px;padding:8px">—</div>';
+      :'<div style="color:#aaa;font-size:12px;padding:8px">—</div>';
 
     // LINKS
     const linksArr=Array.isArray(linksData)?linksData:(linksData.rows||[]);
@@ -3291,7 +3269,7 @@ async function renderRef(){
       +'</div>'
       +'<div id="refLinksDrawer" style="display:none">'
       +'<div class="ref-info-panel"><div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1)">🔗 Links & Systems</div>'
-      +'<div class="ref-panel-body">'+(linkCards||'<div style="color:#555;padding:16px;text-align:center">No data</div>')+'</div></div>'
+      +'<div class="ref-panel-body">'+(linkCards||'<div style="color:#aaa;padding:16px;text-align:center">No data</div>')+'</div></div>'
       +'</div>'
 
       // BRAND CIRCLES
@@ -3333,48 +3311,11 @@ async function renderRef(){
 
   }catch(e){
     console.error('renderRef error:',e);
-    container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#444;margin-top:4px">'+e.message+'</div></div>';
+    container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
   }
 }
 
 
-
-const VEHICLE_SHEET_ID='1VLZ3UL4jXlN-z0-yN86ouA_IDl326VAFYSjyHJV0MZU';
-const VEHICLE_TABS={nissan:'Nissan',stellantis:'Stellantis',baic:'BAIC'};
-const VEHICLE_CACHE={};
-
-async function loadVehicleModels(brand){
-  const drawerId=brand+'ModelsDrawer';
-  const contentId=brand+'ModelsContent';
-  const icoId='ico_'+brand+'Models';
-  const drawer=document.getElementById(drawerId);
-  const ico=document.getElementById(icoId);
-  if(!drawer)return;
-  const isOpen=drawer.style.display!=='none';
-  drawer.style.display=isOpen?'none':'block';
-  if(ico)ico.textContent=isOpen?'▼':'▲';
-  if(isOpen||VEHICLE_CACHE[brand])return;
-  
-  const tabName=VEHICLE_TABS[brand];
-  try{
-    const data=await fetchSheet(VEHICLE_SHEET_ID,tabName);
-    const arr=Array.isArray(data)?data:(data.rows||[]);
-    if(!arr.length){document.getElementById(contentId).innerHTML='<div style="text-align:center;color:#555;font-size:12px">No data</div>';return;}
-    const keys=Object.keys(arr[0]);
-    let html='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
-      +'<thead><tr style="background:#f5f5f5">'
-      +keys.map(k=>'<th style="padding:7px 12px;font-weight:700;color:#333;border-bottom:2px solid #eee;text-align:left">'+k+'</th>').join('')
-      +'</tr></thead><tbody>'
-      +arr.map((r,i)=>'<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+'">'
-        +keys.map(k=>'<td style="padding:6px 12px;color:#333;font-size:11px">'+String(r[k]||'').trim()+'</td>').join('')
-        +'</tr>').join('')
-      +'</tbody></table></div>';
-    VEHICLE_CACHE[brand]=true;
-    document.getElementById(contentId).innerHTML=html;
-  }catch(e){
-    document.getElementById(contentId).innerHTML='<div style="color:#c0272d;font-size:12px">Error loading models</div>';
-  }
-}
 
 // Auto-start on page load
 window.addEventListener('DOMContentLoaded', () => { loadAllData(); });
