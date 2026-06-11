@@ -1270,7 +1270,7 @@ const REF_SHEETS = {
   },
   nissan: {
     id: '1lXDeN1iUosG_JSADgdWhnkT5J1t3hhwXoSJdbmb4B88',
-    tabs: ['Nissan Vehicle','Showroom','Service','Spare Parts ','PAC','SMS & Location','Nissan APP 25-26']
+    tabs: ['Warranty','Showroom','service','Spare Parts ','PAC','SMS & Location','Nissan APP 25-26']
   },
   stellantis: {
     id: '104CXGHd1raokgGijhvHgt6AI2gdsqzANBH74Ehm01dM',
@@ -1474,10 +1474,7 @@ const BRANCH_VALID_REGIONS = new Set([
   'West','Western','Central','Center','Centeral',
   'East','Eastern','South','Southern','North','Northern'
 ]);
-const BRANCH_REGION_ORDER = [
-  'West','Western','Central','Center','Centeral',
-  'East','Eastern','South','Southern','North','Northern'
-];
+const BRANCH_REGION_ORDER = ['West','Western','Central','Center','Centeral','East','Eastern','South','Southern','North','Northern'];
 const BRANCH_REGION_COLORS = {
   West:'#c0272d',Western:'#c0272d',
   Central:'#1565c0',Center:'#1565c0',Centeral:'#1565c0',
@@ -1485,47 +1482,6 @@ const BRANCH_REGION_COLORS = {
   South:'#6a1b9a',Southern:'#6a1b9a',
   North:'#e65100',Northern:'#e65100'
 };
-
-function makeEmailSection(reqTo, reqCC, comTo, comCC){
-  const fmtPills = v => String(v||'').split(/,/).map(e=>{
-    const s=e.trim(); if(!s) return '';
-    if(s.includes('@')) return '<a href="mailto:'+s+'" style="display:inline-flex;background:#e0f7f4;color:#00695c;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;margin:2px">'+s+'</a>';
-    return '<span style="font-size:11px;color:#333;font-weight:600;margin:2px">'+s+'</span>';
-  }).filter(Boolean).join('');
-  return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
-    +'<div style="font-size:13px;font-weight:700;color:#c0272d;margin-bottom:8px">📧 Request</div>'
-    +(reqTo?'<div style="margin-bottom:6px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px"><span style="background:#c0272d;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px">TO</span>'+fmtPills(reqTo)+'</div>':'')
-    +(reqCC?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px"><span style="background:#1565c0;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px">CC</span>'+fmtPills(reqCC)+'</div>':'')
-    +'</div>'
-    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
-    +'<div style="font-size:13px;font-weight:700;color:#c0272d;margin-bottom:8px">📧 Complaint</div>'
-    +(comTo?'<div style="margin-bottom:6px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px"><span style="background:#c0272d;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px">TO</span>'+fmtPills(comTo)+'</div>':'')
-    +(comCC?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px"><span style="background:#1565c0;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px">CC</span>'+fmtPills(comCC)+'</div>':'')
-    +'</div>'
-    +'</div>';
-}
-
-// Unified card renderer — same layout for ALL brands
-function makeUnifiedCard(name, city, address, manager, phone, email, hours, gps, color, extra){
-  color = color || '#c0272d';
-  return '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);border-top:3px solid '+color+'">'
-    // Header
-    +'<div style="background:'+color+'15;border-bottom:2px solid '+color+'20;padding:10px 14px;text-align:center">'
-    +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+name+'</div>'
-    +((city||address)?'<div style="font-size:11px;color:#444;margin-top:3px;font-weight:600">'
-      +(city?'📌 '+city+' ':'')+( address?'📍 '+address:'')+'</div>':'')
-    +'</div>'
-    // Body
-    +'<div style="padding:10px 14px;text-align:center">'
-    +(manager?'<div style="font-size:12px;font-weight:600;color:#222;margin-bottom:4px">👤 '+manager+'</div>':'')
-    +(phone?'<div style="font-size:12px;font-weight:600;color:#222;margin-bottom:4px">📞 '+phone+'</div>':'')
-    +(email?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="color:#1565c0;font-weight:600;text-decoration:none">✉️ '+email+'</a></div>':'')
-    +(extra||'')
-    +(hours?'<div style="font-size:10px;color:#444;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+hours+'</div>':'')
-    +(gps&&gps.startsWith&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-    +'</div></div>';
-}
 
 function renderNissanBranchTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
@@ -1553,7 +1509,19 @@ function renderNissanBranchTab(arr, sheetName, brand){
     : {req:{to:'Manager Branch + sali.aljehani@petromin.com',cc:'cs.agent@petromin.com'},
        com:{to:'Manager Branch + CRTeam@petromin.com',cc:'cs.agent@petromin.com'}};
 
-  const emailHdr = makeEmailSection(emCfg.req.to, emCfg.req.cc, emCfg.com.to, emCfg.com.cc);
+  const emailHdr =
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">'
+    +'<div class="ref-email-card" style="border-left:4px solid #00695c;text-align:center">'
+    +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+pills(emCfg.req.to)+'</div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+pills(emCfg.req.cc)+'</div>'
+    +'</div>'
+    +'<div class="ref-email-card" style="border-left:4px solid #c0272d;text-align:center">'
+    +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+pills(emCfg.com.to)+'</div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+pills(emCfg.com.cc)+'</div>'
+    +'</div>'
+    +'</div>';
 
   // Detect columns — new structure: Regions, City, Branch Code - Branch, District, Phone, Advisor, Email, Hours
   const cols = Object.keys(arr[0]||{});
@@ -1564,9 +1532,9 @@ function renderNissanBranchTab(arr, sheetName, brand){
   const serviceCol = fc('service type') || fc('service advisor') || '';
   const distCol    = fc('location','district','address') || cols[2];
   const phoneCol   = fc('phone','mobile','contact','number') || '';
-  const advisorCol = fc('branch manager','bm','manager','advisor','contact person') || cols[5];
+  const advisorCol = fc('branch manager','bm','manager') || fc('advisor') || cols[5];
   const emailCol   = fc('email') || cols[4];
-  const hoursCol   = fc('working hours','hours','working') || cols[6];
+  const hoursCol   = fc('working','hours') || cols[5];
   const gpsCol     = fc('gps','locaton','map') || cols[cols.length-1];
   const cityCol    = fc('city') || '';
 
@@ -1599,29 +1567,41 @@ function renderNissanBranchTab(arr, sheetName, brand){
   );
 
   const makeCard = (b, col_color) => {
-    const name = b.name.replace(/\s*\(.*?\)\s*/g,'').replace(/\n/g,' ').trim();
-    const city = b.city ? arCity(b.city) : '';
-    const address = b.district || '';
-    const hours = (b.hours&&b.regHours&&b.hours.trim()!==b.regHours.trim()) ? b.hours : '';
+    const persHTML = b.persons.map(p =>
+      '<div style="padding:5px 0;border-bottom:1px solid #f5f5f5">'
+      +(p.advisor?'<div style="font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:2px">👤 '+p.advisor+'</div>':'')
+      +(p.phone?'<div style="font-size:12px;color:#333;margin-bottom:2px">📞 '+p.phone+'</div>':'')
+      +(p.email?'<div style="font-size:11px"><a href="mailto:'+p.email+'" style="color:#1565c0;text-decoration:none">✉️ '+p.email+'</a></div>':'')
+      +'</div>'
+    ).join('');
+
     const govHTML = b.gov.length
       ? '<div style="margin-top:8px;padding:8px;background:#fff8e1;border-radius:6px;border-left:3px solid #f9a825">'
         +'<div style="font-size:10px;font-weight:700;color:#f9a825;text-transform:uppercase;margin-bottom:5px">🏢 Government Sales</div>'
         +b.gov.map(g=>
           '<div style="padding:3px 0;border-bottom:1px solid #fef3c7">'
-          +(g.name?'<div style="font-size:12px;font-weight:600;color:#222;margin-bottom:2px">👤 '+g.name+'</div>':'')
-          +(g.phone?'<div style="font-size:12px;font-weight:600;color:#222;margin-bottom:2px">📞 '+g.phone+'</div>':'')
-          +(g.email?'<div style="font-size:11px"><a href="mailto:'+g.email+'" style="color:#1565c0;font-weight:600;text-decoration:none">✉️ '+g.email+'</a></div>':'')
+          +(g.name?'<div style="font-size:12px;font-weight:600;color:#1a1a2e">👤 '+g.name+'</div>':'')
+          +(g.phone?'<div style="font-size:12px;color:#333">📞 '+g.phone+'</div>':'')
+          +(g.email?'<div style="font-size:11px"><a href="mailto:'+g.email+'" style="color:#1565c0;text-decoration:none">✉️ '+g.email+'</a></div>':'')
           +'</div>'
         ).join('')
         +'</div>'
       : '';
-    const serviceTag = b.service ? '<div style="display:inline-block;background:'+col_color+'15;color:'+col_color+';padding:2px 10px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px">'+b.service+'</div>' : '';
-    const persHTML = b.persons.map(p=>
-      (p.advisor?'<div style="font-size:12px;font-weight:600;color:#222;margin-bottom:3px">👤 '+p.advisor+'</div>':'')
-      +(p.phone?'<div style="font-size:12px;font-weight:600;color:#222;margin-bottom:3px">📞 '+p.phone+'</div>':'')
-      +(p.email?'<div style="font-size:11px;margin-bottom:3px"><a href="mailto:'+p.email+'" style="color:#1565c0;font-weight:600;text-decoration:none">✉️ '+p.email+'</a></div>':'')
-    ).join('');
-    return makeUnifiedCard(name, city, address, '', '', '', hours, b.gps, col_color, serviceTag+persHTML+govHTML);
+
+    return '<div class="ref-card" style="padding:0;overflow:hidden">'
+      // Branch name — colored header box
+      +'<div style="background:'+col_color+'18;border-bottom:2px solid '+col_color+'22;padding:10px 14px;margin-bottom:0;text-align:center">'
+      +'<div style="font-size:13px;font-weight:700;color:'+col_color+'">'+b.name.replace(/\s*\(.*?\)\s*/g,'').replace(/\n/g,' ').trim()+'</div>'
+      +'<div style="font-size:11px;color:#666;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">'+(b.city?'<span>📌 '+arCity(b.city)+'</span>':'')+(b.district?'<span>📍 '+b.district+'</span>':'')+'</div>'
+      +'</div>'
+      +'<div style="padding:10px 14px;text-align:center">'
+      +(b.service?'<div style="display:inline-block;background:'+col_color+'15;color:'+col_color+';padding:2px 10px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px">'+b.service+'</div>':'')
+      +persHTML
+      +govHTML
+      +(b.phone&&!b.persons.some(p=>p.phone===b.phone)?'<div style="font-size:12px;margin-bottom:5px">📞 '+b.phone+'</div>':'')
+      +(b.gps&&b.gps.startsWith('http')?'<div style="margin-top:8px"><a href="'+b.gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
+      +(b.hours&&b.regHours&&b.hours.trim()!==b.regHours.trim()?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+b.hours+'</div>':'')
+      +'</div></div>';
   };
 
   const regionsHTML = sortedRegs.map((reg, ri) => {
@@ -1678,15 +1658,15 @@ function renderNissanBranchTab(arr, sheetName, brand){
       // LMT button
       +'<a href="https://petromincrm-my.sharepoint.com/:x:/r/personal/amal_alghamdi_petromin_com/Documents/LMT/LMT%20(7).xlsx?d=w4f5bfe89cf904a458af70cbf2d86ac0b&csf=1&web=1&e=l1ekTK" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#e65100;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;margin:4px;box-shadow:0 2px 8px rgba(230,81,0,.35);text-decoration:none">📊 LMT</a>'
       // Government Sales button
-      +'<button onclick="toggleRegion(\'govSalesSection\')" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#26a69a;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;margin:4px;box-shadow:0 2px 6px rgba(38,166,154,.25)">🏢 Government Sales <span id="ico_govSalesSection">▼</span></button>'
+      +'<button onclick="toggleRegion(\'govSalesSection\')" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#00897b;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;margin:4px;box-shadow:0 2px 8px rgba(0,137,123,.35)">🏢 Government Sales <span id="ico_govSalesSection">▼</span></button>'
 
       +'</div>'
       // Gov Sales drawer
       +'<div id="govSalesSection" style="display:none;margin-bottom:12px">'
-      +'<div style="overflow-x:auto;border-radius:10px;border:1px solid #b2dfdb;background:#f5fafa">'
+      +'<div style="overflow-x:auto;border-radius:10px;border:1px solid #80cbc4;background:#e0f2f1">'
       +'<table style="width:100%;border-collapse:collapse;font-size:12px">'
-      +'<thead><tr style="background:#e8f5e9">'
-      +'<th style="padding:8px 12px;color:#26a69a;font-weight:700;border-bottom:2px solid #80cbc4;text-align:center">👤 Name</th>'
+      +'<thead><tr style="background:#e0f2f1">'
+      +'<th style="padding:8px 12px;color:#00897b;font-weight:700;border-bottom:2px solid #80cbc4;text-align:center">👤 Name</th>'
       +'<th style="padding:8px 12px;color:#00897b;font-weight:700;border-bottom:2px solid #80cbc4;text-align:center">📞 Phone</th>'
       +'<th style="padding:8px 12px;color:#00897b;font-weight:700;border-bottom:2px solid #80cbc4;text-align:center">✉️ Email</th>'
       +'</tr></thead><tbody>'
@@ -1703,9 +1683,9 @@ function renderNissanBranchTab(arr, sheetName, brand){
       +'<th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th>'
       +'<th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th>'
       +'</tr></thead><tbody>'
-      +'<tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South · North</td><td style="padding:7px 12px;text-align:center"><a href="mailto:s.alsulami@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alsulami@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr>'
+      +'<tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alsulami@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr>'
       +'<tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">simon.white@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr>'
-      +'<tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">z.bakhurji@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr>'
+      +'<tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="color:#1565c0;text-decoration:none">z.bakhurji@petromin.com</a></td></tr>'
       +'</tbody></table></div></div>';
   }
 
@@ -1749,9 +1729,20 @@ function renderTristarTab(arr){
     const phone=fmtNum(String(r[phoneKey]||'').trim());
     const cc=String(r[ccKey]||'').trim();
     const gps=String(r[gpsKey]||'').trim();
-    const arTag=arName?'<div style="font-size:11px;color:#444;font-weight:600;margin-bottom:3px">'+arName+'</div>':'';
-    const ccTag=cc?'<div style="margin-bottom:4px;display:flex;flex-wrap:wrap;justify-content:center;gap:2px">'+fmtCC(cc)+'</div>':'';
-    return makeUnifiedCard(name,'',dist,mgr,phone,email,hours,gps,rc,arTag+ccTag);
+    return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
+      +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
+      +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+name+'</div>'
+      +(arName?'<div style="font-size:12px;color:#888;margin-top:2px">'+arName+'</div>':'')
+      +(dist?'<div style="font-size:11px;color:#888;margin-top:3px">📍 '+dist+'</div>':'')
+      +'</div>'
+      +'<div style="padding:10px 14px;text-align:center">'
+      +(mgr?'<div style="font-size:12px;margin-bottom:5px">👤 '+mgr+'</div>':'')
+      +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
+      +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">✉️ '+email+'</a></div>':'')
+      +(cc?'<div style="margin-bottom:5px;flex-wrap:wrap;display:flex;justify-content:center;gap:2px">'+fmtCC(cc)+'</div>':'')
+      +(hours?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+hours+'</div>':'')
+      +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
+      +'</div></div>';
   };
 
   const warrantyHTML=warrantyRows.length?
@@ -1909,7 +1900,15 @@ function renderStellantisSparePartsTab(arr){
 
   // Simple email header
   console.log('Spare Parts branchRows:', branchRows.length, 'ccMap keys:', Object.keys(ccMap));
-  const emailHtml=makeEmailSection('Manager Branch, sali.aljehani@petromin.com','','Manager Branch, CRTeam@petromin.com','');
+  const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
+    +'<div style="font-size:12px;font-weight:700;color:#c0272d;margin-bottom:8px">📧 Complaint TO</div>'
+    +'<div style="font-size:11px;color:#555">Manager Branch + <a href="mailto:CRTeam@petromin.com" style="color:#c0272d">CRTeam@petromin.com</a></div>'
+    +'</div>'
+    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
+    +'<div style="font-size:12px;font-weight:700;color:#2e7d32;margin-bottom:8px">📧 Request TO</div>'
+    +'<div style="font-size:11px;color:#555">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="color:#2e7d32">sali.aljehani@petromin.com</a></div>'
+    +'</div></div>';
 
   const cards=branchRows.map(r=>{
     const branch=String(r[branchKey]||'').trim();
@@ -1922,9 +1921,18 @@ function renderStellantisSparePartsTab(arr){
     const cc=ccMap[branch]||'';
     if(!branch||branch===branchKey) return '';
 
-    const emailTags2=(email?'<div style="margin-bottom:5px"><span style="background:#e8f5e9;color:#2e7d32;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">TO</span>'+fmtEmails(email,'#e8f5e9','#2e7d32')+'</div>':'')
-      +(cc?'<div style="margin-bottom:5px"><span style="background:#e3f2fd;color:#1565c0;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">CC</span>'+fmtEmails(cc,'#e3f2fd','#1565c0')+'</div>':'');
-    return makeUnifiedCard(branch,city,street,advisor,'','',hours,gps,color,emailTags2);
+    return '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+color+';margin-bottom:10px">'
+      +'<div style="background:'+color+'12;padding:10px 16px">'
+      +'<div style="font-size:14px;font-weight:700;color:'+color+'">'+branch+(city?' <span style="font-size:11px;color:#888;font-weight:400">— '+city+'</span>':'')+'</div>'
+      +(street?'<div style="font-size:11px;color:#888;margin-top:2px">📍 '+street+'</div>':'')
+      +(hours?'<div style="font-size:11px;color:#888;margin-top:2px">'+hours+'</div>':'')
+      +'</div>'
+      +'<div style="padding:10px 16px">'
+      +(advisor?'<div style="font-size:12px;margin-bottom:6px">👤 <strong>'+advisor+'</strong></div>':'')
+      +(email?'<div style="margin-bottom:6px"><span style="background:#e8f5e9;color:#2e7d32;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">TO</span>'+fmtEmails(email,'#e8f5e9','#2e7d32')+'</div>':'')
+      +(cc?'<div style="margin-bottom:6px"><span style="background:#e3f2fd;color:#1565c0;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">CC</span>'+fmtEmails(cc,'#e3f2fd','#1565c0')+'</div>':'')
+      +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
+      +'</div></div>';
   }).filter(Boolean).join('');
 
   return '<div>'+emailHtml+cards+'</div>';
@@ -1951,10 +1959,22 @@ function renderStellantisPMSTab(arr, sheetName){
     else if(reg==='CC'){if(cur==='complaint')complaint.cc=name;else if(cur==='request')request.cc=name;}
   });
 
-  const emailHtml=(complaint.to||complaint.cc||request.to||request.cc)?makeEmailSection(request.to,request.cc,complaint.to,complaint.cc):'';
+  const emailHtml=(complaint.to||complaint.cc||request.to||request.cc)?
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
+    +'<div style="font-size:12px;font-weight:700;color:#c0272d;margin-bottom:8px">📧 Complaint</div>'
+    +(complaint.to?'<div style="margin-bottom:6px"><span style="background:#c0272d;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:4px">TO</span>'+fmtE(complaint.to)+'</div>':'')
+    +(complaint.cc?'<div><span style="background:#1565c0;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:4px">CC</span>'+fmtE(complaint.cc)+'</div>':'')
+    +'</div>'
+    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
+    +'<div style="font-size:12px;font-weight:700;color:#2e7d32;margin-bottom:8px">📧 Request</div>'
+    +(request.to?'<div style="margin-bottom:6px"><span style="background:#c0272d;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:4px">TO</span>'+fmtE(request.to)+'</div>':'')
+    +(request.cc?'<div><span style="background:#1565c0;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:4px">CC</span>'+fmtE(request.cc)+'</div>':'')
+    +'</div></div>'
+    :'';
 
   const regions={};
-  const REGION_ORDER=['West','Western','Central','Center','East','Eastern','South','Southern','North','Northern'];
+  const REGION_ORDER=['Western','Central','Eastern','Southern','Northern'];
   const REGION_COLORS={Western:'#c0272d',Central:'#1565c0',Eastern:'#2e7d32',Southern:'#6a1b9a',Northern:'#e65100'};
   branchRows.forEach(r=>{const reg=String(r[keys[0]]||'').trim();if(!regions[reg])regions[reg]=[];regions[reg].push(r);});
 
@@ -1981,8 +2001,18 @@ function renderStellantisPMSTab(arr, sheetName){
         const em=String(r[keys[6]]||'').trim();
         const h=String(r[keys[7]]||'').trim();
         const gps=String(r[keys[8]]||'').trim();
-        const svcTag3=svc?'<div style="display:inline-block;background:'+rc+'15;color:'+rc+';padding:2px 10px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:6px">'+svc+'</div>':'';
-        return makeUnifiedCard(b,'',addr,bm,ph,em,(h&&h!==commonH?h:''),gps,rc,svcTag3);
+        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
+          +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
+          +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+b+'</div>'
+          +(addr?'<div style="font-size:11px;color:#888;margin-top:4px">📍 '+addr+'</div>':'')
+          +'</div><div style="padding:10px 14px;text-align:center">'
+          +(svc?'<div style="display:inline-block;background:'+rc+'15;color:'+rc+';padding:2px 10px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px">'+svc+'</div>':'')
+          +(bm?'<div style="font-size:12px;margin-bottom:5px">👤 '+bm+'</div>':'')
+          +(ph?'<div style="font-size:12px;margin-bottom:5px">📞 '+ph+'</div>':'')
+          +(em?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+em+'" style="color:#1565c0;text-decoration:none">✉️ '+em+'</a></div>':'')
+          +(gps&&gps.startsWith('http')?'<div style="margin-top:8px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
+          +(h&&h!==commonH?'<div style="font-size:10px;color:#888;margin-top:6px;border-top:1px solid #f0f0f0;padding-top:6px">🕐 '+h+'</div>':'')
+          +'</div></div>';
       }).join('')+'</div></div></div>';
   }).join('');
 
@@ -2018,7 +2048,15 @@ function renderStellantisPACTab(arr){
   });
 
   // Email header
-  const emailHtml=makeEmailSection('Manager Branch, sali.aljehani@petromin.com','','Manager Branch, CRTeam@petromin.com','');
+  const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
+    +'<div style="font-size:12px;font-weight:700;color:#c0272d;margin-bottom:6px">📧 Complaint TO</div>'
+    +'<div style="font-size:11px;color:#555">Manager Branch + <a href="mailto:CRTeam@petromin.com" style="color:#c0272d">CRTeam@petromin.com</a></div>'
+    +'</div>'
+    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
+    +'<div style="font-size:12px;font-weight:700;color:#2e7d32;margin-bottom:6px">📧 Request TO</div>'
+    +'<div style="font-size:11px;color:#555">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="color:#2e7d32">sali.aljehani@petromin.com</a></div>'
+    +'</div></div>';
 
   // Group branches by city
   const cities={}, cityOrder=[];
@@ -2035,7 +2073,14 @@ function renderStellantisPACTab(arr){
     const mobile=fmtNum(String(r[mobileKey]||'').trim());
     const email=String(r[emailKey]||'').trim();
     const gps=String(r[gpsKey]||'').trim();
-    return makeUnifiedCard(branch,'','',mgr,mobile,email,hours,gps,color,'');
+    return '<div style="background:#fff;border-radius:10px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-top:2px solid '+color+'">'
+      +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">'+branch+'</div>'
+      +(hours?'<div style="font-size:10px;color:#888;margin-bottom:6px">🕐 '+hours+'</div>':'')
+      +(mgr?'<div style="font-size:12px;margin-bottom:4px">👤 '+mgr+'</div>':'')
+      +(mobile?'<div style="font-size:12px;margin-bottom:4px">📞 '+mobile+'</div>':'')
+      +(email?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">✉️ '+email+'</a></div>':'')
+      +(gps&&gps.startsWith('http')?'<div style="margin-top:4px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
+      +'</div>';
   };
 
   const LARGE_CITIES=new Set(['Jeddah','Riyadh']);
@@ -2261,7 +2306,15 @@ function renderBodyShopTab(arr){
   });
 
   // Email header
-  const emailHtml=makeEmailSection('Manager Branch, sali.aljehani@petromin.com','','Manager Branch, CRTeam@petromin.com','');
+  const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
+    +'<div style="font-size:12px;font-weight:700;color:#c0272d;margin-bottom:6px">📧 Complaint TO</div>'
+    +'<div style="font-size:11px;color:#555">Manager Branch + <a href="mailto:CRTeam@petromin.com" style="color:#c0272d">CRTeam@petromin.com</a></div>'
+    +'</div>'
+    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
+    +'<div style="font-size:12px;font-weight:700;color:#2e7d32;margin-bottom:6px">📧 Request TO</div>'
+    +'<div style="font-size:11px;color:#555">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="color:#2e7d32">sali.aljehani@petromin.com</a></div>'
+    +'</div></div>';
 
   // Group by region
   const regions={}, REGION_ORDER=['Western','West','Central','Center','East','Eastern','Southern','South','Northern','North'];
@@ -2292,7 +2345,18 @@ function renderBodyShopTab(arr){
         const email=emailCol?String(r[emailCol]||'').trim():'';
         const hours=hoursCol?String(r[hoursCol]||'').trim():'';
         const gps=gpsCol?String(r[gpsCol]||'').trim():'';
-        return makeUnifiedCard(name,'',dist,mgr,phone,email,(hours&&hours!==commonH?hours:''),gps,rc,'');
+        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
+          +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
+          +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+name+'</div>'
+          +(dist?'<div style="font-size:11px;color:#888;margin-top:3px">📍 '+dist+'</div>':'')
+          +'</div>'
+          +'<div style="padding:10px 14px;text-align:center">'
+          +(mgr?'<div style="font-size:12px;margin-bottom:5px">👤 '+mgr+'</div>':'')
+          +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
+          +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">✉️ '+email+'</a></div>':'')
+          +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
+          +(hours&&hours!==commonH?'<div style="font-size:10px;color:#888;margin-top:6px;border-top:1px solid #f0f0f0;padding-top:6px">🕐 '+hours+'</div>':'')
+          +'</div></div>';
       }).join('')+'</div></div></div>';
   }).join('');
 
@@ -2317,44 +2381,53 @@ function renderNissanWarrantyTab(arr){
 }
 
 function renderNissanAppTab(arr){
+  // All data is static — no need to read from sheet
   const toEmails='sara.alwaqdany@nissan-me.ae, arwa.alharbi@nissan-me.ae';
   const ccEmail='marwah.albishri@nissan-me.ae';
-  const mkPill=e=>{const s=e.trim();if(!s||!s.includes('@'))return '';return '<a href="mailto:'+s+'" style="display:inline-flex;background:#fce4ec;color:#c0272d;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;margin:2px">'+s+'</a>';};
+  const conditions='My Nissan App for Vehicle model name: only (Nissan Patrol).\nGrades: only (Platinum, Titanium, Pro-4X, NISMO).\nModel year: (2025–2026).\nPurchase source: Petromin or Manahil only.\n\nMy Nissan Ownership - for all other models';
+  const mkPill=e=>{const s=e.trim();if(!s||!s.includes('@'))return '';return '<a href="mailto:'+s+'" style="display:inline-flex;background:#fff3e0;color:#e65100;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;margin:2px">'+s+'</a>';};
   const fmtPills=v=>v.split(/,/).map(mkPill).filter(Boolean).join('');
-  const userFields=[
-    {f:'VIN',m:false},{f:'Customer Name',m:false},{f:'Phone Number',m:false},
-    {f:'City',m:false},{f:'Model Year',m:false},
-    {f:'User ID or Email',m:true},{f:'Phone Device Model',m:true},
-    {f:'Phone OS (iOS / Android + Version)',m:true},{f:'Nissan App Version',m:true}
-  ];
-  return '<div style="max-width:680px;margin:0 auto">'
-    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px 16px;margin-bottom:10px">'
+  const userFields=['VIN','Customre Name','Phone number','City','Model Year','User ID or Email (ID for App login)','Phone Device Model','Phone OS (iOS or Android, version of it)','Nissan Mobile App Version'];
+  const inquiryFields=['Title','Description'];
+  const mandatory=new Set(['User ID or Email (ID for App login)','Phone Device Model','Phone OS (iOS or Android, version of it)','Nissan Mobile App Version']);
+  return '<div style="max-width:700px;margin:0 auto">'
+    // Email strip
+    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:12px 16px;margin-bottom:8px">'
+    +'<div style="font-size:13px;font-weight:700;color:#c0272d;margin-bottom:8px">📧 Email</div>'
     +'<div style="margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="background:#c0272d;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">TO</span>'+fmtPills(toEmails)+'</div>'
     +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="background:#1565c0;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">CC</span>'+fmtPills(ccEmail)+'</div>'
     +'</div>'
-    +'<div style="background:#fff8e1;border-radius:10px;border:1px solid #ffe082;padding:10px 16px;margin-bottom:12px">'
-    +'<div style="font-size:11px;font-weight:700;color:#f57f17;margin-bottom:4px">⚠️ Important</div>'
-    +'<div style="font-size:11px;color:#555;line-height:1.7">🚗 <strong>My Nissan App</strong> — Patrol only (Platinum, Titanium, Pro-4X, NISMO) · 2025–2026 · Petromin or Manahil only<br>📱 <strong>My Nissan Ownership</strong> — All other models</div>'
+    // Important strip
+    +'<div style="background:#fff8e1;border-radius:10px;border:1px solid #ffe082;padding:12px 16px;margin-bottom:16px">'
+    +'<div style="font-size:13px;font-weight:700;color:#f57f17;margin-bottom:6px">⚠️ Important</div>'
+    +'<div style="font-size:11px;color:#555;line-height:1.8;white-space:pre-wrap">'+conditions+'</div>'
     +'</div>'
     +'<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)">'
-    +'<div style="background:#c0272d;color:#fff;padding:10px 16px;font-size:13px;font-weight:700;text-align:center">📋 My Nissan App (CCS) — Y63</div>'
-    +'<div style="padding:12px 16px">'
-    +'<div style="font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">👤 User Information</div>'
-    +userFields.map(({f,m})=>'<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f5f5f5">'
-      +'<span style="font-size:12px;color:#333;font-weight:'+(m?'600':'400')+';flex:1">'+f+(m?' <span style="color:#c0272d;font-size:10px">*</span>':'')+'</span>'
-      +'<span style="font-size:11px;color:#ccc;background:#f9f9f9;padding:2px 10px;border-radius:5px;border:1px solid #eee;min-width:100px;text-align:center">—</span>'
+    +'<div style="background:#c0272d;color:#fff;padding:12px 16px;font-size:14px;font-weight:700;text-align:center">My Nissan App ( CCS ) - Y63</div>'
+    +'<div style="padding:14px 16px">'
+    +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #f0f0f0">👤 User Information</div>'
+    +userFields.map(f=>'<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f5f5f5">'
+      +'<span style="font-size:12px;color:#444;flex:1;text-align:left">'+f+(mandatory.has(f)?'<span style="color:#c0272d;font-size:10px;font-weight:700;margin-left:4px">*</span>':'')+'</span>'
+      +'<span style="font-size:11px;color:#bbb;background:#f9f9f9;padding:3px 12px;border-radius:6px;border:1px solid #eee;min-width:120px;text-align:center">___</span>'
       +'</div>').join('')
-    +'<div style="font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;margin:10px 0 8px">💬 Inquiry</div>'
-    +['Title','Description'].map(f=>'<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f5f5f5">'
-      +'<span style="font-size:12px;color:#333;flex:1">'+f+'</span>'
-      +'<span style="font-size:11px;color:#ccc;background:#f9f9f9;padding:2px 10px;border-radius:5px;border:1px solid #eee;min-width:100px;text-align:center">—</span>'
+    +'</div><div style="padding:14px 16px">'
+    +'<div style="font-size:11px;font-weight:700;text-transform:uppercase;color:#888;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #f0f0f0">Inquiry</div>'
+    +inquiryFields.map(f=>'<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f5f5f5">'
+      +'<span style="font-size:12px;color:#444;flex:1;text-align:left">'+f+'</span>'
+      +'<span style="font-size:11px;color:#bbb;background:#f9f9f9;padding:3px 12px;border-radius:6px;border:1px solid #eee;min-width:120px;text-align:center">___</span>'
       +'</div>').join('')
     +'</div>'
-    +'<div style="padding:10px 16px;background:#f9f9f9;text-align:center;display:flex;align-items:center;justify-content:center;gap:12px">'
-    +'<button onclick="copyNissanAppForm()" style="padding:7px 20px;background:#c0272d;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer">📋 Copy Form</button>'
-    +'<span style="font-size:10px;color:#888">* Required</span>'
-    +'<span id="nissanAppCopied" style="font-size:11px;color:#2e7d32;display:none">✅ Copied!</span>'
-    +'</div></div></div>';
+    +'<div style="padding:12px 16px;background:#f9f9f9;text-align:center">'
+    +'<button onclick="copyNissanAppForm()" style="padding:8px 24px;background:#c0272d;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer">📋 Copy Form</button>'
+    +'<div id="nissanAppCopied" style="font-size:11px;color:#2e7d32;margin-top:6px;display:none">✅ Copied!</div>'
+    +'</div></div>'
+    +'<div style="font-size:10px;color:#aaa;text-align:center;margin-top:8px">* Mandatory for App issues</div>'
+    +'</div>';
+}
+
+function copyNissanAppForm(){
+  var form='My Nissan App ( CCS ) - Y63\n\nUser Information:\nVIN: ___\nCustomer Name: ___\nPhone number: ___\nCity: ___\nModel Year: ___\nUser ID or Email: ___\nPhone Device Model: ___\nPhone OS: ___\nNissan Mobile App Version: ___\n\nInquiry:\nTitle: ___\nDescription: ___';
+  navigator.clipboard.writeText(form).then(function(){var el=document.getElementById('nissanAppCopied');if(el){el.style.display='block';setTimeout(function(){el.style.display='none';},2000);}});
 }
 
 
@@ -2512,16 +2585,22 @@ function showRefBrandPage(brand){
     +'<span style="font-size:26px">'+meta.icon+'</span>'
     +'<span style="font-size:16px;font-weight:700">'+meta.label+'</span>'
     +'<span style="margin-left:auto;font-size:11px;opacity:.75">'+tabs.length+' tabs</span>'
+    +(brand==='stellantis'?'<button onclick="loadVehicleModels(\'stellantis\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Models <span id="ico_stellantisModels">▼</span></button>':'')
     +(brand==='stellantis'?'<button onclick="toggleRegion(\'stellantisWarrantyGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:8px">🛡️ Warranty <span id="ico_stellantisWarrantyGlobal">▼</span></button>':'')
+    +(brand==='nissan'?'<button onclick="loadVehicleModels(\'nissan\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Models <span id="ico_nissanModels">▼</span></button>':'')
     +(brand==='nissan'?'<button onclick="toggleRegion(\'nissanWarrantyGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🛡️ Warranty <span id="ico_nissanWarrantyGlobal">▼</span></button>':'')
     +(brand==='nissan'?'<button onclick="toggleRegion(\'nissanAreaMgrGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🗺️ Area Manager <span id="ico_nissanAreaMgrGlobal">▼</span></button>':'')
-    +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e3f2fd"><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="color:#1565c0;text-decoration:none">ahmed.ateeq@petromin.com</a></td></tr><tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central · North</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="color:#1565c0;text-decoration:none">simon.white@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="color:#1565c0;text-decoration:none">z.bakhurji@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr></tbody></table></div>':'')
+    +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e3f2fd"><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alsulami@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr><tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">simon.white@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">z.bakhurji@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr></tbody></table></div>':'')
+    +(brand==='baic'?'<button onclick="loadVehicleModels(\'baic\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Models <span id="ico_baicModels">▼</span></button>':'')
     +(brand==='bodyshop'?'<button onclick="toggleRegion(\'bodyshopInstruction\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">📋 Instruction <span id="ico_bodyshopInstruction">▼</span></button>':'')
     
     +'</div>'
     +(brand==='stellantis'?'<div id="stellantisWarrantyGlobal" style="display:none;background:#fff;border-radius:0;overflow-x:auto;border-bottom:2px solid #e8eaed"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e8f5e9"><th style="padding:9px 14px;color:#2e7d32;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">ضمان</th><th style="padding:9px 14px;color:#2e7d32;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">CHRYSLER, DODGE, JEEP, RAM</th><th style="padding:9px 14px;color:#2e7d32;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">FIAT, ABARTH, ALFA ROMEO</th></tr></thead><tbody><tr style="background:#fff"><td style="padding:8px 14px;font-weight:600;color:#333">الضمان الأساسي + بطارية المصنع</td><td style="padding:8px 14px;text-align:center">3 years / 60,000 km</td><td style="padding:8px 14px;text-align:center">2 years / unlimited mileage</td></tr><tr style="background:#f9fbff"><td style="padding:8px 14px;font-weight:600;color:#333">الضمان الممتد</td><td style="padding:8px 14px;text-align:center">5 years / 100,000 km</td><td style="padding:8px 14px;text-align:center">5 years / 120,000 km</td></tr><tr style="background:#fff"><td style="padding:8px 14px;font-weight:600;color:#333">ضمان قطع الغيار</td><td style="padding:8px 14px;text-align:center">1 year / 20,000 km</td><td style="padding:8px 14px;text-align:center">1 year / 20,000 km</td></tr></tbody></table></div>':'')
+    +(brand==='nissan'?'<div id="nissanModelsDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:12px 16px"><div id="nissanModelsContent" style="text-align:center;color:#aaa;font-size:12px">⏳ Loading...</div></div>':'')
+    +(brand==='stellantis'?'<div id="stellantisModelsDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:12px 16px"><div id="stellantisModelsContent" style="text-align:center;color:#aaa;font-size:12px">⏳ Loading...</div></div>':'')
+    +(brand==='baic'?'<div id="baicModelsDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:12px 16px"><div id="baicModelsContent" style="text-align:center;color:#aaa;font-size:12px">⏳ Loading...</div></div>':'')
     +(brand==='nissan'?'<div id="nissanWarrantyGlobal" style="display:none;background:#fff;border-radius:0;overflow-x:auto;border-bottom:2px solid #eee;padding:14px 16px;direction:rtl;text-align:right"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-left:4px solid #c0272d"><div style="font-size:13px;font-weight:700;color:#c0272d;margin-bottom:8px">🛡️ الضمان الأساسي</div><div style="font-size:12px;color:#555;line-height:1.8">📅 يسري من تاريخ إصدار اللوحات<br>⏱️ 3 سنوات أو 100,000 كم<br>✅ يتفعل تلقائياً بدون إجراء<br>🔧 يشترط الصيانة في مراكز معتمدة</div></div><div style="background:#fef9f9;border-radius:10px;padding:14px;border-left:4px solid #c0272d"><div style="font-size:13px;font-weight:700;color:#c0272d;margin-bottom:8px">🔋 ضمان البطارية</div><div style="font-size:12px;color:#555;line-height:1.8">📅 يسري من تاريخ إصدار اللوحات<br>السنة الأولى: تغيير مجاني ✅<br>السنة الثانية: خصم 50٪<br>السنة الثالثة: خصم 25٪<br>🏢 في مراكز بترومين نيسان فقط</div></div><div style="background:#f9fffe;border-radius:10px;padding:14px;border-left:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 جدول الصيانة</div><div style="font-size:12px;color:#555;line-height:1.8">🆓 فحص مجاني: 1,000 - 2,000 كم<br>⏱️ صيانة دورية: كل 10,000 كم أو 6 أشهر<br>مجانية لسيارات 2025-2026 داخل الوكالة</div></div><div style="background:#f9fffe;border-radius:10px;padding:14px;border-left:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">⚙️ زيت القير</div><div style="font-size:12px;color:#555;line-height:1.8">🔧 يُوصى بالتغيير بعد 40,000 - 60,000 كم<br>حسب ظروف القيادة والاستخدام</div></div></div></div>':'')
-    +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e3f2fd"><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="color:#1565c0;text-decoration:none">ahmed.ateeq@petromin.com</a></td></tr><tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central · North</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="color:#1565c0;text-decoration:none">simon.white@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="color:#1565c0;text-decoration:none">z.bakhurji@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr></tbody></table></div>':'')
+    +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e3f2fd"><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alsulami@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr><tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">simon.white@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">z.bakhurji@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr></tbody></table></div>':'')
     +(brand==='bodyshop'?'<div id="bodyshopInstruction" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px;direction:rtl;text-align:right"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-right:4px solid #7b0000"><div style="font-size:13px;font-weight:700;color:#7b0000;margin-bottom:8px">📋 الإجراءات (قبل)</div><div style="font-size:11px;color:#555;line-height:1.8">يلزم توفير المستندات التالية:<br>1- استمارة المركبة<br>2- تقرير الجهة المباشرة للحادث (نجم أو المرور)<br>3- الرقم المرجعي لمطالبة التأمين<br><br>يُشترط حضور وتسليم المركبة من مالكها أو المفوّض رسميًا.<br>في حال تعذّر الحضور يجب تقديم تفويض خطي.</div></div><div style="background:#fff9f0;border-radius:10px;padding:14px;border-right:4px solid #e65100"><div style="font-size:13px;font-weight:700;color:#e65100;margin-bottom:8px">💰 التسعيرة</div><div style="font-size:11px;color:#555;line-height:1.8">يستغرق فحص المركبة وإرسال التسعيرة لشركة التأمين من 7 إلى 14 يوم عمل.<br><br>• قابلة للقيادة: تُسلَّم بعد الفحص<br>• غير قابلة للقيادة: تُحجز بالفرع لحين الإصلاح</div></div><div style="background:#f0fff4;border-radius:10px;padding:14px;border-right:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 الإصلاح</div><div style="font-size:11px;color:#555;line-height:1.8">يبدأ الإصلاح بعد موافقة التأمين، بحد أقصى 90 يوم عمل.<br><br>سيتم توفير قطع الغيار خلال هذه الفترة، وإشعاركم برسالة نصية عند توفرها.</div></div></div></div>':'')
     +'<div class="ref-sub-tabs" style="justify-content:center">'
     +tabs.map((t,i)=>{
@@ -2594,17 +2673,18 @@ async function renderRefBrand(brand,tabIdx){
       container.innerHTML=renderSalesTeamTab(arr);
       return;
     }
-    const VEHICLE_TABS2={'Nissan Vehicle':'Nissan Model','Stellantis Vehicle':'Stellantis Model','BAIC Vehicle':'BAIC Model'};
-    if(VEHICLE_TABS2[sheetName]){
-      const vdata=await fetchSheet('1VLZ3UL4jXlN-z0-yN86ouA_IDl326VAFYSjyHJV0MZU',VEHICLE_TABS2[sheetName]);
+    const VTABS2={'Nissan Vehicle':'Nissan Model','Stellantis Vehicle':'Stellantis Model','BAIC Vehicle':'BAIC Model'};
+    if(VTABS2[sheetName]){
+      const vdata=await fetchSheet('1VLZ3UL4jXlN-z0-yN86ouA_IDl326VAFYSjyHJV0MZU',VTABS2[sheetName]);
       const varr=Array.isArray(vdata)?vdata:(vdata.rows||[]);
-      if(!varr.length){container.innerHTML='<div style="text-align:center;padding:24px;color:#555">No data</div>';return;}
+      if(!varr.length){container.innerHTML='<div style="text-align:center;padding:24px;color:#aaa">No data</div>';return;}
       const vkeys=Object.keys(varr[0]);
       const colors={nissan:'#c0272d',stellantis:'#1565c0',baic:'#37474f'};
       const vc=colors[brand]||'#333';
       container.innerHTML='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
         +'<thead><tr style="background:'+vc+'15">'+vkeys.map(k=>'<th style="padding:9px 14px;color:'+vc+';font-weight:700;border-bottom:2px solid '+vc+'22;text-align:center">'+k+'</th>').join('')+'</tr></thead><tbody>'
-        +varr.map((r,i)=>'<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+'">'+vkeys.map(k=>'<td style="padding:7px 14px;color:#333;text-align:center;font-size:11px">'+String(r[k]||'').trim()+'</td>').join('')+'</tr>').join('')
+        +varr.map((r,i)=>'<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+'">'
+          +vkeys.map(k=>'<td style="padding:7px 14px;color:#555;text-align:center;font-size:11px">'+String(r[k]||'').trim()+'</td>').join('')+'</tr>').join('')
         +'</tbody></table></div>';
       return;
     }
@@ -2771,13 +2851,11 @@ function renderRoster(){
     var callRows=[], chatRows=[], wSection='call';
     WEEKLY_DATA.forEach(function(r){
       var wkeys2=Object.keys(WEEKLY_DATA[0]||{});
-      var weekCol2=wkeys2[0]||''; var agentCol2=wkeys2[1]||''; var breakCol2=wkeys2[2]||'';
-      var week2=String(r[weekCol2]||'').trim();
-      var agent2=String(r[agentCol2]||'').trim();
-      var brk2=String(r[breakCol2]||'').trim();
-      if(week2==='Week'||brk2==='Break Time'||week2===weekCol2) return;
-      if(agent2==='WhatsApp'||week2==='WhatsApp'){wSection='chat';return;}
-      if(week2||agent2||brk2){ if(wSection==='call')callRows.push(r); else chatRows.push(r); }
+      var wk0=wkeys2[0]||'', wk1=wkeys2[1]||'', wk2=wkeys2[2]||'';
+      var wv0=String(r[wk0]||'').trim(), wv1=String(r[wk1]||'').trim(), wv2=String(r[wk2]||'').trim();
+      if(wv0==='Week'||wv2==='Break Time') return;
+      if(wv1==='WhatsApp'||wv0==='WhatsApp'){wSection='chat';return;}
+      if(wv0||wv1||wv2){ if(wSection==='call')callRows.push(r); else chatRows.push(r); }
     });
 
     function fmtTime(v){
@@ -2790,6 +2868,12 @@ function renderRoster(){
     }
     function buildBreakTable(brows,title,color){
       if(!brows.length) return '';
+      var wkeys3=Object.keys(WEEKLY_DATA[0]||{});
+      var wkCols=[
+        {key:wkeys3[0]||'',label:'Week'},
+        {key:wkeys3[1]||'',label:'Agent Name'},
+        {key:wkeys3[2]||'',label:'Break Time'}
+      ];
       var allKeys={};
       brows.forEach(function(r){Object.keys(r).forEach(function(k){if(k)allKeys[k]=1;});});
       var wk=Object.keys(allKeys);
@@ -2797,12 +2881,12 @@ function renderRoster(){
         +'<div style="background:'+color+'18;border-left:4px solid '+color+';padding:10px 14px;font-size:13px;font-weight:700;color:'+color+'">'+title+'</div>'
         +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
         +'<thead><tr style="background:'+color+'10">';
-      wk.forEach(function(c){t+='<th style="padding:7px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">'+c+'</th>';});
+      wkCols.forEach(function(c){t+='<th style="padding:7px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">'+c.label+'</th>';});
       t+='</tr></thead><tbody>';
       brows.forEach(function(r,i){
         t+='<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+'">';
-        wk.forEach(function(c){
-          var val=String(r[c]||'').trim();
+        wkCols.forEach(function(c){
+          var val=String(r[c.key]||'').trim();
           if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(val)) val=fmtTime(val);
           t+='<td style="padding:7px 12px;color:#444;text-align:center">'+val+'</td>';
         });
@@ -3240,6 +3324,40 @@ async function renderRef(){
 }
 
 
+
+
+const VEHICLE_SHEET_ID='1VLZ3UL4jXlN-z0-yN86ouA_IDl326VAFYSjyHJV0MZU';
+const VEHICLE_TABS_MAP={'nissan':'Nissan Model','stellantis':'Stellantis Model','baic':'BAIC Model'};
+const VEHICLE_CACHE={};
+
+async function loadVehicleModels(brand){
+  const drawerId=brand+'ModelsDrawer';
+  const contentId=brand+'ModelsContent';
+  const icoId='ico_'+brand+'Models';
+  const drawer=document.getElementById(drawerId);
+  const ico=document.getElementById(icoId);
+  if(!drawer)return;
+  const isOpen=drawer.style.display!=='none';
+  drawer.style.display=isOpen?'none':'block';
+  if(ico)ico.textContent=isOpen?'▼':'▲';
+  if(isOpen||VEHICLE_CACHE[brand])return;
+  try{
+    const tabName=VEHICLE_TABS_MAP[brand];
+    const data=await fetchSheet(VEHICLE_SHEET_ID,tabName);
+    const arr=Array.isArray(data)?data:(data.rows||[]);
+    if(!arr.length){document.getElementById(contentId).innerHTML='<div style="text-align:center;color:#aaa;font-size:12px">No data</div>';return;}
+    const keys=Object.keys(arr[0]);
+    let html='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
+      +'<thead><tr style="background:#f5f5f5">'+keys.map(k=>'<th style="padding:7px 12px;font-weight:700;color:#333;border-bottom:2px solid #eee;text-align:center">'+k+'</th>').join('')+'</tr></thead><tbody>'
+      +arr.map((r,i)=>'<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+'">'
+        +keys.map(k=>'<td style="padding:6px 12px;color:#555;text-align:center;font-size:11px">'+String(r[k]||'').trim()+'</td>').join('')+'</tr>').join('')
+      +'</tbody></table></div>';
+    VEHICLE_CACHE[brand]=true;
+    document.getElementById(contentId).innerHTML=html;
+  }catch(e){
+    document.getElementById(contentId).innerHTML='<div style="color:#c0272d;font-size:12px">Error loading</div>';
+  }
+}
 
 // Auto-start on page load
 window.addEventListener('DOMContentLoaded', () => { loadAllData(); });
