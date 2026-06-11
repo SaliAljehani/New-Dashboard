@@ -1270,7 +1270,7 @@ const REF_SHEETS = {
   },
   nissan: {
     id: '1lXDeN1iUosG_JSADgdWhnkT5J1t3hhwXoSJdbmb4B88',
-    tabs: ['Showroom','3S','Spare Parts ','Body Shop','Nissan PAC','SMS & Location','Nissan App 25-26','Nissan Recall']
+    tabs: ['Warranty','Showroom','3S','Spare Parts ','Body Shop','Nissan PAC','SMS & Location','Nissan App 25-26','Nissan Recall']
   },
   stellantis: {
     id: '104CXGHd1raokgGijhvHgt6AI2gdsqzANBH74Ehm01dM',
@@ -2285,6 +2285,23 @@ function renderPACTab(arr){
     +'</div>';
 }
 
+function renderNissanWarrantyTab(arr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const keys=Object.keys(arr[0]||{});
+  const titleKey=keys[0], descKey=keys[1];
+  const colors=['#c0272d','#1565c0','#2e7d32','#e65100'];
+  return '<div style="max-width:900px;margin:0 auto;direction:rtl;text-align:right">'
+    +arr.filter(r=>String(r[titleKey]||'').trim()).map((r,i)=>{
+      const title=String(r[titleKey]||'').trim();
+      const desc=String(r[descKey]||'').trim();
+      const c=colors[i%colors.length];
+      return '<div style="background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:12px;border-right:4px solid '+c+'">'
+        +'<div style="font-size:14px;font-weight:700;color:'+c+';margin-bottom:10px">'+title+'</div>'
+        +'<div style="font-size:12px;color:#555;line-height:2;white-space:pre-wrap">'+desc+'</div>'
+        +'</div>';
+    }).join('')+'</div>';
+}
+
 function renderNissanAppTab(arr){
   // All data is static — no need to read from sheet
   const toEmails='sara.alwaqdany@nissan-me.ae, arwa.alharbi@nissan-me.ae';
@@ -2491,8 +2508,12 @@ function showRefBrandPage(brand){
     +'<span style="font-size:16px;font-weight:700">'+meta.label+'</span>'
     +'<span style="margin-left:auto;font-size:11px;opacity:.75">'+tabs.length+' tabs</span>'
     +(brand==='stellantis'?'<button onclick="toggleRegion(\'stellantisWarrantyGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:8px">🛡️ Warranty <span id="ico_stellantisWarrantyGlobal">▼</span></button>':'')
+    +(brand==='nissan'?'<button onclick="toggleRegion(\'nissanWarrantyGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🛡️ Warranty <span id="ico_nissanWarrantyGlobal">▼</span></button>':'')
+    +(brand==='nissan'?'<a href="https://petromincrm-my.sharepoint.com/:x:/r/personal/amal_alghamdi_petromin_com/Documents/LMT/LMT%20(7).xlsx?d=w4f5bfe89cf904a458af70cbf2d86ac0b&csf=1&web=1&e=l1ekTK" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;text-decoration:none;margin-left:4px">📊 LMT</a>':'')
+    +(brand==='stellantis'?'<a href="https://petromincrm-my.sharepoint.com/:x:/r/personal/shahad_ammar_petromin_com/Documents/Stellantis%20Reference.xlsx?d=w8c34efa26e1b477189d0967452c776f4&csf=1&web=1&e=txOjiD" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;text-decoration:none;margin-left:4px">📊 Reference</a>':'')
     +'</div>'
     +(brand==='stellantis'?'<div id="stellantisWarrantyGlobal" style="display:none;background:#fff;border-radius:0;overflow-x:auto;border-bottom:2px solid #e8eaed"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e8f5e9"><th style="padding:9px 14px;color:#2e7d32;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">ضمان</th><th style="padding:9px 14px;color:#2e7d32;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">CHRYSLER, DODGE, JEEP, RAM</th><th style="padding:9px 14px;color:#2e7d32;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">FIAT, ABARTH, ALFA ROMEO</th></tr></thead><tbody><tr style="background:#fff"><td style="padding:8px 14px;font-weight:600;color:#333">الضمان الأساسي + بطارية المصنع</td><td style="padding:8px 14px;text-align:center">3 years / 60,000 km</td><td style="padding:8px 14px;text-align:center">2 years / unlimited mileage</td></tr><tr style="background:#f9fbff"><td style="padding:8px 14px;font-weight:600;color:#333">الضمان الممتد</td><td style="padding:8px 14px;text-align:center">5 years / 100,000 km</td><td style="padding:8px 14px;text-align:center">5 years / 120,000 km</td></tr><tr style="background:#fff"><td style="padding:8px 14px;font-weight:600;color:#333">ضمان قطع الغيار</td><td style="padding:8px 14px;text-align:center">1 year / 20,000 km</td><td style="padding:8px 14px;text-align:center">1 year / 20,000 km</td></tr></tbody></table></div>':'')
+    +(brand==='nissan'?'<div id="nissanWarrantyGlobal" style="display:none;background:#fff;border-radius:0;overflow-x:auto;border-bottom:2px solid #eee;padding:14px 16px;direction:rtl;text-align:right"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-left:4px solid #c0272d"><div style="font-size:13px;font-weight:700;color:#c0272d;margin-bottom:8px">🛡️ الضمان الأساسي</div><div style="font-size:12px;color:#555;line-height:1.8">📅 يسري من تاريخ إصدار اللوحات<br>⏱️ 3 سنوات أو 100,000 كم<br>✅ يتفعل تلقائياً بدون إجراء<br>🔧 يشترط الصيانة في مراكز معتمدة</div></div><div style="background:#fef9f9;border-radius:10px;padding:14px;border-left:4px solid #c0272d"><div style="font-size:13px;font-weight:700;color:#c0272d;margin-bottom:8px">🔋 ضمان البطارية</div><div style="font-size:12px;color:#555;line-height:1.8">📅 يسري من تاريخ إصدار اللوحات<br>السنة الأولى: تغيير مجاني ✅<br>السنة الثانية: خصم 50٪<br>السنة الثالثة: خصم 25٪<br>🏢 في مراكز بترومين نيسان فقط</div></div><div style="background:#f9fffe;border-radius:10px;padding:14px;border-left:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 جدول الصيانة</div><div style="font-size:12px;color:#555;line-height:1.8">🆓 فحص مجاني: 1,000 - 2,000 كم<br>⏱️ صيانة دورية: كل 10,000 كم أو 6 أشهر<br>مجانية لسيارات 2025-2026 داخل الوكالة</div></div><div style="background:#f9fffe;border-radius:10px;padding:14px;border-left:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">⚙️ زيت القير</div><div style="font-size:12px;color:#555;line-height:1.8">🔧 يُوصى بالتغيير بعد 40,000 - 60,000 كم<br>حسب ظروف القيادة والاستخدام</div></div></div></div>':'')
     +'<div class="ref-sub-tabs" style="justify-content:center">'
     +tabs.map((t,i)=>'<button class="ref-sub-tab'+(i===0?' active':'')+'" '
       +'style="'+(i===0?'background:'+meta.color+';color:#fff;border-color:'+meta.color:'')+'" '
@@ -2558,6 +2579,10 @@ async function renderRefBrand(brand,tabIdx){
     }
     if(brand==='stellantis' && sheetName.trim()==='Showroom Sales Team'){
       container.innerHTML=renderSalesTeamTab(arr);
+      return;
+    }
+    if(brand==='nissan' && sheetName.trim()==='Warranty'){
+      container.innerHTML=renderNissanWarrantyTab(arr);
       return;
     }
     if(brand==='nissan' && sheetName.trim()==='Nissan PAC'){
