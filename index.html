@@ -1270,11 +1270,11 @@ const REF_SHEETS = {
   },
   nissan: {
     id: '1lXDeN1iUosG_JSADgdWhnkT5J1t3hhwXoSJdbmb4B88',
-    tabs: ['Nissan Vehicle','Showroom','Service','Spare Parts ','PAC','SMS & Location','Nissan APP 25-26']
+    tabs: ['Showroom','Service','Spare Parts ','PAC','SMS & Location','Nissan APP 25-26']
   },
   stellantis: {
     id: '104CXGHd1raokgGijhvHgt6AI2gdsqzANBH74Ehm01dM',
-    tabs: ['Stellantis Vehicle','Showroom ','Service','Spare Parts ','PAC','Tristar','Showroom Sales Team']
+    tabs: ['Showroom ','Service','Spare Parts ','PAC','Tristar','Showroom Sales Team']
   },
   bodyshop: {
     id: '1_Z8Ry4-Y7kNFYnhXNvn7QP8jt1S_n9JHdVC2zT6R6WE',
@@ -1282,7 +1282,7 @@ const REF_SHEETS = {
   },
   baic: {
     id: '1FQaNEkC-gKFIJLT5hBE9qzBL7pXf_m5Aot35h622hR4',
-    tabs: ['BAIC Vehicle','Aftersales','Appointment Script','Car Models','BAIC Location']
+    tabs: ['Aftersales','Appointment Script','Car Models','BAIC Location']
   },
   baicRecall: {
     id: '1pUqPaAXpKBjuBI6ABvgtd9Iuxo0IQ0sEbHX--3QMtpY',
@@ -2316,22 +2316,6 @@ function renderPACTab(arr){
     +'</div>';
 }
 
-function renderVehicleTab(arr, sheetName, brand){
-  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#555">No data</div>';
-  const colors={nissan:'#c0272d',stellantis:'#1565c0',baic:'#37474f'};
-  const color=colors[brand]||'#333';
-  const keys=Object.keys(arr[0]||{});
-
-  return '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
-    +'<thead><tr style="background:'+color+'15">'
-    +keys.map(k=>'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">'+k+'</th>').join('')
-    +'</tr></thead><tbody>'
-    +arr.map((r,i)=>'<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+'">'
-      +keys.map(k=>'<td style="padding:7px 14px;color:#333;text-align:center;font-size:11px">'+String(r[k]||'').trim()+'</td>').join('')
-      +'</tr>').join('')
-    +'</tbody></table></div>';
-}
-
 function renderBodyShopTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#555">No data</div>';
   const color='#7b0000';
@@ -2637,14 +2621,20 @@ function showRefBrandPage(brand){
     +'<span style="font-size:26px">'+meta.icon+'</span>'
     +'<span style="font-size:16px;font-weight:700">'+meta.label+'</span>'
     +'<span style="margin-left:auto;font-size:11px;opacity:.75">'+tabs.length+' tabs</span>'
+    +(brand==='stellantis'?'<button onclick="loadVehicleModels(\'stellantis\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Stellantis Models <span id="ico_stellantisModels">▼</span></button>':'')
     +(brand==='stellantis'?'<button onclick="toggleRegion(\'stellantisWarrantyGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:8px">🛡️ Warranty <span id="ico_stellantisWarrantyGlobal">▼</span></button>':'')
+    +(brand==='nissan'?'<button onclick="loadVehicleModels(\'nissan\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Nissan Models <span id="ico_nissanModels">▼</span></button>':'')
     +(brand==='nissan'?'<button onclick="toggleRegion(\'nissanWarrantyGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🛡️ Warranty <span id="ico_nissanWarrantyGlobal">▼</span></button>':'')
     +(brand==='nissan'?'<button onclick="toggleRegion(\'nissanAreaMgrGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🗺️ Area Manager <span id="ico_nissanAreaMgrGlobal">▼</span></button>':'')
     +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e3f2fd"><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South · North</td><td style="padding:7px 12px;text-align:center"><a href="mailto:s.alsulami@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alsulami@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr><tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">simon.white@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">z.bakhurji@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr></tbody></table></div>':'')
+    +(brand==='baic'?'<button onclick="loadVehicleModels(\'baic\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 BAIC Models <span id="ico_baicModels">▼</span></button>':'')
     +(brand==='bodyshop'?'<button onclick="toggleRegion(\'bodyshopInstruction\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">📋 Instruction <span id="ico_bodyshopInstruction">▼</span></button>':'')
     
     +'</div>'
     +(brand==='stellantis'?'<div id="stellantisWarrantyGlobal" style="display:none;background:#fff;border-radius:0;overflow-x:auto;border-bottom:2px solid #e8eaed"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e8f5e9"><th style="padding:9px 14px;color:#2e7d32;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">ضمان</th><th style="padding:9px 14px;color:#2e7d32;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">CHRYSLER, DODGE, JEEP, RAM</th><th style="padding:9px 14px;color:#2e7d32;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">FIAT, ABARTH, ALFA ROMEO</th></tr></thead><tbody><tr style="background:#fff"><td style="padding:8px 14px;font-weight:600;color:#333">الضمان الأساسي + بطارية المصنع</td><td style="padding:8px 14px;text-align:center">3 years / 60,000 km</td><td style="padding:8px 14px;text-align:center">2 years / unlimited mileage</td></tr><tr style="background:#f9fbff"><td style="padding:8px 14px;font-weight:600;color:#333">الضمان الممتد</td><td style="padding:8px 14px;text-align:center">5 years / 100,000 km</td><td style="padding:8px 14px;text-align:center">5 years / 120,000 km</td></tr><tr style="background:#fff"><td style="padding:8px 14px;font-weight:600;color:#333">ضمان قطع الغيار</td><td style="padding:8px 14px;text-align:center">1 year / 20,000 km</td><td style="padding:8px 14px;text-align:center">1 year / 20,000 km</td></tr></tbody></table></div>':'')
+    +(brand==='nissan'?'<div id="nissanModelsDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:12px 16px"><div id="nissanModelsContent" style="text-align:center;color:#555;font-size:12px">⏳ Loading...</div></div>':'')
+    +(brand==='stellantis'?'<div id="stellantisModelsDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:12px 16px"><div id="stellantisModelsContent" style="text-align:center;color:#555;font-size:12px">⏳ Loading...</div></div>':'')
+    +(brand==='baic'?'<div id="baicModelsDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:12px 16px"><div id="baicModelsContent" style="text-align:center;color:#555;font-size:12px">⏳ Loading...</div></div>':'')
     +(brand==='nissan'?'<div id="nissanWarrantyGlobal" style="display:none;background:#fff;border-radius:0;overflow-x:auto;border-bottom:2px solid #eee;padding:14px 16px;direction:rtl;text-align:right"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-left:4px solid #c0272d"><div style="font-size:13px;font-weight:700;color:#c0272d;margin-bottom:8px">🛡️ الضمان الأساسي</div><div style="font-size:12px;color:#555;line-height:1.8">📅 يسري من تاريخ إصدار اللوحات<br>⏱️ 3 سنوات أو 100,000 كم<br>✅ يتفعل تلقائياً بدون إجراء<br>🔧 يشترط الصيانة في مراكز معتمدة</div></div><div style="background:#fef9f9;border-radius:10px;padding:14px;border-left:4px solid #c0272d"><div style="font-size:13px;font-weight:700;color:#c0272d;margin-bottom:8px">🔋 ضمان البطارية</div><div style="font-size:12px;color:#555;line-height:1.8">📅 يسري من تاريخ إصدار اللوحات<br>السنة الأولى: تغيير مجاني ✅<br>السنة الثانية: خصم 50٪<br>السنة الثالثة: خصم 25٪<br>🏢 في مراكز بترومين نيسان فقط</div></div><div style="background:#f9fffe;border-radius:10px;padding:14px;border-left:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 جدول الصيانة</div><div style="font-size:12px;color:#555;line-height:1.8">🆓 فحص مجاني: 1,000 - 2,000 كم<br>⏱️ صيانة دورية: كل 10,000 كم أو 6 أشهر<br>مجانية لسيارات 2025-2026 داخل الوكالة</div></div><div style="background:#f9fffe;border-radius:10px;padding:14px;border-left:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">⚙️ زيت القير</div><div style="font-size:12px;color:#555;line-height:1.8">🔧 يُوصى بالتغيير بعد 40,000 - 60,000 كم<br>حسب ظروف القيادة والاستخدام</div></div></div></div>':'')
     +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e3f2fd"><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South · North</td><td style="padding:7px 12px;text-align:center"><a href="mailto:s.alsulami@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alsulami@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr><tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">simon.white@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">z.bakhurji@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr></tbody></table></div>':'')
     +(brand==='bodyshop'?'<div id="bodyshopInstruction" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px;direction:rtl;text-align:right"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-right:4px solid #7b0000"><div style="font-size:13px;font-weight:700;color:#7b0000;margin-bottom:8px">📋 الإجراءات (قبل)</div><div style="font-size:11px;color:#555;line-height:1.8">يلزم توفير المستندات التالية:<br>1- استمارة المركبة<br>2- تقرير الجهة المباشرة للحادث (نجم أو المرور)<br>3- الرقم المرجعي لمطالبة التأمين<br><br>يُشترط حضور وتسليم المركبة من مالكها أو المفوّض رسميًا.<br>في حال تعذّر الحضور يجب تقديم تفويض خطي.</div></div><div style="background:#fff9f0;border-radius:10px;padding:14px;border-right:4px solid #e65100"><div style="font-size:13px;font-weight:700;color:#e65100;margin-bottom:8px">💰 التسعيرة</div><div style="font-size:11px;color:#555;line-height:1.8">يستغرق فحص المركبة وإرسال التسعيرة لشركة التأمين من 7 إلى 14 يوم عمل.<br><br>• قابلة للقيادة: تُسلَّم بعد الفحص<br>• غير قابلة للقيادة: تُحجز بالفرع لحين الإصلاح</div></div><div style="background:#f0fff4;border-radius:10px;padding:14px;border-right:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 الإصلاح</div><div style="font-size:11px;color:#555;line-height:1.8">يبدأ الإصلاح بعد موافقة التأمين، بحد أقصى 90 يوم عمل.<br><br>سيتم توفير قطع الغيار خلال هذه الفترة، وإشعاركم برسالة نصية عند توفرها.</div></div></div></div>':'')
@@ -2681,10 +2671,7 @@ async function renderRefBrand(brand,tabIdx){
   if(!container)return;
   container.innerHTML='<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading '+sheetName+'...</div>';
   try{
-    const VEHICLE_TABS2={'Nissan Vehicle':'Nissan','Stellantis Vehicle':'Stellantis','BAIC Vehicle':'BAIC'};
-    const fetchId=VEHICLE_TABS2[sheetName]?'1VLZ3UL4jXlN-z0-yN86ouA_IDl326VAFYSjyHJV0MZU':cfg.id;
-    const fetchSheet2=VEHICLE_TABS2[sheetName]||sheetName;
-    const data=await fetchSheet(fetchId,fetchSheet2);
+    const data=await fetchSheet(cfg.id,sheetName);
     const arr=Array.isArray(data)?data:(data.rows||[]);
     // Nissan branch tabs - use card layout
     const branchTabs=['Showroom','Service','3S','Spare Parts ','Spare Parts','Body Shop'];
@@ -2721,8 +2708,8 @@ async function renderRefBrand(brand,tabIdx){
       container.innerHTML=renderSalesTeamTab(arr);
       return;
     }
-    if(sheetName.trim()==='Nissan Vehicle'||sheetName.trim()==='Stellantis Vehicle'||sheetName.trim()==='BAIC Vehicle'){
-      container.innerHTML=renderVehicleTab(arr, sheetName, brand);
+    if(brand==='bodyshop'){
+      container.innerHTML=renderBodyShopTab(arr);
       return;
     }
     if(brand==='nissan' && sheetName.trim()==='Warranty'){
@@ -2882,16 +2869,14 @@ function renderRoster(){
   if(WEEKLY_DATA && WEEKLY_DATA.length){
     var wkeys=Object.keys(WEEKLY_DATA[0]||{});
     // Columns: "Multi Campaign" (Week), "" (Agent Name), "Break Time"
-    var weekCol=wkeys[0]||'';
+    var weekCol=wkeys[0]||'Multi Campaign';
     var agentCol=wkeys[1]||'';
-    var breakCol=wkeys[2]||'';
+    var breakCol=wkeys[2]||'Break Time';
     var callRows=[], chatRows=[], wSection='call';
     WEEKLY_DATA.forEach(function(r){
       var week=String(r[weekCol]||'').trim();
       var agent=String(r[agentCol]||'').trim();
       var brk=String(r[breakCol]||'').trim();
-      // Skip header rows
-      if(week==='Week'||week===weekCol) return;
       if(agent==='WhatsApp'||week==='WhatsApp'){wSection='chat';return;}
       if(week||agent||brk){ if(wSection==='call')callRows.push(r); else chatRows.push(r); }
     });
@@ -2906,10 +2891,11 @@ function renderRoster(){
     }
     function buildBreakTable(brows,title,color){
       if(!brows.length) return '';
+      var wkeys2=Object.keys(WEEKLY_DATA[0]||{});
       var wk=[
-        {key:weekCol, label:'Week'},
-        {key:agentCol, label:'Agent Name'},
-        {key:breakCol, label:'Break Time'}
+        {key:wkeys2[0]||'', label:'Week'},
+        {key:wkeys2[1]||'', label:'Agent Name'},
+        {key:wkeys2[2]||'Break Time', label:'Break Time'}
       ];
       var t='<div style="background:#fff;border-radius:10px;border:1px solid #eee;overflow:hidden;margin-bottom:12px">'
         +'<div style="background:'+color+'18;border-left:4px solid '+color+';padding:10px 14px;font-size:13px;font-weight:700;color:'+color+'">'+title+'</div>'
