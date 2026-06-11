@@ -1486,6 +1486,47 @@ const BRANCH_REGION_COLORS = {
   North:'#e65100',Northern:'#e65100'
 };
 
+function makeEmailSection(reqTo, reqCC, comTo, comCC){
+  const fmtPills = v => String(v||'').split(/,/).map(e=>{
+    const s=e.trim(); if(!s) return '';
+    if(s.includes('@')) return '<a href="mailto:'+s+'" style="display:inline-flex;background:#e0f7f4;color:#00695c;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;margin:2px">'+s+'</a>';
+    return '<span style="font-size:11px;color:#333;font-weight:600;margin:2px">'+s+'</span>';
+  }).filter(Boolean).join('');
+  return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
+    +'<div style="font-size:13px;font-weight:700;color:#c0272d;margin-bottom:8px">📧 Request</div>'
+    +(reqTo?'<div style="margin-bottom:6px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px"><span style="background:#c0272d;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px">TO</span>'+fmtPills(reqTo)+'</div>':'')
+    +(reqCC?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px"><span style="background:#1565c0;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px">CC</span>'+fmtPills(reqCC)+'</div>':'')
+    +'</div>'
+    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
+    +'<div style="font-size:13px;font-weight:700;color:#c0272d;margin-bottom:8px">📧 Complaint</div>'
+    +(comTo?'<div style="margin-bottom:6px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px"><span style="background:#c0272d;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px">TO</span>'+fmtPills(comTo)+'</div>':'')
+    +(comCC?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px"><span style="background:#1565c0;color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px">CC</span>'+fmtPills(comCC)+'</div>':'')
+    +'</div>'
+    +'</div>';
+}
+
+// Unified card renderer — same layout for ALL brands
+function makeUnifiedCard(name, city, address, manager, phone, email, hours, gps, color, extra){
+  color = color || '#c0272d';
+  return '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);border-top:3px solid '+color+'">'
+    // Header
+    +'<div style="background:'+color+'15;border-bottom:2px solid '+color+'20;padding:10px 14px;text-align:center">'
+    +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+name+'</div>'
+    +((city||address)?'<div style="font-size:11px;color:#444;margin-top:3px;font-weight:600">'
+      +(city?'📌 '+city+' ':'')+( address?'📍 '+address:'')+'</div>':'')
+    +'</div>'
+    // Body
+    +'<div style="padding:10px 14px;text-align:center">'
+    +(manager?'<div style="font-size:12px;font-weight:600;color:#222;margin-bottom:4px">👤 '+manager+'</div>':'')
+    +(phone?'<div style="font-size:12px;font-weight:600;color:#222;margin-bottom:4px">📞 '+phone+'</div>':'')
+    +(email?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="color:#1565c0;font-weight:600;text-decoration:none">✉️ '+email+'</a></div>':'')
+    +(extra||'')
+    +(hours?'<div style="font-size:10px;color:#444;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+hours+'</div>':'')
+    +(gps&&gps.startsWith&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
+    +'</div></div>';
+}
+
 function renderNissanBranchTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 
@@ -1512,19 +1553,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
     : {req:{to:'Manager Branch + sali.aljehani@petromin.com',cc:'cs.agent@petromin.com'},
        com:{to:'Manager Branch + CRTeam@petromin.com',cc:'cs.agent@petromin.com'}};
 
-  const emailHdr =
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">'
-    +'<div class="ref-email-card" style="border-left:4px solid #00695c;text-align:center">'
-    +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+pills(emCfg.req.to)+'</div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+pills(emCfg.req.cc)+'</div>'
-    +'</div>'
-    +'<div class="ref-email-card" style="border-left:4px solid #c0272d;text-align:center">'
-    +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+pills(emCfg.com.to)+'</div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+pills(emCfg.com.cc)+'</div>'
-    +'</div>'
-    +'</div>';
+  const emailHdr = makeEmailSection(emCfg.req.to, emCfg.req.cc, emCfg.com.to, emCfg.com.cc);
 
   // Detect columns — new structure: Regions, City, Branch Code - Branch, District, Phone, Advisor, Email, Hours
   const cols = Object.keys(arr[0]||{});
@@ -1570,41 +1599,29 @@ function renderNissanBranchTab(arr, sheetName, brand){
   );
 
   const makeCard = (b, col_color) => {
-    const persHTML = b.persons.map(p =>
-      '<div style="padding:5px 0;border-bottom:1px solid #f5f5f5">'
-      +(p.advisor?'<div style="font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:2px">👤 '+p.advisor+'</div>':'')
-      +(p.phone?'<div style="font-size:12px;color:#333;margin-bottom:2px">📞 '+p.phone+'</div>':'')
-      +(p.email?'<div style="font-size:11px"><a href="mailto:'+p.email+'" style="color:#1565c0;text-decoration:none">✉️ '+p.email+'</a></div>':'')
-      +'</div>'
-    ).join('');
-
+    const name = b.name.replace(/\s*\(.*?\)\s*/g,'').replace(/\n/g,' ').trim();
+    const city = b.city ? arCity(b.city) : '';
+    const address = b.district || '';
+    const hours = (b.hours&&b.regHours&&b.hours.trim()!==b.regHours.trim()) ? b.hours : '';
     const govHTML = b.gov.length
       ? '<div style="margin-top:8px;padding:8px;background:#fff8e1;border-radius:6px;border-left:3px solid #f9a825">'
         +'<div style="font-size:10px;font-weight:700;color:#f9a825;text-transform:uppercase;margin-bottom:5px">🏢 Government Sales</div>'
         +b.gov.map(g=>
           '<div style="padding:3px 0;border-bottom:1px solid #fef3c7">'
-          +(g.name?'<div style="font-size:12px;font-weight:600;color:#1a1a2e">👤 '+g.name+'</div>':'')
-          +(g.phone?'<div style="font-size:12px;color:#333">📞 '+g.phone+'</div>':'')
-          +(g.email?'<div style="font-size:11px"><a href="mailto:'+g.email+'" style="color:#1565c0;text-decoration:none">✉️ '+g.email+'</a></div>':'')
+          +(g.name?'<div style="font-size:12px;font-weight:600;color:#222;margin-bottom:2px">👤 '+g.name+'</div>':'')
+          +(g.phone?'<div style="font-size:12px;font-weight:600;color:#222;margin-bottom:2px">📞 '+g.phone+'</div>':'')
+          +(g.email?'<div style="font-size:11px"><a href="mailto:'+g.email+'" style="color:#1565c0;font-weight:600;text-decoration:none">✉️ '+g.email+'</a></div>':'')
           +'</div>'
         ).join('')
         +'</div>'
       : '';
-
-    return '<div class="ref-card" style="padding:0;overflow:hidden">'
-      // Branch name — colored header box
-      +'<div style="background:'+col_color+'18;border-bottom:2px solid '+col_color+'22;padding:10px 14px;margin-bottom:0;text-align:center">'
-      +'<div style="font-size:13px;font-weight:700;color:'+col_color+'">'+b.name.replace(/\s*\(.*?\)\s*/g,'').replace(/\n/g,' ').trim()+'</div>'
-      +'<div style="font-size:11px;color:#666;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">'+(b.city?'<span>📌 '+arCity(b.city)+'</span>':'')+(b.district?'<span>📍 '+b.district+'</span>':'')+'</div>'
-      +'</div>'
-      +'<div style="padding:10px 14px;text-align:center">'
-      +(b.service?'<div style="display:inline-block;background:'+col_color+'15;color:'+col_color+';padding:2px 10px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px">'+b.service+'</div>':'')
-      +persHTML
-      +govHTML
-      +(b.phone&&!b.persons.some(p=>p.phone===b.phone)?'<div style="font-size:12px;margin-bottom:5px">📞 '+b.phone+'</div>':'')
-      +(b.gps&&b.gps.startsWith('http')?'<div style="margin-top:8px"><a href="'+b.gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-      +(b.hours&&b.regHours&&b.hours.trim()!==b.regHours.trim()?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+b.hours+'</div>':'')
-      +'</div></div>';
+    const serviceTag = b.service ? '<div style="display:inline-block;background:'+col_color+'15;color:'+col_color+';padding:2px 10px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px">'+b.service+'</div>' : '';
+    const persHTML = b.persons.map(p=>
+      (p.advisor?'<div style="font-size:12px;font-weight:600;color:#222;margin-bottom:3px">👤 '+p.advisor+'</div>':'')
+      +(p.phone?'<div style="font-size:12px;font-weight:600;color:#222;margin-bottom:3px">📞 '+p.phone+'</div>':'')
+      +(p.email?'<div style="font-size:11px;margin-bottom:3px"><a href="mailto:'+p.email+'" style="color:#1565c0;font-weight:600;text-decoration:none">✉️ '+p.email+'</a></div>':'')
+    ).join('');
+    return makeUnifiedCard(name, city, address, '', '', '', hours, b.gps, col_color, serviceTag+persHTML+govHTML);
   };
 
   const regionsHTML = sortedRegs.map((reg, ri) => {
@@ -1732,20 +1749,9 @@ function renderTristarTab(arr){
     const phone=fmtNum(String(r[phoneKey]||'').trim());
     const cc=String(r[ccKey]||'').trim();
     const gps=String(r[gpsKey]||'').trim();
-    return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
-      +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
-      +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+name+'</div>'
-      +(arName?'<div style="font-size:12px;color:#888;margin-top:2px">'+arName+'</div>':'')
-      +(dist?'<div style="font-size:11px;color:#888;margin-top:3px">📍 '+dist+'</div>':'')
-      +'</div>'
-      +'<div style="padding:10px 14px;text-align:center">'
-      +(mgr?'<div style="font-size:12px;margin-bottom:5px">👤 '+mgr+'</div>':'')
-      +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
-      +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">✉️ '+email+'</a></div>':'')
-      +(cc?'<div style="margin-bottom:5px;flex-wrap:wrap;display:flex;justify-content:center;gap:2px">'+fmtCC(cc)+'</div>':'')
-      +(hours?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+hours+'</div>':'')
-      +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-      +'</div></div>';
+    const arTag=arName?'<div style="font-size:11px;color:#444;font-weight:600;margin-bottom:3px">'+arName+'</div>':'';
+    const ccTag=cc?'<div style="margin-bottom:4px;display:flex;flex-wrap:wrap;justify-content:center;gap:2px">'+fmtCC(cc)+'</div>':'';
+    return makeUnifiedCard(name,'',dist,mgr,phone,email,hours,gps,rc,arTag+ccTag);
   };
 
   const warrantyHTML=warrantyRows.length?
@@ -1903,15 +1909,7 @@ function renderStellantisSparePartsTab(arr){
 
   // Simple email header
   console.log('Spare Parts branchRows:', branchRows.length, 'ccMap keys:', Object.keys(ccMap));
-  const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
-    +'<div style="font-size:12px;font-weight:700;color:#c0272d;margin-bottom:8px">📧 Complaint TO</div>'
-    +'<div style="font-size:11px;color:#555">Manager Branch + <a href="mailto:CRTeam@petromin.com" style="color:#c0272d">CRTeam@petromin.com</a></div>'
-    +'</div>'
-    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
-    +'<div style="font-size:12px;font-weight:700;color:#2e7d32;margin-bottom:8px">📧 Request TO</div>'
-    +'<div style="font-size:11px;color:#555">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="color:#2e7d32">sali.aljehani@petromin.com</a></div>'
-    +'</div></div>';
+  const emailHtml=makeEmailSection('Manager Branch, sali.aljehani@petromin.com','','Manager Branch, CRTeam@petromin.com','');
 
   const cards=branchRows.map(r=>{
     const branch=String(r[branchKey]||'').trim();
@@ -1924,18 +1922,9 @@ function renderStellantisSparePartsTab(arr){
     const cc=ccMap[branch]||'';
     if(!branch||branch===branchKey) return '';
 
-    return '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+color+';margin-bottom:10px">'
-      +'<div style="background:'+color+'12;padding:10px 16px">'
-      +'<div style="font-size:14px;font-weight:700;color:'+color+'">'+branch+(city?' <span style="font-size:11px;color:#888;font-weight:400">— '+city+'</span>':'')+'</div>'
-      +(street?'<div style="font-size:11px;color:#888;margin-top:2px">📍 '+street+'</div>':'')
-      +(hours?'<div style="font-size:11px;color:#888;margin-top:2px">'+hours+'</div>':'')
-      +'</div>'
-      +'<div style="padding:10px 16px">'
-      +(advisor?'<div style="font-size:12px;margin-bottom:6px">👤 <strong>'+advisor+'</strong></div>':'')
-      +(email?'<div style="margin-bottom:6px"><span style="background:#e8f5e9;color:#2e7d32;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">TO</span>'+fmtEmails(email,'#e8f5e9','#2e7d32')+'</div>':'')
-      +(cc?'<div style="margin-bottom:6px"><span style="background:#e3f2fd;color:#1565c0;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">CC</span>'+fmtEmails(cc,'#e3f2fd','#1565c0')+'</div>':'')
-      +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-      +'</div></div>';
+    const emailTags2=(email?'<div style="margin-bottom:5px"><span style="background:#e8f5e9;color:#2e7d32;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">TO</span>'+fmtEmails(email,'#e8f5e9','#2e7d32')+'</div>':'')
+      +(cc?'<div style="margin-bottom:5px"><span style="background:#e3f2fd;color:#1565c0;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">CC</span>'+fmtEmails(cc,'#e3f2fd','#1565c0')+'</div>':'');
+    return makeUnifiedCard(branch,city,street,advisor,'','',hours,gps,color,emailTags2);
   }).filter(Boolean).join('');
 
   return '<div>'+emailHtml+cards+'</div>';
@@ -2004,18 +1993,8 @@ function renderStellantisPMSTab(arr, sheetName){
         const em=String(r[keys[6]]||'').trim();
         const h=String(r[keys[7]]||'').trim();
         const gps=String(r[keys[8]]||'').trim();
-        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
-          +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
-          +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+b+'</div>'
-          +(addr?'<div style="font-size:11px;color:#888;margin-top:4px">📍 '+addr+'</div>':'')
-          +'</div><div style="padding:10px 14px;text-align:center">'
-          +(svc?'<div style="display:inline-block;background:'+rc+'15;color:'+rc+';padding:2px 10px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px">'+svc+'</div>':'')
-          +(bm?'<div style="font-size:12px;margin-bottom:5px">👤 '+bm+'</div>':'')
-          +(ph?'<div style="font-size:12px;margin-bottom:5px">📞 '+ph+'</div>':'')
-          +(em?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+em+'" style="color:#1565c0;text-decoration:none">✉️ '+em+'</a></div>':'')
-          +(gps&&gps.startsWith('http')?'<div style="margin-top:8px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-          +(h&&h!==commonH?'<div style="font-size:10px;color:#888;margin-top:6px;border-top:1px solid #f0f0f0;padding-top:6px">🕐 '+h+'</div>':'')
-          +'</div></div>';
+        const svcTag3=svc?'<div style="display:inline-block;background:'+rc+'15;color:'+rc+';padding:2px 10px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:6px">'+svc+'</div>':'';
+        return makeUnifiedCard(b,'',addr,bm,ph,em,(h&&h!==commonH?h:''),gps,rc,svcTag3);
       }).join('')+'</div></div></div>';
   }).join('');
 
@@ -2348,18 +2327,7 @@ function renderBodyShopTab(arr){
         const email=emailCol?String(r[emailCol]||'').trim():'';
         const hours=hoursCol?String(r[hoursCol]||'').trim():'';
         const gps=gpsCol?String(r[gpsCol]||'').trim():'';
-        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
-          +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
-          +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+name+'</div>'
-          +(dist?'<div style="font-size:11px;color:#888;margin-top:3px">📍 '+dist+'</div>':'')
-          +'</div>'
-          +'<div style="padding:10px 14px;text-align:center">'
-          +(mgr?'<div style="font-size:12px;margin-bottom:5px">👤 '+mgr+'</div>':'')
-          +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
-          +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">✉️ '+email+'</a></div>':'')
-          +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-          +(hours&&hours!==commonH?'<div style="font-size:10px;color:#888;margin-top:6px;border-top:1px solid #f0f0f0;padding-top:6px">🕐 '+hours+'</div>':'')
-          +'</div></div>';
+        return makeUnifiedCard(name,'',dist,mgr,phone,email,(hours&&hours!==commonH?hours:''),gps,rc,'');
       }).join('')+'</div></div></div>';
   }).join('');
 
