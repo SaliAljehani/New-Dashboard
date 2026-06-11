@@ -1755,21 +1755,66 @@ function renderStellantisAppointmentTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#1565c0';
   
-  // Split into Appointment Script rows and Warranty rows
-  const apptRows=[], warrantyRows=[];
+  const keys=arr.length?Object.keys(arr[0]):[];
+  // Keys: "Appointment Script", "Source", "Service Advisor", "Description (Eg.)"
+  // OR: "Service", "Source", "Service Advisor", "Description (Eg.)"
+  // First column might be "Appointment Script" label
+  const svcKey=keys[0]; // Service column
+  const srcKey=keys[1]; // Source column  
+  const advKey=keys[2]; // Advisor column
+  const descKey=keys[3]; // Description column
+
+  // Split into Appointment Script rows and Queue rows
+  const apptRows=[], queueRows=[];
   let section='appt';
   
   arr.forEach(r=>{
     const vals=Object.values(r).map(v=>String(v||'').trim());
     const first=vals[0];
-    if(first==='Warranty'){ section='warranty'; return; }
-    if(first==='Appointment Script'||first==='Service') return; // skip headers
-    if(vals.every(v=>!v)) return; // skip empty rows
-    if(section==='appt') apptRows.push(r);
-    else warrantyRows.push(r);
+    // Skip title/header rows
+    if(first==='Appointment Script'||first==='Service'||first==='Warranty') return;
+    if(vals.every(v=>!v)) return;
+    // Queue section detection
+    const firstKey=String(r[keys[0]]||'').trim();
+    const secondKey=String(r[keys[1]]||'').trim();
+    if(firstKey==='Queue'||secondKey==='Queue'||vals.some(v=>v==='Queue')) { section='queue'; return; }
+    if(section==='queue') { queueRows.push(r); return; }
+    if(firstKey&&firstKey!=='Service') apptRows.push(r);
   });
 
-  const keys=arr.length?Object.keys(arr[0]):[];
+  // Source colors
+  const SRC_COLOR={'Call Center':'#c0272d','WhatsApp':'#2e7d32','Online':'#1565c0'};
+  const SRC_BG={'Call Center':'#fef2f2','WhatsApp':'#e8f5e9','Online':'#e3f2fd'};
+
+  const apptHTML='<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:16px">'
+    +'<div style="background:'+color+';padding:12px 16px;color:#fff;font-size:13px;font-weight:700">📋 Appointment Script</div>'
+    +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
+    +'<thead><tr style="background:'+color+'15">'
+    +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:left">Service</th>'
+    +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:left">Source</th>'
+    +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:left">Service Advisor</th>'
+    +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:left">Description (Eg.)</th>'
+    +'</tr></thead><tbody>'
+    +apptRows.map((r,i)=>{
+      const svc=String(r[svcKey]||'').trim();
+      const src=String(r[srcKey]||'').trim();
+      const adv=String(r[advKey]||'').trim();
+      const desc=String(r[descKey]||'').trim();
+      const srcColor=SRC_COLOR[src]||'#555';
+      const srcBg=SRC_BG[src]||'#f5f5f5';
+      return '<tr style="background:'+(i%2===0?'#fff':'#f9fbff')+';border-bottom:1px solid #f0f0f0">'
+        +(svc?'<td style="padding:8px 14px;font-weight:700;color:'+color+'">'
+          +'<span style="background:'+color+'15;color:'+color+';padding:2px 8px;border-radius:6px;font-size:11px">'+svc+'</span></td>'
+          :'<td style="padding:8px 14px"></td>')
+        +'<td style="padding:8px 14px"><span style="background:'+srcBg+';color:'+srcColor+';padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600">'+src+'</span></td>'
+        +'<td style="padding:8px 14px;color:#555">'+adv+'</td>'
+        +'<td style="padding:8px 14px;color:#333;font-family:monospace;font-size:11px">'+desc+'</td>'
+        +'</tr>';
+    }).join('')
+    +'</tbody></table></div></div>';
+
+  return '<div>'+apptHTML+'</div>';
+}
 
   // Source colors
   const SRC_COLOR={'Call Center':'#c0272d','WhatsApp':'#2e7d32','Online':'#1565c0'};
@@ -1828,7 +1873,6 @@ function renderStellantisAppointmentTab(arr){
         +wkeys.map(k=>'<td style="padding:8px 14px;text-align:center;color:#333">'+String(r[k]||'').trim()+'</td>').join('')
         +'</tr>').join('')
       +'</tbody></table></div></div>';
-  }
 
   return '<div>'+apptHTML+'</div>';
 }
