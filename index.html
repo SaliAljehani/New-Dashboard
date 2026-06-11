@@ -1270,11 +1270,11 @@ const REF_SHEETS = {
   },
   nissan: {
     id: '1lXDeN1iUosG_JSADgdWhnkT5J1t3hhwXoSJdbmb4B88',
-    tabs: ['Showroom','3S','Spare Parts ','Nissan PAC','SMS & Location','Nissan App 25-26','Nissan Recall']
+    tabs: ['Showroom','Service','Spare Parts ','PAC','SMS & Location','Nissan App 25-26']
   },
   stellantis: {
     id: '104CXGHd1raokgGijhvHgt6AI2gdsqzANBH74Ehm01dM',
-    tabs: ['Showroom ','PMS','Spare Parts ','PAC','Appointment Script','Tristar','Showroom Sales Team']
+    tabs: ['Showroom ','Service','Spare Parts ','PAC','Tristar','Showroom Sales Team']
   },
   bodyshop: {
     id: '1_Z8Ry4-Y7kNFYnhXNvn7QP8jt1S_n9JHdVC2zT6R6WE',
@@ -2203,14 +2203,14 @@ function renderPACTab(arr){
     return '<div class="ref-card" style="text-align:center;padding:0;overflow:hidden">'
       +'<div style="background:#c0272d18;border-bottom:2px solid #c0272d22;padding:10px 14px;border-radius:10px 10px 0 0">'
       +'<div style="font-size:13px;font-weight:700;color:#c0272d">'+branch+'</div>'
-      +(city?'<div style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;color:#888;margin-top:3px;direction:ltr"><span>&#128204;</span><span>'+city+'</span></div>':'')
+      +(city?'<div style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:12px;color:#333;font-weight:600;margin-top:3px;direction:ltr"><span>&#128204;</span><span>'+city+'</span></div>':'')
       +'</div>'
       +'<div style="padding:10px 14px">'
       +mkRow('&#128100;',bm)
       +mkRow('&#128222;',phone)
       +mkRow('&#9993;',email)
       +mkRow('&#128205;',loc)
-      +(hoursClean?'<div style="font-size:10px;color:#888;margin-top:8px;padding-top:6px;border-top:1px solid #f0f0f0">&#128336; '+hoursClean+'</div>':'')
+      +(hoursClean?'<div style="font-size:10px;color:#555;margin-top:8px;padding-top:6px;border-top:1px solid #f0f0f0">&#128336; '+hoursClean+'</div>':'')
       +'</div></div>';
   }).filter(Boolean).join('');
 
@@ -2630,7 +2630,7 @@ async function renderRefBrand(brand,tabIdx){
     const data=await fetchSheet(cfg.id,sheetName);
     const arr=Array.isArray(data)?data:(data.rows||[]);
     // Nissan branch tabs - use card layout
-    const branchTabs=['Showroom','3S','Spare Parts ','Spare Parts','Body Shop'];
+    const branchTabs=['Showroom','Service','Spare Parts ','Spare Parts','Body Shop'];
     if(brand==='nissan' && branchTabs.some(t=>sheetName.trim()===t.trim())){
       container.innerHTML=renderNissanBranchTab(arr, sheetName, brand);
       return;
@@ -2644,7 +2644,7 @@ async function renderRefBrand(brand,tabIdx){
       container.innerHTML=renderStellantisPACTab(arr);
       return;
     }
-    if(brand==='stellantis' && sheetName.trim()==='PMS'){
+    if(brand==='stellantis' && sheetName.trim()==='Service'){
       container.innerHTML=renderStellantisPMSTab(arr, sheetName.trim());
       return;
     }
@@ -2672,7 +2672,7 @@ async function renderRefBrand(brand,tabIdx){
       container.innerHTML=renderNissanWarrantyTab(arr);
       return;
     }
-    if(brand==='nissan' && sheetName.trim()==='Nissan PAC'){
+    if(brand==='nissan' && sheetName.trim()==='PAC'){
       container.innerHTML=renderPACTab(arr);
       return;
     }
@@ -3265,14 +3265,6 @@ async function renderRef(){
 
       +'</div>'
 
-      // LINKS BUTTON + DRAWER
-      +'<div style="text-align:right;margin-bottom:4px">'
-      +'<button onclick="toggleRefSection(\'refLinksDrawer\',\'refLinksIco\')" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#1565c0;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(21,101,192,.3)">🔗 Links <span id="refLinksIco">▼</span></button>'
-      +'</div>'
-      +'<div id="refLinksDrawer" style="display:none">'
-      +'<div class="ref-info-panel"><div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1)">🔗 Links & Systems</div>'
-      +'<div class="ref-panel-body">'+(linkCards||'<div style="color:#aaa;padding:16px;text-align:center">No data</div>')+'</div></div>'
-      +'</div>'
 
       // SUBJECT 2-COL
       +'<div class="ref-info-panel">'
@@ -3285,16 +3277,6 @@ async function renderRef(){
       +'<div>'+buildCol(col2)+'</div>'
       +'</div></div></div></div>'
 
-      // EMAIL
-      +'<div class="ref-info-panel">'
-      +'<div class="ref-panel-header" style="background:linear-gradient(135deg,#00695c,#004d40);cursor:pointer" onclick="toggleRefSection(\'refEmailBody\',\'refEmailIco\')">'
-      +'✉️ Email References<span id="refEmailIco" style="margin-left:auto">▲</span>'
-      +'</div>'
-      +'<div id="refEmailBody"><div class="ref-panel-body">'
-      +buildEmailSection(Array.isArray(emailData)?emailData:(emailData.rows||[]))
-      +'</div></div></div>'
-
-      +'</div>';
 
   }catch(e){
     console.error('renderRef error:',e);
