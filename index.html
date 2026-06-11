@@ -1763,14 +1763,17 @@ function renderStellantisAppointmentTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#1565c0';
   
-  // Keys from sheet: first key is "Appointment Script" (title), rest are real columns
-  // Row 1 in sheet = title "Appointment Script", Row 2 = headers Service/Source/etc
-  // Apps Script returns row 1 as column headers
-  // So keys[0]="Appointment Script", keys[1]="Source", keys[2]="Service Advisor", keys[3]="Description (Eg.)"
-  const svcKey=keys[0]; // Contains Service values (GR, PMS, etc)
-  const srcKey=keys[1]; // Source (Call Center, WhatsApp, Online)
-  const advKey=keys[2]; // Service Advisor
-  const descKey=keys[3]; // Description
+  // Sheet structure: Row1 = "Appointment Script | Service | Source | Service Advisor | Description"
+  // Apps Script uses Row1 as headers, so:
+  // keys[0]="Appointment Script" (contains: GR, PMS, Recall, Emergency values)
+  // keys[1]="Service" (contains: Source values like Call Center, WhatsApp)
+  // keys[2]="Source" (contains: Service Advisor values)
+  // keys[3]="Service Advisor" (contains: Description values)
+  // keys[4]="Description (Eg.)" (empty or Queue data)
+  const svcKey=keys[0];
+  const srcKey=keys[1];
+  const advKey=keys[2];
+  const descKey=keys[3];
 
   // Split into Appointment Script rows and Queue rows
   const apptRows=[], queueRows=[];
