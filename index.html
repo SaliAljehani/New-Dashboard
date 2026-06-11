@@ -1662,8 +1662,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
       +'<a href="https://petromincrm-my.sharepoint.com/:x:/r/personal/amal_alghamdi_petromin_com/Documents/LMT/LMT%20(7).xlsx?d=w4f5bfe89cf904a458af70cbf2d86ac0b&csf=1&web=1&e=l1ekTK" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#e65100;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;margin:4px;box-shadow:0 2px 8px rgba(230,81,0,.35);text-decoration:none">📊 LMT</a>'
       // Government Sales button
       +'<button onclick="toggleRegion(\'govSalesSection\')" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#00897b;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;margin:4px;box-shadow:0 2px 8px rgba(0,137,123,.35)">🏢 Government Sales <span id="ico_govSalesSection">▼</span></button>'
-      // Area Manager button
-      +'<button onclick="toggleRegion(\'areaMgrSection\')" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#1565c0;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;margin:4px;box-shadow:0 2px 8px rgba(21,101,192,.35)">🗺️ Area Manager <span id="ico_areaMgrSection">▼</span></button>'
+
       +'</div>'
       // Gov Sales drawer
       +'<div id="govSalesSection" style="display:none;margin-bottom:12px">'
@@ -2289,18 +2288,18 @@ function renderBodyShopTab(arr){
   const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
   const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:#fef2f2;color:'+color+';padding:2px 7px;border-radius:5px;font-size:10px;font-weight:600;text-decoration:none;margin:1px">'+s+'</a>';}).filter(Boolean).join('');
 
-  // Detect column structure dynamically
-  const regionCol=keys.find(k=>/region/i.test(k))||keys[0];
-  const branchCol=keys.find(k=>/branch|name/i.test(k))||keys[1];
-  const distCol=keys.find(k=>/district|address|location/i.test(k))||keys[2];
-  const phoneCol=keys.find(k=>/phone|mobile|number/i.test(k))||'';
-  const mgrCol=keys.find(k=>/manager|bm|advisor/i.test(k))||'';
-  const emailCol=keys.find(k=>/email/i.test(k))||'';
-  const hoursCol=keys.find(k=>/working|hours/i.test(k))||'';
-  const gpsCol=keys.find(k=>/gps|map|locaton/i.test(k))||keys[keys.length-1];
+  // Columns: Region, City, Branch Code-Branch, District, Manager, Phone, Email, Working Hours, SMS EN, SMS AR
+  const regionCol=keys[0];  // Region
+  const branchCol=keys[2];  // Branch Code - Branch
+  const distCol=keys[3];    // District Name/Address
+  const mgrCol=keys[4];     // Manager Name
+  const phoneCol=keys[5];   // Phone Number
+  const emailCol=keys[6];   // Email
+  const hoursCol=keys[7];   // Working Hours
+  const gpsCol='';          // No GPS column
 
   // Email section
-  const VALID_REGIONS=new Set(['Western','Central','Eastern','Southern','Northern','West','East','South','North']);
+  const VALID_REGIONS=new Set(['Western','Central','Eastern','Southern','Northern','West','East','South','North','Central ','Western ']);
   const branchRows=arr.filter(r=>VALID_REGIONS.has(String(r[regionCol]||'').trim()));
 
   // Email header
@@ -2315,8 +2314,8 @@ function renderBodyShopTab(arr){
     +'</div></div>';
 
   // Group by region
-  const regions={}, REGION_ORDER=['Western','Central','Eastern','Southern','Northern'];
-  const REGION_COLORS={Western:'#c0272d',Central:'#1565c0',Eastern:'#2e7d32',Southern:'#6a1b9a',Northern:'#e65100'};
+  const regions={}, REGION_ORDER=['Western','West','Central','East','Eastern','Southern','South','Northern','North'];
+  const REGION_COLORS={Western:'#c0272d',West:'#c0272d',Central:'#1565c0',East:'#2e7d32',Eastern:'#2e7d32',Southern:'#6a1b9a',South:'#6a1b9a',Northern:'#e65100',North:'#e65100'};
   branchRows.forEach(r=>{const reg=String(r[regionCol]||'').trim();if(!regions[reg])regions[reg]=[];regions[reg].push(r);});
 
   // Common hours
