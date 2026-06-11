@@ -1951,19 +1951,7 @@ function renderStellantisPMSTab(arr, sheetName){
     else if(reg==='CC'){if(cur==='complaint')complaint.cc=name;else if(cur==='request')request.cc=name;}
   });
 
-  const emailHtml=(complaint.to||complaint.cc||request.to||request.cc)?
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
-    +'<div style="font-size:12px;font-weight:700;color:#c0272d;margin-bottom:8px">📧 Complaint</div>'
-    +(complaint.to?'<div style="margin-bottom:6px"><span style="background:#c0272d;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:4px">TO</span>'+fmtE(complaint.to)+'</div>':'')
-    +(complaint.cc?'<div><span style="background:#1565c0;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:4px">CC</span>'+fmtE(complaint.cc)+'</div>':'')
-    +'</div>'
-    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
-    +'<div style="font-size:12px;font-weight:700;color:#2e7d32;margin-bottom:8px">📧 Request</div>'
-    +(request.to?'<div style="margin-bottom:6px"><span style="background:#c0272d;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:4px">TO</span>'+fmtE(request.to)+'</div>':'')
-    +(request.cc?'<div><span style="background:#1565c0;color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-right:4px">CC</span>'+fmtE(request.cc)+'</div>':'')
-    +'</div></div>'
-    :'';
+  const emailHtml=(complaint.to||complaint.cc||request.to||request.cc)?makeEmailSection(request.to,request.cc,complaint.to,complaint.cc):'';
 
   const regions={};
   const REGION_ORDER=['West','Western','Central','Center','East','Eastern','South','Southern','North','Northern'];
@@ -2030,15 +2018,7 @@ function renderStellantisPACTab(arr){
   });
 
   // Email header
-  const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
-    +'<div style="font-size:12px;font-weight:700;color:#c0272d;margin-bottom:6px">📧 Complaint TO</div>'
-    +'<div style="font-size:11px;color:#555">Manager Branch + <a href="mailto:CRTeam@petromin.com" style="color:#c0272d">CRTeam@petromin.com</a></div>'
-    +'</div>'
-    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
-    +'<div style="font-size:12px;font-weight:700;color:#2e7d32;margin-bottom:6px">📧 Request TO</div>'
-    +'<div style="font-size:11px;color:#555">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="color:#2e7d32">sali.aljehani@petromin.com</a></div>'
-    +'</div></div>';
+  const emailHtml=makeEmailSection('Manager Branch, sali.aljehani@petromin.com','','Manager Branch, CRTeam@petromin.com','');
 
   // Group branches by city
   const cities={}, cityOrder=[];
@@ -2055,14 +2035,7 @@ function renderStellantisPACTab(arr){
     const mobile=fmtNum(String(r[mobileKey]||'').trim());
     const email=String(r[emailKey]||'').trim();
     const gps=String(r[gpsKey]||'').trim();
-    return '<div style="background:#fff;border-radius:10px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-top:2px solid '+color+'">'
-      +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">'+branch+'</div>'
-      +(hours?'<div style="font-size:10px;color:#888;margin-bottom:6px">🕐 '+hours+'</div>':'')
-      +(mgr?'<div style="font-size:12px;margin-bottom:4px">👤 '+mgr+'</div>':'')
-      +(mobile?'<div style="font-size:12px;margin-bottom:4px">📞 '+mobile+'</div>':'')
-      +(email?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">✉️ '+email+'</a></div>':'')
-      +(gps&&gps.startsWith('http')?'<div style="margin-top:4px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-      +'</div>';
+    return makeUnifiedCard(branch,'','',mgr,mobile,email,hours,gps,color,'');
   };
 
   const LARGE_CITIES=new Set(['Jeddah','Riyadh']);
@@ -2288,15 +2261,7 @@ function renderBodyShopTab(arr){
   });
 
   // Email header
-  const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
-    +'<div style="font-size:12px;font-weight:700;color:#c0272d;margin-bottom:6px">📧 Complaint TO</div>'
-    +'<div style="font-size:11px;color:#555">Manager Branch + <a href="mailto:CRTeam@petromin.com" style="color:#c0272d">CRTeam@petromin.com</a></div>'
-    +'</div>'
-    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px;text-align:center">'
-    +'<div style="font-size:12px;font-weight:700;color:#2e7d32;margin-bottom:6px">📧 Request TO</div>'
-    +'<div style="font-size:11px;color:#555">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="color:#2e7d32">sali.aljehani@petromin.com</a></div>'
-    +'</div></div>';
+  const emailHtml=makeEmailSection('Manager Branch, sali.aljehani@petromin.com','','Manager Branch, CRTeam@petromin.com','');
 
   // Group by region
   const regions={}, REGION_ORDER=['Western','West','Central','Center','East','Eastern','Southern','South','Northern','North'];
