@@ -1270,11 +1270,11 @@ const REF_SHEETS = {
   },
   nissan: {
     id: '1lXDeN1iUosG_JSADgdWhnkT5J1t3hhwXoSJdbmb4B88',
-    tabs: ['Showroom','Service','Spare Parts ','PAC','SMS & Location','Nissan App 25-26']
+    tabs: ['Showroom','3S','Spare Parts ','Nissan PAC','SMS & Location','Nissan App 25-26']
   },
   stellantis: {
     id: '104CXGHd1raokgGijhvHgt6AI2gdsqzANBH74Ehm01dM',
-    tabs: ['Showroom ','Service','Spare Parts ','PAC','Tristar','Showroom Sales Team']
+    tabs: ['Showroom ','PMS','Spare Parts ','PAC','Tristar','Showroom Sales Team']
   },
   bodyshop: {
     id: '1_Z8Ry4-Y7kNFYnhXNvn7QP8jt1S_n9JHdVC2zT6R6WE',
@@ -2598,9 +2598,13 @@ function showRefBrandPage(brand){
     +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e3f2fd"><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South · North</td><td style="padding:7px 12px;text-align:center"><a href="mailto:s.alsulami@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alsulami@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr><tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">simon.white@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">z.bakhurji@petromin.com</a> · <a href="mailto:s.alshamrani@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">s.alshamrani@petromin.com</a> · <a href="mailto:elie.cremesty@petromin.com" style="color:#1565c0;text-decoration:none;margin:2px;display:inline-block">elie.cremesty@petromin.com</a></td></tr></tbody></table></div>':'')
     +(brand==='bodyshop'?'<div id="bodyshopInstruction" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px;direction:rtl;text-align:right"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-right:4px solid #7b0000"><div style="font-size:13px;font-weight:700;color:#7b0000;margin-bottom:8px">📋 الإجراءات (قبل)</div><div style="font-size:11px;color:#555;line-height:1.8">يلزم توفير المستندات التالية:<br>1- استمارة المركبة<br>2- تقرير الجهة المباشرة للحادث (نجم أو المرور)<br>3- الرقم المرجعي لمطالبة التأمين<br><br>يُشترط حضور وتسليم المركبة من مالكها أو المفوّض رسميًا.<br>في حال تعذّر الحضور يجب تقديم تفويض خطي.</div></div><div style="background:#fff9f0;border-radius:10px;padding:14px;border-right:4px solid #e65100"><div style="font-size:13px;font-weight:700;color:#e65100;margin-bottom:8px">💰 التسعيرة</div><div style="font-size:11px;color:#555;line-height:1.8">يستغرق فحص المركبة وإرسال التسعيرة لشركة التأمين من 7 إلى 14 يوم عمل.<br><br>• قابلة للقيادة: تُسلَّم بعد الفحص<br>• غير قابلة للقيادة: تُحجز بالفرع لحين الإصلاح</div></div><div style="background:#f0fff4;border-radius:10px;padding:14px;border-right:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 الإصلاح</div><div style="font-size:11px;color:#555;line-height:1.8">يبدأ الإصلاح بعد موافقة التأمين، بحد أقصى 90 يوم عمل.<br><br>سيتم توفير قطع الغيار خلال هذه الفترة، وإشعاركم برسالة نصية عند توفرها.</div></div></div></div>':'')
     +'<div class="ref-sub-tabs" style="justify-content:center">'
-    +tabs.map((t,i)=>'<button class="ref-sub-tab'+(i===0?' active':'')+'" '
-      +'style="'+(i===0?'background:'+meta.color+';color:#fff;border-color:'+meta.color:'')+'" '
-      +'onclick="switchRefTab(\''+brand+'\','+i+',this)">'+t+'</button>').join('')
+    +tabs.map((t,i)=>{
+      const TAB_LABELS={'3S':'Service','Nissan PAC':'PAC','PMS':'Service','Appointment Script':'Appointment Script'};
+      const label=TAB_LABELS[t]||t;
+      return '<button class="ref-sub-tab'+(i===0?' active':'')+'" '
+        +'style="'+(i===0?'background:'+meta.color+';color:#fff;border-color:'+meta.color:'')+'" '
+        +'onclick="switchRefTab(\''+brand+'\','+i+',this)">'+label+'</button>';
+    }).join('')
     +'</div>'
     +'<div class="ref-tab-content"><div id="refTab_'+brand+'" style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading '+tabs[0]+'...</div></div>'
     +'</div>';
@@ -2824,8 +2828,12 @@ function renderRoster(){
   var weeklyHTML = '';
   if(WEEKLY_DATA && WEEKLY_DATA.length){
     var wkeys=Object.keys(WEEKLY_DATA[0]||{});
-    var callRows=WEEKLY_DATA.filter(function(r){return String(r[wkeys[3]]||'').includes('Call');});
-    var chatRows=WEEKLY_DATA.filter(function(r){return String(r[wkeys[3]]||'').includes('Chat');});
+    var callRows=[], chatRows=[], wSection='call';
+    WEEKLY_DATA.forEach(function(r){
+      var a=String(r[wkeys[1]]||'').trim(), w=String(r[wkeys[0]]||'').trim();
+      if(a==='WhatsApp'||w==='WhatsApp'){wSection='chat';return;}
+      if(a||w){if(wSection==='call')callRows.push(r);else chatRows.push(r);}
+    });
 
     function fmtTime(v){
       var s=String(v||'').trim();
@@ -3130,7 +3138,6 @@ async function renderRef(){
       {key:'baic',       label:'BAIC',             icon:'🟡', color:'#f9a825'},
       {key:'nissan',     label:'Nissan',           icon:'🚗', color:'#c0272d'},
       {key:'stellantis', label:'Stellantis',       icon:'🔵', color:'#1565c0'},
-      {key:'bodyshop',   label:'Body Shop & Paint',icon:'🔴', color:'#7b0000'},
       {key:'foton',      label:'Foton',            icon:'🚛', color:'#546e7a'},
       {key:'nos',        label:'National Oil Stop',icon:'🟢', color:'#2e7d32'},
       {key:'electromin', label:'Electromin',       icon:'⚡', color:'#1b5e20'},
