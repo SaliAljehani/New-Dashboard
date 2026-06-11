@@ -1915,30 +1915,43 @@ function renderStellantisSparePartsTab(arr){
     +'<div style="font-size:11px;color:#555">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="color:#2e7d32">sali.aljehani@petromin.com</a></div>'
     +'</div></div>';
 
-  const cards=branchRows.map(r=>{
-    const branch=String(r[branchKey]||'').trim();
-    const city=String(r[cityKey]||'').trim();
-    const street=String(r[streetKey]||'').trim();
-    const hours=String(r[hoursKey]||'').trim();
-    const advisor=String(r[advisorKey]||'').trim();
-    const email=String(r[emailKey]||'').trim();
-    const gps=String(r[gpsKey]||'').trim();
-    const cc=ccMap[branch]||'';
-    if(!branch||branch===branchKey) return '';
+  // Group by city with toggle
+  const cities2={}, cityOrder2=[];
+  branchRows.forEach(r=>{
+    const city2=String(r[cityKey]||'').trim()||'Other';
+    if(!cities2[city2]){cities2[city2]=[];cityOrder2.push(city2);}
+    cities2[city2].push(r);
+  });
 
-    return '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+color+';margin-bottom:10px">'
-      +'<div style="background:'+color+'12;padding:10px 16px">'
-      +'<div style="font-size:14px;font-weight:700;color:'+color+'">'+branch+(city?' <span style="font-size:11px;color:#888;font-weight:400">— '+city+'</span>':'')+'</div>'
-      +(street?'<div style="font-size:11px;color:#555;font-weight:600;margin-top:2px">📍 '+street+'</div>':'')
-      +(hours?'<div style="font-size:11px;color:#888;margin-top:2px">'+hours+'</div>':'')
-      +'</div>'
-      +'<div style="padding:10px 16px">'
-      +(advisor?'<div style="font-size:12px;margin-bottom:6px">👤 <strong>'+advisor+'</strong></div>':'')
-      +(email?'<div style="margin-bottom:6px"><span style="background:#e8f5e9;color:#2e7d32;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">TO</span>'+fmtEmails(email,'#e8f5e9','#2e7d32')+'</div>':'')
-      +(cc?'<div style="margin-bottom:6px"><span style="background:#e3f2fd;color:#1565c0;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">CC</span>'+fmtEmails(cc,'#e3f2fd','#1565c0')+'</div>':'')
-      +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-      +'</div></div>';
-  }).filter(Boolean).join('');
+  const cards=cityOrder2.map(city2=>{
+    const cityRows=cities2[city2];
+    const cityId='sp_'+city2.replace(/\s/g,'');
+    const cityCards=cityRows.map(r=>{
+      const branch=String(r[branchKey]||'').trim();
+      const street=String(r[streetKey]||'').trim();
+      const hours=String(r[hoursKey]||'').trim();
+      const advisor=String(r[advisorKey]||'').trim();
+      const email=String(r[emailKey]||'').trim();
+      const gps=String(r[gpsKey]||'').trim();
+      const cc=ccMap[branch]||'';
+      if(!branch||branch===branchKey) return '';
+      return '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+color+';margin-bottom:10px">'
+        +'<div style="background:'+color+'12;padding:10px 16px">'
+        +'<div style="font-size:14px;font-weight:700;color:'+color+'">'+branch+'</div>'
+        +(street?'<div style="font-size:11px;color:#444;font-weight:600;margin-top:2px">📍 '+street+'</div>':'')
+        +(hours?'<div style="font-size:11px;color:#555;margin-top:2px">'+hours+'</div>':'')
+        +'</div>'
+        +'<div style="padding:10px 16px">'
+        +(advisor?'<div style="font-size:12px;margin-bottom:6px">👤 <strong>'+advisor+'</strong></div>':'')
+        +(email?'<div style="margin-bottom:6px"><span style="background:#e8f5e9;color:#2e7d32;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">TO</span>'+fmtEmails(email,"'#e8f5e9','#2e7d32'")+'</div>':'')
+        +(cc?'<div style="margin-bottom:6px"><span style="background:#e3f2fd;color:#1565c0;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">CC</span>'+fmtEmails(cc,"'#e3f2fd','#1565c0'")+'</div>':'')
+        +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
+        +'</div></div>';
+    }).filter(Boolean).join('');
+    return '<div style="margin-bottom:14px">'
+      +'<div onclick="toggleRegion(\''+cityId+'\')" style="font-size:12px;font-weight:700;color:'+color+';padding:6px 12px;background:'+color+'12;border-radius:6px;margin-bottom:8px;border-left:3px solid '+color+';cursor:pointer;display:flex;align-items:center">📌 '+city2+' ('+cityRows.length+')<span id="ico_'+cityId+'" style="margin-left:auto">▼</span></div>'
+      +'<div id="'+cityId+'">'+cityCards+'</div></div>';
+  }).join('');
 
   return '<div>'+emailHtml+cards+'</div>';
 }
@@ -2021,7 +2034,36 @@ function renderStellantisPMSTab(arr, sheetName){
       }).join('')+'</div></div></div>';
   }).join('');
 
-  return '<div>'+emailHtml+regHTML+'</div>';
+  const apptDrawer='<div style="margin-bottom:12px">'
+    +'<button onclick="toggleRegion(\'stApptScript\')" style="width:100%;padding:10px 16px;background:#f5f5f5;border:1px solid #e0e0e0;border-radius:8px;font-size:12px;font-weight:700;color:#333;cursor:pointer;text-align:left;display:flex;align-items:center">📋 Appointment Script <span id="ico_stApptScript" style="margin-left:auto">▼</span></button>'
+    +'<div id="stApptScript" style="display:none;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 8px 8px;overflow-x:auto">'
+    +'<table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#1565c015">'
+    +'<th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c022">Service</th>'
+    +'<th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c022">Source</th>'
+    +'<th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c022">Service Advisor</th>'
+    +'<th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c022">Description (Eg.)</th>'
+    +'</tr></thead><tbody>'
+    +[['GR','Call Center','Service Advisor GR','CC - GR - Engine Failure - Jeep Wrangler'],
+      ['GR','WhatsApp','Service Advisor GR','WA - GR - Engine Failure - Jeep Wrangler'],
+      ['GR','Online','Service Advisor GR','OL - GR - Engine Failure - Jeep Wrangler'],
+      ['PMS','Call Center','Service Advisor PMS','CC - PMS - 10000K - Jeep Wrangler'],
+      ['PMS','WhatsApp','Service Advisor PMS','WA - PMS - 10000K - Jeep Wrangler'],
+      ['PMS','Online','Service Advisor PMS','OL - PMS - 10000K - Jeep Wrangler'],
+      ['Recall','Call Center','Service Advisor PMS','CC - Recall - Jeep Wrangler'],
+      ['Recall','WhatsApp','Service Advisor PMS','WA - Recall - Jeep Wrangler'],
+      ['Emergency','Call Center','Service Advisor PMS','CC - Emergency - Jeep Wrangler'],
+      ['Emergency','WhatsApp','Service Advisor PMS','WA - Emergency - Jeep Wrangler']].map(function(row,i){
+        const SRC={'Call Center':'#fef2f2;color:#c0272d','WhatsApp':'#e8f5e9;color:#2e7d32','Online':'#e3f2fd;color:#1565c0'};
+        const sc=SRC[row[1]]||'#f5f5f5;color:#555';
+        return '<tr style="background:'+(i%2===0?'#fff':'#f9fbff')+'">'
+          +'<td style="padding:7px 12px"><span style="background:#1565c015;color:#1565c0;padding:2px 7px;border-radius:5px;font-size:11px">'+row[0]+'</span></td>'
+          +'<td style="padding:7px 12px"><span style="background:'+sc+';padding:2px 7px;border-radius:5px;font-size:11px">'+row[1]+'</span></td>'
+          +'<td style="padding:7px 12px;color:#555">'+row[2]+'</td>'
+          +'<td style="padding:7px 12px;font-family:monospace;font-size:11px">'+row[3]+'</td>'
+          +'</tr>';
+      }).join('')
+    +'</tbody></table></div></div>';
+  return '<div>'+apptDrawer+emailHtml+regHTML+'</div>';
 }
 
 function renderStellantisPACTab(arr){
@@ -2851,9 +2893,8 @@ function renderRoster(){
     }
     function buildBreakTable(brows,title,color){
       if(!brows.length) return '';
-      var allKeys={};
-      brows.forEach(function(r){Object.keys(r).forEach(function(k){if(k)allKeys[k]=1;});});
-      var wk=Object.keys(allKeys);
+      // Always use Week, Agent Name, Break Time columns
+      var wk=['Week','Agent Name','Break Time'];
       var t='<div style="background:#fff;border-radius:10px;border:1px solid #eee;overflow:hidden;margin-bottom:12px">'
         +'<div style="background:'+color+'18;border-left:4px solid '+color+';padding:10px 14px;font-size:13px;font-weight:700;color:'+color+'">'+title+'</div>'
         +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
