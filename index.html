@@ -3636,7 +3636,13 @@ async function renderRefBrand(brand,tabIdx){
   if(brand==='petromin'){
     container.innerHTML='<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading '+sheetName+'...</div>';
     try{
-      const arr=await fetchCSVRaw(cfg.id, sheetName);
+      const data=await fetchSheet(cfg.id, sheetName);
+      let arr=Array.isArray(data)?data:(data.rows||[]);
+      if(arr.length && Object.keys(arr[0]).length<4){
+        console.log('Petromin',sheetName,'falling back to raw CSV (keys:',Object.keys(arr[0]),')');
+        arr=await fetchCSVRaw(cfg.id, sheetName);
+      }
+      console.log('Petromin',sheetName,'rows:',arr.length,'sample:',arr[0]);
       const t=sheetName.trim();
       if(t==='Instruction') container.innerHTML=renderPetrominInstructionTab(arr);
       else if(t==='New PAC') container.innerHTML=renderPetrominPACTab(arr);
