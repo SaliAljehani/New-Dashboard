@@ -2918,18 +2918,24 @@ async function renderInstructionTab(brand, cfg){
   let warrantyBody='';
   if(warrantyRows.length){
     if(isDualCol){
-      warrantyBody='<div style="background:#fff;border-radius:12px;overflow-x:auto;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:12px">'
-        +'<thead><tr style="background:'+color+'12">'
-        +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">ضمان</th>'
-        +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">'+col1Header+'</th>'
-        +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">'+col2Header+'</th>'
-        +'</tr></thead><tbody>'
-        +warrantyRows.map((w,i)=>'<tr style="background:'+(i%2===0?'#fff':'#f9fbff')+'">'
-          +'<td style="padding:8px 14px;font-weight:600;color:#333;direction:rtl;text-align:right;white-space:pre-wrap">'+w.title+'</td>'
-          +'<td style="padding:8px 14px;text-align:center;direction:rtl;white-space:pre-wrap">'+w.c1+'</td>'
-          +'<td style="padding:8px 14px;text-align:center;direction:rtl;white-space:pre-wrap">'+w.c2+'</td>'
-          +'</tr>').join('')
-        +'</tbody></table></div>';
+      warrantyBody='<div style="display:flex;flex-direction:column;gap:12px">'
+        +warrantyRows.map((w,i)=>{
+          const c=WARRANTY_COLORS[i%WARRANTY_COLORS.length];
+          return '<div style="background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden">'
+            +'<div style="padding:10px 14px;font-size:13px;font-weight:700;color:'+c+';direction:rtl;text-align:right;border-bottom:1px solid #f0f0f0">'+w.title+'</div>'
+            +'<div style="display:grid;grid-template-columns:1fr 1fr">'
+            +'<div style="padding:12px 14px;border-left:4px solid '+c+';direction:rtl;text-align:right">'
+            +'<div style="font-size:11px;font-weight:700;color:'+c+';margin-bottom:6px">'+col1Header+'</div>'
+            +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+w.c1+'</div>'
+            +'</div>'
+            +'<div style="padding:12px 14px;border-left:4px solid '+(WARRANTY_COLORS[(i+1)%WARRANTY_COLORS.length])+';direction:rtl;text-align:right">'
+            +'<div style="font-size:11px;font-weight:700;color:'+(WARRANTY_COLORS[(i+1)%WARRANTY_COLORS.length])+';margin-bottom:6px">'+col2Header+'</div>'
+            +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+w.c2+'</div>'
+            +'</div>'
+            +'</div>'
+            +'</div>';
+        }).join('')
+        +'</div>';
     }else{
       warrantyBody='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
         +warrantyRows.map((w,i)=>{
