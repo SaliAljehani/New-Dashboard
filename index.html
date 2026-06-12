@@ -2361,7 +2361,7 @@ function renderNissanAppTab(arr){
     {f:'User ID or Email',m:true},{f:'Phone Device Model',m:true},
     {f:'Phone OS (iOS / Android + version)',m:true},{f:'Nissan App Version',m:true}
   ];
-  return '<div style="max-width:640px;margin:0 auto">'
+  return '<div style="max-width:640px;margin:0 auto;direction:ltr;text-align:left">'
     +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px 16px;margin-bottom:10px">'
     +'<div style="margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="background:#c0272d;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">TO</span>'+fmtPills(toEmails)+'</div>'
     +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="background:#1565c0;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">CC</span>'+fmtPills(ccEmail)+'</div>'
@@ -2534,7 +2534,7 @@ function showRefBrandPage(brand){
   const META={
     nissan:    {label:'Nissan',    icon:'🔴',color:'#c0272d'},
     stellantis:{label:'Stellantis',icon:'🔵',color:'#1565c0'},
-    bodyshop:  {label:'Body Shop & Paint', icon:'🔴',color:'#7b0000'},
+    bodyshop:  {label:'Body Shop', icon:'🔴',color:'#7b0000'},
     baic:      {label:'BAIC',      icon:'⚫',color:'#37474f'},
     baicRecall:{label:'BAIC Recall — VIN Search',icon:'🔎',color:'#4a148c'},
   };
@@ -3136,11 +3136,11 @@ async function renderRef(){
       {key:'baic',       label:'BAIC',             icon:'🟡', color:'#f9a825'},
       {key:'nissan',     label:'Nissan',           icon:'🚗', color:'#c0272d'},
       {key:'stellantis', label:'Stellantis',       icon:'🔵', color:'#1565c0'},
-      {key:'bodyshop',   label:'Body Shop & Paint',icon:'🔴', color:'#7b0000'},
       {key:'foton',      label:'Foton',            icon:'🚛', color:'#546e7a'},
       {key:'nos',        label:'National Oil Stop',icon:'🟢', color:'#2e7d32'},
       {key:'electromin', label:'Electromin',       icon:'⚡', color:'#1b5e20'},
       {key:'baicRecall', label:'Recall',           icon:'⚠️', color:'#4a148c'},
+      {key:'bodyshop',   label:'Body Shop',        icon:'🔴', color:'#7b0000'},
     ];
 
     // CONTACT NUMBERS
