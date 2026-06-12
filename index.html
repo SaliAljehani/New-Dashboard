@@ -1361,6 +1361,10 @@ const REF_SHEETS = {
     id: '1PBhYlWtWqGZFZi_wgjDTlUaoN6O0QeS4P1CHcd40H4Y',
     tabs: ['Instruction','Aftersales Truck','Aftersales Pickup']
   },
+  nos: {
+    id: '1gKtlJ2VNz8ddL5yOuIgGCgAGGkqeizzZ_r9NZ1FNaj0',
+    tabs: ['FAQ','Franchise Locations','Price List','NOS Complaint ']
+  },
   baicRecall: {
     id: '1pUqPaAXpKBjuBI6ABvgtd9Iuxo0IQ0sEbHX--3QMtpY',
     tabs: ['D50-1137Units','BJ40-845Units','BJ40-1778Units','X7-Fuse Box']
@@ -1509,7 +1513,7 @@ function refGlobalFilter(q){
 
 function switchRefTab(brand, idx, btn){
   REF_ACTIVE_TABS[brand] = idx;
-  const color = {nissan:'#c0272d', stellantis:'#1565c0', baic:'#f9a825', baicRecall:'#4a148c',petromin:'#DAA520',foton:'#546e7a'}[brand] || '#c0272d';
+  const color = {nissan:'#c0272d', stellantis:'#1565c0', baic:'#f9a825', baicRecall:'#4a148c',petromin:'#DAA520',foton:'#546e7a',nos:'#2e7d32'}[brand] || '#c0272d';
   btn.parentElement.querySelectorAll('.ref-sub-tab').forEach((t,i) => {
     t.classList.toggle('active', i===idx);
     t.style.background = i===idx ? color : '';
@@ -2891,6 +2895,118 @@ function renderPetrominComplaintsTab(arr){
   }).join('')+'</div>';
 }
 
+function renderNosFAQTab(arr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const color='#2e7d32';
+  let groups=[];
+  let cur=null;
+  arr.forEach((r,idx)=>{
+    const v=Object.values(r).map(x=>String(x===undefined||x===null?'':x).trim());
+    const v0=v[0]||'', v1=v[1]||'', v2=v[2]||'';
+    if(idx===0 && (v1==='Questions'||v2==='Answers'))return; // header
+    if(v0){ cur={title:v0,items:[]}; groups.push(cur); }
+    if(!cur)return;
+    if(v1) cur.items.push({q:v1,a:v2});
+  });
+
+  return groups.map((g,gi)=>{
+    const body='<div>'+g.items.map((it,i)=>{
+      return '<div style="padding:12px 16px;'+(i>0?'border-top:1px solid #f0f0f0':'')+'">'
+        +'<div style="font-size:12px;font-weight:700;color:#333;margin-bottom:6px;direction:rtl;text-align:right">❓ '+it.q+'</div>'
+        +'<div style="font-size:12px;color:#555;direction:rtl;text-align:right;line-height:1.9;white-space:pre-wrap">'+it.a+'</div>'
+        +'</div>';
+    }).join('')+'</div>';
+    return mkCollapsible(g.title, body, 'nosFaq_'+gi, color);
+  }).join('');
+}
+
+function renderNosFranchiseTab(arr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const color='#2e7d32';
+  const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
+
+  const rows=[];
+  arr.forEach((r,idx)=>{
+    const v=Object.values(r).map(x=>String(x===undefined||x===null?'':x).trim());
+    const v0=v[0]||'';
+    if(idx===0 && v0==='City')return; // header
+    if(!v0||!v[1])return;
+    rows.push({city:v0,branch:v[1],district:v[2]||'',supervisor:v[3]||'',mobile:fmtNum(v[4]),owner:v[5]||'',company:v[6]||'',email:v[7]||''});
+  });
+
+  // Group by city
+  const groups={};
+  const order=[];
+  rows.forEach(r=>{
+    if(!groups[r.city]){groups[r.city]=[];order.push(r.city);}
+    groups[r.city].push(r);
+  });
+
+  return order.map(city=>{
+    const items=groups[city];
+    const gid='nosFranch_'+city.replace(/\W/g,'');
+    return '<div style="margin-bottom:10px">'
+      +'<div onclick="toggleRegion(\''+gid+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+color+'12;border-radius:8px;border-left:4px solid '+color+';cursor:pointer;margin-bottom:8px">'
+      +'<span style="font-size:13px;font-weight:700;color:'+color+'">'+city+'</span>'
+      +'<span style="font-size:11px;color:#aaa">('+items.length+')</span>'
+      +'<span id="ico_'+gid+'" style="margin-left:auto;color:'+color+'">▼</span></div>'
+      +'<div id="'+gid+'"><div class="ref-cards-grid">'+items.map(it=>{
+        return '<div class="ref-card" style="padding:10px 14px;text-align:center;border-top:3px solid '+color+'">'
+          +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+it.branch+'</div>'
+          +(it.district?'<div style="font-size:11px;color:#888;margin:3px 0">📌 '+it.district+'</div>':'')
+          +(it.owner?'<div style="font-size:12px;color:#333;margin-bottom:3px">👤 '+it.owner+'</div>':'')
+          +(it.supervisor?'<div style="font-size:11px;color:#666;margin-bottom:3px">🧑‍💼 '+it.supervisor+(it.mobile?' · '+it.mobile:'')+'</div>':'')
+          +(it.company?'<div style="font-size:10px;color:#999;margin-top:4px">🏢 '+it.company+'</div>':'')
+          +(it.email?'<div style="font-size:11px;margin-top:4px"><a href="mailto:'+it.email+'" style="color:#1565c0;font-weight:700;text-decoration:none">✉️ '+it.email+'</a></div>':'')
+          +'</div>';
+      }).join('')+'</div></div></div>';
+  }).join('');
+}
+
+function renderNosComplaintTab(arr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const rows=arr.filter((r,idx)=>{
+    const v=Object.values(r);
+    if(idx===0) return false; // skip "NOS Complaint" header row
+    return v[0]||v[1];
+  });
+  return '<div class="ref-cards-grid">'+rows.map(r=>{
+    const v=Object.values(r).map(x=>String(x||'').trim());
+    return '<div class="ref-card" style="padding:10px 14px">'
+      +(v[0]?'<div style="font-size:11px;color:#444;margin-bottom:6px;line-height:1.6">'+v[0]+'</div>':'')
+      +(v[1]?'<div style="font-size:11px;color:#555;direction:rtl;text-align:right;line-height:1.8;'+(v[0]?'border-top:1px dashed #eee;padding-top:6px':'')+'">'+v[1]+'</div>':'')
+      +'</div>';
+  }).join('')+'</div>';
+}
+
+function renderNosPriceTab(arr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const color='#2e7d32';
+
+  const groups={};
+  const order=[];
+  arr.forEach((r,idx)=>{
+    const v=Object.values(r).map(x=>String(x===undefined||x===null?'':x).trim());
+    const v0=v[0]||'', v1=v[1]||'', v2=v[2]||'';
+    if(idx===0 && v0==='Category')return; // header
+    if(!v0||!v1)return;
+    if(!groups[v0]){groups[v0]=[];order.push(v0);}
+    let price=v2;
+    const num=parseFloat(price);
+    if(!isNaN(num)) price=num.toFixed(2)+' SR';
+    groups[v0].push({item:v1,price});
+  });
+
+  return order.map((cat,ci)=>{
+    const items=groups[cat];
+    const body='<div style="overflow-x:auto;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:12px">'
+      +'<thead><tr style="background:'+color+'12"><th style="padding:9px 14px;color:'+color+';font-weight:700;text-align:left;border-bottom:2px solid '+color+'22">Item Number</th><th style="padding:9px 14px;color:'+color+';font-weight:700;text-align:center;border-bottom:2px solid '+color+'22">Price (incl. VAT)</th></tr></thead><tbody>'
+      +items.map((it,i)=>'<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'"><td style="padding:7px 14px">'+it.item+'</td><td style="padding:7px 14px;text-align:center;font-weight:700;color:'+color+'">'+it.price+'</td></tr>').join('')
+      +'</tbody></table></div>';
+    return mkCollapsible(cat+' ('+items.length+')', body, 'nosPrice_'+ci, color);
+  }).join('');
+}
+
 function renderFotonInstructionTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#546e7a';
@@ -3570,6 +3686,7 @@ function showRefBrandPage(brand){
     baicRecall:{label:'BAIC Recall — VIN Search',icon:'🔎',color:'#4a148c'},
     petromin:  {label:'Petromin',  icon:'⭐',color:'#DAA520'},
     foton:     {label:'Foton',     icon:'🚛',color:'#546e7a'},
+    nos:       {label:'National Oil Stop', icon:'🟢',color:'#2e7d32'},
   };
   const meta=META[brand];
   const tabs=REF_SHEETS[brand].tabs;
@@ -3619,7 +3736,7 @@ function showRefBrandPage(brand){
 
 function switchRefTab(brand,idx,btn){
   REF_ACTIVE_TABS[brand]=idx;
-  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#f9a825',baicRecall:'#4a148c',petromin:'#DAA520',foton:'#546e7a'}[brand]||'#c0272d';
+  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#f9a825',baicRecall:'#4a148c',petromin:'#DAA520',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
   const container=btn?btn.parentElement:document.querySelector('#refSubTabs_'+brand);
   if(container){
     container.querySelectorAll('.ref-sub-tab').forEach((t,i)=>{
@@ -3845,6 +3962,25 @@ async function renderRefBrand(brand,tabIdx){
       else if(t==='Tire&Battery') container.innerHTML=renderPetrominTireBatteryTab(arr);
       else if(t==='PE-Emailz') container.innerHTML=renderPetrominEmailzTab(arr);
       else if(t==='Complaints Emails') container.innerHTML=renderPetrominComplaintsTab(arr);
+      else container.innerHTML='<div style="text-align:center;padding:24px;color:#aaa">No renderer for '+t+'</div>';
+    }catch(e){
+      container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
+    }
+    return;
+  }
+  if(brand==='nos'){
+    container.innerHTML='<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading '+sheetName+'...</div>';
+    try{
+      const t=sheetName.trim();
+      const data=await fetchSheet(cfg.id, sheetName);
+      let arr=Array.isArray(data)?data:(data.rows||[]);
+      if(arr.length && Object.keys(arr[0]).length<3){
+        arr=await fetchCSVRaw(cfg.id, sheetName);
+      }
+      if(t==='FAQ') container.innerHTML=renderNosFAQTab(arr);
+      else if(t==='Franchise Locations') container.innerHTML=renderNosFranchiseTab(arr);
+      else if(t==='Price List') container.innerHTML=renderNosPriceTab(arr);
+      else if(t==='NOS Complaint') container.innerHTML=renderNosComplaintTab(arr);
       else container.innerHTML='<div style="text-align:center;padding:24px;color:#aaa">No renderer for '+t+'</div>';
     }catch(e){
       container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
@@ -4461,6 +4597,7 @@ async function renderRef(){
     const BRAND_CONFIGS=[
       {key:'petromin',   label:'Petromin',         icon:'⭐', color:'#DAA520'},
       {key:'foton',      label:'Foton',            icon:'🚛', color:'#546e7a'},
+      {key:'nos',        label:'National Oil Stop', icon:'🟢', color:'#2e7d32'},
       {key:'baic',       label:'BAIC',             icon:'🟡', color:'#f9a825'},
       {key:'nissan',     label:'Nissan',           icon:'🚗', color:'#c0272d'},
       {key:'stellantis', label:'Stellantis',       icon:'🔵', color:'#1565c0'},
