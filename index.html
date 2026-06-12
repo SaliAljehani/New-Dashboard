@@ -576,13 +576,17 @@ function showMotivation(){
   const el=document.getElementById('motivationText');
   if(!el) return;
   const q=MOTIVATION_QUOTES;
-  const row=(items)=>'<div style="display:flex;justify-content:center;gap:28px;flex-wrap:wrap">'
-    +items.map(t=>'<span style="white-space:nowrap">'+t+'</span>').join('')
+  const col=(top,bottom)=>'<div style="display:flex;flex-direction:column;gap:4px;align-items:center;flex:1;min-width:180px">'
+    +'<span>'+top+'</span>'
+    +'<span>'+bottom+'</span>'
     +'</div>';
   el.innerHTML=
-    row([q[0],q[1],q[2]])
-    +row([q[3],q[4],q[5]])
-    +'<div style="margin-top:4px">'+q[6]+'</div>'
+    '<div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:6px">'
+    +col(q[0],q[3])
+    +col(q[1],q[4])
+    +col(q[2],q[5])
+    +'</div>'
+    +'<div>'+q[6]+'</div>'
     +'<div>'+q[7]+'</div>';
 }
 
