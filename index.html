@@ -1336,14 +1336,14 @@ const REF_SHEETS = {
   },
   bodyshop: {
     id: '1_Z8Ry4-Y7kNFYnhXNvn7QP8jt1S_n9JHdVC2zT6R6WE',
-    tabs: ['Body Shop & Paint']
+    tabs: ['Body Shop & Paint','Location ']
   },
   baic: {
     id: '1FQaNEkC-gKFIJLT5hBE9qzBL7pXf_m5Aot35h622hR4',
     tabs: ['Instruction','Service','BAIC Location']
   },
   petromin: {
-    id: 'PLACEHOLDER_PETROMIN_SHEET_ID',
+    id: '11M28wIA4Ee84ohrIqzXtobK7X-QsrruoL4MwjoGz-6k',
     tabs: ['New PAC','Petromin Tristar']
   },
   baicRecall: {
@@ -2634,6 +2634,46 @@ function renderPetrominTristarTab(arr){
   return '<div>'+emailHtml+branchHtml+'</div>';
 }
 
+function renderBodyShopLocationTab(arr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const color='#7b0000';
+  const keys=Object.keys(arr[0]||{});
+  const regionCol=keys[0], cityCol=keys[1], enCol=keys[2], arCol=keys[3];
+
+  const REGION_COLORS={West:'#c0272d',Center:'#1565c0',Central:'#1565c0',East:'#2e7d32',South:'#6a1b9a',North:'#e65100'};
+
+  const mkBox=(text,id,label)=>{
+    if(!text) return '';
+    const safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const isAR=/[\u0600-\u06FF]/.test(text.substring(0,10));
+    return '<div style="background:#fafafa;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
+      +'<span style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase">'+label+'</span>'
+      +'<button onclick="copySMS(\''+id+'\')" style="padding:3px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer">📋 Copy</button>'
+      +'</div>'
+      +'<div id="sms_'+id+'" style="font-size:11px;color:#444;line-height:1.6;white-space:pre-wrap;direction:'+(isAR?'rtl':'ltr')+';text-align:'+(isAR?'right':'left')+'">'+safe+'</div>'
+      +'</div>';
+  };
+
+  const rows=arr.filter(r=>String(r[enCol]||r[arCol]||'').trim());
+
+  return '<div class="ref-cards-grid">'+rows.map((r,i)=>{
+    const region=String(r[regionCol]||'').trim();
+    const city=String(r[cityCol]||'').trim();
+    const en=String(r[enCol]||'').trim();
+    const ar=String(r[arCol]||'').trim();
+    const rc=REGION_COLORS[region]||color;
+    return '<div class="ref-card" style="padding:10px 14px;border-top:3px solid '+rc+'">'
+      +'<div style="text-align:center;margin-bottom:8px">'
+      +(region?'<span style="font-size:10px;font-weight:700;color:'+rc+';text-transform:uppercase">'+region+'</span> · ':'')
+      +'<span style="font-size:13px;font-weight:700;color:#333">'+city+'</span>'
+      +'</div>'
+      +mkBox(en,'bsLoc_en_'+i,'EN')
+      +mkBox(ar,'bsLoc_ar_'+i,'AR')
+      +'</div>';
+  }).join('')+'</div>';
+}
+
 function renderBodyShopTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#7b0000';
@@ -2979,7 +3019,7 @@ function showRefBrandPage(brand){
     +(brand==='bodyshop'?'<div id="bodyshopInstruction" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px;direction:rtl;text-align:right"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-right:4px solid #7b0000"><div style="font-size:13px;font-weight:700;color:#7b0000;margin-bottom:8px">📋 الإجراءات (قبل)</div><div style="font-size:11px;color:#555;line-height:1.8">يلزم توفير المستندات التالية:<br>1- استمارة المركبة<br>2- تقرير الجهة المباشرة للحادث (نجم أو المرور)<br>3- الرقم المرجعي لمطالبة التأمين<br><br>يُشترط حضور وتسليم المركبة من مالكها أو المفوّض رسميًا.<br>في حال تعذّر الحضور يجب تقديم تفويض خطي.</div></div><div style="background:#fff9f0;border-radius:10px;padding:14px;border-right:4px solid #e65100"><div style="font-size:13px;font-weight:700;color:#e65100;margin-bottom:8px">💰 التسعيرة</div><div style="font-size:11px;color:#555;line-height:1.8">يستغرق فحص المركبة وإرسال التسعيرة لشركة التأمين من 7 إلى 14 يوم عمل.<br><br>• قابلة للقيادة: تُسلَّم بعد الفحص<br>• غير قابلة للقيادة: تُحجز بالفرع لحين الإصلاح</div></div><div style="background:#f0fff4;border-radius:10px;padding:14px;border-right:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 الإصلاح</div><div style="font-size:11px;color:#555;line-height:1.8">يبدأ الإصلاح بعد موافقة التأمين، بحد أقصى 90 يوم عمل.<br><br>سيتم توفير قطع الغيار خلال هذه الفترة، وإشعاركم برسالة نصية عند توفرها.</div></div></div></div>':'')
     +'<div class="ref-sub-tabs" style="justify-content:center">'
     +tabs.map((t,i)=>{
-      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','PMS':'Service','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction'};
+      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','PMS':'Service','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location'};
       const label=TAB_LABELS[t]||t;
       return '<button class="ref-sub-tab'+(i===0?' active':'')+'" '
         +'style="'+(i===0?'background:'+meta.color+';color:#fff;border-color:'+meta.color:'')+'" '
@@ -3260,6 +3300,10 @@ async function renderRefBrand(brand,tabIdx){
     }
     if(brand==='petromin' && sheetName.trim()==='Petromin Tristar'){
       container.innerHTML=renderPetrominTristarTab(arr);
+      return;
+    }
+    if(brand==='bodyshop' && sheetName.trim()==='Location'){
+      container.innerHTML=renderBodyShopLocationTab(arr);
       return;
     }
     if(brand==='bodyshop'){
