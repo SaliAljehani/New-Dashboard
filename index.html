@@ -2876,6 +2876,7 @@ async function renderInstructionTab(brand, cfg){
       return;
     }
     if(mode==='appt'){
+      if(!title && !c1 && sec.length>15){ noteRows.push(sec); return; }
       if(!sec){ if(c1 && c1.length>15) noteRows.push(c1); return; }
       apptRows.push({svc:sec,a:title,b:c1,c:c2});
       return;
