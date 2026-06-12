@@ -2310,27 +2310,48 @@ function renderBodyShopTab(arr){
       +(commonH?'<span style="font-size:10px;color:#888;margin-left:auto">🕐 '+commonH+'</span>':'')
       +'<span id="ico_'+regId+'" style="color:'+rc+'">▼</span>'
       +'</div>'
-      +'<div id="'+regId+'"><div class="ref-cards-grid">'+rows.map(r=>{
-        const name=String(r[branchCol]||'').replace(/\n/g,' ').trim();
-        const dist=distCol?String(r[distCol]||'').trim():'';
-        const phone=phoneCol?String(r[phoneCol]||'').split('\n').map(s=>fmtNum(s.trim())).filter(Boolean).join(' / '):'';
-        const mgr=mgrCol?String(r[mgrCol]||'').trim():'';
-        const email=emailCol?String(r[emailCol]||'').trim():'';
-        const hours=hoursCol?cleanHours(r[hoursCol]):'';
-        const gps=gpsCol?String(r[gpsCol]||'').trim():'';
-        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
-          +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
-          +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+name+'</div>'
-          +(dist?'<div style="font-size:11px;color:#888;margin-top:3px">📍 '+dist+'</div>':'')
-          +'</div>'
-          +'<div style="padding:10px 14px;text-align:center">'
-          +(mgr?'<div style="font-size:12px;color:#333;margin-bottom:5px">👤 '+mgr+'</div>':'')
-          +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
-          +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="color:#1565c0;font-weight:700;text-decoration:none">✉️ '+email+'</a></div>':'')
-          +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-          +(hours&&hours!==commonH?'<div style="font-size:10px;color:#888;margin-top:6px;border-top:1px solid #f0f0f0;padding-top:6px">🕐 '+hours+'</div>':'')
-          +'</div></div>';
-      }).join('')+'</div></div></div>';
+      +'<div id="'+regId+'"><div class="ref-cards-grid">'+(()=>{
+        // Group rows by branch name, merge persons
+        const branches={}, order=[];
+        rows.forEach(r=>{
+          const name=String(r[branchCol]||'').replace(/\n/g,' ').trim();
+          if(!name) return;
+          if(!branches[name]){
+            branches[name]={
+              name,
+              dist:distCol?String(r[distCol]||'').trim():'',
+              hours:hoursCol?cleanHours(r[hoursCol]):'',
+              gps:gpsCol?String(r[gpsCol]||'').trim():'',
+              persons:[]
+            };
+            order.push(name);
+          }
+          const mgr=mgrCol?String(r[mgrCol]||'').trim():'';
+          const phone=phoneCol?String(r[phoneCol]||'').split('\n').map(s=>fmtNum(s.trim())).filter(Boolean).join(' / '):'';
+          const email=emailCol?String(r[emailCol]||'').trim():'';
+          if(mgr||phone||email) branches[name].persons.push({mgr,phone,email});
+        });
+        return order.map(name=>{
+          const b=branches[name];
+          const persHTML=b.persons.map(p=>
+            '<div style="padding:5px 0;border-bottom:1px solid #f5f5f5">'
+            +(p.mgr?'<div style="font-size:12px;color:#333;margin-bottom:2px">👤 '+p.mgr+'</div>':'')
+            +(p.phone?'<div style="font-size:12px;color:#333;margin-bottom:2px">📞 '+p.phone+'</div>':'')
+            +(p.email?'<div style="font-size:11px"><a href="mailto:'+p.email+'" style="color:#1565c0;font-weight:700;text-decoration:none">✉️ '+p.email+'</a></div>':'')
+            +'</div>'
+          ).join('');
+          return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
+            +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
+            +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+b.name+'</div>'
+            +(b.dist?'<div style="font-size:11px;color:#888;margin-top:3px">📍 '+b.dist+'</div>':'')
+            +'</div>'
+            +'<div style="padding:10px 14px;text-align:center">'
+            +persHTML
+            +(b.gps&&b.gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+b.gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
+            +(b.hours&&b.hours!==commonH?'<div style="font-size:10px;color:#888;margin-top:6px;border-top:1px solid #f0f0f0;padding-top:6px">🕐 '+b.hours+'</div>':'')
+            +'</div></div>';
+        }).join('');
+      })()+'</div></div></div>';
   }).join('');
 
   return '<div>'+emailHtml+regHTML+'</div>';
