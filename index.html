@@ -2900,7 +2900,6 @@ function renderPetrominPACTab(arr){
   arr.forEach((r,idx)=>{
     const vals=Object.values(r).map(v=>String(v||'').trim());
     const v0=vals[0]||'';
-    if(idx>=98){ console.log('PAC row',idx,':', JSON.stringify(vals)); }
     if(REGION_ORDER.includes(v0)){
       if(!regions[v0])regions[v0]=[];
       regions[v0].push(vals);
@@ -2930,6 +2929,25 @@ function renderPetrominPACTab(arr){
     +(emRows.Complaint?.to?'<div style="font-size:11px;color:#444;margin-bottom:5px"><span class="ref-email-tag to">TO</span> '+emRows.Complaint.to.replace(/,\s*$/,'')+'</div>':'')
     +(emRows.Complaint?.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emRows.Complaint.cc)+'</div>':'')
     +'</div></div>';
+
+  // Unique Area Managers (RM) summary
+  const amMap={};
+  Object.values(rmByBranch).forEach(rm=>{
+    if(!amMap[rm.email]) amMap[rm.email]={name:rm.name,email:rm.email,mobiles:new Set(),branches:0};
+    if(rm.mobile) amMap[rm.email].mobiles.add(rm.mobile);
+    amMap[rm.email].branches++;
+  });
+  const amList=Object.values(amMap);
+  const amHTML=amList.length?'<div style="margin-bottom:16px">'
+    +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:8px;text-align:center">🗺️ Area Managers</div>'
+    +'<div class="ref-cards-grid">'+amList.map(am=>{
+      return '<div class="ref-card" style="padding:10px 14px;text-align:center">'
+        +'<div style="font-size:13px;font-weight:700;color:#333">'+am.name+'</div>'
+        +'<div style="font-size:11px;color:#888;margin:3px 0">📦 '+am.branches+' branches</div>'
+        +'<div style="font-size:12px;margin-bottom:4px">📞 '+[...am.mobiles].join(' / ')+'</div>'
+        +'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="color:#1565c0;font-weight:700;text-decoration:none">✉️ '+am.email+'</a></div>'
+        +'</div>';
+    }).join('')+'</div></div>':'';
 
   const regHTML=REGION_ORDER.filter(r=>regions[r]).map(reg=>{
     const rows=regions[reg];
@@ -2968,7 +2986,7 @@ function renderPetrominPACTab(arr){
       }).join('')+'</div></div></div>';
   }).join('');
 
-  return '<div>'+emailHtml+regHTML+'</div>';
+  return '<div>'+emailHtml+amHTML+regHTML+'</div>';
 }
 
 function renderPetrominTristarTab(arr){
