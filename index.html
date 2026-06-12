@@ -1216,6 +1216,13 @@ let ANNOUNCEMENTS = [];
 let ESCALATIONS = [];
 let EOM_DATA = [];
 
+async function fetchCSVRaw(sheetId, sheetName){
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&sheet=`+encodeURIComponent(sheetName);
+  const res = await fetch(url);
+  const text = await res.text();
+  return parseCSVRaw(text);
+}
+
 function parseCSVRaw(text){
   const rows=[];
   let row=[], field='', inQuotes=false;
@@ -2658,6 +2665,15 @@ function renderPetrominLocationListTab(arr, kind){
     'North':'#e65100','South':'#6a1b9a','East':'#2e7d32','West':'#c0272d','Central':'#1565c0'
   };
 
+  const CITY_REGION={
+    'JEDDAH':'West','MAKKAH':'West','TAIF':'West','MADINA':'West','YANBU':'West','AL ULA':'West','RABIGH':'West',
+    'RIYADH':'Central','AL KHARJ':'Central','BURAYDAH':'Central','BUKAYRIYAH':'Central','UNAYZAH':'Central','QUWAIIYAH':'Central','DAWADMI':'Central','WADY DAWASIR':'Central','HAIL':'Central',
+    'DAMMAM':'East','AL HASSA':'East','AL KHOBAR':'East','JUBAIL':'East','KHAFJI':'East','BAQAIQ':'East','RASTANURA':'East','ABQAIQ':'East',
+    'ABHA':'South','KHAMIS':'South','BISHA':'South','BAHA':'South','NAMAS':'South','BILJURESHI':'South','JIZAN':'South','ABU ARISH':'South','SABIA':'South','MOHYAIL':'South','DARB':'South','QUNFIDHA':'South',
+    'TABUK':'North','ARAR':'North','SAKAKA':'North','TURAIF':'North','HAFER BATIN':'North','AL LITH':'West','BADAR':'West','UMAL SAHEK':'South'
+  };
+  const cityToRegion=(city)=>CITY_REGION[String(city||'').toUpperCase().trim()]||'';
+
   const items=[];
   arr.forEach(r=>{
     const v=Object.values(r).map(x=>String(x===undefined||x===null?'':x).trim());
@@ -2668,7 +2684,7 @@ function renderPetrominLocationListTab(arr, kind){
       // Regions|City|Code-Station Name|Area Manager|COORDINATES
       const [region,city,station,mgr,coord]=v;
       if(!station)return;
-      items.push({region,city,station,mgr,coord,type:''});
+      items.push({region:cityToRegion(city)||region,city,station,mgr,coord,type:''});
     }else if(kind==='fuel'){
       // Region|City|Station|Gas or Diesel|GPS|Region Manager
       const [region,city,station,type,gps,mgr]=v;
@@ -2678,17 +2694,18 @@ function renderPetrominLocationListTab(arr, kind){
       // Station Name - Number|City|Coordinates|Location
       const [station,city,coord,link]=v;
       if(!station)return;
-      items.push({region:'',city,station,mgr:'',coord,type:'',link});
+      items.push({region:cityToRegion(city),city,station,mgr:'',coord,type:'',link});
     }
   });
 
   const groups={};
-  const order=[];
   items.forEach(it=>{
-    const g=(kind==='ecowash')?'All':(it.region||'All');
-    if(!groups[g]){groups[g]=[];order.push(g);}
+    const g=it.region||'Other';
+    if(!groups[g])groups[g]=[];
     groups[g].push(it);
   });
+  const REGION_ORDER=['West','Central','East','South','North','Other'];
+  const order=REGION_ORDER.filter(r=>groups[r]).concat(Object.keys(groups).filter(g=>!REGION_ORDER.includes(g)));
 
   const mapLink=(coord)=>{
     if(!coord)return'';
@@ -2702,7 +2719,7 @@ function renderPetrominLocationListTab(arr, kind){
     const its=groups[g];
     const gid='peLoc_'+kind+'_'+g.replace(/\W/g,'');
     return '<div style="margin-bottom:10px">'
-      +(g!=='All'?'<div onclick="toggleRegion(\''+gid+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px"><span style="font-size:13px;font-weight:700;color:'+rc+'">'+g+'</span><span style="font-size:11px;color:#aaa">('+its.length+')</span><span id="ico_'+gid+'" style="margin-left:auto;color:'+rc+'">▼</span></div>':'')
+      +'<div onclick="toggleRegion(\''+gid+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px"><span style="font-size:13px;font-weight:700;color:'+rc+'">'+g+'</span><span style="font-size:11px;color:#aaa">('+its.length+')</span><span id="ico_'+gid+'" style="margin-left:auto;color:'+rc+'">▼</span></div>'
       +'<div id="'+gid+'"><div class="ref-cards-grid">'+its.map(it=>{
         const link=it.link&&it.link.startsWith('http')?it.link:mapLink(it.coord);
         return '<div class="ref-card" style="padding:9px 12px;text-align:center;border-top:3px solid '+rc+'">'
@@ -3614,12 +3631,21 @@ async function renderRefBrand(brand,tabIdx){
   const sheetName=cfg.tabs[tabIdx];
   const container=document.getElementById('refTab_'+brand);
   if(!container)return;
-  if(sheetName.trim()==='Instruction' && brand==='petromin'){
-    container.innerHTML='<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading...</div>';
+  if(brand==='petromin'){
+    container.innerHTML='<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading '+sheetName+'...</div>';
     try{
-      const data=await fetchSheet(cfg.id,'Instruction');
-      const arr=Array.isArray(data)?data:(data.rows||[]);
-      container.innerHTML=renderPetrominInstructionTab(arr);
+      const arr=await fetchCSVRaw(cfg.id, sheetName);
+      const t=sheetName.trim();
+      if(t==='Instruction') container.innerHTML=renderPetrominInstructionTab(arr);
+      else if(t==='New PAC') container.innerHTML=renderPetrominPACTab(arr);
+      else if(t==='Petromin Tristar') container.innerHTML=renderPetrominTristarTab(arr);
+      else if(t==='Eco Wash') container.innerHTML=renderPetrominLocationListTab(arr,'ecowash');
+      else if(t==='Fuel Station') container.innerHTML=renderPetrominLocationListTab(arr,'fuel');
+      else if(t==='DIESEL') container.innerHTML=renderPetrominLocationListTab(arr,'diesel');
+      else if(t==='Tire&Battery') container.innerHTML=renderPetrominTireBatteryTab(arr);
+      else if(t==='PE-Emailz') container.innerHTML=renderPetrominEmailzTab(arr);
+      else if(t==='Complaints Emails') container.innerHTML=renderPetrominComplaintsTab(arr);
+      else container.innerHTML='<div style="text-align:center;padding:24px;color:#aaa">No renderer for '+t+'</div>';
     }catch(e){
       container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
     }
