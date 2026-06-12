@@ -1355,7 +1355,7 @@ const REF_SHEETS = {
   },
   petromin: {
     id: '11M28wIA4Ee84ohrIqzXtobK7X-QsrruoL4MwjoGz-6k',
-    tabs: ['Instruction','New PAC','Petromin Tristar','Eco Wash','Fuel Station','DIESEL','Tire&Battery','PE-Emailz','Complaints Emails']
+    tabs: ['Instruction','New PAC','Petromin Tristar','Tire&Battery','Eco Wash','Fuel Station','DIESEL','PE-Emailz','Complaints Emails']
   },
   baicRecall: {
     id: '1pUqPaAXpKBjuBI6ABvgtd9Iuxo0IQ0sEbHX--3QMtpY',
@@ -2534,9 +2534,10 @@ function renderPetrominInstructionTab(arr){
   const oilTable={petromin:[],toyota:[]}, dieselInfo={};
   let mode='guidance';
 
-  arr.forEach(r=>{
+  arr.forEach((r,idx)=>{
     const v=Object.values(r).map(x=>String(x===undefined||x===null?'':x).trim());
     const v0=v[0]||'', v1=v[1]||'', v2=v[2]||'', v3=v[3]||'', v4=v[4]||'';
+    if(idx===0 && v0==='Section' && v1==='Title')return; // skip header row
 
     if(v0==='PE - Additional Service'){ mode='addservice'; if(v3)oilBrands.push({h:true,v:v3}); if(v4)carBrands.push({h:true,v:v4}); return; }
     if(v0==='Pacages Name'){ mode='pacages'; return; }
@@ -2896,9 +2897,10 @@ function renderPetrominPACTab(arr){
   const rmByBranch={};
   let emRows={};
 
-  arr.forEach(r=>{
+  arr.forEach((r,idx)=>{
     const vals=Object.values(r).map(v=>String(v||'').trim());
     const v0=vals[0]||'';
+    if(idx>=98){ console.log('PAC row',idx,':', JSON.stringify(vals)); }
     if(REGION_ORDER.includes(v0)){
       if(!regions[v0])regions[v0]=[];
       regions[v0].push(vals);
