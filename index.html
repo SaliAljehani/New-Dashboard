@@ -339,8 +339,8 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 
 <!-- MAIN CONTENT (hidden until loaded) -->
 <div id="mainContent" style="display:none">
-  <div id="motivationBanner" style="margin:0 0 12px;background:linear-gradient(135deg,#c0272d,#8e1c20);border-radius:12px;padding:14px 20px;color:#fff;text-align:center;direction:rtl">
-    <div id="motivationText" style="font-size:12px;font-weight:600;line-height:2.2;white-space:pre-wrap"></div>
+  <div id="motivationBanner" style="margin:0 0 10px;background:linear-gradient(135deg,#c0272d,#8e1c20);border-radius:10px;padding:12px 18px;color:#fff;text-align:center;direction:rtl">
+    <div id="motivationText" style="font-size:12px;font-weight:600;line-height:2.1"></div>
   </div>
   <div class="ctrl">
     <label>From:</label><input type="date" id="df" onchange="rf()">
@@ -564,19 +564,20 @@ function setProgress(pct, msg){
 const MOTIVATION_QUOTES=[
 `🌟 صباح الإنجاز!
 ابتسامتك، احترافيتك، وسرعة استجابتك تصنع الفرق`,
-`🌟 كل عميل تتعامل معه اليوم هو فرصة لإظهار تميزك.`,
-`🎯 هدفنا اليوم: خدمة أسرع، تجربة أفضل، وعميل أكثر رضاً.`,
-`✨ أنت تمثل واجهة الشركة، فاجعل كل تواصل يعكس التميز.`,
-`🤝 الثقة تُبنى من أول رسالة، وأنت صانع هذه الثقة.`,
-`⭐ خلف كل تقييم إيجابي قصة خدمة مميزة صنعتها أنت.`,
-`🎯 نجاحنا يبدأ من رضا عملائنا، ورضا عملائنا يبدأ من احترافيتك. اجعل كل تفاعل يعكس الجودة والاهتمام والالتزام.`,
-`نتمنى لك يومًا مليئًا بالتميز والرضا والنتائج الرائعة`
+`🎯 هدفنا اليوم: خدمة أسرع، تجربة أفضل، وعميل أكثر رضاً`,
+`✨ أنت تمثل واجهة الشركة، فاجعل كل تواصل يعكس التميز`,
+`🌟 كل عميل تتعامل معه اليوم هو فرصة لإظهار تميزك`,
+`⭐ خلف كل تقييم إيجابي قصة خدمة مميزة صنعتها أنت`
 ];
 
 function showMotivation(){
   const el=document.getElementById('motivationText');
   if(!el) return;
-  el.textContent=MOTIVATION_QUOTES.join('\n');
+  const lines=[];
+  for(let i=0;i<MOTIVATION_QUOTES.length;i+=2){
+    lines.push(MOTIVATION_QUOTES.slice(i,i+2).join('   •   '));
+  }
+  el.innerHTML=lines.join('<br>');
 }
 
 async function loadAllData(){
