@@ -339,8 +339,8 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 
 <!-- MAIN CONTENT (hidden until loaded) -->
 <div id="mainContent" style="display:none">
-  <div id="motivationBanner" style="margin:0 0 12px;background:linear-gradient(135deg,#c0272d,#8e1c20);border-radius:12px;padding:14px 20px;color:#fff;text-align:center;direction:rtl;box-shadow:0 2px 10px rgba(192,39,45,.25);transition:opacity .4s">
-    <div id="motivationText" style="font-size:13px;font-weight:600;line-height:1.9;white-space:pre-wrap"></div>
+  <div id="motivationBanner" style="margin:0 0 12px;background:linear-gradient(135deg,#c0272d,#8e1c20);border-radius:12px;padding:14px 20px;color:#fff;text-align:center;direction:rtl">
+    <div id="motivationText" style="font-size:12px;font-weight:600;line-height:2.2;white-space:pre-wrap"></div>
   </div>
   <div class="ctrl">
     <label>From:</label><input type="date" id="df" onchange="rf()">
@@ -575,19 +575,8 @@ const MOTIVATION_QUOTES=[
 
 function showMotivation(){
   const el=document.getElementById('motivationText');
-  const banner=document.getElementById('motivationBanner');
-  if(!el||!banner) return;
-  banner.style.opacity='0';
-  setTimeout(()=>{
-    const q=MOTIVATION_QUOTES[Math.floor(Math.random()*MOTIVATION_QUOTES.length)];
-    el.textContent=q;
-    banner.style.opacity='1';
-  },400);
-}
-
-function startMotivationRotation(){
-  showMotivation();
-  setInterval(showMotivation,60000);
+  if(!el) return;
+  el.textContent=MOTIVATION_QUOTES.join('\n');
 }
 
 async function loadAllData(){
@@ -3781,7 +3770,7 @@ async function loadVehicleModels(brand){
 }
 
 // Auto-start on page load
-window.addEventListener('DOMContentLoaded', () => { loadAllData(); startMotivationRotation(); });
+window.addEventListener('DOMContentLoaded', () => { loadAllData(); showMotivation(); });
 </script>
 </body>
 </html>
