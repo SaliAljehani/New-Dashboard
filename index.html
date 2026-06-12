@@ -1282,7 +1282,7 @@ const REF_SHEETS = {
   },
   baic: {
     id: '1FQaNEkC-gKFIJLT5hBE9qzBL7pXf_m5Aot35h622hR4',
-    tabs: ['BAIC Vehicle','Aftersales','Appointment Script','Car Models','BAIC Location']
+    tabs: ['Service','BAIC Location']
   },
   baicRecall: {
     id: '1pUqPaAXpKBjuBI6ABvgtd9Iuxo0IQ0sEbHX--3QMtpY',
@@ -2250,6 +2250,173 @@ function renderPACTab(arr){
     +'</div>';
 }
 
+function renderBaicServiceTab(arr, apptArr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const color='#f9a825';
+  const keys=Object.keys(arr[0]||{});
+  const regionCol=keys[0], cityCol=keys[1], branchCol=keys[2], mgrCol=keys[3], phoneCol=keys[4], emailCol=keys[5], gpsLinkCol=keys[7];
+
+  const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
+  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:#fff8e1;color:#f9a825;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700;text-decoration:none;margin:1px">'+s+'</a>';}).filter(Boolean).join('');
+
+  const VALID_REGIONS=new Set(['West','Western','Central','Center','East','Eastern','South','Southern','North','Northern']);
+  const REGION_ORDER=['West','Western','Central','Center','East','Eastern','South','Southern','North','Northern'];
+  const REGION_COLORS={West:'#c0272d',Western:'#c0272d',Central:'#1565c0',Center:'#1565c0',East:'#2e7d32',Eastern:'#2e7d32',South:'#6a1b9a',Southern:'#6a1b9a',North:'#e65100',Northern:'#e65100'};
+
+  let instruction='', emTo={complaint:'',request:''}, emCc={complaint:'',request:''};
+  const branchRows=[];
+  let mode='branches';
+  arr.forEach(r=>{
+    const vals=Object.values(r);
+    const v0=String(vals[0]||'').trim();
+    const v1=String(vals[1]||'').trim();
+    const v3=String(vals[3]||'').trim();
+
+    if(v1==='for Complaint'||v1==='for Request'){ mode='email'; return; }
+    if(v0==='TO'||v0==='CC'){
+      if(mode==='email'){
+        if(v0==='TO'){ if(!emTo.complaint) emTo.complaint=v1; else emTo.request=v3; }
+        if(v0==='CC'){ if(!emCc.complaint) emCc.complaint=v1; else emCc.request=v3; }
+      }
+      return;
+    }
+    if(v0==='Region'||v0==='Branch Manager') { mode='other'; return; }
+    if(VALID_REGIONS.has(v0)){
+      branchRows.push(r);
+      return;
+    }
+    // Instruction row: region empty, col4 has long Arabic text
+    if(!v0 && v3 && v3.length>30){ instruction=v3; return; }
+  });
+
+  // Email header
+  const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+    +'<div class="ref-email-card" style="border-left:4px solid #00695c;text-align:center">'
+    +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
+    +(emTo.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">'+emTo.request.replace(/,\s*$/,'')+'</span></div>':'')
+    +(emCc.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.request)+'</div>':'')
+    +'</div>'
+    +'<div class="ref-email-card" style="border-left:4px solid #c0272d;text-align:center">'
+    +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
+    +(emTo.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">'+emTo.complaint.replace(/,\s*$/,'')+'</span></div>':'')
+    +(emCc.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.complaint)+'</div>':'')
+    +'</div></div>';
+
+  // Appointment Script — collapsible
+  let apptHtml='';
+  if(apptArr && apptArr.length){
+    const ak=Object.keys(apptArr[0]||{});
+    const svcKey=ak[0], descKey=ak[1];
+    const rows=apptArr.filter(r=>String(r[svcKey]||'').trim() && String(r[svcKey]||'').trim()!==svcKey && String(r[svcKey]||'').trim()!=='Service');
+    apptHtml='<div style="margin-bottom:16px">'
+      +'<div onclick="toggleRegion(\'baicApptScript\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+color+'12;border-radius:8px;border-left:4px solid '+color+';cursor:pointer;margin-bottom:8px">'
+      +'<span style="font-size:13px;font-weight:700;color:'+color+'">📋 Appointment Script</span>'
+      +'<span style="font-size:11px;color:#aaa">('+rows.length+')</span>'
+      +'<span id="ico_baicApptScript" style="margin-left:auto;color:'+color+'">▶</span>'
+      +'</div>'
+      +'<div id="baicApptScript" style="display:none;overflow-x:auto;border-radius:10px;border:1px solid #eee">'
+      +'<table style="width:100%;border-collapse:collapse;font-size:12px">'
+      +'<thead><tr style="background:'+color+'12"><th style="padding:8px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">Service</th><th style="padding:8px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">Description</th></tr></thead><tbody>'
+      +rows.map((r,i)=>'<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'"><td style="padding:7px 12px;font-weight:600;text-align:center">'+String(r[svcKey]||'').trim()+'</td><td style="padding:7px 12px;text-align:center">'+String(r[descKey]||'').trim()+'</td></tr>').join('')
+      +'</tbody></table></div></div>';
+  }
+
+  // Instruction box
+  const instrHtml=instruction?
+    '<div style="margin-bottom:16px;background:#fff8e1;border-radius:10px;padding:14px 18px;border-right:4px solid '+color+';direction:rtl;text-align:right">'
+    +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:8px">📋 Instruction</div>'
+    +'<div style="font-size:12px;color:#555;line-height:2;white-space:pre-wrap">'+instruction+'</div>'
+    +'</div>'
+    :'';
+
+  // Group branches by region
+  const regions={};
+  branchRows.forEach(r=>{
+    const reg=String(r[regionCol]||'').trim();
+    if(!regions[reg])regions[reg]=[];
+    regions[reg].push(r);
+  });
+
+  const regHTML=REGION_ORDER.filter(r=>regions[r]).map(reg=>{
+    const rows=regions[reg];
+    const rc=REGION_COLORS[reg]||color;
+    const regId='baicSvc_'+reg.replace(/\s/g,'');
+    return '<div style="margin-bottom:14px">'
+      +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px">'
+      +'<span style="font-size:13px;font-weight:700;color:'+rc+'">'+reg+'</span>'
+      +'<span style="font-size:11px;color:#aaa">('+rows.length+')</span>'
+      +'<span id="ico_'+regId+'" style="margin-left:auto;color:'+rc+'">▼</span>'
+      +'</div>'
+      +'<div id="'+regId+'"><div class="ref-cards-grid">'+rows.map(r=>{
+        const city=String(r[cityCol]||'').trim();
+        const branch=String(r[branchCol]||'').replace(/\n/g,' ').trim();
+        const mgr=String(r[mgrCol]||'').trim();
+        const phone=String(r[phoneCol]||'').split(',').map(s=>fmtNum(s.trim())).filter(Boolean).join(' / ');
+        const email=String(r[emailCol]||'').trim();
+        const gps=String(r[gpsLinkCol]||'').trim();
+        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
+          +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
+          +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
+          +(city?'<div style="font-size:11px;color:#888;margin-top:3px">📌 '+city+'</div>':'')
+          +'</div>'
+          +'<div style="padding:10px 14px;text-align:center">'
+          +(mgr?'<div style="font-size:12px;color:#333;margin-bottom:5px">👤 '+mgr+'</div>':'')
+          +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
+          +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="color:#1565c0;font-weight:700;text-decoration:none">✉️ '+email+'</a></div>':'')
+          +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
+          +'</div></div>';
+      }).join('')+'</div></div></div>';
+  }).join('');
+
+  return '<div>'+emailHtml+apptHtml+instrHtml+regHTML+'</div>';
+}
+
+function renderBaicLocationTab(arr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const color='#f9a825';
+  const keys=Object.keys(arr[0]||{});
+  const arKey=keys[0], enKey=keys[1];
+
+  const sections={service:[],recall:[]};
+  let current='service';
+  arr.forEach(r=>{
+    const ar=String(r[arKey]||'').trim();
+    if(ar==='BAIC Location') return;
+    if(ar==='Reacall Location'||ar==='Recall Location'){ current='recall'; return; }
+    if(!ar) return;
+    sections[current].push(r);
+  });
+
+  const mkBox=(text,id,label)=>{
+    if(!text) return '';
+    const safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const isAR=/[\u0600-\u06FF]/.test(text.substring(0,10));
+    return '<div style="background:#fafafa;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
+      +'<span style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase">'+label+'</span>'
+      +'<button onclick="copySMS(\''+id+'\')" style="padding:3px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer">📋 Copy</button>'
+      +'</div>'
+      +'<div id="sms_'+id+'" style="font-size:11px;color:#444;line-height:1.6;white-space:pre-wrap;direction:'+(isAR?'rtl':'ltr')+';text-align:'+(isAR?'right':'left')+'">'+safe+'</div>'
+      +'</div>';
+  };
+
+  const mkSection=(rows,prefix)=>'<div class="ref-cards-grid">'+rows.map((r,i)=>{
+    const ar=String(r[arKey]||'').trim();
+    const en=String(r[enKey]||'').trim();
+    if(!ar&&!en) return '';
+    return '<div class="ref-card" style="padding:10px 14px">'
+      +mkBox(en,prefix+'_en_'+i,'EN')
+      +mkBox(ar,prefix+'_ar_'+i,'AR')
+      +'</div>';
+  }).filter(Boolean).join('')+'</div>';
+
+  return '<div>'
+    +'<div style="font-size:13px;font-weight:700;color:'+color+';margin:6px 0 10px;text-align:center">📍 Service Location SMS</div>'
+    +mkSection(sections.service,'baicLoc')
+    +(sections.recall.length?'<div style="font-size:13px;font-weight:700;color:'+color+';margin:18px 0 10px;text-align:center">📍 Recall Location SMS</div>'+mkSection(sections.recall,'baicRecallLoc'):'')
+    +'</div>';
+}
+
 function renderBodyShopTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#7b0000';
@@ -2580,7 +2747,9 @@ function showRefBrandPage(brand){
     +(brand==='nissan'?'<button onclick="toggleRegion(\'nissanWarrantyGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🛡️ Warranty <span id="ico_nissanWarrantyGlobal">▼</span></button>':'')
     +(brand==='nissan'?'<button onclick="toggleRegion(\'nissanAreaMgrGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🗺️ Area Manager <span id="ico_nissanAreaMgrGlobal">▼</span></button>':'')
     +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e3f2fd"><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="color:#1565c0;text-decoration:none">ahmed.ateeq@petromin.com</a></td></tr><tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="color:#1565c0;text-decoration:none">simon.white@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="color:#1565c0;text-decoration:none">z.bakhurji@petromin.com</a></td></tr></tbody></table></div>':'')
-    +(brand==='baic'?'<button onclick="loadVehicleModels(\'baic\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Models <span id="ico_baicModels">▼</span></button>':'')
+    +(brand==='baic'?'<button onclick="loadVehicleModels(\'baic\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Vehicles <span id="ico_baicModels">▼</span></button>':'')
+    +(brand==='baic'?'<button onclick="toggleRegion(\'baicWarrantyGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🛡️ Warranty <span id="ico_baicWarrantyGlobal">▼</span></button>':'')
+    +(brand==='baic'?'<button onclick="toggleRegion(\'baicAreaMgrGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🗺️ Area Manager <span id="ico_baicAreaMgrGlobal">▼</span></button>':'')
     +(brand==='bodyshop'?'<button onclick="toggleRegion(\'bodyshopInstruction\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">📋 Instruction <span id="ico_bodyshopInstruction">▼</span></button>':'')
     
     +'</div>'
@@ -2588,6 +2757,8 @@ function showRefBrandPage(brand){
     +(brand==='nissan'?'<div id="nissanModelsDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:12px 16px"><div id="nissanModelsContent" style="text-align:center;color:#aaa;font-size:12px">⏳ Loading...</div></div>':'')
     +(brand==='stellantis'?'<div id="stellantisModelsDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:12px 16px"><div id="stellantisModelsContent" style="text-align:center;color:#aaa;font-size:12px">⏳ Loading...</div></div>':'')
     +(brand==='baic'?'<div id="baicModelsDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:12px 16px"><div id="baicModelsContent" style="text-align:center;color:#aaa;font-size:12px">⏳ Loading...</div></div>':'')
+    +(brand==='baic'?'<div id="baicWarrantyGlobal" style="display:none;background:#fff;border-radius:0;overflow-x:auto;border-bottom:2px solid #eee;padding:14px 16px;direction:rtl;text-align:right"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-left:4px solid #f9a825"><div style="font-size:13px;font-weight:700;color:#f9a825;margin-bottom:8px">🛡️ الضمان الأساسي لمركبات بايك</div><div style="font-size:12px;color:#555;line-height:1.8">📅 بداية سريان الضمان: من تاريخ إصدار لوحات المركبة<br>⏱️ مدة الضمان: 10 سنوات أو 150,000 كيلومتر (أيهما يأتي أولاً)</div></div><div style="background:#f9fffe;border-radius:10px;padding:14px;border-left:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 جدول الصيانة لمركبات بايك</div><div style="font-size:12px;color:#555;line-height:1.8">🆓 أول صيانة دورية: 5,000 كم أو 6 أشهر (أيهما يأتي أولاً)<br>⏱️ بعد ذلك: كل 7,500 كم أو 6 أشهر (أيهما يأتي أولاً)</div></div></div></div>':'')
+    +(brand==='baic'?'<div id="baicAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#fff8e1"><th style="padding:8px 12px;color:#f9a825;font-weight:700;border-bottom:2px solid #ffe082;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#f9a825;font-weight:700;border-bottom:2px solid #ffe082;text-align:center">👤 Branch Manager</th><th style="padding:8px 12px;color:#f9a825;font-weight:700;border-bottom:2px solid #ffe082;text-align:center">✉️ Email</th><th style="padding:8px 12px;color:#f9a825;font-weight:700;border-bottom:2px solid #ffe082;text-align:center">📞 Area Manager</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#f9a825">West · North · South</td><td style="padding:7px 12px;text-align:center">Roummie Palma</td><td style="padding:7px 12px;text-align:center"><a href="mailto:roummie@petromin.com" style="color:#1565c0;text-decoration:none">roummie@petromin.com</a></td><td style="padding:7px 12px;text-align:center">507103299</td></tr><tr style="background:#fff8e1"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#f9a825">East</td><td style="padding:7px 12px;text-align:center">Jimshad Mayin</td><td style="padding:7px 12px;text-align:center"><a href="mailto:jimshad.mayin@petromin.com" style="color:#1565c0;text-decoration:none">jimshad.mayin@petromin.com</a></td><td style="padding:7px 12px;text-align:center">557554409</td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#f9a825">Central<br><span style="font-size:10px;color:#999">Exit-14 · Kharj · Azeziah · Khurais · Al Badia</span></td><td style="padding:7px 12px;text-align:center">Mohammed Sallam</td><td style="padding:7px 12px;text-align:center"><a href="mailto:m.sallam@petromin.com" style="color:#1565c0;text-decoration:none">m.sallam@petromin.com</a></td><td style="padding:7px 12px;text-align:center">539143824</td></tr><tr style="background:#fff8e1"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#f9a825">Central<br><span style="font-size:10px;color:#999">Darb · Thumama · Al Massif · QassimLand · Unaizah</span></td><td style="padding:7px 12px;text-align:center">Mohammed Sallam</td><td style="padding:7px 12px;text-align:center"><a href="mailto:m.sallam@petromin.com" style="color:#1565c0;text-decoration:none">m.sallam@petromin.com</a></td><td style="padding:7px 12px;text-align:center">555047230</td></tr></tbody></table></div>':'')
     +(brand==='nissan'?'<div id="nissanWarrantyGlobal" style="display:none;background:#fff;border-radius:0;overflow-x:auto;border-bottom:2px solid #eee;padding:14px 16px;direction:rtl;text-align:right"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-left:4px solid #c0272d"><div style="font-size:13px;font-weight:700;color:#c0272d;margin-bottom:8px">🛡️ الضمان الأساسي</div><div style="font-size:12px;color:#555;line-height:1.8">📅 يسري من تاريخ إصدار اللوحات<br>⏱️ 3 سنوات أو 100,000 كم<br>✅ يتفعل تلقائياً بدون إجراء<br>🔧 يشترط الصيانة في مراكز معتمدة</div></div><div style="background:#fef9f9;border-radius:10px;padding:14px;border-left:4px solid #c0272d"><div style="font-size:13px;font-weight:700;color:#c0272d;margin-bottom:8px">🔋 ضمان البطارية</div><div style="font-size:12px;color:#555;line-height:1.8">📅 يسري من تاريخ إصدار اللوحات<br>السنة الأولى: تغيير مجاني ✅<br>السنة الثانية: خصم 50٪<br>السنة الثالثة: خصم 25٪<br>🏢 في مراكز بترومين نيسان فقط</div></div><div style="background:#f9fffe;border-radius:10px;padding:14px;border-left:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 جدول الصيانة</div><div style="font-size:12px;color:#555;line-height:1.8">🆓 فحص مجاني: 1,000 - 2,000 كم<br>⏱️ صيانة دورية: كل 10,000 كم أو 6 أشهر<br>مجانية لسيارات 2025-2026 داخل الوكالة</div></div><div style="background:#f9fffe;border-radius:10px;padding:14px;border-left:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">⚙️ زيت القير</div><div style="font-size:12px;color:#555;line-height:1.8">🔧 يُوصى بالتغيير بعد 40,000 - 60,000 كم<br>حسب ظروف القيادة والاستخدام</div></div></div></div>':'')
     +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e3f2fd"><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="color:#1565c0;text-decoration:none">ahmed.ateeq@petromin.com</a></td></tr><tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="color:#1565c0;text-decoration:none">simon.white@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="color:#1565c0;text-decoration:none">z.bakhurji@petromin.com</a></td></tr></tbody></table></div>':'')
     +(brand==='bodyshop'?'<div id="bodyshopInstruction" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px;direction:rtl;text-align:right"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-right:4px solid #7b0000"><div style="font-size:13px;font-weight:700;color:#7b0000;margin-bottom:8px">📋 الإجراءات (قبل)</div><div style="font-size:11px;color:#555;line-height:1.8">يلزم توفير المستندات التالية:<br>1- استمارة المركبة<br>2- تقرير الجهة المباشرة للحادث (نجم أو المرور)<br>3- الرقم المرجعي لمطالبة التأمين<br><br>يُشترط حضور وتسليم المركبة من مالكها أو المفوّض رسميًا.<br>في حال تعذّر الحضور يجب تقديم تفويض خطي.</div></div><div style="background:#fff9f0;border-radius:10px;padding:14px;border-right:4px solid #e65100"><div style="font-size:13px;font-weight:700;color:#e65100;margin-bottom:8px">💰 التسعيرة</div><div style="font-size:11px;color:#555;line-height:1.8">يستغرق فحص المركبة وإرسال التسعيرة لشركة التأمين من 7 إلى 14 يوم عمل.<br><br>• قابلة للقيادة: تُسلَّم بعد الفحص<br>• غير قابلة للقيادة: تُحجز بالفرع لحين الإصلاح</div></div><div style="background:#f0fff4;border-radius:10px;padding:14px;border-right:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 الإصلاح</div><div style="font-size:11px;color:#555;line-height:1.8">يبدأ الإصلاح بعد موافقة التأمين، بحد أقصى 90 يوم عمل.<br><br>سيتم توفير قطع الغيار خلال هذه الفترة، وإشعاركم برسالة نصية عند توفرها.</div></div></div></div>':'')
@@ -2681,6 +2852,16 @@ async function renderRefBrand(brand,tabIdx){
           return '<span style="display:inline-flex;background:'+c+'15;color:'+c+';padding:5px 14px;border-radius:16px;font-size:13px;font-weight:700;border:1px solid '+c+'33">'+m+'</span>';
         }).join('')
         +'</div>';
+      return;
+    }
+    if(brand==='baic' && sheetName.trim()==='Service'){
+      const apptData=await fetchSheet(cfg.id,'Appointment Script ');
+      const apptArr=Array.isArray(apptData)?apptData:(apptData.rows||[]);
+      container.innerHTML=renderBaicServiceTab(arr,apptArr);
+      return;
+    }
+    if(brand==='baic' && sheetName.trim()==='BAIC Location'){
+      container.innerHTML=renderBaicLocationTab(arr);
       return;
     }
     if(brand==='bodyshop'){
