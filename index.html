@@ -1278,7 +1278,7 @@ const REF_SHEETS = {
   },
   bodyshop: {
     id: '1_Z8Ry4-Y7kNFYnhXNvn7QP8jt1S_n9JHdVC2zT6R6WE',
-    tabs: ['Body Shop']
+    tabs: ['Body Shop & Paint']
   },
   baic: {
     id: '1FQaNEkC-gKFIJLT5hBE9qzBL7pXf_m5Aot35h622hR4',
@@ -2280,10 +2280,12 @@ function renderBodyShopTab(arr){
     +'<div class="ref-email-card" style="border-left:4px solid #00695c;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
     +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="color:#1565c0;text-decoration:none">sali.aljehani@petromin.com</a></span></div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span><span style="font-size:11px;color:#444"><a href="mailto:cs.agent@petromin.com" style="color:#1565c0;text-decoration:none">cs.agent@petromin.com</a></span></div>'
     +'</div>'
     +'<div class="ref-email-card" style="border-left:4px solid #c0272d;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
     +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:CRTeam@petromin.com" style="color:#1565c0;text-decoration:none">CRTeam@petromin.com</a></span></div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span><span style="font-size:11px;color:#444"><a href="mailto:cs.agent@petromin.com" style="color:#1565c0;text-decoration:none">cs.agent@petromin.com</a></span></div>'
     +'</div></div>';
 
   // Group by region
@@ -2292,7 +2294,8 @@ function renderBodyShopTab(arr){
   branchRows.forEach(r=>{const reg=String(r[regionCol]||'').trim();if(!regions[reg])regions[reg]=[];regions[reg].push(r);});
 
   // Common hours
-  const allH=branchRows.map(r=>hoursCol?String(r[hoursCol]||'').trim():'').filter(Boolean);
+  const cleanHours=h=>String(h||'').split('\n').map(s=>s.trim()).filter(Boolean).join(' · ');
+  const allH=branchRows.map(r=>hoursCol?cleanHours(r[hoursCol]):'').filter(Boolean);
   const hCnt={};allH.forEach(h=>{hCnt[h]=(hCnt[h]||0)+1;});
   const commonH=allH.sort((a,b)=>(hCnt[b]||0)-(hCnt[a]||0))[0]||'';
 
@@ -2310,10 +2313,10 @@ function renderBodyShopTab(arr){
       +'<div id="'+regId+'"><div class="ref-cards-grid">'+rows.map(r=>{
         const name=String(r[branchCol]||'').replace(/\n/g,' ').trim();
         const dist=distCol?String(r[distCol]||'').trim():'';
-        const phone=phoneCol?fmtNum(String(r[phoneCol]||'').trim()):'';
+        const phone=phoneCol?String(r[phoneCol]||'').split('\n').map(s=>fmtNum(s.trim())).filter(Boolean).join(' / '):'';
         const mgr=mgrCol?String(r[mgrCol]||'').trim():'';
         const email=emailCol?String(r[emailCol]||'').trim():'';
-        const hours=hoursCol?String(r[hoursCol]||'').trim():'';
+        const hours=hoursCol?cleanHours(r[hoursCol]):'';
         const gps=gpsCol?String(r[gpsCol]||'').trim():'';
         return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
           +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
@@ -2321,9 +2324,9 @@ function renderBodyShopTab(arr){
           +(dist?'<div style="font-size:11px;color:#888;margin-top:3px">📍 '+dist+'</div>':'')
           +'</div>'
           +'<div style="padding:10px 14px;text-align:center">'
-          +(mgr?'<div style="font-size:12px;margin-bottom:5px">👤 '+mgr+'</div>':'')
+          +(mgr?'<div style="font-size:12px;color:#333;margin-bottom:5px">👤 '+mgr+'</div>':'')
           +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
-          +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">✉️ '+email+'</a></div>':'')
+          +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="color:#1565c0;font-weight:700;text-decoration:none">✉️ '+email+'</a></div>':'')
           +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
           +(hours&&hours!==commonH?'<div style="font-size:10px;color:#888;margin-top:6px;border-top:1px solid #f0f0f0;padding-top:6px">🕐 '+hours+'</div>':'')
           +'</div></div>';
@@ -2569,7 +2572,7 @@ function showRefBrandPage(brand){
     +(brand==='bodyshop'?'<div id="bodyshopInstruction" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px;direction:rtl;text-align:right"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-right:4px solid #7b0000"><div style="font-size:13px;font-weight:700;color:#7b0000;margin-bottom:8px">📋 الإجراءات (قبل)</div><div style="font-size:11px;color:#555;line-height:1.8">يلزم توفير المستندات التالية:<br>1- استمارة المركبة<br>2- تقرير الجهة المباشرة للحادث (نجم أو المرور)<br>3- الرقم المرجعي لمطالبة التأمين<br><br>يُشترط حضور وتسليم المركبة من مالكها أو المفوّض رسميًا.<br>في حال تعذّر الحضور يجب تقديم تفويض خطي.</div></div><div style="background:#fff9f0;border-radius:10px;padding:14px;border-right:4px solid #e65100"><div style="font-size:13px;font-weight:700;color:#e65100;margin-bottom:8px">💰 التسعيرة</div><div style="font-size:11px;color:#555;line-height:1.8">يستغرق فحص المركبة وإرسال التسعيرة لشركة التأمين من 7 إلى 14 يوم عمل.<br><br>• قابلة للقيادة: تُسلَّم بعد الفحص<br>• غير قابلة للقيادة: تُحجز بالفرع لحين الإصلاح</div></div><div style="background:#f0fff4;border-radius:10px;padding:14px;border-right:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 الإصلاح</div><div style="font-size:11px;color:#555;line-height:1.8">يبدأ الإصلاح بعد موافقة التأمين، بحد أقصى 90 يوم عمل.<br><br>سيتم توفير قطع الغيار خلال هذه الفترة، وإشعاركم برسالة نصية عند توفرها.</div></div></div></div>':'')
     +'<div class="ref-sub-tabs" style="justify-content:center">'
     +tabs.map((t,i)=>{
-      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','PMS':'Service','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script'};
+      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','PMS':'Service','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop'};
       const label=TAB_LABELS[t]||t;
       return '<button class="ref-sub-tab'+(i===0?' active':'')+'" '
         +'style="'+(i===0?'background:'+meta.color+';color:#fff;border-color:'+meta.color:'')+'" '
@@ -3136,11 +3139,11 @@ async function renderRef(){
       {key:'baic',       label:'BAIC',             icon:'🟡', color:'#f9a825'},
       {key:'nissan',     label:'Nissan',           icon:'🚗', color:'#c0272d'},
       {key:'stellantis', label:'Stellantis',       icon:'🔵', color:'#1565c0'},
+      {key:'bodyshop',   label:'Body Shop',        icon:'🔴', color:'#7b0000'},
       {key:'foton',      label:'Foton',            icon:'🚛', color:'#546e7a'},
       {key:'nos',        label:'National Oil Stop',icon:'🟢', color:'#2e7d32'},
       {key:'electromin', label:'Electromin',       icon:'⚡', color:'#1b5e20'},
       {key:'baicRecall', label:'Recall',           icon:'⚠️', color:'#4a148c'},
-      {key:'bodyshop',   label:'Body Shop',        icon:'🔴', color:'#7b0000'},
     ];
 
     // CONTACT NUMBERS
