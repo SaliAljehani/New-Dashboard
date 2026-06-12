@@ -3729,19 +3729,13 @@ async function renderRef(){
         '</div>').join('')
       +'</div>'
 
-      // CONTACT NUMBERS — two separate boxes
-      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:0">'
-
-      +'<div class="ref-info-panel">'
-      +'<div class="ref-panel-header" style="background:linear-gradient(135deg,#c0272d,#7b0000)">📞 Toll Free</div>'
-      +'<div class="ref-panel-body"><div class="ref-contacts-grid">'+makePills(tollFree,'#c0272d')+'</div></div>'
-      +'</div>'
-
-      +'<div class="ref-info-panel">'
-      +'<div class="ref-panel-header" style="background:linear-gradient(135deg,#43a047,#2e7d32)">💬 WhatsApp</div>'
-      +'<div class="ref-panel-body"><div class="ref-contacts-grid">'+makePills(waNums,'#2e7d32')+'</div></div>'
-      +'</div>'
-
+      // CONTACT NUMBERS — merged single centered panel
+      +'<div class="ref-info-panel" style="max-width:900px;margin:0 auto 0">'
+      +'<div class="ref-panel-header" style="background:linear-gradient(135deg,#c0272d,#7b0000)">📞 Contact Numbers</div>'
+      +'<div class="ref-panel-body"><div class="ref-contacts-grid">'
+      +makePills(tollFree,'#c0272d')
+      +makePills(waNums,'#2e7d32')
+      +'</div></div>'
       +'</div>'
 
 
