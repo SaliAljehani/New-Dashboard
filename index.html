@@ -1342,6 +1342,10 @@ const REF_SHEETS = {
     id: '1FQaNEkC-gKFIJLT5hBE9qzBL7pXf_m5Aot35h622hR4',
     tabs: ['Instruction','Service','BAIC Location']
   },
+  petromin: {
+    id: 'PLACEHOLDER_PETROMIN_SHEET_ID',
+    tabs: ['New PAC','Petromin Tristar']
+  },
   baicRecall: {
     id: '1pUqPaAXpKBjuBI6ABvgtd9Iuxo0IQ0sEbHX--3QMtpY',
     tabs: ['D50-1137Units','BJ40-845Units','BJ40-1778Units','X7-Fuse Box']
@@ -1490,7 +1494,7 @@ function refGlobalFilter(q){
 
 function switchRefTab(brand, idx, btn){
   REF_ACTIVE_TABS[brand] = idx;
-  const color = {nissan:'#c0272d', stellantis:'#1565c0', baic:'#f9a825', baicRecall:'#4a148c'}[brand] || '#c0272d';
+  const color = {nissan:'#c0272d', stellantis:'#1565c0', baic:'#f9a825', baicRecall:'#4a148c',petromin:'#DAA520'}[brand] || '#c0272d';
   btn.parentElement.querySelectorAll('.ref-sub-tab').forEach((t,i) => {
     t.classList.toggle('active', i===idx);
     t.style.background = i===idx ? color : '';
@@ -2511,6 +2515,125 @@ function renderBaicLocationTab(arr){
     +'</div>';
 }
 
+function renderPetrominPACTab(arr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const color='#DAA520';
+  const keys=Object.keys(arr[0]||{});
+  const regionCol=keys[0], cityCol=keys[1], branchCol=keys[2], mgrCol=keys[3], phoneCol=keys[4], emailCol=keys[5], hoursCol=keys[6], gpsCol=keys[7];
+
+  const REGION_ORDER=['West','Central','East','South','North'];
+  const REGION_COLORS={West:'#c0272d',Central:'#1565c0',East:'#2e7d32',South:'#6a1b9a',North:'#e65100'};
+
+  const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
+
+  const regions={};
+  arr.forEach(r=>{
+    const reg=String(r[regionCol]||'').trim();
+    if(!reg||!REGION_ORDER.includes(reg))return;
+    if(!regions[reg])regions[reg]=[];
+    regions[reg].push(r);
+  });
+
+  const regHTML=REGION_ORDER.filter(r=>regions[r]).map(reg=>{
+    const rows=regions[reg];
+    const rc=REGION_COLORS[reg]||color;
+    const regId='pePac_'+reg;
+    return '<div style="margin-bottom:14px">'
+      +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px">'
+      +'<span style="font-size:13px;font-weight:700;color:'+rc+'">'+reg+'</span>'
+      +'<span style="font-size:11px;color:#aaa">('+rows.length+')</span>'
+      +'<span id="ico_'+regId+'" style="margin-left:auto;color:'+rc+'">▼</span>'
+      +'</div>'
+      +'<div id="'+regId+'"><div class="ref-cards-grid">'+rows.map(r=>{
+        const city=String(r[cityCol]||'').trim();
+        const branch=String(r[branchCol]||'').replace(/\n/g,' ').trim();
+        const mgr=String(r[mgrCol]||'').trim();
+        const phone=String(r[phoneCol]||'').split(',').map(s=>fmtNum(s.trim())).filter(Boolean).join(' / ');
+        const email=String(r[emailCol]||'').trim();
+        const hours=String(r[hoursCol]||'').trim();
+        const gps=String(r[gpsCol]||'').trim();
+        const gpsLink=gps?'https://www.google.com/maps?q='+encodeURIComponent(gps):'';
+        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
+          +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
+          +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
+          +(city?'<div style="font-size:11px;color:#888;margin-top:3px">📌 '+city+'</div>':'')
+          +'</div>'
+          +'<div style="padding:10px 14px;text-align:center">'
+          +(mgr?'<div style="font-size:12px;color:#333;margin-bottom:5px">👤 '+mgr+'</div>':'')
+          +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
+          +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="color:#1565c0;font-weight:700;text-decoration:none">✉️ '+email+'</a></div>':'')
+          +(hours?'<div style="font-size:10px;color:#999;margin-top:6px">⏰ '+hours+'</div>':'')
+          +(gpsLink?'<div style="margin-top:6px"><a href="'+gpsLink+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
+          +'</div></div>';
+      }).join('')+'</div></div></div>';
+  }).join('');
+
+  return '<div>'+regHTML+'</div>';
+}
+
+function renderPetrominTristarTab(arr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const color='#DAA520';
+  const keys=Object.keys(arr[0]||{});
+  const regionCol=keys[0], branchCol=keys[1], addrCol=keys[2], mgrCol=keys[3], lineMgrCol=keys[4], phoneCol=keys[5], emailCol=keys[6];
+
+  const branchRows=[];
+  let emTo={complaint:'',request:''}, emCc={complaint:'',request:''};
+  let mode='branches';
+
+  arr.forEach(r=>{
+    const vals=Object.values(r).map(v=>String(v||'').trim());
+    const v0=vals[0]||'', v1=vals[1]||'';
+    if(v1==='for Complaint'){mode='complaint';return;}
+    if(v1==='for Request'){mode='request';return;}
+    if(v0==='TO'){ if(mode==='complaint') emTo.complaint=v1; else if(mode==='request') emTo.request=v1; return; }
+    if(v0==='CC'){ if(mode==='complaint') emCc.complaint=v1; else if(mode==='request') emCc.request=v1; return; }
+    if(!v0||v0==='Region'||v0==='Petromin Tristar Workshops Location Details')return;
+    branchRows.push(r);
+  });
+
+  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700;text-decoration:none;margin:1px">'+s+'</a>';}).filter(Boolean).join('');
+
+  const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+    +'<div class="ref-email-card" style="border-left:4px solid #00695c;text-align:center">'
+    +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
+    +(emTo.request?'<div style="font-size:11px;color:#444;margin-bottom:5px"><span class="ref-email-tag to">TO</span> '+emTo.request.replace(/,\s*$/,'')+'</div>':'')
+    +(emCc.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.request)+'</div>':'')
+    +'</div>'
+    +'<div class="ref-email-card" style="border-left:4px solid #c0272d;text-align:center">'
+    +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
+    +(emTo.complaint?'<div style="font-size:11px;color:#444;margin-bottom:5px"><span class="ref-email-tag to">TO</span> '+emTo.complaint.replace(/,\s*$/,'')+'</div>':'')
+    +(emCc.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.complaint)+'</div>':'')
+    +'</div></div>';
+
+  const REGION_COLORS={Central:'#1565c0',Eastern:'#2e7d32',East:'#2e7d32',West:'#c0272d',South:'#6a1b9a',North:'#e65100'};
+
+  const branchHtml='<div class="ref-cards-grid">'+branchRows.map(r=>{
+    const reg=String(r[regionCol]||'').trim();
+    const branch=String(r[branchCol]||'').trim();
+    const addr=String(r[addrCol]||'').trim();
+    const mgr=String(r[mgrCol]||'').trim();
+    const lineMgr=String(r[lineMgrCol]||'').trim();
+    const phone=String(r[phoneCol]||'').trim();
+    const email=String(r[emailCol]||'').trim();
+    const rc=REGION_COLORS[reg]||color;
+    return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
+      +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
+      +'<div style="font-size:10px;color:'+rc+';font-weight:700;text-transform:uppercase">'+reg+'</div>'
+      +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
+      +(addr?'<div style="font-size:11px;color:#888;margin-top:3px">📌 '+addr+'</div>':'')
+      +'</div>'
+      +'<div style="padding:10px 14px;text-align:center">'
+      +(mgr?'<div style="font-size:12px;color:#333;margin-bottom:5px">👤 '+mgr+' <span style="color:#aaa;font-size:10px">(Manager)</span></div>':'')
+      +(lineMgr?'<div style="font-size:12px;color:#333;margin-bottom:5px">👤 '+lineMgr+' <span style="color:#aaa;font-size:10px">(Line Manager)</span></div>':'')
+      +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
+      +(email?'<div style="font-size:11px"><a href="mailto:'+email+'" style="color:#1565c0;font-weight:700;text-decoration:none">✉️ '+email+'</a></div>':'')
+      +'</div></div>';
+  }).join('')+'</div>';
+
+  return '<div>'+emailHtml+branchHtml+'</div>';
+}
+
 function renderBodyShopTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#7b0000';
@@ -2822,6 +2945,7 @@ function showRefBrandPage(brand){
     bodyshop:  {label:'Body Shop', icon:'🔴',color:'#7b0000'},
     baic:      {label:'BAIC',      icon:'🟡',color:'#f9a825'},
     baicRecall:{label:'BAIC Recall — VIN Search',icon:'🔎',color:'#4a148c'},
+    petromin:  {label:'Petromin',  icon:'⭐',color:'#DAA520'},
   };
   const meta=META[brand];
   const tabs=REF_SHEETS[brand].tabs;
@@ -2869,7 +2993,7 @@ function showRefBrandPage(brand){
 
 function switchRefTab(brand,idx,btn){
   REF_ACTIVE_TABS[brand]=idx;
-  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#f9a825',baicRecall:'#4a148c'}[brand]||'#c0272d';
+  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#f9a825',baicRecall:'#4a148c',petromin:'#DAA520'}[brand]||'#c0272d';
   btn.parentElement.querySelectorAll('.ref-sub-tab').forEach((t,i)=>{
     t.classList.toggle('active',i===idx);
     t.style.background=i===idx?color:'';
@@ -3128,6 +3252,14 @@ async function renderRefBrand(brand,tabIdx){
     }
     if(brand==='baic' && sheetName.trim()==='BAIC Location'){
       container.innerHTML=renderBaicLocationTab(arr);
+      return;
+    }
+    if(brand==='petromin' && sheetName.trim()==='New PAC'){
+      container.innerHTML=renderPetrominPACTab(arr);
+      return;
+    }
+    if(brand==='petromin' && sheetName.trim()==='Petromin Tristar'){
+      container.innerHTML=renderPetrominTristarTab(arr);
       return;
     }
     if(brand==='bodyshop'){
@@ -3684,7 +3816,7 @@ async function renderRef(){
         +'<div class="ref-subj-subject">'+it.subject
         +(it.status?'<span class="ref-subj-badge" style="background:'+(it.status==='Open'?'#fde':'#e8f5e9')+';color:'+(it.status==='Open'?'#c0272d':'#2e7d32')+'">'+it.status+'</span>':'')
         +'</div>'
-        +(depts.length?'<div class="ref-subj-row"><span class="ref-subj-ico">📂</span><span>'+depts.map(d=>'<span style="display:inline-block;background:#e3f2fd;color:#1565c0;font-size:11px;font-weight:600;padding:2px 9px;border-radius:6px;margin:2px">'+d+'</span>').join('')+'</span></div>':'')
+        +(depts.length?'<div class="ref-subj-row"><span class="ref-subj-ico">📂</span><span>'+depts.map(d=>'<span style="display:inline-block;background:#f0f0f0;color:#666;font-size:11px;font-weight:600;padding:2px 9px;border-radius:6px;margin:2px">'+d+'</span>').join('')+'</span></div>':'')
         +(it.desc?'<div class="ref-subj-row"><span class="ref-subj-ico">✏️</span><span>'+it.desc+'</span></div>':'')
         +(cats.length?'<div class="ref-subj-row"><span class="ref-subj-ico">🏷️</span><span>'+cats.map(c=>'<span style="display:inline-block;background:#fff8e1;color:#9e7700;font-size:11px;font-weight:600;padding:2px 9px;border-radius:6px;margin:2px">'+c+'</span>').join('')+'</span></div>':'')
         +(it.notes?'<div class="ref-subj-row ref-subj-note"><span class="ref-subj-ico">💡</span><span>'+it.notes+'</span></div>':'')
