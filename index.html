@@ -2260,8 +2260,33 @@ function renderStellantisPACTab(arr){
       +'</tbody></table></div>';
   }
 
+  // Unique Area Managers summary (dedupe by RM name)
+  const amMap={};
+  rmRows.forEach(r=>{
+    const rm=String(r[hoursKey]||'').trim();
+    const mobile=fmtNum(String(r[mgrKey]||'').trim());
+    const email=String(r[mobileKey]||'').trim();
+    if(!rm)return;
+    if(!amMap[rm])amMap[rm]={name:rm,email:email&&email.includes('@')?email:'',mobiles:new Set(),branches:0};
+    if(mobile)amMap[rm].mobiles.add(mobile);
+    if(!amMap[rm].email && email.includes('@'))amMap[rm].email=email;
+    amMap[rm].branches++;
+  });
+  const amList=Object.values(amMap);
+  const amHTML=amList.length?'<div style="margin-bottom:16px">'
+    +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:8px;text-align:center">🗺️ Area Managers</div>'
+    +'<div class="ref-cards-grid">'+amList.map(am=>{
+      return '<div class="ref-card" style="padding:10px 14px;text-align:center">'
+        +'<div style="font-size:13px;font-weight:700;color:#333">'+am.name+'</div>'
+        +'<div style="font-size:11px;color:#888;margin:3px 0">📦 '+am.branches+' branches</div>'
+        +(am.mobiles.size?'<div style="font-size:12px;margin-bottom:4px">📞 '+[...am.mobiles].join(' / ')+'</div>':'')
+        +(am.email?'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="color:#1565c0;font-weight:700;text-decoration:none">✉️ '+am.email+'</a></div>':'')
+        +'</div>';
+    }).join('')+'</div></div>':'';
+
   return '<div>'
-    +(rmRows.length?'<div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button onclick="toggleRegion(\'stellantisPacRM\')" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:'+color+';color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(21,101,192,.3)">🗺️ Area Manager <span id="ico_stellantisPacRM">▼</span></button></div>'+rmHTML:'')
+    +amHTML
+    +(rmRows.length?'<div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button onclick="toggleRegion(\'stellantisPacRM\')" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:'+color+';color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(21,101,192,.3)">🗺️ Area Manager Details <span id="ico_stellantisPacRM">▼</span></button></div>'+rmHTML:'')
     +emailHtml+branchCards
     +'</div>';
 }
@@ -2906,7 +2931,7 @@ function renderPetrominPACTab(arr){
       return;
     }
     // RM mapping rows: col0/1 empty, col2=branch code, col3=RM, col4=RM email, col5=RM mobile
-    if(!v0 && vals[2] && vals[3] && vals[4] && vals[4].includes('@')){
+    if(!v0 && vals[2] && vals[2]!=='Request' && vals[2]!=='Complaint' && vals[3] && vals[4] && vals[4].includes('@')){
       rmByBranch[vals[2]] = {name:vals[3], email:vals[4], mobile:fmtNum(vals[5])};
       return;
     }
@@ -3659,7 +3684,7 @@ async function renderRefBrand(brand,tabIdx){
     container.innerHTML='<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading '+sheetName+'...</div>';
     try{
       const t=sheetName.trim();
-      const FORCE_RAW=['Tire&Battery','Petromin Tristar','New PAC'];
+      const FORCE_RAW=['Tire&Battery','Petromin Tristar'];
       const data=await fetchSheet(cfg.id, sheetName);
       let arr=Array.isArray(data)?data:(data.rows||[]);
       if(FORCE_RAW.includes(t) || (arr.length && Object.keys(arr[0]).length<4)){
