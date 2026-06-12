@@ -1359,7 +1359,7 @@ const REF_SHEETS = {
   },
   foton: {
     id: '1PBhYlWtWqGZFZi_wgjDTlUaoN6O0QeS4P1CHcd40H4Y',
-    tabs: ['Instruction','Aftersales Truck','Aftersales Pickup']
+    tabs: ['Instruction','Aftersales Truck','Aftersales Pickup','Sales Price List']
   },
   nos: {
     id: '1gKtlJ2VNz8ddL5yOuIgGCgAGGkqeizzZ_r9NZ1FNaj0',
@@ -1733,7 +1733,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
   if(brand === 'stellantis' && (sh.includes('showroom') || sh === 'showroom')){
     govAreaSection =
       '<div style="margin-top:10px;margin-bottom:6px">'
-      +'<a href="https://petromincrm-my.sharepoint.com/:x:/r/personal/sali_aljehani_petromin_com/Documents/Stellantis%20Price%20List.xlsx?d=w9c84f16bdac4414cb3078cb3a74f0d2e&csf=1&web=1&e=JeqN7U&nav=MTVfezAwMDAwMDAwLTAwMDEtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMH0" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#78909c;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:500;text-decoration:none;margin:4px;box-shadow:0 1px 4px rgba(120,144,156,.2)">💰 Price List</a>'
+      +'<a href="https://petromincrm-my.sharepoint.com/:x:/r/personal/sali_aljehani_petromin_com/Documents/Stellantis%20Price%20List.xlsx?d=w9c84f16bdac4414cb3078cb3a74f0d2e&csf=1&web=1&e=JeqN7U&nav=MTVfezAwMDAwMDAwLTAwMDEtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMH0" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#78909c;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:500;text-decoration:none;margin:4px;box-shadow:0 1px 4px rgba(120,144,156,.2)">📄 Sales Price List</a>'
       +'</div>';
   }
   if(brand === 'nissan' && (sh.includes('showroom') || sh === 'showroom')){
@@ -3007,6 +3007,15 @@ function renderNosPriceTab(arr){
   }).join('');
 }
 
+function renderFotonPriceListTab(){
+  const color='#546e7a';
+  return '<div style="text-align:center;padding:40px 20px">'
+    +'<div style="font-size:40px;margin-bottom:12px">📄</div>'
+    +'<div style="font-size:14px;color:#555;margin-bottom:18px">Sales Price List — Stellantis & Foton<br>(Full Excel file on SharePoint)</div>'
+    +'<a href="https://petromincrm-my.sharepoint.com/:x:/r/personal/sali_aljehani_petromin_com/Documents/Inbound%20Team/Stellantis%20Price%20List.xlsx?d=w9c84f16bdac4414cb3078cb3a74f0d2e&csf=1&web=1&e=EHDgrM" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:'+color+';color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 12px rgba(84,110,122,.3)">📄 Open Sales Price List</a>'
+    +'</div>';
+}
+
 function renderFotonInstructionTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#546e7a';
@@ -3051,11 +3060,7 @@ function renderFotonInstructionTab(arr){
       +'</div>';
   }).join('')+'</div>':'';
 
-  const linkHTML='<div style="text-align:center;margin-bottom:14px">'
-    +'<a href="https://petromincrm-my.sharepoint.com/:x:/r/personal/sali_aljehani_petromin_com/Documents/Inbound%20Team/Stellantis%20Price%20List.xlsx?d=w9c84f16bdac4414cb3078cb3a74f0d2e&csf=1&web=1&e=EHDgrM" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:'+color+';color:#fff;border-radius:20px;font-size:12px;font-weight:700;text-decoration:none;box-shadow:0 2px 8px rgba(84,110,122,.3)">📄 Sales Price List</a>'
-    +'</div>';
-
-  return linkHTML+contactsHTML+emailHTML;
+  return contactsHTML+emailHTML;
 }
 
 function renderFotonTruckTab(arr){
@@ -3993,6 +3998,8 @@ async function renderRefBrand(brand,tabIdx){
   }
   if(brand==='foton'){
     container.innerHTML='<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading '+sheetName+'...</div>';
+    const t0=sheetName.trim();
+    if(t0==='Sales Price List'){ container.innerHTML=renderFotonPriceListTab(); return; }
     try{
       const t=sheetName.trim();
       const data=await fetchSheet(cfg.id, sheetName);
