@@ -1357,6 +1357,10 @@ const REF_SHEETS = {
     id: '11M28wIA4Ee84ohrIqzXtobK7X-QsrruoL4MwjoGz-6k',
     tabs: ['Instruction','New PAC','Petromin Tristar','Tire&Battery','Eco Wash','Fuel Station','DIESEL','PE-Emailz','Complaints Emails']
   },
+  foton: {
+    id: '1PBhYlWtWqGZFZi_wgjDTlUaoN6O0QeS4P1CHcd40H4Y',
+    tabs: ['Instruction','Aftersales Truck','Aftersales Pickup']
+  },
   baicRecall: {
     id: '1pUqPaAXpKBjuBI6ABvgtd9Iuxo0IQ0sEbHX--3QMtpY',
     tabs: ['D50-1137Units','BJ40-845Units','BJ40-1778Units','X7-Fuse Box']
@@ -1505,7 +1509,7 @@ function refGlobalFilter(q){
 
 function switchRefTab(brand, idx, btn){
   REF_ACTIVE_TABS[brand] = idx;
-  const color = {nissan:'#c0272d', stellantis:'#1565c0', baic:'#f9a825', baicRecall:'#4a148c',petromin:'#DAA520'}[brand] || '#c0272d';
+  const color = {nissan:'#c0272d', stellantis:'#1565c0', baic:'#f9a825', baicRecall:'#4a148c',petromin:'#DAA520',foton:'#546e7a'}[brand] || '#c0272d';
   btn.parentElement.querySelectorAll('.ref-sub-tab').forEach((t,i) => {
     t.classList.toggle('active', i===idx);
     t.style.background = i===idx ? color : '';
@@ -2414,8 +2418,8 @@ function renderBaicServiceTab(arr, apptArr){
     if(v1==='for Complaint'||v1==='for Request'){ mode='email'; return; }
     if(v0==='TO'||v0==='CC'){
       if(mode==='email'){
-        if(v0==='TO'){ if(!emTo.complaint) emTo.complaint=v1; else emTo.request=v3; }
-        if(v0==='CC'){ if(!emCc.complaint) emCc.complaint=v1; else emCc.request=v3; }
+        if(v0==='TO'){ emTo.complaint=v1; emTo.request=v3; }
+        if(v0==='CC'){ emCc.complaint=v1; emCc.request=v3; }
       }
       return;
     }
@@ -2885,6 +2889,135 @@ function renderPetrominComplaintsTab(arr){
       +'<div style="font-size:11px;color:#555;direction:rtl;text-align:right;line-height:1.8;border-top:1px dashed #eee;padding-top:6px">'+v[1]+'</div>'
       +'</div>';
   }).join('')+'</div>';
+}
+
+function renderFotonInstructionTab(arr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const color='#546e7a';
+  const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
+  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700;text-decoration:none;margin:1px">'+s+'</a>';}).filter(Boolean).join('');
+
+  const contacts=[]; const emailRows=[];
+  let mode='contacts';
+
+  arr.forEach((r,idx)=>{
+    const v=Object.values(r).map(x=>String(x===undefined||x===null?'':x).trim());
+    const v0=v[0]||'', v1=v[1]||'', v2=v[2]||'', v3=v[3]||'';
+    if(v0==='Email' && !v1){ mode='email'; return; }
+    if(v0==='Parts Inquiries'){ return; }
+    if(v0==='Department'||(v1==='TO'&&v2==='CC')){ return; }
+    if(mode==='contacts'){
+      if(v0 && v1 && v2) contacts.push({region:v0,name:v1,mobile:fmtNum(v2)});
+      return;
+    }
+    if(mode==='email'){
+      if(v0) emailRows.push({dept:v0,to:v1,cc:v2,esc:v3});
+      return;
+    }
+  });
+
+  const contactsHTML=contacts.length?'<div style="margin-bottom:16px">'
+    +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:8px;text-align:center">📦 Parts Inquiries</div>'
+    +'<div class="ref-cards-grid">'+contacts.map(c=>{
+      return '<div class="ref-card" style="padding:10px 14px;text-align:center">'
+        +'<div style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase">'+c.region+'</div>'
+        +'<div style="font-size:13px;font-weight:700;color:#333;margin:4px 0">'+c.name+'</div>'
+        +'<div style="font-size:12px">📞 '+c.mobile+'</div>'
+        +'</div>';
+    }).join('')+'</div></div>':'';
+
+  const emailHTML=emailRows.length?'<div class="ref-cards-grid">'+emailRows.map(e=>{
+    return '<div class="ref-card" style="padding:10px 14px">'
+      +'<div style="font-size:12px;font-weight:700;color:'+color+';margin-bottom:6px;text-align:center">'+e.dept+'</div>'
+      +(e.to?'<div style="margin-bottom:4px"><span style="background:'+color+'15;color:'+color+';font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">TO</span>'+fmtE(e.to)+'</div>':'')
+      +(e.cc?'<div style="margin-bottom:4px"><span style="background:#e3f2fd;color:#1565c0;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">CC</span>'+fmtE(e.cc)+'</div>':'')
+      +(e.esc?'<div><span style="background:#fdecea;color:#c0272d;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">ESC</span>'+fmtE(e.esc)+'</div>':'')
+      +'</div>';
+  }).join('')+'</div>':'';
+
+  return contactsHTML+emailHTML;
+}
+
+function renderFotonTruckTab(arr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const color='#546e7a';
+  const keys=Object.keys(arr[0]||{});
+  const cityCol=keys[0], branchCol=keys[1], addrCol=keys[2], contactCol=keys[3], mobileCol=keys[4], emailCol=keys[5], gpsLinkCol=keys[6];
+
+  const rows=arr.filter(r=>String(r[branchCol]||'').trim());
+
+  return '<div class="ref-cards-grid">'+rows.map(r=>{
+    const city=String(r[cityCol]||'').trim();
+    const branch=String(r[branchCol]||'').trim();
+    const addr=String(r[addrCol]||'').trim();
+    const contact=String(r[contactCol]||'').trim();
+    const mobile=String(r[mobileCol]||'').trim();
+    const email=String(r[emailCol]||'').trim();
+    const gpsLink=String(r[gpsLinkCol]||'').trim();
+    return '<div class="ref-card" style="padding:10px 14px;text-align:center;border-top:3px solid '+color+'">'
+      +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+branch+'</div>'
+      +(city?'<div style="font-size:11px;color:#888;margin:3px 0">📌 '+city+(addr?' · '+addr:'')+'</div>':'')
+      +(contact&&contact!=='N/A'?'<div style="font-size:12px;color:#333;margin-bottom:4px">👤 '+contact+'</div>':'')
+      +(mobile&&mobile!=='N/A'?'<div style="font-size:12px;margin-bottom:4px">📞 '+mobile+'</div>':'')
+      +(email&&email!=='N/A'?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="color:#1565c0;font-weight:700;text-decoration:none">✉️ '+email+'</a></div>':'')
+      +(gpsLink&&gpsLink.startsWith('http')?'<div style="margin-top:4px"><a href="'+gpsLink+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
+      +'</div>';
+  }).join('')+'</div>';
+}
+
+function renderFotonPickupTab(arr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const color='#546e7a';
+  const keys=Object.keys(arr[0]||{});
+  const regionCol=keys[0], cityCol=keys[1], branchCol=keys[2], mgrCol=keys[3], phoneCol=keys[4], emailCol=keys[5], hoursCol=keys[6], gpsCol=keys[7];
+
+  const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
+  const REGION_ORDER=['West','Central','East','South','North'];
+  const REGION_COLORS={West:'#c0272d',Central:'#1565c0',East:'#2e7d32',South:'#6a1b9a',North:'#e65100'};
+
+  const regions={};
+  arr.forEach(r=>{
+    const reg=String(r[regionCol]||'').trim();
+    if(!reg||!REGION_ORDER.includes(reg))return;
+    if(!regions[reg])regions[reg]=[];
+    regions[reg].push(r);
+  });
+
+  const regHTML=REGION_ORDER.filter(r=>regions[r]).map(reg=>{
+    const rows=regions[reg];
+    const rc=REGION_COLORS[reg]||color;
+    const regId='fotonPickup_'+reg;
+    const hours=String(rows[0][hoursCol]||'').trim();
+    return '<div style="margin-bottom:14px">'
+      +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px">'
+      +'<span style="font-size:13px;font-weight:700;color:'+rc+'">'+reg+'</span>'
+      +'<span style="font-size:11px;color:#aaa">('+rows.length+')</span>'
+      +(hours?'<span style="font-size:11px;color:'+rc+';margin-left:auto">⏰ '+hours+'</span>':'')
+      +'<span id="ico_'+regId+'" style="color:'+rc+'">▼</span>'
+      +'</div>'
+      +'<div id="'+regId+'"><div class="ref-cards-grid">'+rows.map(r=>{
+        const city=String(r[cityCol]||'').trim();
+        const branch=String(r[branchCol]||'').replace(/\n/g,' ').trim();
+        const mgr=String(r[mgrCol]||'').trim();
+        const phone=String(r[phoneCol]||'').split(',').map(s=>fmtNum(s.trim())).filter(Boolean).join(' / ');
+        const email=String(r[emailCol]||'').trim();
+        const gps=String(r[gpsCol]||'').trim();
+        const gpsLink=gps?'https://www.google.com/maps?q='+encodeURIComponent(gps):'';
+        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
+          +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
+          +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
+          +(city?'<div style="font-size:11px;color:#888;margin-top:3px">📌 '+city+'</div>':'')
+          +'</div>'
+          +'<div style="padding:10px 14px;text-align:center">'
+          +(mgr?'<div style="font-size:12px;color:#333;margin-bottom:5px">👤 '+mgr+'</div>':'')
+          +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
+          +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="color:#1565c0;font-weight:700;text-decoration:none">✉️ '+email+'</a></div>':'')
+          +(gpsLink?'<div style="margin-top:6px"><a href="'+gpsLink+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
+          +'</div></div>';
+      }).join('')+'</div></div></div>';
+  }).join('');
+
+  return '<div>'+regHTML+'</div>';
 }
 
 function renderPetrominPACTab(arr){
@@ -3407,6 +3540,7 @@ function showRefBrandPage(brand){
     baic:      {label:'BAIC',      icon:'🟡',color:'#f9a825'},
     baicRecall:{label:'BAIC Recall — VIN Search',icon:'🔎',color:'#4a148c'},
     petromin:  {label:'Petromin',  icon:'⭐',color:'#DAA520'},
+    foton:     {label:'Foton',     icon:'🚛',color:'#546e7a'},
   };
   const meta=META[brand];
   const tabs=REF_SHEETS[brand].tabs;
@@ -3456,7 +3590,7 @@ function showRefBrandPage(brand){
 
 function switchRefTab(brand,idx,btn){
   REF_ACTIVE_TABS[brand]=idx;
-  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#f9a825',baicRecall:'#4a148c',petromin:'#DAA520'}[brand]||'#c0272d';
+  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#f9a825',baicRecall:'#4a148c',petromin:'#DAA520',foton:'#546e7a'}[brand]||'#c0272d';
   const container=btn?btn.parentElement:document.querySelector('#refSubTabs_'+brand);
   if(container){
     container.querySelectorAll('.ref-sub-tab').forEach((t,i)=>{
@@ -3682,6 +3816,24 @@ async function renderRefBrand(brand,tabIdx){
       else if(t==='Tire&Battery') container.innerHTML=renderPetrominTireBatteryTab(arr);
       else if(t==='PE-Emailz') container.innerHTML=renderPetrominEmailzTab(arr);
       else if(t==='Complaints Emails') container.innerHTML=renderPetrominComplaintsTab(arr);
+      else container.innerHTML='<div style="text-align:center;padding:24px;color:#aaa">No renderer for '+t+'</div>';
+    }catch(e){
+      container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
+    }
+    return;
+  }
+  if(brand==='foton'){
+    container.innerHTML='<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading '+sheetName+'...</div>';
+    try{
+      const t=sheetName.trim();
+      const data=await fetchSheet(cfg.id, sheetName);
+      let arr=Array.isArray(data)?data:(data.rows||[]);
+      if(arr.length && Object.keys(arr[0]).length<4){
+        arr=await fetchCSVRaw(cfg.id, sheetName);
+      }
+      if(t==='Instruction') container.innerHTML=renderFotonInstructionTab(arr);
+      else if(t==='Aftersales Truck') container.innerHTML=renderFotonTruckTab(arr);
+      else if(t==='Aftersales Pickup') container.innerHTML=renderFotonPickupTab(arr);
       else container.innerHTML='<div style="text-align:center;padding:24px;color:#aaa">No renderer for '+t+'</div>';
     }catch(e){
       container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
@@ -4279,11 +4431,11 @@ async function renderRef(){
 
     const BRAND_CONFIGS=[
       {key:'petromin',   label:'Petromin',         icon:'⭐', color:'#DAA520'},
+      {key:'foton',      label:'Foton',            icon:'🚛', color:'#546e7a'},
       {key:'baic',       label:'BAIC',             icon:'🟡', color:'#f9a825'},
       {key:'nissan',     label:'Nissan',           icon:'🚗', color:'#c0272d'},
       {key:'stellantis', label:'Stellantis',       icon:'🔵', color:'#1565c0'},
       {key:'bodyshop',   label:'Body Shop',        icon:'🔴', color:'#7b0000'},
-      {key:'foton',      label:'Foton',            icon:'🚛', color:'#546e7a'},
       {key:'nos',        label:'National Oil Stop',icon:'🟢', color:'#2e7d32'},
       {key:'electromin', label:'Electromin',       icon:'⚡', color:'#1b5e20'},
       {key:'baicRecall', label:'Recall',           icon:'⚠️', color:'#4a148c'},
