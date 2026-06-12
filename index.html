@@ -1635,7 +1635,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
     const bList = Object.values(branches);
     return '<div style="margin-bottom:14px">'
       +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+col_color+'12;border-radius:8px;border-left:4px solid '+col_color+';cursor:pointer;user-select:none;margin-bottom:10px">'
-      +'<span style="font-size:13px;font-weight:700;color:'+col_color+';text-transform:uppercase;letter-spacing:.04em">'+(REGION_DISPLAY[reg]||reg)+'</span>'
+      +'<span style="font-size:13px;font-weight:700;color:'+col_color+';text-transform:uppercase;letter-spacing:.04em">'+reg+'</span>'
       +'<span style="font-size:11px;color:#aaa">('+bList.length+' branches)</span>'
       +(hoursDisp?'<span style="font-size:11px;color:#888;margin-left:auto">🕐 '+hoursDisp+'</span>':'')
       +'<span id="ico_'+regId+'" style="margin-left:8px;color:'+col_color+'">▼</span>'
@@ -1905,8 +1905,7 @@ function renderStellantisSparePartsTab(arr){
     branchRows.push(r);
   });
 
-  // Simple email header
-  console.log('Spare Parts branchRows:', branchRows.length, 'ccMap keys:', Object.keys(ccMap));
+  // Email header — matches reference image (TO + CC rows, two cards)
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
     +'<div class="ref-email-card" style="border-left:4px solid #00695c;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
@@ -1917,45 +1916,35 @@ function renderStellantisSparePartsTab(arr){
     +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:CRTeam@petromin.com" style="color:#1565c0;text-decoration:none">CRTeam@petromin.com</a></span></div>'
     +'</div></div>';
 
-  // Group by city with toggle
-  const cities2={}, cityOrder2=[];
-  branchRows.forEach(r=>{
-    const city=String(r[cityKey]||'').trim()||'Other';
-    if(!cities2[city]){cities2[city]=[];cityOrder2.push(city);}
-    cities2[city].push(r);
-  });
+  // Single open grid — all branches side by side, no city grouping/toggle
+  const cards=branchRows.map(r=>{
+    const branch=String(r[branchKey]||'').trim();
+    const city=String(r[cityKey]||'').trim();
+    const street=String(r[streetKey]||'').trim();
+    const hours=String(r[hoursKey]||'').trim();
+    const advisor=String(r[advisorKey]||'').trim();
+    const email=String(r[emailKey]||'').trim();
+    const gps=String(r[gpsKey]||'').trim();
+    const cc=ccMap[branch]||'';
+    if(!branch||branch===branchKey) return '';
+    return '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+color+'">'
+      +'<div style="background:'+color+'12;padding:10px 16px;text-align:center">'
+      +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+branch+'</div>'
+      +(city?'<div style="font-size:11px;color:#666;margin-top:4px">📌 '+city+'</div>':'')
+      +(street?'<div style="font-size:11px;color:#555;margin-top:2px">📍 '+street+'</div>':'')
+      +'</div>'
+      +'<div style="padding:10px 16px;text-align:center">'
+      +(advisor?'<div style="font-size:12px;color:#333;margin-bottom:5px">👤 '+advisor+'</div>':'')
+      +(email?'<div style="margin-bottom:5px"><span style="background:#e8f5e9;color:#2e7d32;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">TO</span>'+fmtEmails(email,'#e8f5e9','#2e7d32')+'</div>':'')
+      +(cc?'<div style="margin-bottom:5px"><span style="background:#e3f2fd;color:#1565c0;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">CC</span>'+fmtEmails(cc,'#e3f2fd','#1565c0')+'</div>':'')
+      +(gps&&gps.startsWith('http')?'<div style="margin-top:5px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px">🗺️ Location</a></div>':'')
+      +(hours?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+hours+'</div>':'')
+      +'</div></div>';
+  }).filter(Boolean).join('');
 
-  const cards=cityOrder2.map(city=>{
-    const cityRows=cities2[city];
-    const cityId='sp2_'+city.replace(/\s/g,'');
-    const cityCards=cityRows.map(r=>{
-      const branch=String(r[branchKey]||'').trim();
-      const street=String(r[streetKey]||'').trim();
-      const hours=String(r[hoursKey]||'').trim();
-      const advisor=String(r[advisorKey]||'').trim();
-      const email=String(r[emailKey]||'').trim();
-      const gps=String(r[gpsKey]||'').trim();
-      const cc=ccMap[branch]||'';
-      if(!branch||branch===branchKey) return '';
-      return '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+color+'">'
-        +'<div style="background:'+color+'12;padding:10px 16px">'
-        +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+branch+'</div>'
-        +(street?'<div style="font-size:11px;color:#555;margin-top:2px">📍 '+street+'</div>':'')
-        +(hours?'<div style="font-size:10px;color:#888;margin-top:2px">'+hours+'</div>':'')
-        +'</div>'
-        +'<div style="padding:10px 16px">'
-        +(advisor?'<div style="font-size:12px;margin-bottom:5px">👤 '+advisor+'</div>':'')
-        +(email?'<div style="margin-bottom:5px"><span style="background:#e8f5e9;color:#2e7d32;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">TO</span>'+fmtEmails(email,'#e8f5e9','#2e7d32')+'</div>':'')
-        +(cc?'<div style="margin-bottom:5px"><span style="background:#e3f2fd;color:#1565c0;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">CC</span>'+fmtEmails(cc,'#e3f2fd','#1565c0')+'</div>':'')
-        +(gps&&gps.startsWith('http')?'<div style="margin-top:5px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px">🗺️ Location</a></div>':'')
-        +'</div></div>';
-    }).filter(Boolean).join('');
-    return '<div style="margin-bottom:14px">'
-      +'<div onclick="toggleRegion(\''+cityId+'\')" style="font-size:12px;font-weight:700;color:'+color+';padding:6px 12px;background:'+color+'12;border-radius:6px;margin-bottom:8px;border-left:3px solid '+color+';cursor:pointer;display:flex;align-items:center">📌 '+city+' ('+cityRows.length+')<span id="ico_'+cityId+'" style="margin-left:auto">▼</span></div>'
-      +'<div id="'+cityId+'"><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px">'+cityCards+'</div></div></div>';
-  }).join('');
+  const gridHtml='<div class="ref-cards-grid">'+cards+'</div>';
 
-  return '<div>'+emailHtml+cards+'</div>';
+  return '<div>'+emailHtml+gridHtml+'</div>';
 }
 
 function renderStellantisPMSTab(arr, sheetName){
@@ -2067,26 +2056,21 @@ function renderStellantisPACTab(arr){
     if(city && branch) branchRows.push(r);
   });
 
-  // Email header
-    const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+  // Email header — matches reference image, with CC added to both
+  const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
     +'<div class="ref-email-card" style="border-left:4px solid #00695c;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="color:#1565c0;text-decoration:none">sali.aljehani@petromin.com</a></span></div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="color:#1565c0;text-decoration:none">sali.aljehani@petromin.com</a></span></div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span><span style="font-size:11px;color:#444"><a href="mailto:cs.agent@petromin.com" style="color:#1565c0;text-decoration:none">cs.agent@petromin.com</a></span></div>'
     +'</div>'
     +'<div class="ref-email-card" style="border-left:4px solid #c0272d;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:CRTeam@petromin.com" style="color:#1565c0;text-decoration:none">CRTeam@petromin.com</a></span></div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:CRTeam@petromin.com" style="color:#1565c0;text-decoration:none">CRTeam@petromin.com</a></span></div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span><span style="font-size:11px;color:#444"><a href="mailto:cs.agent@petromin.com" style="color:#1565c0;text-decoration:none">cs.agent@petromin.com</a></span></div>'
     +'</div></div>';
 
-  // Group branches by city
-  const cities={}, cityOrder=[];
-  branchRows.forEach(r=>{
-    const city=String(r[cityKey]||'').trim();
-    if(!cities[city]){cities[city]=[];cityOrder.push(city);}
-    cities[city].push(r);
-  });
-
   const branchCard=(r)=>{
+    const city=String(r[cityKey]||'').trim();
     const branch=String(r[branchKey]||'').trim();
     const hours=String(r[hoursKey]||'').trim();
     const mgr=String(r[mgrKey]||'').trim();
@@ -2096,37 +2080,20 @@ function renderStellantisPACTab(arr){
     return '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+color+'">'
       +'<div style="background:'+color+'12;padding:10px 14px;text-align:center">'
       +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+branch+'</div>'
+      +(city?'<div style="font-size:11px;color:#666;margin-top:2px">📌 '+city+'</div>':'')
       +'</div>'
       +'<div style="padding:10px 14px;text-align:center">'
-      +(hours?'<div style="font-size:10px;color:#888;margin-bottom:6px">🕐 '+hours+'</div>':'')
       +(mgr?'<div style="font-size:12px;color:#333;margin-bottom:4px">👤 '+mgr+'</div>':'')
       +(mobile?'<div style="font-size:12px;color:#333;margin-bottom:4px">📞 '+mobile+'</div>':'')
-      +(email?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">✉️ '+email+'</a></div>':'')
+      +(email?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="color:#1565c0;font-weight:700;text-decoration:none">✉️ '+email+'</a></div>':'')
       +(gps&&gps.startsWith('http')?'<div style="margin-top:4px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px">🗺️ Location</a></div>':'')
+      +(hours?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+hours+'</div>':'')
       +'</div></div>';
   };
 
-  const LARGE_CITIES=new Set(['Jeddah','Riyadh']);
-  
-  // Separate large cities from single-branch cities
-  const largeCityOrder=cityOrder.filter(c=>LARGE_CITIES.has(c)||cities[c].length>2);
-  const singleCities=cityOrder.filter(c=>!LARGE_CITIES.has(c)&&cities[c].length<=2);
-
-  const makeCitySection=(city)=>{
-    const rows=cities[city];
-    return rows.map(r=>branchCard(r)).join('');
-  };
-
-  const allCityOrder=[...largeCityOrder,...singleCities];
-  const branchCards=allCityOrder.map(city=>{
-    const rows=cities[city];
-    const cityId='pac_'+city.replace(/\s/g,'');
-    return '<div style="margin-bottom:14px">'
-      +'<div onclick="toggleRegion(\''+cityId+'\')" style="font-size:12px;font-weight:700;color:'+color+';padding:8px 14px;background:'+color+'12;border-radius:8px;margin-bottom:8px;border-left:3px solid '+color+';cursor:pointer;display:flex;align-items:center">📌 '+city+' ('+rows.length+')<span id="ico_'+cityId+'" style="margin-left:auto">▼</span></div>'
-      +'<div id="'+cityId+'"><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px">'
-      +rows.map(r=>branchCard(r)).join('')
-      +'</div></div></div>';
-  }).join('');
+  const branchCards='<div class="ref-cards-grid">'
+    +branchRows.map(r=>branchCard(r)).join('')
+    +'</div>';
 
   // RM table with CC
   let rmHTML='';
@@ -2673,7 +2640,7 @@ async function renderRefBrand(brand,tabIdx){
     }
     const VTABS2={'Nissan Vehicle':'Nissan Model','Stellantis Vehicle':'Stellantis Model','BAIC Vehicle':'BAIC Model'};
     if(VTABS2[sheetName]){
-      const vdata=await fetchSheet('1VLZ3UL4jXlN-z0-yN86ouA_IDl326VAFYSjyHJV0MZU',VTABS2[sheetName]);
+      const vdata=await fetchSheet(cfg.id,VTABS2[sheetName]);
       const varr=Array.isArray(vdata)?vdata:(vdata.rows||[]);
       if(!varr.length){container.innerHTML='<div style="text-align:center;padding:24px;color:#aaa">No data</div>';return;}
       const vkeys=Object.keys(varr[0]);
@@ -3320,7 +3287,6 @@ async function renderRef(){
 
 
 
-const VEHICLE_SHEET_ID='1VLZ3UL4jXlN-z0-yN86ouA_IDl326VAFYSjyHJV0MZU';
 const VEHICLE_TABS_MAP={'nissan':'Nissan Model','stellantis':'Stellantis Model','baic':'BAIC Model'};
 const VEHICLE_CACHE={};
 
@@ -3336,8 +3302,9 @@ async function loadVehicleModels(brand){
   if(ico)ico.textContent=isOpen?'▼':'▲';
   if(isOpen||VEHICLE_CACHE[brand])return;
   try{
+    const cfg=REF_SHEETS[brand];
     const tabName=VEHICLE_TABS_MAP[brand];
-    const data=await fetchSheet(VEHICLE_SHEET_ID,tabName);
+    const data=await fetchSheet(cfg.id,tabName);
     const arr=Array.isArray(data)?data:(data.rows||[]);
     if(!arr.length){document.getElementById(contentId).innerHTML='<div style="text-align:center;color:#aaa;font-size:12px">No data</div>';return;}
     const keys=Object.keys(arr[0]);
