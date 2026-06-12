@@ -3416,9 +3416,11 @@ function showRefBrandPage(brand){
     +'<button onclick="renderRef()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:#f5f5f5;border:1.5px solid #ddd;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;color:#555">'
     +'← Back to References</button></div>'
     +'<div class="ref-brand-section">'
-    +'<div style="padding:14px 20px;background:linear-gradient(135deg,'+meta.color+','+meta.color+'99);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;gap:12px">'
+    +'<div style="padding:14px 20px;background:linear-gradient(135deg,'+meta.color+','+meta.color+'99);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;gap:12px;position:relative">'
+    +'<div style="position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:10px;pointer-events:none">'
     +'<span style="font-size:22px">'+meta.icon+'</span>'
     +'<span style="font-size:15px;font-weight:700">'+meta.label+'</span>'
+    +'</div>'
     +'<span style="margin-left:auto"></span>'
     +(brand==='stellantis'?'<button onclick="loadVehicleModels(\'stellantis\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Vehicle <span id="ico_stellantisModels">▼</span></button>':'')
     +(brand==='nissan'?'<button onclick="loadVehicleModels(\'nissan\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Vehicle <span id="ico_nissanModels">▼</span></button>':'')
