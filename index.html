@@ -1220,6 +1220,7 @@ async function fetchCSVRaw(sheetId, sheetName){
   const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=`+encodeURIComponent(sheetName);
   const res = await fetch(url);
   const text = await res.text();
+  console.log('fetchCSVRaw', sheetName, '→', text.substring(0,150));
   return parseCSVRaw(text);
 }
 
