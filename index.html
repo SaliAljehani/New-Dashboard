@@ -2204,6 +2204,15 @@ function renderStellantisPACTab(arr){
     +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span><span style="font-size:11px;color:#444"><a href="mailto:cs.agent@petromin.com" style="color:#1565c0;text-decoration:none">cs.agent@petromin.com</a></span></div>'
     +'</div></div>';
 
+  // Map branch -> RM for inline display
+  const rmByBranch={};
+  rmRows.forEach(r=>{
+    const branch=String(r[branchKey]||'').trim();
+    const rm=String(r[hoursKey]||'').trim();
+    const mobile=fmtNum(String(r[mgrKey]||'').trim());
+    if(branch && rm) rmByBranch[branch]={name:rm,mobile};
+  });
+
   const branchCard=(r)=>{
     const city=String(r[cityKey]||'').trim();
     const branch=String(r[branchKey]||'').trim();
@@ -2212,6 +2221,7 @@ function renderStellantisPACTab(arr){
     const mobile=fmtNum(String(r[mobileKey]||'').trim());
     const email=String(r[emailKey]||'').trim();
     const gps=String(r[gpsKey]||'').trim();
+    const rm=rmByBranch[branch]||null;
     return '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+color+'">'
       +'<div style="background:'+color+'12;padding:10px 14px;text-align:center">'
       +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+branch+'</div>'
@@ -2222,6 +2232,7 @@ function renderStellantisPACTab(arr){
       +(mobile?'<div style="font-size:12px;color:#333;margin-bottom:4px">📞 '+mobile+'</div>':'')
       +(email?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="color:#1565c0;font-weight:700;text-decoration:none">✉️ '+email+'</a></div>':'')
       +(gps&&gps.startsWith('http')?'<div style="margin-top:4px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px">🗺️ Location</a></div>':'')
+      +(rm?'<div style="font-size:10px;color:#999;margin-top:6px;padding-top:6px;border-top:1px solid #f5f5f5">🗺️ RM: '+rm.name+(rm.mobile?' · '+rm.mobile:'')+'</div>':'')
       +(hours?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+hours+'</div>':'')
       +'</div></div>';
   };
@@ -2229,36 +2240,6 @@ function renderStellantisPACTab(arr){
   const branchCards='<div class="ref-cards-grid">'
     +branchRows.map(r=>branchCard(r)).join('')
     +'</div>';
-
-  // RM table with CC
-  let rmHTML='';
-  if(rmRows.length){
-    const hasCC=rmRows.some(r=>String(r[keys[5]]||'').trim());
-    rmHTML='<div id="stellantisPacRM" style="display:none;overflow-x:auto;border-radius:10px;border:1px solid #e8eaed;margin-bottom:16px">'
-      +'<table style="width:100%;border-collapse:collapse;font-size:11px">'
-      +'<thead><tr style="background:'+color+'12">'
-      +'<th style="padding:8px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22">Branch</th>'
-      +'<th style="padding:8px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22">RM</th>'
-      +'<th style="padding:8px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22">Mobile</th>'
-      +'<th style="padding:8px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22">Email</th>'
-      +(hasCC?'<th style="padding:8px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22">CC</th>':'')
-      +'</tr></thead><tbody>'
-      +rmRows.map((r,i)=>{
-        const branch=String(r[branchKey]||'').trim();
-        const rm=String(r[hoursKey]||'').trim();
-        const mobile=fmtNum(String(r[mgrKey]||'').trim());
-        const email=String(r[mobileKey]||'').trim();
-        const cc=String(r[keys[5]]||'').trim();
-        return '<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+'">'
-          +'<td style="padding:6px 12px;font-weight:600">'+branch+'</td>'
-          +'<td style="padding:6px 12px">'+rm+'</td>'
-          +'<td style="padding:6px 12px">'+mobile+'</td>'
-          +'<td style="padding:6px 12px">'+(email&&email.includes('@')?'<a href="mailto:'+email+'" style="color:#1565c0;text-decoration:none">'+email+'</a>':email)+'</td>'
-          +(hasCC?'<td style="padding:6px 12px">'+fmtE(cc,'#e3f2fd','#1565c0')+'</td>':'')
-          +'</tr>';
-      }).join('')
-      +'</tbody></table></div>';
-  }
 
   // Unique Area Managers summary (dedupe by RM name)
   const amMap={};
@@ -2273,21 +2254,19 @@ function renderStellantisPACTab(arr){
     amMap[rm].branches++;
   });
   const amList=Object.values(amMap);
-  const amHTML=amList.length?'<div style="margin-bottom:16px">'
-    +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:8px;text-align:center">🗺️ Area Managers</div>'
-    +'<div class="ref-cards-grid">'+amList.map(am=>{
+  const amHTML=amList.length?mkCollapsible('🗺️ Area Managers',
+    '<div class="ref-cards-grid">'+amList.map(am=>{
       return '<div class="ref-card" style="padding:10px 14px;text-align:center">'
         +'<div style="font-size:13px;font-weight:700;color:#333">'+am.name+'</div>'
         +'<div style="font-size:11px;color:#888;margin:3px 0">📦 '+am.branches+' branches</div>'
         +(am.mobiles.size?'<div style="font-size:12px;margin-bottom:4px">📞 '+[...am.mobiles].join(' / ')+'</div>':'')
         +(am.email?'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="color:#1565c0;font-weight:700;text-decoration:none">✉️ '+am.email+'</a></div>':'')
         +'</div>';
-    }).join('')+'</div></div>':'';
+    }).join('')+'</div>'
+    ,'stellantisPacAM',color):'';
 
   return '<div>'
-    +amHTML
-    +(rmRows.length?'<div style="display:flex;justify-content:flex-end;margin-bottom:12px"><button onclick="toggleRegion(\'stellantisPacRM\')" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:'+color+';color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(21,101,192,.3)">🗺️ Area Manager Details <span id="ico_stellantisPacRM">▼</span></button></div>'+rmHTML:'')
-    +emailHtml+branchCards
+    +emailHtml+amHTML+branchCards
     +'</div>';
 }
 function renderPACTab(arr){
@@ -2963,16 +2942,16 @@ function renderPetrominPACTab(arr){
     amMap[rm.email].branches++;
   });
   const amList=Object.values(amMap);
-  const amHTML=amList.length?'<div style="margin-bottom:16px">'
-    +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:8px;text-align:center">🗺️ Area Managers</div>'
-    +'<div class="ref-cards-grid">'+amList.map(am=>{
+  const amHTML=amList.length?mkCollapsible('🗺️ Area Managers',
+    '<div class="ref-cards-grid">'+amList.map(am=>{
       return '<div class="ref-card" style="padding:10px 14px;text-align:center">'
         +'<div style="font-size:13px;font-weight:700;color:#333">'+am.name+'</div>'
         +'<div style="font-size:11px;color:#888;margin:3px 0">📦 '+am.branches+' branches</div>'
         +'<div style="font-size:12px;margin-bottom:4px">📞 '+[...am.mobiles].join(' / ')+'</div>'
         +'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="color:#1565c0;font-weight:700;text-decoration:none">✉️ '+am.email+'</a></div>'
         +'</div>';
-    }).join('')+'</div></div>':'';
+    }).join('')+'</div>'
+    ,'petrominPacAM',color):'';
 
   const regHTML=REGION_ORDER.filter(r=>regions[r]).map(reg=>{
     const rows=regions[reg];
