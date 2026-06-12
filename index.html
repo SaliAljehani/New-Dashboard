@@ -1217,7 +1217,7 @@ let ESCALATIONS = [];
 let EOM_DATA = [];
 
 async function fetchCSVRaw(sheetId, sheetName){
-  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&sheet=`+encodeURIComponent(sheetName);
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=`+encodeURIComponent(sheetName);
   const res = await fetch(url);
   const text = await res.text();
   return parseCSVRaw(text);
