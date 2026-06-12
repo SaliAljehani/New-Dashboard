@@ -3678,15 +3678,15 @@ async function renderRef(){
     if(mainC)mainC.subject=allComplaintSubjects[0]||mainC.subject;
 
     const subjItem=(it,isCMain,subTags)=>{
-      const depts=it.dept?it.dept.split('\n').map(s=>s.trim()).filter(Boolean):[];
-      const cats=it.cat?it.cat.split('\n').map(s=>s.trim()).filter(Boolean):[];
+      const depts=it.dept?it.dept.split(/\n|-/).map(s=>s.trim()).filter(Boolean):[];
+      const cats=it.cat?it.cat.split(/\n|-/).map(s=>s.trim()).filter(Boolean):[];
       return'<div class="ref-subj-item">'
         +'<div class="ref-subj-subject">'+it.subject
         +(it.status?'<span class="ref-subj-badge" style="background:'+(it.status==='Open'?'#fde':'#e8f5e9')+';color:'+(it.status==='Open'?'#c0272d':'#2e7d32')+'">'+it.status+'</span>':'')
         +'</div>'
-        +(depts.length?'<div class="ref-subj-row"><span class="ref-subj-ico">📂</span><span>'+depts.join(' · ')+'</span></div>':'')
+        +(depts.length?'<div class="ref-subj-row"><span class="ref-subj-ico">📂</span><span>'+depts.map(d=>'<span style="display:inline-block;background:#e3f2fd;color:#1565c0;font-size:11px;font-weight:600;padding:2px 9px;border-radius:6px;margin:2px">'+d+'</span>').join('')+'</span></div>':'')
         +(it.desc?'<div class="ref-subj-row"><span class="ref-subj-ico">✏️</span><span>'+it.desc+'</span></div>':'')
-        +(cats.length?'<div class="ref-subj-row"><span class="ref-subj-ico">🏷️</span><span>'+cats.join(' · ')+'</span></div>':'')
+        +(cats.length?'<div class="ref-subj-row"><span class="ref-subj-ico">🏷️</span><span>'+cats.map(c=>'<span style="display:inline-block;background:#fff8e1;color:#9e7700;font-size:11px;font-weight:600;padding:2px 9px;border-radius:6px;margin:2px">'+c+'</span>').join('')+'</span></div>':'')
         +(it.notes?'<div class="ref-subj-row ref-subj-note"><span class="ref-subj-ico">💡</span><span>'+it.notes+'</span></div>':'')
         +(isCMain&&subTags&&subTags.length?'<div class="ref-subj-complaints">'+subTags.map(s=>'<span class="ref-subj-complaint-tag">'+s+'</span>').join('')+'</div>':'')
         +'</div>';
