@@ -3051,7 +3051,11 @@ function renderFotonInstructionTab(arr){
       +'</div>';
   }).join('')+'</div>':'';
 
-  return contactsHTML+emailHTML;
+  const linkHTML='<div style="text-align:center;margin-bottom:14px">'
+    +'<a href="https://petromincrm-my.sharepoint.com/:x:/r/personal/sali_aljehani_petromin_com/Documents/Inbound%20Team/Stellantis%20Price%20List.xlsx?d=w9c84f16bdac4414cb3078cb3a74f0d2e&csf=1&web=1&e=EHDgrM" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:'+color+';color:#fff;border-radius:20px;font-size:12px;font-weight:700;text-decoration:none;box-shadow:0 2px 8px rgba(84,110,122,.3)">📄 Stellantis Price List (Full Excel)</a>'
+    +'</div>';
+
+  return linkHTML+contactsHTML+emailHTML;
 }
 
 function renderFotonTruckTab(arr){
@@ -4596,13 +4600,12 @@ async function renderRef(){
 
     const BRAND_CONFIGS=[
       {key:'petromin',   label:'Petromin',         icon:'⭐', color:'#DAA520'},
-      {key:'foton',      label:'Foton',            icon:'🚛', color:'#546e7a'},
-      {key:'nos',        label:'National Oil Stop', icon:'🟢', color:'#2e7d32'},
       {key:'baic',       label:'BAIC',             icon:'🟡', color:'#f9a825'},
       {key:'nissan',     label:'Nissan',           icon:'🚗', color:'#c0272d'},
       {key:'stellantis', label:'Stellantis',       icon:'🔵', color:'#1565c0'},
       {key:'bodyshop',   label:'Body Shop',        icon:'🔴', color:'#7b0000'},
-      {key:'nos',        label:'National Oil Stop',icon:'🟢', color:'#2e7d32'},
+      {key:'foton',      label:'Foton',            icon:'🚛', color:'#546e7a'},
+      {key:'nos',        label:'National Oil Stop', icon:'🟢', color:'#2e7d32'},
       {key:'electromin', label:'Electromin',       icon:'⚡', color:'#1b5e20'},
       {key:'baicRecall', label:'Recall',           icon:'⚠️', color:'#4a148c'},
     ];
