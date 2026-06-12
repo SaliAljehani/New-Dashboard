@@ -2976,12 +2976,39 @@ function renderFotonPickupTab(arr){
   const REGION_COLORS={West:'#c0272d',Central:'#1565c0',East:'#2e7d32',South:'#6a1b9a',North:'#e65100'};
 
   const regions={};
+  const rmByBranch={};
   arr.forEach(r=>{
-    const reg=String(r[regionCol]||'').trim();
-    if(!reg||!REGION_ORDER.includes(reg))return;
-    if(!regions[reg])regions[reg]=[];
-    regions[reg].push(r);
+    const vals=Object.values(r).map(v=>String(v||'').trim());
+    const v0=vals[0]||'';
+    if(REGION_ORDER.includes(v0)){
+      if(!regions[v0])regions[v0]=[];
+      regions[v0].push(r);
+      return;
+    }
+    // RM mapping rows: col0/1 empty, col2=branch code, col3=RM, col4=RM email, col5=RM mobile
+    if(!v0 && vals[2] && vals[2]!=='Branch Code - Branch' && vals[2].trim()!=='Branch Code - Branch' && vals[3] && vals[4] && vals[4].includes('@')){
+      rmByBranch[vals[2]] = {name:vals[3], email:vals[4], mobile:fmtNum(vals[5])};
+    }
   });
+
+  // Unique Area Managers summary
+  const amMap={};
+  Object.values(rmByBranch).forEach(rm=>{
+    if(!amMap[rm.email]) amMap[rm.email]={name:rm.name,email:rm.email,mobiles:new Set(),branches:0};
+    if(rm.mobile) amMap[rm.email].mobiles.add(rm.mobile);
+    amMap[rm.email].branches++;
+  });
+  const amList=Object.values(amMap);
+  const amHTML=amList.length?mkCollapsible('🗺️ Area Managers',
+    '<div class="ref-cards-grid">'+amList.map(am=>{
+      return '<div class="ref-card" style="padding:10px 14px;text-align:center">'
+        +'<div style="font-size:13px;font-weight:700;color:#333">'+am.name+'</div>'
+        +'<div style="font-size:11px;color:#888;margin:3px 0">📦 '+am.branches+' branches</div>'
+        +'<div style="font-size:12px;margin-bottom:4px">📞 '+[...am.mobiles].join(' / ')+'</div>'
+        +'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="color:#1565c0;font-weight:700;text-decoration:none">✉️ '+am.email+'</a></div>'
+        +'</div>';
+    }).join('')+'</div>'
+    ,'fotonPickupAM',color):'';
 
   const regHTML=REGION_ORDER.filter(r=>regions[r]).map(reg=>{
     const rows=regions[reg];
@@ -3003,6 +3030,7 @@ function renderFotonPickupTab(arr){
         const email=String(r[emailCol]||'').trim();
         const gps=String(r[gpsCol]||'').trim();
         const gpsLink=gps?'https://www.google.com/maps?q='+encodeURIComponent(gps):'';
+        const rm=rmByBranch[branch]||null;
         return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
           +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
           +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
@@ -3012,12 +3040,13 @@ function renderFotonPickupTab(arr){
           +(mgr?'<div style="font-size:12px;color:#333;margin-bottom:5px">👤 '+mgr+'</div>':'')
           +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
           +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="color:#1565c0;font-weight:700;text-decoration:none">✉️ '+email+'</a></div>':'')
+          +(rm?'<div style="font-size:10px;color:#999;margin-top:6px;padding-top:6px;border-top:1px solid #f5f5f5">🗺️ RM: '+rm.name+(rm.mobile?' · '+rm.mobile:'')+'</div>':'')
           +(gpsLink?'<div style="margin-top:6px"><a href="'+gpsLink+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
           +'</div></div>';
       }).join('')+'</div></div></div>';
   }).join('');
 
-  return '<div>'+regHTML+'</div>';
+  return '<div>'+amHTML+regHTML+'</div>';
 }
 
 function renderPetrominPACTab(arr){
