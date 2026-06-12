@@ -1217,11 +1217,14 @@ let ESCALATIONS = [];
 let EOM_DATA = [];
 
 async function fetchCSVRaw(sheetId, sheetName){
-  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=`+encodeURIComponent(sheetName);
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=`+encodeURIComponent(sheetName);
   const res = await fetch(url);
   const text = await res.text();
-  console.log('fetchCSVRaw', sheetName, '→', text.substring(0,150));
-  return parseCSVRaw(text);
+  const json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}')+1));
+  const cols = json.table.cols.map(c=>c.label||'');
+  const rows = json.table.rows.map(r=>r.c.map(c=>c?(c.f!==undefined?c.f:c.v):''));
+  console.log('fetchCSVRaw(json)', sheetName, 'cols:', cols, 'rows:', rows.length, 'sample:', rows[0]);
+  return [cols, ...rows];
 }
 
 function parseCSVRaw(text){
@@ -2748,7 +2751,7 @@ function renderPetrominTireBatteryTab(arr){
     const v=Object.values(r).map(x=>String(x===undefined||x===null?'':x).trim());
     const v0=v[0]||'', v1=v[1]||'', v2=v[2]||'';
 
-    if(v1==='The Sales supervisor for Pirelli Tire'){ mode='sup'; return; }
+    if(/The Sales supervisor for Pirelli Tire/.test(v1)){ mode='sup'; return; }
     if(v0==='Region'&&v1==='Area'&&v2==='Employ'){ return; } // header
     if(v0==='Region'&&v1==='location'){ mode='loc'; return; }
     if(v0==='Battery Part'){ mode='battery'; return; }
