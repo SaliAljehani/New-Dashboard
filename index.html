@@ -512,7 +512,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
   <div id="eomWinner"></div>
   <div class="eom-teams-grid" id="eomTeams"></div>
 </div>
-<footer style="position:relative">Inbound Daily Dashboard · Petromin Group · Connected to Google Sheets · Auto-updates on refresh<span style="position:absolute;right:14px;top:50%;transform:translateY(-50%)">By: Sali Aljehani</span></footer>
+<footer style="position:relative">Inbound Daily Dashboard · Petromin Group · Connected to Google Sheets · Auto-updates on refresh<span style="position:absolute;left:14px;top:50%;transform:translateY(-50%)">By: Sali Aljehani</span></footer>
 
 <script>
 const SHEET_ID = '1MRUWG3v9Neac-UselMf_HzlfiLtX64a9iJsIUV5FmRU';
@@ -1278,8 +1278,10 @@ async function loadEscalations(){
 }
 
 async function loadEOM(){
-  const rows = await fetchCSV('Employee of the MONTH');
-  EOM_DATA = rows;
+  try{
+    const rows = await fetchCSVRaw(SHEET_ID, 'Employee of the MONTH');
+    EOM_DATA = rows;
+  }catch(e){ console.warn('loadEOM failed:', e); EOM_DATA=[]; }
 }
 
 async function fetchCSV(sheetName){
@@ -4493,97 +4495,65 @@ function renderEOM(){
   if(!el) return;
   if(!EOM_DATA.length){ el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">🏆 No data yet.</div>'; return; }
 
-  const keys = Object.keys(EOM_DATA[0]||{});
-  const teamKey=keys[0], monthKey=keys[1], nameKey=keys[2];
-
-  // Group by month then team
-  const months=[...new Set(EOM_DATA.map(function(r){return String(r[monthKey]||'').split('T')[0].split(' ')[0].substring(0,7);}))].filter(Boolean).sort().reverse();
-  const teams=[...new Set(EOM_DATA.map(function(r){return String(r[teamKey]||'').trim();}))].filter(Boolean);
-
-  let activeMonth=months[0]||'';
-
-  function buildEOM(month){
-    var filtered=EOM_DATA.filter(function(r){ return String(r[monthKey]||'').includes(month); });
-    var byTeam={};
-    filtered.forEach(function(r){ var t=String(r[teamKey]||'').trim(); if(!byTeam[t]) byTeam[t]=[]; byTeam[t].push(r); });
-
-    var html='';
-    Object.keys(byTeam).forEach(function(team){
-      var rows=byTeam[team];
-      html+='<div style="background:#fff;border-radius:12px;border:1px solid #eee;box-shadow:0 2px 10px rgba(0,0,0,.07);margin-bottom:16px;overflow:hidden">'
-        +'<div style="background:linear-gradient(135deg,#c0272d,#e53935);padding:12px 16px">'
-        +'<div style="font-size:14px;font-weight:700;color:#fff">🏆 '+team+'</div>'
-        +'</div>'
-        +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px">'
-        +'<thead><tr style="background:#f9f9f9">';
-      Object.keys(rows[0]).slice(2).forEach(function(c){
-        html+='<th style="padding:7px 10px;color:#555;font-weight:700;border-bottom:2px solid #eee;white-space:nowrap;text-align:center">'+c+'</th>';
-      });
-      html+='</tr></thead><tbody>';
-      rows.forEach(function(r,i){
-        html+='<tr style="background:'+(i===0?'#fff9c4':(i%2===0?'#fff':'#f9f9f9'))+'">';
-        Object.keys(r).slice(2).forEach(function(c){
-          var v=String(r[c]||'').trim();
-          html+='<td style="padding:7px 10px;text-align:center;color:#333'+(i===0?';font-weight:700':'')+'">'+v+'</td>';
-        });
-        html+='</tr>';
-      });
-      html+='</tbody></table></div></div>';
-    });
-    return html;
+  // Parse blocks: title row "Employees Of the Month – <Month> <Year>", then "Winner #1" row, then names row
+  const months=[];
+  for(let i=0;i<EOM_DATA.length;i++){
+    const r=EOM_DATA[i].map(x=>String(x===undefined||x===null?'':x).trim());
+    const title=r.find(c=>/Employees Of the Month/i.test(c));
+    if(title){
+      const m=title.match(/Employees Of the Month\s*[–-]?\s*(.+)/i);
+      const label=m?m[1].trim():title;
+      const namesRow=EOM_DATA[i+2]?EOM_DATA[i+2].map(x=>String(x===undefined||x===null?'':x).trim()):[];
+      const names=namesRow.slice(0,3).filter(Boolean);
+      months.push({label, names});
+    }
   }
 
-  var monthTabs='<div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;justify-content:center">';
-  months.slice(0,6).forEach(function(m){
-    monthTabs+='<button onclick="renderEOMMonth(&apos;'+m+'&apos;)" id="emtab_'+m+'" style="padding:6px 16px;border-radius:16px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:'+(m===activeMonth?'#c0272d':'#f0f0f0')+';color:'+(m===activeMonth?'#fff':'#555')+'">'+m+'</button>';
-  });
-  monthTabs+='</div>';
+  // Count wins per name (Hall of Fame)
+  const winCount={};
+  months.forEach(mo=>mo.names.forEach(n=>{ winCount[n]=(winCount[n]||0)+1; }));
+  const topWinners=Object.entries(winCount).filter(([,c])=>c>1).sort((a,b)=>b[1]-a[1]);
 
-  el.innerHTML='<div style="padding:4px">'
-    +'<div style="font-size:16px;font-weight:700;color:#c0272d;margin-bottom:12px;text-align:center">🏆 Employee of the Month</div>'
-    +monthTabs
-    +'<div id="eom_content">'+buildEOM(activeMonth)+'</div>'
+  const CARD_STYLES=[
+    {icon:'🥇',bg:'linear-gradient(135deg,#FFD700,#FFA000)',label:'Top Performer'},
+    {icon:'🌟',bg:'linear-gradient(135deg,#42A5F5,#1565C0)',label:'Star Achiever'},
+    {icon:'🏆',bg:'linear-gradient(135deg,#66BB6A,#2E7D32)',label:'Excellence Award'}
+  ];
+
+  const hallOfFameHTML=topWinners.length?'<div style="background:linear-gradient(135deg,#fff8e1,#fff3cd);border:2px dashed #FFD700;border-radius:16px;padding:18px;margin-bottom:24px;text-align:center">'
+    +'<div style="font-size:15px;font-weight:800;color:#b8860b;margin-bottom:10px">🌟 Hall of Fame — أكثر الفائزات تكراراً 🌟</div>'
+    +'<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:10px">'
+    +topWinners.map(([name,count])=>'<div style="background:#fff;border-radius:12px;padding:10px 18px;box-shadow:0 2px 8px rgba(0,0,0,.08);min-width:120px">'
+      +'<div style="font-size:13px;font-weight:700;color:#333">'+name+'</div>'
+      +'<div style="font-size:11px;color:#b8860b;font-weight:700;margin-top:2px">🏆 × '+count+'</div>'
+      +'</div>').join('')
+    +'</div></div>':'';
+
+  const monthsHTML=months.map(mo=>{
+    const hasWinners=mo.names.length>0;
+    return '<div style="margin-bottom:24px">'
+      +'<div style="font-size:14px;font-weight:800;color:#1a1a2e;margin-bottom:12px;text-align:center;padding:8px;background:#f5f5f7;border-radius:10px">📅 '+mo.label+'</div>'
+      +(hasWinners
+        ?'<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">'
+          +CARD_STYLES.map((style,i)=>{
+            const name=mo.names[i]||'';
+            if(!name)return'';
+            return '<div style="background:'+style.bg+';border-radius:16px;padding:20px;text-align:center;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.15)">'
+              +'<div style="font-size:34px;margin-bottom:8px">'+style.icon+'</div>'
+              +'<div style="font-size:11px;font-weight:700;opacity:.9;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">'+style.label+'</div>'
+              +'<div style="font-size:15px;font-weight:800">'+name+'</div>'
+              +'</div>';
+          }).join('')
+          +'</div>'
+        :'<div style="text-align:center;padding:20px;color:#bbb;font-size:12px;background:#fafafa;border-radius:12px">🕓 Pending — يتم التحديث قريباً</div>')
+      +'</div>';
+  }).join('');
+
+  el.innerHTML='<div style="padding:4px;max-width:900px;margin:0 auto">'
+    +'<div style="font-size:20px;font-weight:800;color:#c0272d;margin-bottom:20px;text-align:center">🏆 Employee of the Month 🏆</div>'
+    +hallOfFameHTML
+    +monthsHTML
     +'</div>';
-
-  window._eomData=EOM_DATA;
-  window._eomMonths=months;
-}
-
-function renderEOMMonth(month){
-  window._eomMonths.forEach(function(m){
-    var btn=document.getElementById('emtab_'+m);
-    if(btn){ btn.style.background=m===month?'#c0272d':'#f0f0f0'; btn.style.color=m===month?'#fff':'#555'; }
-  });
-  var filtered=window._eomData.filter(function(r){
-    var k=Object.keys(r)[1]; return String(r[k]||'').includes(month);
-  });
-  var keys=Object.keys(filtered[0]||{});
-  var byTeam={};
-  filtered.forEach(function(r){ var t=String(r[keys[0]]||'').trim(); if(!byTeam[t]) byTeam[t]=[]; byTeam[t].push(r); });
-  var html='';
-  Object.keys(byTeam).forEach(function(team){
-    var rows=byTeam[team];
-    html+='<div style="background:#fff;border-radius:12px;border:1px solid #eee;box-shadow:0 2px 10px rgba(0,0,0,.07);margin-bottom:16px;overflow:hidden">'
-      +'<div style="background:linear-gradient(135deg,#c0272d,#e53935);padding:12px 16px">'
-      +'<div style="font-size:14px;font-weight:700;color:#fff">🏆 '+team+'</div>'
-      +'</div>'
-      +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px">'
-      +'<thead><tr style="background:#f9f9f9">';
-    Object.keys(rows[0]).slice(2).forEach(function(c){
-      html+='<th style="padding:7px 10px;color:#555;font-weight:700;border-bottom:2px solid #eee;white-space:nowrap;text-align:center">'+c+'</th>';
-    });
-    html+='</tr></thead><tbody>';
-    rows.forEach(function(r,i){
-      html+='<tr style="background:'+(i===0?'#fff9c4':(i%2===0?'#fff':'#f9f9f9'))+'">';
-      Object.keys(r).slice(2).forEach(function(c){
-        var v=String(r[c]||'').trim();
-        html+='<td style="padding:7px 10px;text-align:center;color:#333'+(i===0?';font-weight:700':'')+'">'+v+'</td>';
-      });
-      html+='</tr>';
-    });
-    html+='</tbody></table></div></div>';
-  });
-  document.getElementById('eom_content').innerHTML=html;
 }
 
 
