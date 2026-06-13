@@ -359,6 +359,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <button class="pnav" onclick="showPage(2,this)">📊 Calls & WhatsApp Report</button>
     <button class="pnav" onclick="showPage(4,this)">📁 Daily Reference</button>
     <button class="pnav" onclick="showPage(8,this)">🏆 Employee of the Month</button>
+    <button class="pnav" onclick="showPage(9,this)">📅 Vacation Schedule</button>
     <button class="pnav" onclick="showPage(7,this)">⚠️ Escalation</button>
   </div>
 
@@ -508,6 +509,14 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
   </div>
   <div id="eomWinner"></div>
   <div class="eom-teams-grid" id="eomTeams"></div>
+</div>
+
+<div id="page9" style="display:none;padding:0">
+  <div style="display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid #eee">
+    <span style="font-size:15px;font-weight:700;color:#1a1a2e">📅 Vacation Schedule 2026</span>
+    <a href="https://docs.google.com/spreadsheets/d/1MRUWG3v9Neac-UselMf_HzlfiLtX64a9iJsIUV5FmRU/edit#gid=644438759" target="_blank" style="margin-left:auto;font-size:11px;color:#1565c0;font-weight:700;text-decoration:none;background:#e3f2fd;padding:4px 12px;border-radius:12px">🔗 Open in Google Sheets</a>
+  </div>
+  <iframe src="https://docs.google.com/spreadsheets/d/1MRUWG3v9Neac-UselMf_HzlfiLtX64a9iJsIUV5FmRU/pubhtml?gid=644438759&single=true&widget=false&headers=false" style="width:100%;height:calc(100vh - 200px);border:none;display:block"></iframe>
 </div>
 <footer style="position:relative">Inbound Daily Dashboard · Petromin Group · Connected to Google Sheets · Auto-updates on refresh<span style="position:absolute;left:14px;top:50%;transform:translateY(-50%)">By: Sali Aljehani</span></footer>
 
@@ -1177,6 +1186,7 @@ function showPage(n,btn){
   if(n===5)renderRoster();
   if(n===6)renderAnnouncements();
   document.getElementById('page8').style.display=n===8?'block':'none';
+  document.getElementById('page9').style.display=n===9?'block':'none';
   if(n===7)renderEscalations();
   if(n===8)renderEOM();
 }
