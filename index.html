@@ -716,12 +716,12 @@ async function loadAllData(){
         if(gm3) {
           dt=parseInt(gm3[1])+'-'+String(parseInt(gm3[2])+1).padStart(2,'0')+'-'+String(parseInt(gm3[3])).padStart(2,'0');
         } else if(dtRaw3.includes('/')) {
-          // Format is M/D/YYYY
+          // Format is D/M/YYYY (day first)
           const parts=dtRaw3.split('/');
           if(parts.length===3) {
             const y=parts[2].length===4?parts[2]:'20'+parts[2];
-            const m=parts[0].padStart(2,'0'); // month first
-            const d=parts[1].padStart(2,'0'); // day second
+            const d=parts[0].padStart(2,'0'); // day first
+            const m=parts[1].padStart(2,'0'); // month second
             dt=y+'-'+m+'-'+d;
           }
         } else if(dtRaw3.match(/\d{4}-\d{2}-\d{2}/)) {
