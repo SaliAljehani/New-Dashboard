@@ -3246,8 +3246,8 @@ function renderPetrominPACTab(arr){
   });
   const amList=Object.values(amMap);
   const amHTML=amList.length?mkCollapsible('🗺️ Area Managers',
-    '<div class="ref-cards-grid">'+amList.map(am=>{
-      return '<div class="ref-card" style="padding:10px 14px;text-align:center">'
+    '<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:12px">'+amList.map(am=>{
+      return '<div class="ref-card" style="padding:10px 14px;text-align:center;max-width:220px">'
         +'<div style="font-size:13px;font-weight:700;color:#333">'+am.name+'</div>'
         +'<div style="font-size:11px;color:#888;margin:3px 0">📦 '+am.branches+' branches</div>'
         +'<div style="font-size:12px;margin-bottom:4px">📞 '+[...am.mobiles].join(' / ')+'</div>'
@@ -3332,7 +3332,7 @@ function renderPetrominTristarTab(arr){
 
   const REGION_COLORS={Central:'#1565c0',Eastern:'#2e7d32',East:'#2e7d32',West:'#c0272d',South:'#6a1b9a',North:'#e65100'};
 
-  const branchHtml='<div class="ref-cards-grid">'+branchRows.map(vals=>{
+  const branchHtml='<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:14px">'+branchRows.map(vals=>{
     const reg=vals[0]||'';
     const branch=vals[1]||'';
     const addr=vals[2]||'';
@@ -3341,7 +3341,7 @@ function renderPetrominTristarTab(arr){
     const phone=fmtNum(vals[5]||'');
     const email=vals[6]||'';
     const rc=REGION_COLORS[reg]||color;
-    return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
+    return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+';width:280px;max-width:100%">'
       +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
       +'<div style="font-size:10px;color:'+rc+';font-weight:700;text-transform:uppercase">'+reg+'</div>'
       +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
@@ -4256,7 +4256,7 @@ function renderRoster(){
       var ds=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
       headerText = ds[parsed.getDay()]+' '+parsed.getDate()+'-'+ms[parsed.getMonth()];
     }
-    tableHTML += '<th style="padding:8px 10px;text-align:center;white-space:nowrap">'+headerText+'</th>';
+    tableHTML += '<th data-agent="'+a+'" style="padding:8px 10px;text-align:center;white-space:nowrap;transition:background .2s">'+headerText+'</th>';
   });
   tableHTML += '</tr></thead><tbody>';
 
@@ -4295,7 +4295,7 @@ function renderRoster(){
     agents.forEach(function(a){
       var v=String(r[a]||'').trim();
       var isOff=v.toLowerCase()==='off';
-      tableHTML+='<td style="padding:7px 10px;text-align:center">'
+      tableHTML+='<td data-agent="'+a+'" style="padding:7px 10px;text-align:center;transition:background .2s">'
         +(v?'<span style="display:inline-block;padding:2px 10px;border-radius:10px;font-weight:600;font-size:11px;background:'+(isOff?'#ffebee':'#e8f5e9')+';color:'+(isOff?'#c0272d':'#2e7d32')+'">'+v+'</span>':'')
         +'</td>';
     });
@@ -4363,9 +4363,32 @@ function renderRoster(){
     +'<button onclick="switchScheduleTab(&apos;daily&apos;)" id="stab_daily" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#c0272d;color:#fff;margin:4px">📅 Daily Off Schedule</button>'
     +'<button onclick="switchScheduleTab(&apos;weekly&apos;)" id="stab_weekly" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;margin:4px">📞 Weekly Calls & Break</button>'
     +'</div>'
-    +'<div id="schedule_daily">'+tableHTML+'</div>'
+    +'<div id="schedule_daily">'
+    +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;justify-content:center">'
+    +'<span style="font-size:12px;font-weight:600;color:#555">🔍 Highlight Agent:</span>'
+    +'<select id="scheduleAgentSel" onchange="highlightScheduleAgent(this.value)" style="padding:6px 14px;border-radius:16px;border:1.5px solid #c0272d;font-size:12px;font-weight:600;color:#333;background:#fff;cursor:pointer">'
+    +'<option value="">— All Agents —</option>'
+    +agents.map(a=>'<option value="'+a+'">'+a+'</option>').join('')
+    +'</select>'
+    +'</div>'
+    +tableHTML
+    +'</div>'
     +'<div id="schedule_weekly" style="display:none">'+weeklyHTML+'</div>'
     +'</div>';
+}
+
+function highlightScheduleAgent(name){
+  // Reset all cells
+  document.querySelectorAll('#schedule_daily [data-agent]').forEach(function(el){
+    el.style.background='';
+    el.style.fontWeight='';
+  });
+  if(!name)return;
+  // Highlight selected agent column
+  document.querySelectorAll('#schedule_daily [data-agent="'+name+'"]').forEach(function(el){
+    el.style.background='#fff3cd';
+    el.style.fontWeight='700';
+  });
 }
 
 function switchScheduleTab(tab){
