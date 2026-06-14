@@ -802,6 +802,13 @@ function ag(rows){let I=0,T=0,W=0,DI=0,tS=0,tN=0,hS=0,hN=0;rows.forEach(r=>{I+=r
 
 // ── RENDER ALL ───────────────────────────────────────────────────────────────
 function renderAll(){
+  const AVATAR_COLORS=[
+    {bg:'linear-gradient(135deg,#ef5350,#c0272d)',border:'#c0272d',text:'#fff'},
+    {bg:'linear-gradient(135deg,#42a5f5,#1565c0)',border:'#1565c0',text:'#fff'},
+    {bg:'linear-gradient(135deg,#66bb6a,#2e7d32)',border:'#2e7d32',text:'#fff'},
+    {bg:'linear-gradient(135deg,#ab47bc,#6a1b9a)',border:'#6a1b9a',text:'#fff'},
+    {bg:'linear-gradient(135deg,#ffa726,#e65100)',border:'#e65100',text:'#fff'},
+  ];
   const data=fall();
   const agents=Object.keys(data).sort();
   const am={};agents.forEach(a=>am[a]=ag(data[a]));
@@ -810,9 +817,10 @@ function renderAll(){
     document.getElementById('agrid').innerHTML=sorted.map((nm,i)=>{
       const a=am[nm];
       const init=nm.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const c=AVATAR_COLORS[i%AVATAR_COLORS.length];
       return`<div class="ac${nm===CA?' sel':''}" onclick="selAgent('${nm}')">
         <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px">
-          <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#e0e0e0,#eeeeee);border:2px solid #bdbdbd;display:flex;align-items:center;justify-content:center;color:#c0272d;font-size:12px;font-weight:700;flex-shrink:0">${init}</div>
+          <div style="width:34px;height:34px;border-radius:50%;background:${c.bg};border:2px solid ${c.border};display:flex;align-items:center;justify-content:center;color:${c.text};font-size:12px;font-weight:700;flex-shrink:0">${init}</div>
           <div><div class="acn">${nm}</div><div style="font-size:10px;color:#aaa">#${i+1} · ${a.days} days</div></div>
         </div>
         <div class="acs">
@@ -1308,15 +1316,23 @@ async function loadAgentDir(){
 }
 
 function renderDir(filter=''){
+  const AVATAR_COLORS=[
+    {bg:'linear-gradient(135deg,#ef5350,#c0272d)',border:'#c0272d',text:'#fff'},
+    {bg:'linear-gradient(135deg,#42a5f5,#1565c0)',border:'#1565c0',text:'#fff'},
+    {bg:'linear-gradient(135deg,#66bb6a,#2e7d32)',border:'#2e7d32',text:'#fff'},
+    {bg:'linear-gradient(135deg,#ab47bc,#6a1b9a)',border:'#6a1b9a',text:'#fff'},
+    {bg:'linear-gradient(135deg,#ffa726,#e65100)',border:'#e65100',text:'#fff'},
+  ];
   const list = filter
     ? AGENTS_DIR.filter(a=>a.name.toLowerCase().includes(filter.toLowerCase()))
     : AGENTS_DIR;
   document.getElementById('dirCount').textContent = list.length + ' agents';
-  document.getElementById('dirGrid').innerHTML = list.map(a=>{
+  document.getElementById('dirGrid').innerHTML = list.map((a,idx)=>{
     const init = a.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const c = AVATAR_COLORS[idx % AVATAR_COLORS.length];
     return `<div class="dir-card">
       <div class="dir-top">
-        <div class="dir-av">${init}</div>
+        <div class="dir-av" style="background:${c.bg};border-color:${c.border};color:${c.text}">${init}</div>
         <div>
           <div class="dir-name">${a.name}</div>
           <div class="dir-badge">Badge: ${a.badge||'–'}</div>
