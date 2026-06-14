@@ -4231,10 +4231,9 @@ function renderRoster(){
   // Build schedule table
   var tableHTML = '<div style="overflow-x:auto">'
     +'<table style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px">'
-    +'<thead><tr style="background:#c0272d;color:#fff">'
-    +'<th style="padding:8px 12px;text-align:center;min-width:130px">Date</th>';
+    +'<thead><tr style="background:#f5f5f5">'
+    +'<th style="padding:8px 12px;text-align:center;min-width:130px;color:#555;font-weight:700">Date</th>';
   agents.forEach(function(a){
-    // Try to parse date headers
     var headerText = a;
     var parsed = new Date(a);
     if(!isNaN(parsed) && parsed.getFullYear() > 2000){
@@ -4242,7 +4241,7 @@ function renderRoster(){
       var ds=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
       headerText = ds[parsed.getDay()]+' '+parsed.getDate()+'-'+ms[parsed.getMonth()];
     }
-    tableHTML += '<th data-agent="'+a+'" style="padding:8px 10px;text-align:center;white-space:nowrap;transition:background .2s">'+headerText+'</th>';
+    tableHTML += '<th data-agent="'+a+'" style="padding:8px 10px;text-align:center;white-space:nowrap;transition:background .2s;background:#f5f5f5;color:#333;font-weight:700">'+headerText+'</th>';
   });
   tableHTML += '</tr></thead><tbody>';
 
@@ -4276,7 +4275,7 @@ function renderRoster(){
     }
     var rowBg=isToday?'#fff3cd':(i%2===0?'#fff':'#f9f9f9');
     tableHTML+='<tr style="background:'+rowBg+';cursor:pointer" onclick="this.style.background=this.style.background==\'#e3f2fd\'?\''+rowBg+'\':\'#e3f2fd\'">'
-      +'<td style="padding:7px 12px;text-align:center;font-weight:'+(isToday?'700':'500')+';color:'+(isToday?'#c0272d':'#444')+';white-space:nowrap">'
+      +'<td style="padding:7px 12px;text-align:center;font-weight:600;color:'+(isToday?'#c0272d':'#555')+';white-space:nowrap;background:'+(isToday?'#fff3cd':'#f5f5f5')+'">'
       +displayDate+(isToday?' 📍':'')+'</td>';
     agents.forEach(function(a){
       var v=String(r[a]||'').trim();
@@ -4330,8 +4329,8 @@ function renderRoster(){
         if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(brk)) brk=fmtTime(brk);
         if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(agent)&&!brk){brk=fmtTime(agent);agent='';}
         t+='<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+';border-bottom:1px solid #f0f0f0">'
-          +'<td style="padding:8px 14px;color:#555;text-align:center;font-weight:600">'+week+'</td>'
-          +'<td style="padding:8px 14px;color:#333;text-align:center;font-weight:700">'+agent+'</td>'
+          +'<td style="padding:8px 14px;text-align:center;font-weight:700;background:#e3f2fd;color:#1565c0;border-radius:6px;margin:2px">'+week+'</td>'
+          +'<td style="padding:8px 14px;color:#333;text-align:center;font-weight:700;background:#f5f5f5">'+agent+'</td>'
           +'<td style="padding:8px 14px;font-weight:700;color:#2e7d32;text-align:center;font-size:13px">'+brk+'</td>'
           +'</tr>';
       });
