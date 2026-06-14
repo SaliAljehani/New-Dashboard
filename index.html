@@ -1359,7 +1359,7 @@ const REF_SHEETS = {
   },
   petromin: {
     id: '11M28wIA4Ee84ohrIqzXtobK7X-QsrruoL4MwjoGz-6k',
-    tabs: ['Instruction','New PAC','Petromin Tristar','Tire&Battery','Eco Wash','Fuel Station','DIESEL','PE-Emailz','Complaints Emails']
+    tabs: ['Instruction','Autocare','Petromin Tristar','Tire&Battery','Eco Wash','Fuel Station','DIESEL','PE-Emailz','Complaints Emails','Warranty']
   },
   foton: {
     id: '1PBhYlWtWqGZFZi_wgjDTlUaoN6O0QeS4P1CHcd40H4Y',
@@ -2546,133 +2546,93 @@ function renderPetrominInstructionTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#DAA520';
 
-  const guidance=[], addService=[], oilBrands=[], carBrands=[], pacages=[], battery=[];
-  const oilTable={petromin:[],toyota:[]}, dieselInfo={};
-  let mode='guidance';
+  const sections={
+    'Oil Brand':[],
+    'Petromin Oil':[],
+    'Weekly Offers':[],
+    'Extra Information':[]
+  };
+  let currentSection=null;
 
   arr.forEach((r,idx)=>{
     const v=Object.values(r).map(x=>String(x===undefined||x===null?'':x).trim());
-    const v0=v[0]||'', v1=v[1]||'', v2=v[2]||'', v3=v[3]||'', v4=v[4]||'';
-    if(idx===1 && v0==='Section' && v1==='Title')return; // skip header row
-
-    if(v0==='PE - Additional Service'){ mode='addservice'; if(v3)oilBrands.push({h:true,v:v3}); if(v4)carBrands.push({h:true,v:v4}); return; }
-    if(v0==='Pacages Name'){ mode='pacages'; return; }
-    if(v0==='Battery Part'){ mode='battery'; return; }
-    if(v0==='Petromin Oil'&&v2==='Toyota Oil'){ mode='oils'; oilTable._headerRow=0; return; }
-    if(v0==='Oils Name'){ mode='oilsname'; oilTable.brands=v2; return; }
-
-    if(mode==='guidance'){
-      if(v0 && v1) guidance.push({title:v0,content:v1});
-      return;
-    }
-    if(mode==='addservice'){
-      if(v0 && v1) addService.push({item:v0,price:v1});
-      if(v3) oilBrands.push({h:false,v:v3});
-      if(v4) carBrands.push({h:false,v:v4});
-      return;
-    }
-    if(mode==='pacages'){
-      if(v0 && v1) pacages.push({name:v0,price:v1,warranty:v[2]||''});
-      return;
-    }
-    if(mode==='battery'){
-      if(v0) battery.push({part:v0,total:v1,comment:v[2]||''});
-      return;
-    }
-    if(mode==='oils'){
-      // Row pattern: 5000KM|10000KM|5000KM|10000KM (header), then viscosity rows, then prices
-      if(oilTable._headerRow===0){ oilTable.km={petromin:[v0,v1],toyota:[v2,v3]}; oilTable._headerRow=1; return; }
-      if(/SR/.test(v0)||/SR/.test(v1)){ oilTable.prices={petromin:v0,toyota:v1}; return; }
-      oilTable.petromin.push([v0,v1]);
-      oilTable.toyota.push([v2,v3]);
-      return;
-    }
-    if(mode==='oilsname'){
-      if(v0==='Diesel'){ dieselInfo.type=v1; dieselInfo.label=v2; dieselInfo.price=v3; }
-      return;
-    }
+    const v0=v[0]||'', v1=v[1]||'', v2=v[2]||'';
+    if(idx===0||idx===1) return; // skip gviz header rows
+    if(sections.hasOwnProperty(v0)){ currentSection=v0; return; }
+    if(!currentSection) return;
+    if(v0||v1||v2) sections[currentSection].push({col0:v0,col1:v1,col2:v2});
   });
 
-  // Guidance cards
-  const guidanceHTML=guidance.length?'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">'
-    +guidance.map((g,i)=>{
-      const c=i===0?'#c0272d':'#e65100';
-      return '<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid '+c+';direction:rtl;text-align:right">'
-        +'<div style="font-size:12px;font-weight:700;color:'+c+';margin-bottom:8px;line-height:1.6">'+g.title+'</div>'
-        +'<div style="font-size:11px;color:#555;line-height:1.9;white-space:pre-wrap">'+g.content.replace(/^"|"\s*$/g,'')+'</div>'
+  // Oil Brand — pill list
+  const oilBrandHTML=sections['Oil Brand'].length?mkCollapsible('🛢️ Oil Brands',
+    '<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:8px">'
+    +sections['Oil Brand'].map(r=>{
+      const brands=r.col0.split(/\/|,/).map(b=>b.trim()).filter(Boolean);
+      return brands.map(b=>'<span style="background:'+color+'15;color:'+color+';font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;border:1px solid '+color+'44">'+b+'</span>').join('');
+    }).join('')
+    +'</div>'
+    ,'instr_oilbrand',color):'';
+
+  // Petromin Oil — table
+  const oilRows=sections['Petromin Oil'].filter(r=>r.col0&&r.col1&&r.col2);
+  const oilHeaderRow=sections['Petromin Oil'].find(r=>r.col0==='Type of oil');
+  const oilDataRows=sections['Petromin Oil'].filter(r=>r.col0!=='Type of oil'&&r.col0&&r.col1);
+  const petrominOilHTML=oilDataRows.length?mkCollapsible('🚗 Petromin Oil',
+    '<div style="overflow-x:auto;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:13px">'
+    +'<thead><tr style="background:'+color+'15"><th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33">نوع الزيت</th><th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">الاسم</th><th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">السعر</th></tr></thead><tbody>'
+    +oilDataRows.map((r,i)=>'<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'"><td style="padding:9px 16px;font-weight:600">'+r.col0+'</td><td style="padding:9px 16px;text-align:center">'+r.col1+'</td><td style="padding:9px 16px;text-align:center;font-weight:700;color:'+color+'">'+r.col2+'</td></tr>').join('')
+    +'</tbody></table></div>'
+    ,'instr_petrominoil',color):'';
+
+  // Weekly Offers — card
+  const weeklyOfferHTML=sections['Weekly Offers'].length?mkCollapsible('🎉 Weekly Offers',
+    '<div style="background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.07)">'
+    +sections['Weekly Offers'].map(r=>{
+      const text=(r.col0||r.col1||'').replace(/^"|"$/g,'').trim();
+      return '<div style="font-size:13px;color:#333;line-height:2;direction:rtl;text-align:right;white-space:pre-wrap">'+text+'</div>';
+    }).join('<hr style="border:none;border-top:1px dashed #eee;margin:10px 0">')
+    +'</div>'
+    ,'instr_weeklyoffer',color):'';
+
+  // Extra Information — collapsible cards per item
+  const extraHTML=sections['Extra Information'].length?mkCollapsible('ℹ️ Extra Information',
+    '<div style="display:flex;flex-direction:column;gap:10px">'
+    +sections['Extra Information'].map(r=>{
+      const title=r.col0||'';
+      const text=(r.col1||'').replace(/^"|"$/g,'').trim();
+      if(!title&&!text)return'';
+      return '<div style="background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-right:4px solid '+color+';direction:rtl;text-align:right">'
+        +(title?'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">'+title+'</div>':'')
+        +(text?'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+text+'</div>':'')
         +'</div>';
     }).join('')
-    +'</div>':'';
+    +'</div>'
+    ,'instr_extra',color):'';
 
-  // Additional Service pricing table
-  const addServiceHTML=addService.length?mkCollapsible('💰 PE - Additional Service Pricing',
-    '<div style="overflow-x:auto;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:12px">'
-    +'<thead><tr style="background:'+color+'12"><th style="padding:9px 14px;color:'+color+';font-weight:700;text-align:right;border-bottom:2px solid '+color+'22">Service</th><th style="padding:9px 14px;color:'+color+';font-weight:700;text-align:center;border-bottom:2px solid '+color+'22">Price</th></tr></thead><tbody>'
-    +addService.map((a,i)=>'<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'"><td style="padding:7px 14px;text-align:right;direction:rtl">'+a.item+'</td><td style="padding:7px 14px;text-align:center;font-weight:700;color:'+color+'">'+a.price+'</td></tr>').join('')
-    +'</tbody></table></div>'
-    ,'instr_petromin_addsvc',color):'';
+  return oilBrandHTML+petrominOilHTML+weeklyOfferHTML+extraHTML;
+}
 
-  // Pacages table
-  const pacagesHTML=pacages.length?mkCollapsible('📦 Pacages',
-    '<div style="overflow-x:auto;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:12px">'
-    +'<thead><tr style="background:'+color+'12"><th style="padding:9px 14px;color:'+color+';font-weight:700;text-align:center;border-bottom:2px solid '+color+'22">Package</th><th style="padding:9px 14px;color:'+color+';font-weight:700;text-align:center;border-bottom:2px solid '+color+'22">Price</th><th style="padding:9px 14px;color:'+color+';font-weight:700;text-align:center;border-bottom:2px solid '+color+'22">Warranty</th></tr></thead><tbody>'
-    +pacages.map((p,i)=>'<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'"><td style="padding:7px 14px;text-align:center;font-weight:700">'+p.name+'</td><td style="padding:7px 14px;text-align:center;color:'+color+';font-weight:700">'+p.price+'</td><td style="padding:7px 14px;text-align:center">'+p.warranty+'</td></tr>').join('')
-    +'</tbody></table></div>'
-    ,'instr_petromin_pacages',color):'';
 
-  // Battery pricing table
-  const batteryHTML=battery.length?mkCollapsible('🔋 Battery Pricing (AC Delco)',
-    '<div style="overflow-x:auto;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:12px">'
-    +'<thead><tr style="background:'+color+'12"><th style="padding:9px 14px;color:'+color+';font-weight:700;text-align:right;border-bottom:2px solid '+color+'22">Part</th><th style="padding:9px 14px;color:'+color+';font-weight:700;text-align:center;border-bottom:2px solid '+color+'22">Total (SAR)</th><th style="padding:9px 14px;color:'+color+';font-weight:700;text-align:center;border-bottom:2px solid '+color+'22">Comment</th></tr></thead><tbody>'
-    +battery.map((b,i)=>'<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'"><td style="padding:7px 14px;text-align:right">'+b.part+'</td><td style="padding:7px 14px;text-align:center;font-weight:700;color:'+color+'">'+(b.total||'')+'</td><td style="padding:7px 14px;text-align:center">'+(b.comment||'')+'</td></tr>').join('')
-    +'</tbody></table></div>'
-    ,'instr_petromin_battery',color):'';
-
-  // Oil/Car brand lists side by side
-  const brandList=(arr,title)=>{
-    if(!arr.length)return'';
-    return '<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06)">'
-      +'<div style="font-size:12px;font-weight:700;color:'+color+';margin-bottom:8px;text-align:center">'+title+'</div>'
-      +'<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">'
-      +arr.filter(x=>!x.h).map(x=>'<span style="background:'+color+'12;color:'+color+';font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px">'+x.v+'</span>').join('')
-      +'</div></div>';
-  };
-  const brandsHTML=(oilBrands.length||carBrands.length)?'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">'
-    +brandList(oilBrands,'🛢️ Oil Brands')
-    +brandList(carBrands,'🚗 PMS / Car Brands')
-    +'</div>':'';
-
-  // Petromin Oil vs Toyota Oil viscosity tables
-  const oilCard=(title,km,rows,price)=>{
-    if(!km)return'';
-    return '<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06)">'
-      +'<div style="font-size:12px;font-weight:700;color:'+color+';margin-bottom:8px;text-align:center">'+title+'</div>'
-      +'<table style="width:100%;border-collapse:collapse;font-size:11px">'
-      +'<thead><tr><th style="padding:5px;color:#888;border-bottom:1px solid #eee">'+km[0]+'</th><th style="padding:5px;color:#888;border-bottom:1px solid #eee">'+km[1]+'</th></tr></thead>'
-      +'<tbody>'+rows.filter(r=>r[0]||r[1]).map(r=>'<tr><td style="padding:5px;text-align:center;font-weight:600">'+(r[0]||'')+'</td><td style="padding:5px;text-align:center;font-weight:600">'+(r[1]||'')+'</td></tr>').join('')+'</tbody>'
-      +'</table>'
-      +(price?'<div style="text-align:center;margin-top:8px;font-size:12px;font-weight:700;color:'+color+'">💰 '+price+'</div>':'')
-      +'</div>';
-  };
-  const oilTablesHTML=oilTable.km?'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">'
-    +oilCard('🛢️ Petromin Oil',oilTable.km.petromin,oilTable.petromin,oilTable.prices?oilTable.prices.petromin:'')
-    +oilCard('🚗 Toyota Oil',oilTable.km.toyota,oilTable.toyota,oilTable.prices?oilTable.prices.toyota:'')
-    +'</div>':'';
-
-  // Diesel info card
-  const dieselHTML=dieselInfo.type?'<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-top:12px;text-align:center">'
-    +'<div style="font-size:12px;font-weight:700;color:'+color+';margin-bottom:6px">🛢️ Diesel</div>'
-    +'<div style="display:flex;justify-content:center;gap:16px;font-size:12px;color:#444">'
-    +'<span>'+dieselInfo.type+'</span>'
-    +(dieselInfo.label?'<span>'+dieselInfo.label+'</span>':'')
-    +(dieselInfo.price?'<span style="font-weight:700;color:'+color+'">'+dieselInfo.price+'</span>':'')
-    +'</div></div>':'';
-
-  if(oilTable.brands){
-    var brandsNote='<div style="text-align:center;font-size:11px;color:#888;margin-top:8px">Oils Name: '+oilTable.brands+'</div>';
-  }else{ var brandsNote=''; }
-
-  return guidanceHTML+addServiceHTML+pacagesHTML+brandsHTML+oilTablesHTML+brandsNote+dieselHTML;
+function renderPetrominWarrantyTab(arr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const color='#DAA520';
+  const items=[];
+  arr.forEach((r,idx)=>{
+    const v=Object.values(r).map(x=>String(x===undefined||x===null?'':x).trim());
+    if(idx===0)return;
+    const v0=v[0]||'', v1=v[1]||'', v2=v[2]||'';
+    if(v0==='Warranty')return; // skip section header row
+    if(v1&&v2) items.push({title:v1,text:v2.replace(/^"|"$/g,'').trim()});
+  });
+  if(!items.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  return '<div style="display:flex;flex-direction:column;gap:10px">'
+    +items.map(it=>{
+      return '<div style="background:#fff;border-radius:12px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border-right:4px solid '+color+';direction:rtl;text-align:right">'
+        +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">⚠️ '+it.title+'</div>'
+        +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+it.text+'</div>'
+        +'</div>';
+    }).join('')
+    +'</div>';
 }
 
 function renderPetrominLocationListTab(arr, kind){
@@ -3967,7 +3927,8 @@ async function renderRefBrand(brand,tabIdx){
       }
       console.log('Petromin',sheetName,'rows:',arr.length,'sample:',arr[0]);
       if(t==='Instruction') container.innerHTML=renderPetrominInstructionTab(arr);
-      else if(t==='New PAC') container.innerHTML=renderPetrominPACTab(arr);
+      else if(t==='Autocare'||t==='New PAC') container.innerHTML=renderPetrominPACTab(arr);
+      else if(t==='Warranty') container.innerHTML=renderPetrominWarrantyTab(arr);
       else if(t==='Petromin Tristar') container.innerHTML=renderPetrominTristarTab(arr);
       else if(t==='Eco Wash') container.innerHTML=renderPetrominLocationListTab(arr,'ecowash');
       else if(t==='Fuel Station') container.innerHTML=renderPetrominLocationListTab(arr,'fuel');
