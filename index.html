@@ -1573,7 +1573,7 @@ const BRANCH_REGION_COLORS = {
 
 function renderNissanBranchTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-
+  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#f9a825',baicRecall:'#4a148c',petromin:'#DAA520',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
   const fmtNum = n => {
     const s=String(n||'').trim();
     if(!s||s==='-') return '';
@@ -3558,7 +3558,7 @@ function copyNissanAppForm(){
 
 function renderSMSTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-
+  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#f9a825',baicRecall:'#4a148c',petromin:'#DAA520',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
   // All data comes under 3S keys — sections separated by header rows
   // Header rows: values equal their key names (e.g. "PAC Appointment SMS EN" == key "3S Appointment SMS EN")
   var sections = {s3:[], pac:[], body:[]};
