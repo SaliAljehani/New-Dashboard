@@ -38,7 +38,7 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .main{max-width:1300px;margin:0 auto;padding:18px 24px}
 .page2{display:none;max-width:1300px;margin:0 auto;padding:18px 24px}
 .hero{background:#fff;border-radius:14px;padding:18px 22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;gap:18px;border-left:5px solid #c0272d}
-.av{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#c0272d,#7b0000);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:700;flex-shrink:0}
+.av{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#fce8e0,#f5c5b8);display:flex;align-items:center;justify-content:center;color:#c0272d;font-size:18px;font-weight:700;flex-shrink:0;border:2px solid #c0272d}
 .hi2{font-size:18px;font-weight:700;color:#1a1a2e}
 .hi3{font-size:12px;color:#444;margin-top:2px}
 .rkbig{background:linear-gradient(135deg,#c0272d,#7b0000);color:#fff;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600}
@@ -82,7 +82,7 @@ tr:last-child td{border-bottom:none}
 .dir-card:hover{border-color:#c0272d;transform:translateY(-2px);box-shadow:0 4px 14px rgba(192,39,45,.15)}
 .dir-card.active{border-color:#c0272d;background:#fef9f9}
 .dir-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.dir-av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#c0272d,#7b0000);display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:700;flex-shrink:0}
+.dir-av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#fce8e0,#f5c5b8);display:flex;align-items:center;justify-content:center;color:#c0272d;font-size:15px;font-weight:700;flex-shrink:0;border:2px solid #c0272d}
 .dir-name{font-size:14px;font-weight:700;color:#1a1a2e}
 .dir-badge{font-size:11px;color:#444;margin-top:2px}
 .dir-info{display:flex;flex-direction:column;gap:6px}
@@ -247,8 +247,8 @@ tr:last-child td{border-bottom:none}
 .ref-card-hours{font-size:10px;color:#888;border-top:1px solid #f0f0f0;padding-top:7px;margin-top:7px;line-height:1.5}
 
 /* Email cards */
-.ref-email-card{background:#f9fffe;border-radius:10px;padding:12px 14px;border:1px solid #b2dfdb;transition:.15s;margin-bottom:4px;text-align:center}
-.ref-email-card:hover{border-color:#00695c;background:#fff}
+.ref-email-card{background:#fff;border-radius:10px;padding:12px 14px;border:2px solid #fce8e0;transition:.15s;margin-bottom:4px;text-align:center;box-shadow:0 2px 8px rgba(192,39,45,.08)}
+.ref-email-card:hover{border-color:#c0272d;background:#fdf6f0}
 .ref-email-label{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px;text-align:center}
 .ref-email-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:5px;flex-wrap:wrap}
 .ref-email-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap;margin-top:2px}
@@ -820,7 +820,7 @@ function renderAll(){
       const init=nm.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
       return`<div class="ac${nm===CA?' sel':''}" onclick="selAgent('${nm}')">
         <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px">
-          <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#c0272d,#7b0000);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">${init}</div>
+          <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#fce8e0,#f5c5b8);border:2px solid #c0272d;display:flex;align-items:center;justify-content:center;color:#c0272d;font-size:12px;font-weight:700;flex-shrink:0">${init}</div>
           <div><div class="acn">${nm}</div><div style="font-size:10px;color:#aaa">#${i+1} · ${a.days} days</div></div>
         </div>
         <div class="acs">
@@ -1607,7 +1607,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
 
   const emailHdr =
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">'
-    +'<div class="ref-email-card" style="border-left:4px solid #00695c;text-align:center">'
+    +'<div class="ref-email-card" style="border-left:4px solid #DAA520;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
     +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+pills(emCfg.req.to)+'</div>'
     +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+pills(emCfg.req.cc)+'</div>'
@@ -2062,7 +2062,7 @@ function renderStellantisSparePartsTab(arr){
 
   // Email header — matches reference image (TO + CC rows, two cards)
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +'<div class="ref-email-card" style="border-left:4px solid #00695c;text-align:center">'
+    +'<div class="ref-email-card" style="border-left:4px solid #DAA520;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
     +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="color:#1565c0;text-decoration:none">sali.aljehani@petromin.com</a></span></div>'
     +'</div>'
@@ -2125,7 +2125,7 @@ function renderStellantisPMSTab(arr, sheetName){
 
   const emailHtml=(complaint.to||complaint.cc||request.to||request.cc)?
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +'<div class="ref-email-card" style="border-left:4px solid #00695c;text-align:center">'
+    +'<div class="ref-email-card" style="border-left:4px solid #DAA520;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
     +(request.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fmtE(request.to)+'</div>':'')
     +(request.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(request.cc)+'</div>':'')
@@ -2213,7 +2213,7 @@ function renderStellantisPACTab(arr){
 
   // Email header — matches reference image, with CC added to both
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +'<div class="ref-email-card" style="border-left:4px solid #00695c;text-align:center">'
+    +'<div class="ref-email-card" style="border-left:4px solid #DAA520;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
     +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="color:#1565c0;text-decoration:none">sali.aljehani@petromin.com</a></span></div>'
     +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span><span style="font-size:11px;color:#444"><a href="mailto:cs.agent@petromin.com" style="color:#1565c0;text-decoration:none">cs.agent@petromin.com</a></span></div>'
@@ -2450,7 +2450,7 @@ function renderBaicServiceTab(arr, apptArr){
 
   // Email header
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +'<div class="ref-email-card" style="border-left:4px solid #00695c;text-align:center">'
+    +'<div class="ref-email-card" style="border-left:4px solid #DAA520;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
     +(emTo.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">'+emTo.request.replace(/,\s*$/,'')+'</span></div>':'')
     +(emCc.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.request)+'</div>':'')
@@ -3222,7 +3222,7 @@ function renderPetrominPACTab(arr){
 
   // Email cards
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +'<div class="ref-email-card" style="border-left:4px solid #00695c;text-align:center">'
+    +'<div class="ref-email-card" style="border-left:4px solid #DAA520;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
     +(emRows.Request?.to?'<div style="font-size:11px;color:#444;margin-bottom:5px"><span class="ref-email-tag to">TO</span> '+emRows.Request.to.replace(/,\s*$/,'')+'</div>':'')
     +(emRows.Request?.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emRows.Request.cc)+'</div>':'')
@@ -3315,7 +3315,7 @@ function renderPetrominTristarTab(arr){
   const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700;text-decoration:none;margin:1px">'+s+'</a>';}).filter(Boolean).join('');
 
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +'<div class="ref-email-card" style="border-left:4px solid #00695c;text-align:center">'
+    +'<div class="ref-email-card" style="border-left:4px solid #DAA520;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
     +(emTo.request?'<div style="font-size:11px;color:#444;margin-bottom:5px"><span class="ref-email-tag to">TO</span> '+emTo.request.replace(/,\s*$/,'')+'</div>':'')
     +(emCc.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.request)+'</div>':'')
@@ -3421,7 +3421,7 @@ function renderBodyShopTab(arr){
 
   // Email header
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +'<div class="ref-email-card" style="border-left:4px solid #00695c;text-align:center">'
+    +'<div class="ref-email-card" style="border-left:4px solid #DAA520;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
     +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="color:#1565c0;text-decoration:none">sali.aljehani@petromin.com</a></span></div>'
     +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span><span style="font-size:11px;color:#444"><a href="mailto:cs.agent@petromin.com" style="color:#1565c0;text-decoration:none">cs.agent@petromin.com</a></span></div>'
@@ -4360,13 +4360,6 @@ function renderRoster(){
     +'<button onclick="switchScheduleTab(&apos;weekly&apos;)" id="stab_weekly" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;margin:4px">📞 Weekly Calls & Break</button>'
     +'</div>'
     +'<div id="schedule_daily">'
-    +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;justify-content:center">'
-    +'<span style="font-size:12px;font-weight:600;color:#555">🔍 Highlight Agent:</span>'
-    +'<select id="scheduleAgentSel" onchange="highlightScheduleAgent(this.value)" style="padding:6px 14px;border-radius:16px;border:1.5px solid #c0272d;font-size:12px;font-weight:600;color:#333;background:#fff;cursor:pointer">'
-    +'<option value="">— All Agents —</option>'
-    +agents.map(a=>'<option value="'+a+'">'+a+'</option>').join('')
-    +'</select>'
-    +'</div>'
     +tableHTML
     +'</div>'
     +'<div id="schedule_weekly" style="display:none">'+weeklyHTML+'</div>'
@@ -4747,7 +4740,7 @@ async function renderRef(){
 
       // CONTACT NUMBERS — merged single panel
       +'<div class="ref-info-panel">'
-      +'<div class="ref-panel-header" style="background:linear-gradient(135deg,#c0272d,#7b0000)">📞 Contact Numbers</div>'
+      +'<div class="ref-panel-header" style="background:linear-gradient(135deg,#fdf6f0,#fce8e0);color:#c0272d;border-bottom:2px solid #c0272d">📞 Contact Numbers</div>'
       +'<div class="ref-panel-body"><div class="ref-contacts-grid">'
       +makePills(tollFree,'#c0272d')
       +makePills(waNums,'#2e7d32')
@@ -4757,8 +4750,8 @@ async function renderRef(){
 
       // SUBJECT 2-COL
       +'<div class="ref-info-panel">'
-      +'<div class="ref-panel-header" style="background:linear-gradient(135deg,#c0272d,#9e1b1b);cursor:pointer" onclick="toggleRefSection(\'refSubjectBody\',\'refSubjectIco\')">'
-      +'📋 Subject Guide<span id="refSubjectIco" style="margin-left:auto">▲</span>'
+      +'<div class="ref-panel-header" style="background:linear-gradient(135deg,#fdf6f0,#fce8e0);color:#c0272d;border-bottom:2px solid #c0272d;cursor:pointer" onclick="toggleRefSection(\'refSubjectBody\',\'refSubjectIco\')">'
+      +'📋 Subject Guide<span id="refSubjectIco" style="margin-left:auto;color:#c0272d">▲</span>'
       +'</div>'
       +'<div id="refSubjectBody"><div class="ref-panel-body">'
       +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">'
