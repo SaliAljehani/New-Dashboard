@@ -1359,7 +1359,7 @@ const REF_SHEETS = {
   },
   petromin: {
     id: '11M28wIA4Ee84ohrIqzXtobK7X-QsrruoL4MwjoGz-6k',
-    tabs: ['Instruction','Autocare','Petromin Tristar','Tire&Battery','Eco Wash','Fuel Station','DIESEL','PE-Emailz','Complaints Emails','Warranty']
+    tabs: ['Instruction','Autocare','Petromin Tristar','Tire&Battery','Eco Wash','Fuel Station','DIESEL','PE-Emailz','Complaints Emails']
   },
   foton: {
     id: '1PBhYlWtWqGZFZi_wgjDTlUaoN6O0QeS4P1CHcd40H4Y',
@@ -3680,6 +3680,7 @@ function showRefBrandPage(brand){
     +(brand==='nissan'?'<button onclick="toggleRegion(\'nissanAreaMgrGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🗺️ Area Manager <span id="ico_nissanAreaMgrGlobal">▼</span></button>':'')
     +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e3f2fd"><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="color:#1565c0;text-decoration:none">ahmed.ateeq@petromin.com</a></td></tr><tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="color:#1565c0;text-decoration:none">simon.white@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="color:#1565c0;text-decoration:none">z.bakhurji@petromin.com</a></td></tr></tbody></table></div>':'')
     +(brand==='baic'?'<button onclick="loadVehicleModels(\'baic\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Vehicles <span id="ico_baicModels">▼</span></button>':'')
+    +(brand==='petromin'?'<button onclick="togglePetrominWarranty()" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">⚠️ Warranty <span id="ico_petrominWarranty">▼</span></button>':'')
     +(brand==='baic'?'<button onclick="toggleRegion(\'baicAreaMgrGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🗺️ Area Manager <span id="ico_baicAreaMgrGlobal">▼</span></button>':'')
     +(brand==='bodyshop'?'<button onclick="toggleRegion(\'bodyshopInstruction\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">📋 Instruction <span id="ico_bodyshopInstruction">▼</span></button>':'')
     
@@ -3693,6 +3694,7 @@ function showRefBrandPage(brand){
 
     +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e3f2fd"><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="color:#1565c0;text-decoration:none">ahmed.ateeq@petromin.com</a></td></tr><tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="color:#1565c0;text-decoration:none">simon.white@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="color:#1565c0;text-decoration:none">z.bakhurji@petromin.com</a></td></tr></tbody></table></div>':'')
     +(brand==='bodyshop'?'<div id="bodyshopInstruction" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px;direction:rtl;text-align:right"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-right:4px solid #7b0000"><div style="font-size:13px;font-weight:700;color:#7b0000;margin-bottom:8px">📋 الإجراءات (قبل)</div><div style="font-size:11px;color:#555;line-height:1.8">يلزم توفير المستندات التالية:<br>1- استمارة المركبة<br>2- تقرير الجهة المباشرة للحادث (نجم أو المرور)<br>3- الرقم المرجعي لمطالبة التأمين<br><br>يُشترط حضور وتسليم المركبة من مالكها أو المفوّض رسميًا.<br>في حال تعذّر الحضور يجب تقديم تفويض خطي.</div></div><div style="background:#fff9f0;border-radius:10px;padding:14px;border-right:4px solid #e65100"><div style="font-size:13px;font-weight:700;color:#e65100;margin-bottom:8px">💰 التسعيرة</div><div style="font-size:11px;color:#555;line-height:1.8">يستغرق فحص المركبة وإرسال التسعيرة لشركة التأمين من 7 إلى 14 يوم عمل.<br><br>• قابلة للقيادة: تُسلَّم بعد الفحص<br>• غير قابلة للقيادة: تُحجز بالفرع لحين الإصلاح</div></div><div style="background:#f0fff4;border-radius:10px;padding:14px;border-right:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 الإصلاح</div><div style="font-size:11px;color:#555;line-height:1.8">يبدأ الإصلاح بعد موافقة التأمين، بحد أقصى 90 يوم عمل.<br><br>سيتم توفير قطع الغيار خلال هذه الفترة، وإشعاركم برسالة نصية عند توفرها.</div></div></div></div>':'')
+    +'<div id="petrominWarrantyDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px"></div>'
     +'<div class="ref-sub-tabs" id="refSubTabs_'+brand+'" style="justify-content:center">'
     +tabs.map((t,i)=>{
       const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','PMS':'Service','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location'};
@@ -3738,6 +3740,41 @@ async function togglePetrominInstruction(){
       el.dataset.loaded='1';
     }catch(e){
       el.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
+    }
+  }
+}
+
+async function togglePetrominWarranty(){
+  const el=document.getElementById('petrominWarrantyDrawer');
+  const ico=document.getElementById('ico_petrominWarranty');
+  if(!el)return;
+  const showing=el.style.display!=='none';
+  if(showing){ el.style.display='none'; if(ico)ico.textContent='▼'; return; }
+  el.style.display='block';
+  if(ico)ico.textContent='▲';
+  if(!el.dataset.loaded){
+    el.innerHTML='<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading...</div>';
+    try{
+      const arr=await fetchCSVRaw(REF_SHEETS.petromin.id,'Warranty');
+      const color='#DAA520';
+      const items=[];
+      arr.forEach((r,idx)=>{
+        const v=r.map(x=>String(x===undefined||x===null?'':x).trim());
+        if(idx===0)return;
+        // cols: [empty/Warranty, Title, Text]
+        const title=v[1]||'', text=(v[2]||'').replace(/^"|"$/g,'').trim();
+        if(title&&text) items.push({title,text});
+      });
+      el.innerHTML=items.length
+        ?'<div style="display:flex;flex-direction:column;gap:10px">'+items.map(it=>
+            '<div style="background:#fff;border-radius:12px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border-right:4px solid '+color+';direction:rtl;text-align:right">'
+            +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">⚠️ '+it.title+'</div>'
+            +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+it.text+'</div>'
+            +'</div>').join('')+'</div>'
+        :'<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+      el.dataset.loaded='1';
+    }catch(e){
+      el.innerHTML='<div style="color:#c0272d;padding:16px;text-align:center">⚠️ '+e.message+'</div>';
     }
   }
 }
@@ -4278,13 +4315,13 @@ function renderRoster(){
     }
     function buildBreakTable(brows,title,color){
       if(!brows.length) return '';
-      var t='<div style="background:#fff;border-radius:10px;border:1px solid #eee;overflow:hidden;margin-bottom:12px">'
-        +'<div style="background:'+color+'18;border-left:4px solid '+color+';padding:10px 14px;font-size:13px;font-weight:700;color:'+color+'">'+title+'</div>'
+      var t='<div style="background:#fff;border-radius:12px;border:1px solid #eee;overflow:hidden;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)">'
+        +'<div style="background:'+color+'18;border-bottom:3px solid '+color+';padding:12px 16px;font-size:14px;font-weight:800;color:'+color+';text-align:center;letter-spacing:.02em">'+title+'</div>'
         +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
         +'<thead><tr style="background:'+color+'10">'
-        +'<th style="padding:7px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">Week</th>'
-        +'<th style="padding:7px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">Agent Name</th>'
-        +'<th style="padding:7px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">Break Time</th>'
+        +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center;font-size:12px">📅 Week</th>'
+        +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center;font-size:12px">👤 Agent Name</th>'
+        +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center;font-size:12px">⏰ Break Time</th>'
         +'</tr></thead><tbody>';
       brows.forEach(function(r,i){
         var week=String(r.week||'').trim();
@@ -4292,10 +4329,10 @@ function renderRoster(){
         var brk=String(r.brk||'').trim();
         if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(brk)) brk=fmtTime(brk);
         if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(agent)&&!brk){brk=fmtTime(agent);agent='';}
-        t+='<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+'">'
-          +'<td style="padding:7px 12px;color:#444;text-align:center">'+week+'</td>'
-          +'<td style="padding:7px 12px;color:#444;text-align:center">'+agent+'</td>'
-          +'<td style="padding:7px 12px;font-weight:600;color:#2e7d32;text-align:center">'+brk+'</td>'
+        t+='<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+';border-bottom:1px solid #f0f0f0">'
+          +'<td style="padding:8px 14px;color:#555;text-align:center;font-weight:600">'+week+'</td>'
+          +'<td style="padding:8px 14px;color:#333;text-align:center;font-weight:700">'+agent+'</td>'
+          +'<td style="padding:8px 14px;font-weight:700;color:#2e7d32;text-align:center;font-size:13px">'+brk+'</td>'
           +'</tr>';
       });
       t+='</tbody></table></div></div>';
@@ -4683,7 +4720,7 @@ async function renderRef(){
       +'<button onclick="toggleRefSection(\'refLinksDrawer\',\'refLinksIco\')" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#1565c0;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(21,101,192,.3)">🔗 Links <span id="refLinksIco">▼</span></button>'
       +'</div>'
       +'<div id="refLinksDrawer" style="display:none">'
-      +'<div class="ref-info-panel"><div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1)">🔗 Links & Systems</div>'
+      +'<div class="ref-info-panel"><div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;border-bottom:none">🔗 Links & Systems</div>'
       +'<div class="ref-panel-body">'+(linkCards||'<div style="color:#aaa;padding:16px;text-align:center">No data</div>')+'</div></div>'
       +'</div>'
 
