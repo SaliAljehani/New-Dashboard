@@ -34,7 +34,7 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .page-nav{display:flex;gap:6px;background:#fff;padding:10px 24px;border-bottom:1px solid #e8eaed;justify-content:center}
 .pnav{padding:7px 18px;border-radius:8px;border:1.5px solid #ddd;font-size:13px;font-weight:600;cursor:pointer;background:#fff;color:#444;transition:.15s}
 .pnav.active{background:#e0e0e0;color:#c0272d;border-color:#bdbdbd}
-.pnav:hover:not(.active){background:#eeeeee;border-color:#bdbdbd;color:#c0272d}
+.pnav:hover:not(.active){background:#e0e0e0;border-color:#bdbdbd;color:#555}
 .main{max-width:1300px;margin:0 auto;padding:18px 24px}
 .page2{display:none;max-width:1300px;margin:0 auto;padding:18px 24px}
 .hero{background:#fff;border-radius:14px;padding:18px 22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;gap:18px;border-left:5px solid #c0272d}
@@ -55,10 +55,10 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .tabs{display:flex;gap:5px;margin-bottom:14px}
 .tab{padding:6px 14px;border-radius:8px;border:1.5px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#666}
 .tab.active{background:#c0272d;color:#fff;border-color:#c0272d}
-.tab:hover:not(.active){background:#fef2f2;border-color:#c0272d;color:#c0272d}
+.tab:hover:not(.active){background:#e0e0e0;border-color:#bdbdbd;color:#555}
 .agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:16px}
 .ac{background:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 1px 4px rgba(0,0,0,.06);cursor:pointer;transition:.2s;border:2px solid transparent}
-.ac:hover{border-color:#c0272d;transform:translateY(-2px)}
+.ac:hover{border-color:#bdbdbd;transform:translateY(-2px)}
 .ac.sel{border-color:#c0272d;background:#fef2f2}
 .acn{font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:7px}
 .acs{display:flex;gap:6px;flex-wrap:wrap}
@@ -79,7 +79,7 @@ tr:last-child td{border-bottom:none}
 
 .dir-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:16px}
 .dir-card{background:#fff;border-radius:12px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:2px solid transparent;transition:.2s;cursor:pointer}
-.dir-card:hover{border-color:#c0272d;transform:translateY(-2px);box-shadow:0 4px 14px rgba(192,39,45,.15)}
+.dir-card:hover{border-color:#bdbdbd;transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.1)}
 .dir-card.active{border-color:#c0272d;background:#fef9f9}
 .dir-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .dir-av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#e0e0e0,#eeeeee);display:flex;align-items:center;justify-content:center;color:#c0272d;font-size:15px;font-weight:700;flex-shrink:0;border:2px solid #bdbdbd}
@@ -115,7 +115,7 @@ tr:last-child td{border-bottom:none}
 .week-selector{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 .week-btn{padding:6px 16px;border-radius:20px;border:1.5px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#555;transition:.15s}
 .week-btn.active{background:#c0272d;color:#fff;border-color:#c0272d}
-.week-btn:hover:not(.active){border-color:#c0272d;color:#c0272d}
+.week-btn:hover:not(.active){border-color:#bdbdbd;color:#555}
 .team-schedule{background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:12px}
 .team-schedule-title{font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .schedule-table{width:100%;border-collapse:collapse;font-size:12px}
@@ -188,7 +188,7 @@ tr:last-child td{border-bottom:none}
 
 /* Panel */
 .ref-info-panel{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.ref-panel-header{padding:12px 16px;font-size:13px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.ref-panel-header{padding:12px 16px;font-size:13px;font-weight:700;color:#c0272d;display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#f5f5f5,#eeeeee);border-bottom:2px solid #c0272d}
 .ref-panel-body{padding:14px 16px}
 
 /* Contact pills */
@@ -233,14 +233,14 @@ tr:last-child td{border-bottom:none}
 .ref-sub-tabs{display:flex;gap:6px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid #f0f0f0;background:#fafafa}
 .ref-sub-tab{padding:5px 14px;border-radius:20px;border:1.5px solid #ddd;font-size:11px;font-weight:600;cursor:pointer;background:#fff;color:#555;transition:.15s;white-space:nowrap;text-align:center}
 .ref-sub-tab.active{color:#fff;border-color:transparent}
-.ref-sub-tab:hover:not(.active){border-color:#c0272d;color:#c0272d}
+.ref-sub-tab:hover:not(.active){border-color:#bdbdbd;color:#555}
 .ref-tab-content{padding:14px}
 
 /* Branch cards */
 .ref-region-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#888;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #eee;display:flex;align-items:center;gap:6px}
 .ref-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:16px}
 .ref-card{background:#f9fbff;border-radius:10px;padding:14px;border:1px solid #e8eaed;transition:.2s;text-align:center;direction:ltr}
-.ref-card:hover{border-color:#c0272d;background:#fff;box-shadow:0 4px 12px rgba(192,39,45,.1)}
+.ref-card:hover{border-color:#bdbdbd;background:#fafafa;box-shadow:0 4px 12px rgba(0,0,0,.08)}
 .ref-card-title{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px}
 .ref-card-row{display:flex;align-items:flex-start;gap:7px;margin-bottom:5px;font-size:12px;color:#555}
 .ref-card-code{display:inline-block;background:#eef2ff;color:#3949ab;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:6px}
@@ -248,7 +248,7 @@ tr:last-child td{border-bottom:none}
 
 /* Email cards */
 .ref-email-card{background:#fff;border-radius:10px;padding:12px 14px;border:2px solid #fce8e0;transition:.15s;margin-bottom:4px;text-align:center;box-shadow:0 2px 8px rgba(192,39,45,.08)}
-.ref-email-card:hover{border-color:#c0272d;background:#fdf6f0}
+.ref-email-card:hover{border-color:#bdbdbd;background:#f5f5f5}
 .ref-email-label{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px;text-align:center}
 .ref-email-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:5px;flex-wrap:wrap}
 .ref-email-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap;margin-top:2px}
@@ -357,12 +357,11 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
   <div class="page-nav">
     <button class="pnav" onclick="showPage(6,this)">📢 Announcements</button>
     <button class="pnav active" onclick="showPage(3,this)">👥 Team Directory</button>
-    <button class="pnav" onclick="showPage(1,this)">👤 Agent Performance</button>
-    <button class="pnav" onclick="showPage(5,this)">📅 Schedule</button>
-    <button class="pnav" onclick="showPage(2,this)">📊 Calls & WhatsApp Report</button>
-    <button class="pnav" onclick="showPage(4,this)">📁 Daily Reference</button>
+    <button class="pnav" onclick="showPage(1,this)">📊 Team Performance</button>
+    <button class="pnav" onclick="showPage(5,this)">📅 Team Schedules</button>
     <button class="pnav" onclick="showPage(8,this)">🏆 Employee of the Month</button>
-    <button class="pnav" onclick="showPage(9,this)">📅 Vacation Schedule</button>
+    <button class="pnav" onclick="showPage(4,this)">📁 Daily Reference</button>
+    <button class="pnav" onclick="showPage(2,this)">📞 Calls & WhatsApp Report</button>
     <button class="pnav" onclick="showPage(7,this)">⚠️ Escalation</button>
   </div>
 
@@ -514,13 +513,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
   <div class="eom-teams-grid" id="eomTeams"></div>
 </div>
 
-<div id="page9" style="display:none;padding:0">
-  <div style="display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid #eee">
-    <span style="font-size:15px;font-weight:700;color:#1a1a2e">📅 Vacation Schedule 2026</span>
-    <a href="https://docs.google.com/spreadsheets/d/1MRUWG3v9Neac-UselMf_HzlfiLtX64a9iJsIUV5FmRU/edit#gid=644438759" target="_blank" style="margin-left:auto;font-size:11px;color:#1565c0;font-weight:700;text-decoration:none;background:#e3f2fd;padding:4px 12px;border-radius:12px">🔗 Open in Google Sheets</a>
-  </div>
-  <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRGq8k4RcP7K-rN9KkI93gmD51I3KjFVE2GYoofk85KS5PxOZVRfX8p_QEEBMxDvm-hiRfEt-dK2oZH/pubhtml?gid=644438759&single=true&widget=false&headers=false" style="width:100%;height:calc(100vh - 200px);border:none;display:block"></iframe>
-</div>
+<!-- page9 merged into Team Schedules -->
 <footer style="position:relative">Inbound Daily Dashboard · Petromin Group · Connected to Google Sheets · Auto-updates on refresh<span style="position:absolute;left:14px;top:50%;transform:translateY(-50%)">By: Sali Aljehani</span></footer>
 
 <script>
@@ -1189,7 +1182,6 @@ function showPage(n,btn){
   if(n===5)renderRoster();
   if(n===6)renderAnnouncements();
   document.getElementById('page8').style.display=n===8?'block':'none';
-  document.getElementById('page9').style.display=n===9?'block':'none';
   if(n===7)renderEscalations();
   if(n===8)renderEOM();
 }
@@ -4356,13 +4348,15 @@ function renderRoster(){
 
   el.innerHTML = '<div style="padding:4px">'
     +'<div style="text-align:center;margin-bottom:16px">'
-    +'<button onclick="switchScheduleTab(&apos;daily&apos;)" id="stab_daily" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#c0272d;color:#fff;margin:4px">📅 Daily Off Schedule</button>'
+    +'<button onclick="switchScheduleTab(&apos;daily&apos;)" id="stab_daily" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#e0e0e0;color:#c0272d;margin:4px">📅 Daily Off Schedule</button>'
     +'<button onclick="switchScheduleTab(&apos;weekly&apos;)" id="stab_weekly" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;margin:4px">📞 Weekly Calls & Break</button>'
+    +'<button onclick="switchScheduleTab(&apos;vacation&apos;)" id="stab_vacation" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;margin:4px">🗓️ Vacation Schedule</button>'
     +'</div>'
     +'<div id="schedule_daily">'
     +tableHTML
     +'</div>'
     +'<div id="schedule_weekly" style="display:none">'+weeklyHTML+'</div>'
+    +'<div id="schedule_vacation" style="display:none"><iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRGq8k4RcP7K-rN9KkI93gmD51I3KjFVE2GYoofk85KS5PxOZVRfX8p_QEEBMxDvm-hiRfEt-dK2oZH/pubhtml?gid=644438759&single=true&widget=false&headers=false" style="width:100%;height:calc(100vh - 220px);border:none;display:block;border-radius:8px;margin-top:12px"></iframe></div>'
     +'</div>';
 }
 
@@ -4383,10 +4377,13 @@ function highlightScheduleAgent(name){
 function switchScheduleTab(tab){
   document.getElementById('schedule_daily').style.display = tab==='daily' ? 'block' : 'none';
   document.getElementById('schedule_weekly').style.display = tab==='weekly' ? 'block' : 'none';
-  document.getElementById('stab_daily').style.background = tab==='daily' ? '#c0272d' : '#f0f0f0';
-  document.getElementById('stab_daily').style.color = tab==='daily' ? '#fff' : '#555';
-  document.getElementById('stab_weekly').style.background = tab==='weekly' ? '#1565c0' : '#f0f0f0';
-  document.getElementById('stab_weekly').style.color = tab==='weekly' ? '#fff' : '#555';
+  document.getElementById('schedule_vacation').style.display = tab==='vacation' ? 'block' : 'none';
+  document.getElementById('stab_daily').style.background = tab==='daily' ? '#e0e0e0' : '#f0f0f0';
+  document.getElementById('stab_daily').style.color = tab==='daily' ? '#c0272d' : '#555';
+  document.getElementById('stab_weekly').style.background = tab==='weekly' ? '#e0e0e0' : '#f0f0f0';
+  document.getElementById('stab_weekly').style.color = tab==='weekly' ? '#c0272d' : '#555';
+  document.getElementById('stab_vacation').style.background = tab==='vacation' ? '#e0e0e0' : '#f0f0f0';
+  document.getElementById('stab_vacation').style.color = tab==='vacation' ? '#c0272d' : '#555';
 }
 
 function renderAnnouncements(){
@@ -4740,7 +4737,7 @@ async function renderRef(){
 
       // CONTACT NUMBERS — merged single panel
       +'<div class="ref-info-panel">'
-      +'<div class="ref-panel-header" style="background:linear-gradient(135deg,#fdf6f0,#fce8e0);color:#c0272d;border-bottom:2px solid #c0272d">📞 Contact Numbers</div>'
+      +'<div class="ref-panel-header">📞 Contact Numbers</div>'
       +'<div class="ref-panel-body"><div class="ref-contacts-grid">'
       +makePills(tollFree,'#c0272d')
       +makePills(waNums,'#2e7d32')
@@ -4750,7 +4747,7 @@ async function renderRef(){
 
       // SUBJECT 2-COL
       +'<div class="ref-info-panel">'
-      +'<div class="ref-panel-header" style="background:linear-gradient(135deg,#fdf6f0,#fce8e0);color:#c0272d;border-bottom:2px solid #c0272d;cursor:pointer" onclick="toggleRefSection(\'refSubjectBody\',\'refSubjectIco\')">'
+      +'<div class="ref-panel-header" style="cursor:pointer" onclick="toggleRefSection(\'refSubjectBody\',\'refSubjectIco\')">'
       +'📋 Subject Guide<span id="refSubjectIco" style="margin-left:auto;color:#c0272d">▲</span>'
       +'</div>'
       +'<div id="refSubjectBody"><div class="ref-panel-body">'
