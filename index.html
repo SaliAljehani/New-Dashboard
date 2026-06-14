@@ -33,12 +33,12 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .ptag{display:inline-block;background:#fef2f2;color:#c0272d;border:1px solid #fcc;border-radius:8px;padding:3px 10px;font-size:11px;font-weight:600}
 .page-nav{display:flex;gap:6px;background:#fff;padding:10px 24px;border-bottom:1px solid #e8eaed;justify-content:center}
 .pnav{padding:7px 18px;border-radius:8px;border:1.5px solid #ddd;font-size:13px;font-weight:600;cursor:pointer;background:#fff;color:#444;transition:.15s}
-.pnav.active{background:#c0272d;color:#fff;border-color:#c0272d}
-.pnav:hover:not(.active){background:#fef2f2;border-color:#c0272d;color:#c0272d}
+.pnav.active{background:#e0e0e0;color:#c0272d;border-color:#bdbdbd}
+.pnav:hover:not(.active){background:#eeeeee;border-color:#bdbdbd;color:#c0272d}
 .main{max-width:1300px;margin:0 auto;padding:18px 24px}
 .page2{display:none;max-width:1300px;margin:0 auto;padding:18px 24px}
 .hero{background:#fff;border-radius:14px;padding:18px 22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;gap:18px;border-left:5px solid #c0272d}
-.av{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#fce8e0,#f5c5b8);display:flex;align-items:center;justify-content:center;color:#c0272d;font-size:18px;font-weight:700;flex-shrink:0;border:2px solid #c0272d}
+.av{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#e0e0e0,#eeeeee);display:flex;align-items:center;justify-content:center;color:#c0272d;font-size:18px;font-weight:700;flex-shrink:0;border:2px solid #bdbdbd}
 .hi2{font-size:18px;font-weight:700;color:#1a1a2e}
 .hi3{font-size:12px;color:#444;margin-top:2px}
 .rkbig{background:linear-gradient(135deg,#c0272d,#7b0000);color:#fff;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600}
@@ -82,7 +82,7 @@ tr:last-child td{border-bottom:none}
 .dir-card:hover{border-color:#c0272d;transform:translateY(-2px);box-shadow:0 4px 14px rgba(192,39,45,.15)}
 .dir-card.active{border-color:#c0272d;background:#fef9f9}
 .dir-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.dir-av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#fce8e0,#f5c5b8);display:flex;align-items:center;justify-content:center;color:#c0272d;font-size:15px;font-weight:700;flex-shrink:0;border:2px solid #c0272d}
+.dir-av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#e0e0e0,#eeeeee);display:flex;align-items:center;justify-content:center;color:#c0272d;font-size:15px;font-weight:700;flex-shrink:0;border:2px solid #bdbdbd}
 .dir-name{font-size:14px;font-weight:700;color:#1a1a2e}
 .dir-badge{font-size:11px;color:#444;margin-top:2px}
 .dir-info{display:flex;flex-direction:column;gap:6px}
@@ -820,7 +820,7 @@ function renderAll(){
       const init=nm.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
       return`<div class="ac${nm===CA?' sel':''}" onclick="selAgent('${nm}')">
         <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px">
-          <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#fce8e0,#f5c5b8);border:2px solid #c0272d;display:flex;align-items:center;justify-content:center;color:#c0272d;font-size:12px;font-weight:700;flex-shrink:0">${init}</div>
+          <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#e0e0e0,#eeeeee);border:2px solid #bdbdbd;display:flex;align-items:center;justify-content:center;color:#c0272d;font-size:12px;font-weight:700;flex-shrink:0">${init}</div>
           <div><div class="acn">${nm}</div><div style="font-size:10px;color:#aaa">#${i+1} · ${a.days} days</div></div>
         </div>
         <div class="acs">
