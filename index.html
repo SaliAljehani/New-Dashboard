@@ -459,7 +459,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     </div>
     <div class="r2">
       <div class="card">
-        <div class="ctit">📤 Abandoned – Monthly</div>
+        <div class="ctit">📤 Answered – Monthly</div>
         <div style="position:relative;height:200px"><canvas id="abanChart" role="img" aria-label="abandoned"></canvas></div>
       </div>
       <div class="card">
@@ -1049,7 +1049,7 @@ function callFiltered(){
   const{f,t}=gf();const res={};
   ['Nissan','Petromin','Stellantis'].forEach(team=>{
     res[team]={};
-    ['Received','Abandoned','WhatsApp'].forEach(metric=>{
+    ['Received','Answered','WhatsApp'].forEach(metric=>{
       res[team][metric]={};
       Object.entries(CALL[team]?.[metric]||{}).forEach(([d,v])=>{if(d>=f&&d<=t)res[team][metric][d]=v;});
     });
@@ -1069,27 +1069,27 @@ function renderCallPage(){
 
   // KPI
   document.getElementById('callKpis').innerHTML=teams.map(team=>{
-    const rec=sumObj(data[team].Received);const aban=sumObj(data[team].Abandoned);const wa=sumObj(data[team].WhatsApp);
+    const rec=sumObj(data[team].Received);const aban=sumObj(data[team].Answered);const wa=sumObj(data[team].WhatsApp);
     const pct=rec>0?Math.round(aban/rec*100):0;
     const logo=TEAM_LOGOS[team]?`<img src="${TEAM_LOGOS[team]}" style="height:28px;object-fit:contain;margin-bottom:6px;display:block">`:'';
     return`<div class="kc" style="border-top:3px solid ${TC[team]}">
       ${logo}<div class="klbl" style="color:${TC[team]}">${team}</div>
       <div class="kval">${rec.toLocaleString()}</div>
       <div class="ksub">Received · WA: ${wa.toLocaleString()}</div>
-      <div style="font-size:11px;color:#e65100;margin-top:3px">Abandoned: ${aban.toLocaleString()} (${pct}%)</div>
+      <div style="font-size:11px;color:#e65100;margin-top:3px">Answered: ${aban.toLocaleString()} (${pct}%)</div>
     </div>`;
   }).join('');
 
   // Comparison
   document.getElementById('compCards').innerHTML=teams.map(team=>{
-    const rec=sumObj(data[team].Received);const aban=sumObj(data[team].Abandoned);
-    const wa=sumObj(data[team].WhatsApp);const sl=rec>0?Math.round((rec-aban)/rec*100):0;
+    const rec=sumObj(data[team].Received);const aban=sumObj(data[team].Answered);
+    const wa=sumObj(data[team].WhatsApp);const sl=rec>0?Math.round(aban/rec*100):0;
     const slC=sl>=80?'#2e7d32':sl>=60?'#e65100':'#c0272d';
     const logo2=TEAM_LOGOS[team]?`<img src="${TEAM_LOGOS[team]}" style="height:24px;object-fit:contain;margin-bottom:6px;display:block">`:'';
     return`<div class="comp-card" style="border-top:3px solid ${TC[team]}">
       ${logo2}<div class="comp-team" style="color:${TC[team]}">${team}</div>
       <div class="comp-stat"><span class="lbl">📥 Received</span><span class="val">${rec.toLocaleString()}</span></div>
-      <div class="comp-stat"><span class="lbl">📤 Abandoned</span><span class="val" style="color:#e65100">${aban.toLocaleString()}</span></div>
+      <div class="comp-stat"><span class="lbl">📤 Answered</span><span class="val" style="color:#e65100">${aban.toLocaleString()}</span></div>
       <div class="comp-stat"><span class="lbl">💬 WhatsApp</span><span class="val">${wa.toLocaleString()}</span></div>
       <div class="comp-stat"><span class="lbl">✅ Service Level</span><span class="val" style="color:${slC}">${sl}%</span></div>
     </div>`;
@@ -1101,7 +1101,7 @@ function renderCallPage(){
     filtMonthly2[team]={};
     const keyFn=showDaily?(d=>d):(d=>d.slice(0,7));
     Object.entries(data[team]?.Received||{}).forEach(([d,v])=>{const m=keyFn(d);if(!filtMonthly2[team][m])filtMonthly2[team][m]={rec:0,aban:0,wa:0};filtMonthly2[team][m].rec+=v;});
-    Object.entries(data[team]?.Abandoned||{}).forEach(([d,v])=>{const m=keyFn(d);if(!filtMonthly2[team][m])filtMonthly2[team][m]={rec:0,aban:0,wa:0};filtMonthly2[team][m].aban+=v;});
+    Object.entries(data[team]?.Answered||{}).forEach(([d,v])=>{const m=keyFn(d);if(!filtMonthly2[team][m])filtMonthly2[team][m]={rec:0,aban:0,wa:0};filtMonthly2[team][m].aban+=v;});
     Object.entries(data[team]?.WhatsApp||{}).forEach(([d,v])=>{const m=keyFn(d);if(!filtMonthly2[team][m])filtMonthly2[team][m]={rec:0,aban:0,wa:0};filtMonthly2[team][m].wa+=v;});
   });
   // Always use keys from filtered data
@@ -1121,7 +1121,7 @@ function renderCallPage(){
       if(!filtMonthly[m])filtMonthly[m]={rec:0,aban:0};
       filtMonthly[m].rec+=v;
     });
-    Object.entries(data[team]?.Abandoned||{}).forEach(([d,v])=>{
+    Object.entries(data[team]?.Answered||{}).forEach(([d,v])=>{
       const m=d.slice(0,7);
       if(!filtMonthly[m])filtMonthly[m]={rec:0,aban:0};
       filtMonthly[m].aban+=v;
@@ -1130,7 +1130,7 @@ function renderCallPage(){
     const fmKeys={};
     Object.entries(data[team]?.Received||{}).forEach(([d,v])=>{const k=showDaily?d:d.slice(0,7);fmKeys[k]=(fmKeys[k]||0)+v;});
     const fabn={};
-    Object.entries(data[team]?.Abandoned||{}).forEach(([d,v])=>{const k=showDaily?d:d.slice(0,7);fabn[k]=(fabn[k]||0)+v;});
+    Object.entries(data[team]?.Answered||{}).forEach(([d,v])=>{const k=showDaily?d:d.slice(0,7);fabn[k]=(fabn[k]||0)+v;});
     const vals=allKeys.map(m=>fmKeys[m]||0);
     const mx=Math.max(...vals,1);
     const logo3=TEAM_LOGOS[team]?`<img src="${TEAM_LOGOS[team]}" style="height:22px;object-fit:contain;vertical-align:middle;margin-right:8px">`:'';
