@@ -318,17 +318,13 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 <body>
 
 <div class="header" style="flex-direction:column;gap:6px">
-  <div style="display:flex;align-items:center;justify-content:center;width:100%;position:relative">
-    <span class="lupd" id="lupd" onclick="loadAllData()" title="Click to refresh" style="position:absolute;right:0">🔄 Loading...</span>
-    <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
-      <div style="display:flex;align-items:center;gap:12px">
+  <div style="display:flex;align-items:center;width:100%;position:relative">
         <img src="data:image/png;base64,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" style="height:36px;object-fit:contain;border-radius:6px" alt="Petromin">
-        <h1>📞 Inbound Daily Dashboard · Petromin Group</h1>
-      </div>
-      <div style="background:rgba(192,39,45,.07);border-radius:20px;padding:4px 18px;border:1px solid rgba(192,39,45,.15)">
-        <span style="font-size:12px;font-weight:700;color:#c0272d">⭐ خلف كل تقييم إيجابي قصة خدمة مميزة صنعتها أنت</span>
-      </div>
-    </div>
+    <h1 style="position:absolute;left:0;right:0;text-align:center;pointer-events:none">📞 Inbound Daily Dashboard · Petromin Group</h1>
+    <span class="lupd" id="lupd" onclick="loadAllData()" title="Click to refresh" style="margin-left:auto">🔄 Loading...</span>
+  </div>
+  <div style="width:100%;text-align:center;direction:rtl">
+    <span style="background:rgba(192,39,45,.07);border-radius:20px;padding:4px 18px;border:1px solid rgba(192,39,45,.15);font-size:12px;font-weight:700;color:#c0272d">⭐ خلف كل تقييم إيجابي قصة خدمة مميزة صنعتها أنت</span>
   </div>
   <div id="motivationBanner" style="width:100%;text-align:center;direction:rtl">
     <div id="motivationText" style="font-size:11px;color:#999;margin-top:2px"></div>
@@ -801,14 +797,24 @@ function fall(){const{f,t}=gf();const R={};Object.keys(D).forEach(n=>{const r=(D
 function ag(rows){let I=0,T=0,W=0,DI=0,tS=0,tN=0,hS=0,hN=0;rows.forEach(r=>{I+=r[1];T+=r[2];W+=r[3];DI+=r[4];if(r[5]>0){tS+=r[5];tN++;}if(r[7]>0){hS+=r[7];hN++;}});return{days:rows.length,I,T,W,DI,avgTalk:tN?Math.round(tS/tN):0,avgAHT:hN?Math.round(hS/hN):0};}
 
 // ── RENDER ALL ───────────────────────────────────────────────────────────────
+const AVATAR_COLORS=[
+  {bg:'linear-gradient(135deg,#c8d8e8,#a8bccc)',border:'#8aa4b8',text:'#2c3e50'},
+  {bg:'linear-gradient(135deg,#c8e6c9,#a5d6a7)',border:'#81b889',text:'#2d5a30'},
+  {bg:'linear-gradient(135deg,#d7ccc8,#bcaaa4)',border:'#9e8882',text:'#3e2723'},
+  {bg:'linear-gradient(135deg,#d1c4e9,#b39ddb)',border:'#9575bb',text:'#311b6b'},
+  {bg:'linear-gradient(135deg,#ffe0b2,#ffcc80)',border:'#e8a84a',text:'#5d3a00'},
+  {bg:'linear-gradient(135deg,#b2dfdb,#80cbc4)',border:'#4db6ac',text:'#00413c'},
+  {bg:'linear-gradient(135deg,#f8bbd0,#f48fb1)',border:'#d66a8e',text:'#5a0028'},
+];
+
+// Assign random-but-stable color per agent name
+function getAvatarColor(name){
+  let hash=0;
+  for(let i=0;i<name.length;i++) hash=(hash*31+name.charCodeAt(i))&0xffff;
+  return AVATAR_COLORS[hash%AVATAR_COLORS.length];
+}
+
 function renderAll(){
-  const AVATAR_COLORS=[
-    {bg:'linear-gradient(135deg,#ef5350,#c0272d)',border:'#c0272d',text:'#fff'},
-    {bg:'linear-gradient(135deg,#42a5f5,#1565c0)',border:'#1565c0',text:'#fff'},
-    {bg:'linear-gradient(135deg,#66bb6a,#2e7d32)',border:'#2e7d32',text:'#fff'},
-    {bg:'linear-gradient(135deg,#ab47bc,#6a1b9a)',border:'#6a1b9a',text:'#fff'},
-    {bg:'linear-gradient(135deg,#ffa726,#e65100)',border:'#e65100',text:'#fff'},
-  ];
   const data=fall();
   const agents=Object.keys(data).sort();
   const am={};agents.forEach(a=>am[a]=ag(data[a]));
@@ -817,7 +823,7 @@ function renderAll(){
     document.getElementById('agrid').innerHTML=sorted.map((nm,i)=>{
       const a=am[nm];
       const init=nm.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-      const c=AVATAR_COLORS[i%AVATAR_COLORS.length];
+      const c=getAvatarColor(nm);
       return`<div class="ac${nm===CA?' sel':''}" onclick="selAgent('${nm}')">
         <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px">
           <div style="width:34px;height:34px;border-radius:50%;background:${c.bg};border:2px solid ${c.border};display:flex;align-items:center;justify-content:center;color:${c.text};font-size:12px;font-weight:700;flex-shrink:0">${init}</div>
@@ -1316,20 +1322,13 @@ async function loadAgentDir(){
 }
 
 function renderDir(filter=''){
-  const AVATAR_COLORS=[
-    {bg:'linear-gradient(135deg,#ef5350,#c0272d)',border:'#c0272d',text:'#fff'},
-    {bg:'linear-gradient(135deg,#42a5f5,#1565c0)',border:'#1565c0',text:'#fff'},
-    {bg:'linear-gradient(135deg,#66bb6a,#2e7d32)',border:'#2e7d32',text:'#fff'},
-    {bg:'linear-gradient(135deg,#ab47bc,#6a1b9a)',border:'#6a1b9a',text:'#fff'},
-    {bg:'linear-gradient(135deg,#ffa726,#e65100)',border:'#e65100',text:'#fff'},
-  ];
   const list = filter
     ? AGENTS_DIR.filter(a=>a.name.toLowerCase().includes(filter.toLowerCase()))
     : AGENTS_DIR;
   document.getElementById('dirCount').textContent = list.length + ' agents';
   document.getElementById('dirGrid').innerHTML = list.map((a,idx)=>{
     const init = a.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    const c = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+    const c = getAvatarColor(a.name);
     return `<div class="dir-card">
       <div class="dir-top">
         <div class="dir-av" style="background:${c.bg};border-color:${c.border};color:${c.text}">${init}</div>
