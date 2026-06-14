@@ -588,7 +588,7 @@ function showMotivation(){
 
   function renderGroup(g){
     el.innerHTML='<div style="display:flex;justify-content:center;align-items:center;gap:0;width:100%">'
-      +g.map(q=>'<div style="flex:1;text-align:center;padding:0 24px;border-right:1px solid rgba(192,39,45,.2);direction:rtl;font-size:10px;font-weight:600;color:#c0272d;line-height:1.4">'+q+'</div>').join('')
+      +g.map(q=>'<div style="flex:1;text-align:center;padding:0 16px;border-right:1px solid rgba(192,39,45,.2);direction:rtl;font-size:10px;font-weight:600;color:#c0272d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+q+'</div>').join('')
       .replace(/border-right[^;]+;(?=[^<]*<\/div>\s*<\/div>)/, '')
       +'</div>';
   }
