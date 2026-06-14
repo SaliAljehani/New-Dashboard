@@ -579,17 +579,8 @@ const MOTIVATION_QUOTES=[
 function showMotivation(){
   const el=document.getElementById('motivationText');
   if(!el) return;
-  const q=MOTIVATION_QUOTES;
-  const col=(top,bottom)=>'<div style="display:flex;flex-direction:column;gap:4px;align-items:center;flex:1;min-width:180px">'
-    +'<span>'+top+'</span>'
-    +'<span>'+bottom+'</span>'
-    +'</div>';
-  el.innerHTML='<div style="display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:6px">'
-    +col(q[1],q[4])
-    +col(q[0],q[3])
-    +col(q[2],q[5])
-    +'</div>'
-    +'<div>'+q[6]+', '+q[7]+'</div>';
+  const q=MOTIVATION_QUOTES[Math.floor(Math.random()*MOTIVATION_QUOTES.length)];
+  el.textContent=q;
 }
 
 async function loadAllData(){
