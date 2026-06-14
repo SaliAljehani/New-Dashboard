@@ -3963,8 +3963,36 @@ async function renderRefBrand(brand,tabIdx){
         arr=await fetchCSVRaw(cfg.id, sheetName);
       }
       console.log('Petromin',sheetName,'rows:',arr.length,'sample:',arr[0]);
-      if(t==='Instruction') container.innerHTML=renderPetrominInstructionTab(arr);
-      else if(t==='Autocare'||t==='New PAC') container.innerHTML=renderPetrominPACTab(arr);
+  if(brand==='petromin' && t==='Instruction'){
+    container.innerHTML='<div style="text-align:center;padding:24px;color:#bbb">⏳ Loading...</div>';
+    try{
+      const [instrArr, warArr] = await Promise.all([
+        fetchCSVRaw(cfg.id,'Instruction'),
+        fetchCSVRaw(cfg.id,'Warranty')
+      ]);
+      const color='#DAA520';
+      // Build Warranty section first
+      const warItems=[];
+      warArr.forEach((r,idx)=>{
+        const v=r.map(x=>String(x===undefined||x===null?'':x).trim());
+        if(idx===0)return;
+        const title=v[1]||'', text=(v[2]||'').replace(/^"|"$/g,'').trim();
+        if(title&&text) warItems.push({title,text});
+      });
+      const warHTML=warItems.length?mkCollapsible('⚠️ Warranty',
+        '<div style="display:flex;flex-direction:column;gap:10px">'+warItems.map(it=>
+          '<div style="background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-right:4px solid '+color+';direction:rtl;text-align:right">'
+          +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">'+it.title+'</div>'
+          +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+it.text+'</div>'
+          +'</div>').join('')+'</div>'
+        ,'instr_warranty',color):'';
+      container.innerHTML=warHTML+renderPetrominInstructionTab(instrArr);
+    }catch(e){
+      container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center">⚠️ '+e.message+'</div>';
+    }
+    return;
+  }
+      if(t==='Autocare'||t==='New PAC') container.innerHTML=renderPetrominPACTab(arr);
       else if(t==='Warranty') container.innerHTML=renderPetrominWarrantyTab(arr);
       else if(t==='Petromin Tristar') container.innerHTML=renderPetrominTristarTab(arr);
       else if(t==='Eco Wash') container.innerHTML=renderPetrominLocationListTab(arr,'ecowash');
@@ -4389,31 +4417,75 @@ function renderAnnouncements(){
   if(!ANNOUNCEMENTS.length){ el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">📢 No announcements yet.</div>'; return; }
 
   const priorityColor = {'High':'#c0272d','Medium':'#e65100','Low':'#2e7d32'};
+  const priorityBadge = {'High':'🔴 High','Medium':'🟠 Medium','Low':'🟢 Low'};
 
-  let html = '<div style="max-width:800px;margin:0 auto;padding:8px">'
-    +'<div style="font-size:16px;font-weight:700;color:#c0272d;margin-bottom:16px;text-align:center">📢 Announcement Board</div>';
-
-  ANNOUNCEMENTS.filter(function(r){ return Object.values(r).some(function(v){return v&&String(v).trim();}); })
-  .forEach(function(r){
+  const items = ANNOUNCEMENTS.filter(function(r){
+    return Object.values(r).some(function(v){return v&&String(v).trim();});
+  }).map(function(r){
     var keys=Object.keys(r);
-    var date=String(r[keys[0]]||'').split('T')[0].split(' ')[0];
-    var title=String(r[keys[1]]||'').trim();
-    var msg=String(r[keys[2]]||'').trim();
-    var priority=String(r[keys[3]]||'').trim();
-    var color=priorityColor[priority]||'#1565c0';
-    html += '<div style="background:#fff;border-radius:12px;border:1px solid #eee;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:12px;overflow:hidden">'
-      +'<div style="background:'+color+'12;border-left:4px solid '+color+';padding:12px 16px;display:flex;align-items:center;justify-content:space-between">'
-      +'<div style="font-size:14px;font-weight:700;color:'+color+'">'+title+'</div>'
-      +'<div style="display:flex;gap:8px;align-items:center">'
-      +(priority?'<span style="font-size:10px;font-weight:700;padding:2px 10px;background:'+color+';color:#fff;border-radius:10px">'+priority+'</span>':'')
-      +'<span style="font-size:11px;color:#999">'+date+'</span>'
-      +'</div></div>'
-      +(msg?'<div style="padding:12px 16px;font-size:13px;color:#444;line-height:1.7;white-space:pre-wrap">'+msg+'</div>':'')
-      +'</div>';
+    return {
+      date: String(r[keys[0]]||'').split('T')[0].split(' ')[0],
+      title: String(r[keys[1]]||'').trim(),
+      msg: String(r[keys[2]]||'').trim(),
+      priority: String(r[keys[3]]||'').trim()
+    };
   });
 
-  html += '</div>';
+  const today = new Date().toISOString().split('T')[0];
+  const dateStr = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  let html = '<div style="max-width:900px;margin:0 auto;padding:8px;font-family:Georgia,serif">'
+
+    // Newspaper Header
+    +'<div style="text-align:center;border-top:4px solid #1a1a2e;border-bottom:4px solid #1a1a2e;padding:12px 0;margin-bottom:4px">'
+    +'<div style="font-size:11px;color:#888;letter-spacing:.2em;text-transform:uppercase;margin-bottom:4px">Inbound Daily Dashboard</div>'
+    +'<div style="font-size:32px;font-weight:900;color:#1a1a2e;letter-spacing:.05em;line-height:1">📰 The Daily Board</div>'
+    +'<div style="font-size:11px;color:#888;margin-top:4px;letter-spacing:.1em">'+dateStr+'</div>'
+    +'</div>'
+    +'<div style="border-bottom:1px solid #1a1a2e;margin-bottom:16px"></div>'
+
+    // Priority filter pills
+    +'<div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px;flex-wrap:wrap">'
+    +'<span style="font-size:11px;color:#888;align-self:center">Filter:</span>'
+    +['All','High','Medium','Low'].map(p=>
+      '<button onclick="filterAnnounce(\''+p+'\')" id="ann_btn_'+p+'" style="padding:4px 14px;border-radius:16px;border:1.5px solid '+(p==='All'?'#1a1a2e':'#ddd')+';background:'+(p==='All'?'#1a1a2e':'#fff')+';color:'+(p==='All'?'#fff':'#555')+';font-size:11px;font-weight:700;cursor:pointer">'+p+'</button>'
+    ).join('')
+    +'</div>'
+
+    // Articles grid
+    +'<div id="announceGrid" style="columns:2;column-gap:16px">';
+
+  items.forEach(function(it,i){
+    var color = priorityColor[it.priority]||'#1565c0';
+    var badge = priorityBadge[it.priority]||it.priority;
+    var isNew = it.date===today;
+    html += '<div class="ann-card" data-priority="'+it.priority+'" style="break-inside:avoid;background:#fff;border-radius:8px;border:1px solid #e0e0e0;margin-bottom:14px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.06)">'
+      +'<div style="border-left:4px solid '+color+';padding:10px 14px;background:'+color+'08">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
+      +'<span style="font-size:10px;font-weight:800;color:'+color+';text-transform:uppercase;letter-spacing:.08em">'+badge+'</span>'
+      +'<div style="display:flex;align-items:center;gap:6px">'
+      +(isNew?'<span style="font-size:9px;font-weight:800;background:#c0272d;color:#fff;padding:1px 6px;border-radius:8px">NEW</span>':'')
+      +'<span style="font-size:10px;color:#999">📅 '+it.date+'</span>'
+      +'</div></div>'
+      +'<div style="font-size:14px;font-weight:800;color:#1a1a2e;line-height:1.4;font-family:Georgia,serif;margin-bottom:6px">'+it.title+'</div>'
+      +(it.msg?'<div style="font-size:12px;color:#555;line-height:1.8;direction:rtl;text-align:right;white-space:pre-wrap">'+it.msg+'</div>':'')
+      +'</div></div>';
+  });
+
+  html += '</div></div>';
   el.innerHTML = html;
+}
+
+function filterAnnounce(priority){
+  document.querySelectorAll('[id^="ann_btn_"]').forEach(function(btn){
+    var p=btn.id.replace('ann_btn_','');
+    btn.style.background=p===priority?'#1a1a2e':'#fff';
+    btn.style.color=p===priority?'#fff':'#555';
+    btn.style.borderColor=p===priority?'#1a1a2e':'#ddd';
+  });
+  document.querySelectorAll('.ann-card').forEach(function(card){
+    card.style.display=(priority==='All'||card.dataset.priority===priority)?'block':'none';
+  });
 }
 
 // ── ESCALATIONS ────────────────────────────────────────────────────────
