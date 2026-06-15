@@ -3892,10 +3892,11 @@ async function renderInstructionTab(brand, cfg){
     const c2=col2Key?String(r[col2Key]||'').trim():'';
 
     if(sec==='Appointment Script'){ mode='appt'; apptHeaders=null; return; }
+    // PMS Service/Sercive header → switch to pms mode (same as appt)
+    if(sec.toLowerCase().includes('pms')){ mode='pms'; return; }
     if(!sec && title==='Email to'){ mode='email'; return; }
 
     if(mode==='appt' && !apptHeaders){
-      // header row for appt table: e.g. Service|Source|Service Advisor|Description, or Service|Description (Eg.)
       apptHeaders=[sec,title,c1,c2];
       return;
     }
@@ -3906,6 +3907,12 @@ async function renderInstructionTab(brand, cfg){
         return;
       }
       if(!sec && !title && c1 && c1.length>15){ noteRows.push(c1); return; }
+      return;
+    }
+    // PMS mode — each row is a PMS item {title, content}
+    if(mode==='pms'){
+      if(sec && title){ apptRows.push({svc:sec,a:'',b:title,c:c2}); return; }
+      if(sec && c1){ apptRows.push({svc:sec,a:'',b:c1,c:c2}); return; }
       return;
     }
     if(mode==='appt'){
@@ -3964,7 +3971,20 @@ async function renderInstructionTab(brand, cfg){
     const hasSource = apptHeaders && apptHeaders[1] && !/description/i.test(apptHeaders[1]);
     const SRC_COLOR={'Call Center':'#c0272d','WhatsApp':'#2e7d32','Online':'#1565c0'};
     const SRC_BG={'Call Center':'#fef2f2','WhatsApp':'#e8f5e9','Online':'#e3f2fd'};
-    apptBody='<div style="overflow-x:auto;border-radius:12px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:12px">'
+    // Check if rows are PMS style (no source column)
+    const isPMS = apptRows.every(r=>!r.a);
+    if(isPMS){
+      apptBody='<div style="display:flex;flex-direction:column;gap:10px">'
+        +apptRows.map((r,i)=>{
+          const c=WARRANTY_COLORS[i%WARRANTY_COLORS.length];
+          return '<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid '+c+';direction:rtl;text-align:right">'
+            +'<div style="font-size:13px;font-weight:700;color:'+c+';margin-bottom:8px">'+r.svc+'</div>'
+            +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+r.b+'</div>'
+            +'</div>';
+        }).join('')
+        +'</div>';
+    } else {
+      apptBody='<div style="overflow-x:auto;border-radius:12px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:12px">'
       +'<thead><tr style="background:'+color+'12">'
       +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">Service</th>'
       +(hasSource?'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">Source</th><th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">Service Advisor</th>':'')
@@ -3986,8 +4006,11 @@ async function renderInstructionTab(brand, cfg){
           +'</tr>';
       }).join('')
       +'</tbody></table></div>';
+    }
   }
-  const apptHtml=apptBody?mkCollapsibleOpen('🔧 PMS Services',apptBody,'instr_'+brand+'_appt',color):'';
+  const apptHtml=apptBody
+    ? mkCollapsibleOpen('🔧 PMS Services',apptBody,'instr_'+brand+'_appt',color)
+    : mkCollapsible('🔧 PMS Services','<div style="text-align:center;padding:24px;color:#aaa;font-size:13px">📭 No PMS data yet — add Appointment Script section to the sheet</div>','instr_'+brand+'_appt',color);
 
   // ===== Email to section =====
   let emailHtml='';
