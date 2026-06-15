@@ -1049,6 +1049,7 @@ function renderAttendance(name){
           ${mT.Absent?`<span class="mtot absent">❌ ${mT.Absent}</span>`:''}
           ${mT.Off?`<span class="mtot off">– ${mT.Off}</span>`:''}
           ${mT['Saturday Shift']?`<span class="mtot satshift">📅 ${mT['Saturday Shift']}</span>`:''}
+        </div>
       </div>
       <div class="cal-grid">
         <div class="cal-day wd">Mon</div><div class="cal-day wd">Tue</div><div class="cal-day wd">Wed</div>
@@ -1369,12 +1370,12 @@ let REF_DATA = [];
 // ── REFERENCE PAGE ────────────────────────────────────────────────────
 const REF_SHEETS = {
   main: {
-    id: '1FFkOe3_RC7N3MaZ6OQ4MP1qDEHCiHjaQ4MqrFzOa7zo',
-    tabs: ['Subject','Link ','Contact Number','Email']
+    id: '1MRUWG3v9Neac-UselMf_HzlfiLtX64a9iJsIUV5FmRU',
+    tabs: ['Subject','Emails','Contact Number']
   },
   nissan: {
     id: '1lXDeN1iUosG_JSADgdWhnkT5J1t3hhwXoSJdbmb4B88',
-    tabs: ['Instruction','Showroom','Service','Spare Parts ','PAC','SMS & Location','Nissan APP 25-26']
+    tabs: ['Instruction','Showroom','Service','Spare Parts ','PAC','SMS & Location','Nissan APP 25-26','Nissan Website']
   },
   stellantis: {
     id: '104CXGHd1raokgGijhvHgt6AI2gdsqzANBH74Ehm01dM',
@@ -4254,6 +4255,16 @@ async function renderRefBrand(brand,tabIdx){
       container.innerHTML=renderNissanAppTab(arr);
       return;
     }
+    if(brand==='nissan' && sheetName.trim()==='Nissan Website'){
+      container.innerHTML=
+        '<div style="text-align:center;padding:40px 20px">'
+        +'<div style="font-size:48px;margin-bottom:16px">🌐</div>'
+        +'<div style="font-size:16px;font-weight:700;color:#1a1a2e;margin-bottom:8px">Nissan Saudi Arabia — Petromin</div>'
+        +'<div style="font-size:13px;color:#888;margin-bottom:24px">سيارات ركاب، دفع الرباعي، رياضية، تجارية</div>'
+        +'<a href="https://www.petromin-nissan.com/" target="_blank" style="display:inline-flex;align-items:center;gap:10px;padding:14px 32px;background:#c0272d;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(192,39,45,.3)">🔗 petromin-nissan.com</a>'
+        +'</div>';
+      return;
+    }
     if(brand==='nissan' && sheetName.trim()==='Nissan Recall'){
       container.innerHTML=renderRecallTab(arr);
       return;
@@ -4375,11 +4386,18 @@ function renderRoster(){
   const agents = keys.slice(1);
   const today = new Date();
 
-  // Filter out header repeat rows
-  const rows = SCHEDULE_DATA.filter(function(r){
+  // Filter out header repeat rows — stop at Weekly Calls & Break section
+  const allRows = SCHEDULE_DATA.filter(function(r){
     var v = String(r[dateKey]||'').trim();
     return v && v !== dateKey && !agents.includes(v);
   });
+  // Only take rows before "Weekly Calls & Break" header
+  const rows = [];
+  for(var ri=0;ri<allRows.length;ri++){
+    var v=String(allRows[ri][dateKey]||'').trim();
+    if(v==='Weekly Calls & Break'||v==='Multi Campaign'||v==='WhatsApp') break;
+    rows.push(allRows[ri]);
+  }
 
   // Build schedule table
   var tableHTML = '<div style="overflow-x:auto">'
@@ -5060,7 +5078,7 @@ async function renderRef(){
     };
     const[subjectData,linksData,contactData,emailData]=await Promise.all([
       fetchFB(REF_SHEETS.main.id,['Subject','subject']),
-      fetchFB(REF_SHEETS.main.id,['Link ','Links','Link']),
+      fetchFB(REF_SHEETS.main.id,['Emails','Email','Link ','Links','Link']),
       fetchFB(REF_SHEETS.main.id,['Contact Number ','Contact Number','Contact Numbers']),
       fetchFB(REF_SHEETS.main.id,['Email','email']),
     ]);
