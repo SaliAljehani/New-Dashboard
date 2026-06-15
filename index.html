@@ -1295,7 +1295,7 @@ async function loadSchedule(){
     const v0 = String(Object.values(r)[0]||'').trim();
     if(v0==='Weekly Calls & Break'||v0==='Multi Campaign'){ hitWeekly=true; return; }
     if(!hitWeekly) schedRows.push(r);
-    else if(v0 && v0!=='Week' && v0!=='WhatsApp') weeklyRows.push(r);
+    else if(v0 && v0!=='Week') weeklyRows.push(r);
   });
   SCHEDULE_DATA = schedRows;
   WEEKLY_DATA = weeklyRows;
@@ -4488,15 +4488,16 @@ function renderRoster(){
   // Build weekly breaks table
   var weeklyHTML = '';
   if(WEEKLY_DATA && WEEKLY_DATA.length){
-    console.log('WEEKLY_DATA[0]:', WEEKLY_DATA[0], 'WEEKLY_DATA[1]:', WEEKLY_DATA[1], 'WEEKLY_DATA[2]:', WEEKLY_DATA[2]);
     var callRows=[], chatRows=[], wSection='call';
     WEEKLY_DATA.forEach(function(r){
-      var vals=(Array.isArray(r)?r:Object.values(r)).map(function(v){return String(v||'').trim();});
+      var vals=Object.values(r).map(function(v){return String(v||'').trim();});
       var v0=vals[0]||'', v1=vals[1]||'', v2=vals[2]||'';
-      if(v0==='Week'||v0==='week') return;
-      if(v0==='Multi Campaign') return;
-      if(v0==='WhatsApp'||v1==='WhatsApp'||v2==='WhatsApp'){wSection='chat';return;}
       if(!v0&&!v1&&!v2) return;
+      if(v0==='Week'||v0==='week') return;
+      if(v0==='Multi Campaign'||v0==='multi campaign') return;
+      if(v0==='WhatsApp'||v0==='whatsapp'){wSection='chat';return;}
+      // تحقق إذا أي خلية تحتوي WhatsApp كعنوان
+      if(vals.some(function(v){return v==='WhatsApp'||v==='whatsapp';})){wSection='chat';return;}
       var row={week:v0, agent:v1, brk:v2};
       if(wSection==='call') callRows.push(row); else chatRows.push(row);
     });
