@@ -1377,7 +1377,7 @@ const REF_SHEETS = {
   },
   nissan: {
     id: '1lXDeN1iUosG_JSADgdWhnkT5J1t3hhwXoSJdbmb4B88',
-    tabs: ['Instruction','Showroom','Service','Spare Parts ','PAC','SMS & Location','Nissan APP 25-26','Nissan Recall']
+    tabs: ['Instruction','Showroom','Service','Spare Parts ','PAC','SMS & Location','Nissan APP 25-26']
   },
   stellantis: {
     id: '104CXGHd1raokgGijhvHgt6AI2gdsqzANBH74Ehm01dM',
@@ -1409,7 +1409,7 @@ const REF_SHEETS = {
   },
   recallNissan: {
     id: '1l71v2_-xf5T-4B7gw9ChvjY6wr309aGFfKXOl1NH1eI',
-    tabs: ['Nissan Recall']
+    tabs: []
   },
   recallStellantis: {
     id: '1RnRDI6CSo2iKrC6C5rfOimy4OaCV0tvEn3LsS_6eYoY',
@@ -3742,7 +3742,7 @@ function showRefBrandPage(brand){
     +'<div id="petrominWarrantyDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px"></div>'
     +'<div class="ref-sub-tabs" id="refSubTabs_'+brand+'" style="justify-content:center">'
     +tabs.map((t,i)=>{
-      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','PMS':'Service','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Nissan Recall':'⚠️ Recall'};
+      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','PMS':'Service','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location'};
       const label=TAB_LABELS[t]||t;
       return '<button class="ref-sub-tab'+(i===0?' active':'')+'" '
         +'style="'+(i===0?'background:'+meta.color+';color:#fff;border-color:'+meta.color:'')+'" '
@@ -4243,57 +4243,47 @@ async function renderRefBrand(brand,tabIdx){
 function renderRecallTab(arr, sheetName){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#4a148c';
-  const sn=sheetName||'recall';
 
-  // Parse: first section = recall details (until "VIN" header row)
+  // Parse: first section = recall details (until empty row then "VIN")
   const detailRows=[], vinRows=[];
   let mode='details';
-  arr.forEach(function(r){
-    const vals=(Array.isArray(r)?r:Object.values(r)).map(function(x){return String(x===undefined||x===null?'':x).trim();});
+  arr.forEach((r,idx)=>{
+    const vals=Object.values(r).map(x=>String(x===undefined||x===null?'':x).trim());
     const v0=vals[0]||'';
     if(v0==='VIN'||v0==='VINs'||v0==='Vin'){ mode='vin'; return; }
-    if(mode==='details'){ if(vals.some(function(v){return v;})) detailRows.push(vals); }
-    else { if(v0) vinRows.push(v0); }
+    if(mode==='details'){
+      if(vals.some(v=>v)) detailRows.push(vals);
+    } else {
+      if(v0) vinRows.push(v0);
+    }
   });
 
-  const isArabic=function(v){ return /[\u0600-\u06FF]/.test(v); };
+  // Details section
+  const detailHTML=detailRows.length?'<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:4px">'
+    +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
+    +'<thead><tr style="background:'+color+'15">'
+    +detailRows[0].map(h=>h?'<th style="padding:10px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center;white-space:nowrap">'+h+'</th>':'').join('')
+    +'</tr></thead><tbody>'
+    +detailRows.slice(1).map((r,i)=>'<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'">'
+      +r.map(v=>'<td style="padding:9px 14px;color:#333;line-height:1.6;direction:rtl;text-align:right">'+v+'</td>').join('')
+      +'</tr>').join('')
+    +'</tbody></table></div></div>':'';
 
-  // Details table — shown directly (not collapsed)
-  var detailHTML='';
-  if(detailRows.length){
-    const headers=detailRows[0];
-    detailHTML='<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:12px">'
-      +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px">'
-      +'<thead><tr style="background:'+color+'12">'
-      +headers.map(function(h){ return h?'<th style="padding:12px 16px;color:'+color+';font-weight:700;border-bottom:3px solid '+color+'33;text-align:center;white-space:nowrap;font-size:12px">'+h+'</th>':''; }).join('')
-      +'</tr></thead><tbody>'
-      +detailRows.slice(1).map(function(r,i){
-        return '<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'">'
-          +r.map(function(v,ci){
-            var isFirst=ci===0, isSecond=ci===1;
-            var align=isSecond?'center':(isFirst?'left':'center');
-            var dir=(!isFirst&&isArabic(v))?'rtl':'ltr';
-            return '<td style="padding:12px 16px;color:#333;line-height:1.7;text-align:'+align+';direction:'+dir+'">'+v+'</td>';
-          }).join('')
-          +'</tr>';
-      }).join('')
-      +'</tbody></table></div></div>';
-  }
-
-  // VIN Search section — collapsible
-  const vinId='vinList_'+sn.replace(/\W/g,'');
-  const vinInnerHTML='<div style="padding:4px 0">'
+  // VIN Search section
+  const vinId='vinList_'+sheetName.replace(/\W/g,'');
+  const vinHTML='<div style="margin-top:4px">'
     +'<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'
-    +'<input id="vinSearch_'+vinId+'" type="text" placeholder="ابحث برقم الهيكل (VIN)..." oninput="filterVIN(\''+vinId+'\')" style="flex:1;padding:8px 14px;border-radius:20px;border:2px solid '+color+'44;font-size:13px;outline:none">'
+    +'<input id="vinSearch_'+vinId+'" type="text" placeholder="🔍 ابحث برقم الهيكل (VIN)..." oninput="filterVIN(\''+vinId+'\')" style="flex:1;padding:8px 14px;border-radius:20px;border:2px solid '+color+'44;font-size:13px;outline:none">'
     +'<span id="vinCount_'+vinId+'" style="font-size:11px;color:#888;white-space:nowrap">'+vinRows.length+' VINs</span>'
     +'</div>'
     +'<div id="'+vinId+'" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px;max-height:300px;overflow-y:auto;padding:4px">'
-    +vinRows.map(function(v){ return '<div class="vin-item-'+vinId+'" style="background:#f3e5f5;color:#6a1b9a;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;font-family:monospace;text-align:center">'+v+'</div>'; }).join('')
+    +vinRows.map(v=>'<div class="vin-item-'+vinId+'" style="background:#f3e5f5;color:#6a1b9a;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;font-family:monospace;text-align:center">'+v+'</div>').join('')
     +'</div></div>';
 
-  const vinSection=mkCollapsible('🔍 VIN Search', vinInnerHTML, 'recall_vin_'+vinId, color);
+  const detailSection=mkCollapsible('📋 تفاصيل الاستدعاء — '+sheetName, detailHTML, 'recall_detail_'+vinId, color);
+  const vinSection=mkCollapsible('🔍 VIN Search ('+vinRows.length+' أرقام هياكل)', vinHTML, 'recall_vin_'+vinId, color);
 
-  return '<div>'+detailHTML+vinSection+'</div>';
+  return '<div>'+detailSection+vinSection+'</div>';
 }
 
 function filterVIN(vinId){
@@ -4619,18 +4609,22 @@ function renderRecallPage(){
   const el = document.getElementById('recallContent');
   if(!el) return;
 
-  // Level 2: Brand tabs
-  const brandTabsHTML = '<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:20px">'
+  // Brand selector buttons — same style as page-nav
+  const brandTabsHTML = '<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:16px">'
     +Object.entries(RECALL_BRANDS).map(([name,cfg])=>
-      '<button onclick="selectRecallBrand(\''+name+'\')" id="rbrand_'+name.replace(/\s/g,'_')+'" style="padding:8px 20px;border-radius:20px;border:2px solid '+(name===RECALL_ACTIVE_BRAND?cfg.color:'#ddd')+';background:'+(name===RECALL_ACTIVE_BRAND?cfg.color:'#fff')+';color:'+(name===RECALL_ACTIVE_BRAND?'#fff':'#555')+';font-size:13px;font-weight:700;cursor:pointer">'+cfg.icon+' '+name+'</button>'
+      '<button onclick="selectRecallBrand(\''+name+'\')" id="rbrand_'+name.replace(/\s/g,'_')+'" class="pnav'+(name===RECALL_ACTIVE_BRAND?' active':'')+'" style="'+(name===RECALL_ACTIVE_BRAND?'background:'+cfg.color+'0d;color:'+cfg.color+';border-color:'+cfg.color+'44':'')+'">'
+      +cfg.icon+' '+name+'</button>'
     ).join('')+'</div>';
 
-  el.innerHTML = '<div style="background:linear-gradient(135deg,#eeeeee,#e0e0e0);border-radius:12px;padding:12px 18px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #c0272d;box-shadow:0 2px 8px rgba(0,0,0,.06)">'
+  el.innerHTML =
+    // Header — نفس style الـ brand page header
+    '<div style="background:linear-gradient(135deg,#eeeeee,#e0e0e0);border-radius:12px;padding:12px 18px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #c0272d;box-shadow:0 2px 8px rgba(0,0,0,.06)">'
     +'<div style="font-size:16px;font-weight:800;color:#1a1a2e">🔁 Recall Center</div>'
     +'<a href="https://recalls.sa/" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:#fff;color:#555;border:1.5px solid #ddd;border-radius:16px;font-size:11px;font-weight:700;text-decoration:none">🏛️ وزارة التجارة</a>'
     +'</div>'
     + brandTabsHTML
-    + '<div id="recallBrandContent"><div style="text-align:center;padding:40px;color:#aaa">⏳ Loading...</div></div>';
+    // Brand content — same structure as ref-brand-section
+    + '<div id="recallBrandContent"></div>';
 
   loadRecallBrand(RECALL_ACTIVE_BRAND);
 }
@@ -4638,13 +4632,16 @@ function renderRecallPage(){
 function selectRecallBrand(name){
   RECALL_ACTIVE_BRAND = name;
   RECALL_ACTIVE_TAB = 0;
-  // Update brand button styles
-  Object.entries(RECALL_BRANDS).forEach(([n,cfg])=>{
+  const cfg = RECALL_BRANDS[name];
+  // Update brand button styles — same active style as pnav
+  Object.entries(RECALL_BRANDS).forEach(([n,c])=>{
     const btn = document.getElementById('rbrand_'+n.replace(/\s/g,'_'));
     if(!btn) return;
-    btn.style.background = n===name ? cfg.color : '#fff';
-    btn.style.color = n===name ? '#fff' : '#555';
-    btn.style.borderColor = n===name ? cfg.color : '#ddd';
+    const isActive = n===name;
+    btn.classList.toggle('active', isActive);
+    btn.style.background = isActive ? c.color+'0d' : '';
+    btn.style.color = isActive ? c.color : '';
+    btn.style.borderColor = isActive ? c.color+'44' : '';
   });
   loadRecallBrand(name);
 }
@@ -4657,52 +4654,68 @@ async function loadRecallBrand(name){
 
   // If brand has direct link — show button only
   if(cfg.link){
-    cont.innerHTML='<div style="text-align:center;padding:40px">'
+    cont.innerHTML='<div class="ref-brand-section">'
+      +'<div style="padding:14px 20px;background:linear-gradient(135deg,'+color+','+color+'99);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:10px">'
+      +'<span style="font-size:20px">'+cfg.icon+'</span><span style="font-size:15px;font-weight:700">'+name+'</span>'
+      +'</div>'
+      +'<div class="ref-tab-content" style="text-align:center;padding:40px">'
       +'<div style="font-size:40px;margin-bottom:12px">🌍</div>'
       +'<div style="font-size:14px;color:#555;margin-bottom:20px">سجلي بيانات المناطق النائية مباشرة في Google Sheets</div>'
       +'<a href="'+cfg.link+'" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:'+color+';color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.15)">📝 Open Remote Areas Sheet</a>'
-      +'</div>';
+      +'</div></div>';
     return;
   }
 
   const sheets = REF_SHEETS[cfg.key];
-  cont.innerHTML = '<div style="text-align:center;padding:24px;color:#bbb">⏳ Loading...</div>';
 
-  try{
-    // Fetch tab names dynamically from gviz if tabs is empty
-    let tabs = sheets.tabs;
-    if(!tabs || tabs.length===0){
-      cont.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa">📭 No recalls yet for '+name+'.<br><span style="font-size:12px;color:#bbb">Add tabs to the Google Sheet to display recalls.</span></div>';
-      return;
-    }
-
-    // Level 3: Recall tabs
-    const recallTabsHTML = '<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:16px">'
-      +tabs.map((t,i)=>
-        '<button onclick="selectRecallTab(\''+name+'\','+i+')" id="rtab_'+name.replace(/\s/g,'_')+'_'+i+'" style="padding:6px 16px;border-radius:16px;border:1.5px solid '+(i===RECALL_ACTIVE_TAB?color:'#ddd')+';background:'+(i===RECALL_ACTIVE_TAB?color:'#fff')+';color:'+(i===RECALL_ACTIVE_TAB?'#fff':'#555')+';font-size:12px;font-weight:700;cursor:pointer">'+t+'</button>'
-      ).join('')+'</div>';
-
-    cont.innerHTML = recallTabsHTML + '<div id="recallTabContent"></div>';
-    await loadRecallTab(name, tabs[RECALL_ACTIVE_TAB], color);
-  }catch(e){
-    cont.innerHTML = '<div style="color:#c0272d;padding:24px;text-align:center">⚠️ '+e.message+'</div>';
+  if(!sheets.tabs || sheets.tabs.length===0){
+    cont.innerHTML='<div class="ref-brand-section">'
+      +'<div style="padding:14px 20px;background:linear-gradient(135deg,'+color+','+color+'99);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:10px">'
+      +'<span style="font-size:20px">'+cfg.icon+'</span><span style="font-size:15px;font-weight:700">'+name+'</span>'
+      +'</div>'
+      +'<div class="ref-tab-content" style="text-align:center;padding:40px;color:#aaa">📭 No recalls yet for '+name+'.</div>'
+      +'</div>';
+    return;
   }
+
+  const tabs = sheets.tabs;
+
+  // Build brand section — exactly like ref-brand-section in showRefBrandPage
+  cont.innerHTML = '<div class="ref-brand-section">'
+    // Colored header
+    +'<div style="padding:14px 20px;background:linear-gradient(135deg,'+color+','+color+'99);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:10px">'
+    +'<span style="font-size:20px">'+cfg.icon+'</span>'
+    +'<span style="font-size:15px;font-weight:700">'+name+'</span>'
+    +'</div>'
+    // Sub-tabs — same class as Nissan brand page
+    +'<div class="ref-sub-tabs" id="recallSubTabs_'+name.replace(/\s/g,'_')+'">'
+    +tabs.map((t,i)=>'<button class="ref-sub-tab'+(i===0?' active':'')+'" '
+      +'style="'+(i===0?'background:'+color+';color:#fff;border-color:'+color:'')+'" '
+      +'onclick="selectRecallTab(\''+name+'\','+i+',this)">'+t+'</button>'
+    ).join('')
+    +'</div>'
+    // Tab content container
+    +'<div class="ref-tab-content"><div id="recallTabContent" style="text-align:center;padding:24px;color:#bbb">⏳ Loading...</div></div>'
+    +'</div>';
+
+  await loadRecallTab(name, tabs[0], color);
 }
 
-async function selectRecallTab(brand, idx){
+async function selectRecallTab(brand, idx, btn){
   RECALL_ACTIVE_TAB = idx;
   const cfg = RECALL_BRANDS[brand];
-  const sheets = REF_SHEETS[cfg.key];
   const color = cfg.color;
-  // Update tab button styles
-  sheets.tabs.forEach((t,i)=>{
-    const btn = document.getElementById('rtab_'+brand.replace(/\s/g,'_')+'_'+i);
-    if(!btn) return;
-    btn.style.background = i===idx ? color : '#fff';
-    btn.style.color = i===idx ? '#fff' : '#555';
-    btn.style.borderColor = i===idx ? color : '#ddd';
-  });
-  await loadRecallTab(brand, sheets.tabs[idx], color);
+  // Update sub-tab styles — same as switchRefTab
+  const container = btn ? btn.parentElement : document.getElementById('recallSubTabs_'+brand.replace(/\s/g,'_'));
+  if(container){
+    container.querySelectorAll('.ref-sub-tab').forEach((t,i)=>{
+      t.classList.toggle('active', i===idx);
+      t.style.background = i===idx ? color : '';
+      t.style.color = i===idx ? '#fff' : '';
+      t.style.borderColor = i===idx ? color : '';
+    });
+  }
+  await loadRecallTab(brand, REF_SHEETS[cfg.key].tabs[idx], color);
 }
 
 async function loadRecallTab(brand, tabName, color){
@@ -4739,7 +4752,7 @@ function renderRecallTab(arr, sheetName, color){
     +detailRows[0].map(h=>h?'<th style="padding:16px 20px;color:'+color+';font-weight:700;border-bottom:3px solid '+color+'44;text-align:center;white-space:nowrap;font-size:14px">'+h+'</th>':'').filter((_,i)=>detailRows[0][i]).join('')
     +'</tr></thead><tbody>'
     +detailRows.slice(1).map((r,i)=>'<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'">'
-      +r.map((v,ci)=>{const isFirst=ci===0,isSecond=ci===1;const align=isSecond?'center':(isFirst?'left':'center');const dir=(!isFirst&&/[\u0600-\u06FF]/.test(v))?'rtl':'ltr';return '<td style="padding:14px 18px;color:#333;line-height:1.8;direction:'+dir+';text-align:'+align+';border-bottom:1px solid #f0f0f0;font-size:13px">'+v+'</td>';}).join('')
+      +r.map(v=>'<td style="padding:16px 20px;color:#333;line-height:1.9;direction:rtl;text-align:right;border-bottom:1px solid #f0f0f0;font-size:13px">'+v+'</td>').join('')
       +'</tr>').join('')
     +'</tbody></table></div></div>':'';
 
