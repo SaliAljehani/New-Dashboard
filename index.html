@@ -278,12 +278,12 @@ tr:last-child td{border-bottom:none}
 .mtot{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600}
 .mtot.office{background:#e8f5e9;color:#2e7d32}.mtot.remote{background:#e3f2fd;color:#1565c0}
 .mtot.off{background:#d8d8d8;color:#666}.mtot.vacation{background:#f3e5f5;color:#6a1b9a}
-.mtot.sick{background:#fff3e0;color:#e65100}.mtot.absent{background:#fde;color:#c0272d}
+.mtot.sick{background:#fff3e0;color:#e65100}.mtot.absent{background:#fde;color:#c0272d}.mtot.satshift{background:#e0f7fa;color:#00838f}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:10px}
 .cal-day{border-radius:5px;padding:4px 2px;text-align:center;font-size:10px;font-weight:600;min-height:32px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2}
 .cal-day.office{background:#e8f5e9;color:#2e7d32}.cal-day.remote{background:#e3f2fd;color:#1565c0}
 .cal-day.off{background:#d8d8d8;color:#bbb}.cal-day.vacation{background:#f3e5f5;color:#6a1b9a}
-.cal-day.sick{background:#fff3e0;color:#e65100}.cal-day.absent{background:#fde;color:#c0272d}
+.cal-day.sick{background:#fff3e0;color:#e65100}.cal-day.absent{background:#fde;color:#c0272d}.cal-day.satshift{background:#e0f7fa;color:#00838f;font-weight:700}
 .cal-day.el{background:#e0f7fa;color:#00695c}.cal-day.empty{background:transparent}
 .cal-day.wd{font-size:9px;color:#666;background:transparent;font-weight:400}
 .ms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:14px}
@@ -1008,8 +1008,8 @@ function renderAgent(name){
 }
 
 // ── ATTENDANCE ───────────────────────────────────────────────────────────────
-function scls(s){return{Office:'office',Remote:'remote',Off:'off',Vacation:'vacation',Sick:'sick',Absent:'absent',EL:'el'}[s]||'off';}
-function slbl(s){return{Office:'🏢',Remote:'🏠',Off:'–',Vacation:'🌴',Sick:'🤒',Absent:'❌',EL:'📋'}[s]||'–';}
+function scls(s){return{Office:'office',Remote:'remote',Off:'off',Vacation:'vacation',Sick:'sick',Absent:'absent',EL:'el','Saturday Shift':'satshift'}[s]||'off';}
+function slbl(s){return{Office:'🏢',Remote:'🏠',Off:'–',Vacation:'🌴',Sick:'🤒',Absent:'❌',EL:'📋','Saturday Shift':'📅'}[s]||'–';}
 function mnm(m){const ns=['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return ns[parseInt(m.split('-')[1])]+' '+m.split('-')[0];}
 
 function renderAttendance(name){
@@ -1019,7 +1019,7 @@ function renderAttendance(name){
   const rows={};
   Object.entries(ag).forEach(([d,s])=>{if(d>=f&&d<=t)rows[d]=s;});
   if(!Object.keys(rows).length){document.getElementById('attContent').innerHTML='<div style="text-align:center;padding:30px;color:#aaa">No attendance in selected period.</div>';return;}
-  const tot={Office:0,Remote:0,Off:0,Vacation:0,Sick:0,Absent:0,EL:0};
+  const tot={Office:0,Remote:0,Off:0,Vacation:0,Sick:0,Absent:0,EL:0,'Saturday Shift':0};
   Object.values(rows).forEach(s=>{if(s in tot)tot[s]++;});
   const byM={};
   Object.entries(rows).forEach(([d,s])=>{const m=d.slice(0,7);if(!byM[m])byM[m]={};byM[m][d]=s;});
@@ -1030,6 +1030,7 @@ function renderAttendance(name){
     <div class="ms-card" style="border-left-color:#e65100"><div class="ms-name">🤒 Sick Leave</div><div class="ms-val">${tot.Sick}</div></div>
     <div class="ms-card" style="border-left-color:#888"><div class="ms-name">– Off</div><div class="ms-val">${tot.Off}</div></div>
     <div class="ms-card" style="border-left-color:#c0272d"><div class="ms-name">❌ Absent</div><div class="ms-val">${tot.Absent}</div></div>
+    <div class="ms-card" style="border-left-color:#00838f"><div class="ms-name">📅 Saturday Shift</div><div class="ms-val">${tot['Saturday Shift']}</div></div>
   </div>`;
   Object.keys(byM).sort().forEach(m=>{
     const days=byM[m];
@@ -1047,7 +1048,7 @@ function renderAttendance(name){
           ${mT.Sick?`<span class="mtot sick">🤒 ${mT.Sick}</span>`:''}
           ${mT.Absent?`<span class="mtot absent">❌ ${mT.Absent}</span>`:''}
           ${mT.Off?`<span class="mtot off">– ${mT.Off}</span>`:''}
-        </div>
+          ${mT['Saturday Shift']?`<span class="mtot satshift">📅 ${mT['Saturday Shift']}</span>`:''}
       </div>
       <div class="cal-grid">
         <div class="cal-day wd">Mon</div><div class="cal-day wd">Tue</div><div class="cal-day wd">Wed</div>
@@ -1285,12 +1286,10 @@ async function loadSchedule(){
   const rows = await fetchCSV('Daily Off Schedule');
   SCHEDULE_DATA = rows;
   try{
-    const gid = SHEET_GIDS['Weekly Calls & Break'] || '';
-    const res = await fetch(BASE_CSV + encodeURIComponent('Weekly Calls & Break') + '&gid=' + gid);
-    const text = await res.text();
-    WEEKLY_DATA = parseCSVRaw(text);
+    const weeklyRows = await fetchCSV('Weekly Calls & Break');
+    WEEKLY_DATA = weeklyRows;
   }catch(e){
-    console.warn('Weekly Calls & Break CSV fetch failed:', e);
+    console.warn('Weekly Calls & Break fetch failed:', e);
     WEEKLY_DATA = [];
   }
   renderRoster();
@@ -3822,6 +3821,23 @@ async function togglePetrominWarranty(){
   }
 }
 
+function switchInstrTab(brand, tab){
+  const BRAND_COLORS={nissan:'#c0272d',stellantis:'#1565c0',baic:'#f9a825'};
+  const color=BRAND_COLORS[brand]||'#c0272d';
+  ['warranty','pms'].forEach(t=>{
+    const btn=document.getElementById('instrTab_'+t+'_'+brand);
+    const body=document.getElementById('instrBody_'+t+'_'+brand);
+    const isActive=t===tab;
+    if(btn){
+      btn.classList.toggle('active',isActive);
+      btn.style.background=isActive?color:'';
+      btn.style.color=isActive?'#fff':'';
+      btn.style.borderColor=isActive?color:'';
+    }
+    if(body) body.style.display=isActive?'':'none';
+  });
+}
+
 function mkCollapsible(title, bodyHtml, id, color){
   return '<div style="margin-bottom:16px">'
     +'<div onclick="toggleRegion(\''+id+'\')" style="display:flex;align-items:center;gap:10px;padding:9px 16px;background:'+color+'12;border-radius:10px;border-left:4px solid '+color+';cursor:pointer">'
@@ -3981,7 +3997,21 @@ async function renderInstructionTab(brand, cfg){
       +'</div>';
   }
 
-  const result=warrantyHtml+apptHtml+emailHtml+noteHtml;
+  const result=
+    // تابين داخليين
+    '<div class="ref-sub-tabs" style="justify-content:center;margin-bottom:12px">'
+    +'<button class="ref-sub-tab active" id="instrTab_warranty_'+brand+'" style="background:'+color+';color:#fff;border-color:'+color+'" onclick="switchInstrTab(\''+brand+'\',\'warranty\')">🛡️ Warranty</button>'
+    +'<button class="ref-sub-tab" id="instrTab_pms_'+brand+'" onclick="switchInstrTab(\''+brand+'\',\'pms\')">🔧 PMS Services</button>'
+    +'</div>'
+    // محتوى Warranty
+    +'<div id="instrBody_warranty_'+brand+'">'
+    +warrantyHtml+emailHtml+noteHtml
+    +'</div>'
+    // محتوى PMS Services
+    +'<div id="instrBody_pms_'+brand+'" style="display:none">'
+    +apptHtml
+    +'</div>';
+
   if(brand==='baic'){
     return '<div style="max-width:700px;margin:0 auto">'+result+'</div>';
   }
