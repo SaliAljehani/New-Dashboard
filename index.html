@@ -324,7 +324,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <div style="background:rgba(192,39,45,.07);border-radius:20px;padding:6px 24px;border:1px solid rgba(192,39,45,.15);text-align:center">
       <h1 style="margin:0;font-size:15px">Inbound Daily Dashboard · Petromin Group</h1>
     </div>
-    <div style="max-width:100%;overflow:hidden;padding:0 8px"><div id="motivationText" style="font-size:12px;font-weight:600;color:#c0272d;direction:rtl;white-space:nowrap;display:inline-block;animation:scrollText 18s linear infinite" onmouseenter="this.style.animationPlayState='paused'" onmouseleave="this.style.animationPlayState='running'"></div></div>
+    <div id="motivationText" style="width:100%;display:flex;align-items:center;justify-content:center;gap:0;transition:opacity 0.6s;min-height:22px"></div>
   </div>
   <span class="lupd" id="lupd" onclick="loadAllData()" title="Click to refresh" style="flex-shrink:0;font-size:11px">🔄 Refresh</span>
 </div>
@@ -581,31 +581,29 @@ function showMotivation(){
   const el=document.getElementById('motivationText');
   if(!el) return;
 
-  // مجموعات من 3 جمل
   const groups=[
     ['⭐ خلف كل تقييم إيجابي قصة خدمة مميزة صنعتها أنت','✨ نتمنى لك يومًا مليئًا بالتميز والرضا والنتائج الرائعة','🏆 نجاحنا يبدأ من رضا عملائنا، ورضا عملائنا يبدأ من احترافيتك'],
-    ['🌟 صباح الإنجاز!','🎯 هدفنا اليوم: خدمة أسرع، تجربة أفضل، وعميل أكثر رضاً','💫 ابتسامتك واحترافيتك وسرعة استجابتك تصنع الفرق'],
+    ['🌟 صباح الإنجاز! ابدأ يومك بهمة وعزيمة','🎯 هدفنا اليوم: خدمة أسرع، تجربة أفضل، وعميل أكثر رضاً','💫 ابتسامتك واحترافيتك وسرعة استجابتك تصنع الفرق'],
+    ['🚀 كل مكالمة فرصة لتُظهر أفضل ما فيك','💡 التميز عادة وليس حدثاً، كن مميزاً في كل لحظة','🌈 فريقنا هو قوتنا، معاً نصنع النجاح'],
   ];
 
   function renderGroup(g){
-    el.innerHTML='<div style="display:flex;justify-content:center;align-items:center;gap:0;width:100%;min-height:28px">'
-      +g.map((q,qi)=>'<div style="flex:1;text-align:center;padding:0 32px;'+(qi<2?'border-right:1px solid rgba(192,39,45,.25);':'')+';direction:rtl;font-size:11px;font-weight:700;color:#c0272d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'+(qi===2?';padding-right:36px':'')+'">'+q+'</div>').join('')
-      .replace(/border-right[^;]+;(?=[^<]*<\/div>\s*<\/div>)/, '')
-      +'</div>';
+    el.style.opacity='0';
+    setTimeout(function(){
+      el.innerHTML=g.map(function(q,qi){
+        return '<div style="flex:1;text-align:center;padding:0 16px;direction:rtl;font-size:11px;font-weight:600;color:#c0272d;'+(qi<2?'border-right:1px solid rgba(192,39,45,.2)':'')+'">'
+          +q+'</div>';
+      }).join('');
+      el.style.opacity='1';
+    },300);
   }
 
   let idx=0;
   renderGroup(groups[idx]);
-
   setInterval(function(){
-    el.style.opacity='0';
-    el.style.transition='opacity 0.5s';
-    setTimeout(function(){
-      idx=(idx+1)%groups.length;
-      renderGroup(groups[idx]);
-      el.style.opacity='1';
-    },500);
-  },180000);
+    idx=(idx+1)%groups.length;
+    renderGroup(groups[idx]);
+  },180000); // 3 دقائق
 }
 
 async function loadAllData(){
@@ -4610,27 +4608,25 @@ function renderRecallPage(){
   const el = document.getElementById('recallContent');
   if(!el) return;
 
-  // ── 4 brand circles (مثل صفحة Reference الرئيسية) ──
-  const circlesHTML =
-    '<div style="display:flex;gap:24px;flex-wrap:wrap;justify-content:center;margin-bottom:20px">'
+  // 4 دوائر صغيرة للبراندات
+  const circlesHTML = '<div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin-bottom:20px">'
     +Object.entries(RECALL_BRANDS).map(([name,cfg])=>{
       const isActive = name===RECALL_ACTIVE_BRAND;
-      return '<div onclick="selectRecallBrand(\''+name+'\')" id="rcircle_'+name.replace(/\s/g,'_')+'" '
-        +'style="display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;transition:.2s">'
-        +'<div style="width:60px;height:60px;border-radius:50%;background:'+cfg.color+';display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 3px 10px rgba(0,0,0,.18);border:3px solid '+(isActive?'#fff':cfg.color)+'55;outline:'+(isActive?'3px solid '+cfg.color:'none')+'">'+cfg.icon+'</div>'
-        +'<div style="font-size:12px;font-weight:700;color:'+cfg.color+'">'+name+'</div>'
+      return '<div onclick="selectRecallBrand(\''+name+'\')" id="rcircle_'+name.replace(/\s/g,'_')+'" style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:.2s">'
+        +'<div style="width:42px;height:42px;border-radius:50%;background:'+cfg.color+';display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,.15);'+(isActive?'outline:3px solid '+cfg.color+';outline-offset:3px':'')+'">'
+        +cfg.icon+'</div>'
+        +'<div style="font-size:11px;font-weight:700;color:'+cfg.color+'">'+name+'</div>'
         +'</div>';
     }).join('')
     +'</div>';
 
-  // ── الصفحة الكاملة ──
   el.innerHTML =
-    // هيدر رمادي متوسط — "Recall" وسط + وزارة التجارة يمين
-    '<div style="background:linear-gradient(135deg,#757575,#9e9e9e);border-radius:12px 12px 0 0;padding:14px 20px;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 2px 8px rgba(0,0,0,.1)">'
-    +'<span style="font-size:16px;font-weight:800;color:#fff;letter-spacing:.04em">🔁 Recall</span>'
+    // هيدر رمادي — Recall وسط + وزارة التجارة يمين
+    '<div style="background:linear-gradient(135deg,#757575,#9e9e9e);border-radius:12px 12px 0 0;padding:14px 20px;display:flex;align-items:center;justify-content:center;position:relative">'
+    +'<span style="font-size:16px;font-weight:800;color:#fff">🔁 Recall</span>'
     +'<a href="https://recalls.sa/" target="_blank" style="position:absolute;right:16px;display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;text-decoration:none">🏛️ وزارة التجارة</a>'
     +'</div>'
-    // جسم أبيض كامل
+    // جسم أبيض
     +'<div style="background:#fff;border-radius:0 0 12px 12px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:20px 16px">'
     + circlesHTML
     +'<div id="recallBrandContent"></div>'
@@ -4642,15 +4638,14 @@ function renderRecallPage(){
 function selectRecallBrand(name){
   RECALL_ACTIVE_BRAND = name;
   RECALL_ACTIVE_TAB = 0;
-  // تحديث الدوائر
+  // تحديث outline الدوائر
   Object.entries(RECALL_BRANDS).forEach(([n,cfg])=>{
-    const el = document.getElementById('rcircle_'+n.replace(/\s/g,'_'));
-    if(!el) return;
-    const circle = el.querySelector('div');
+    const wrap = document.getElementById('rcircle_'+n.replace(/\s/g,'_'));
+    if(!wrap) return;
+    const circle = wrap.querySelector('div');
     if(!circle) return;
-    const isActive = n===name;
-    circle.style.outline = isActive ? '3px solid '+cfg.color : 'none';
-    circle.style.border = '3px solid '+(isActive?'#fff':cfg.color)+'55';
+    circle.style.outline = n===name ? '3px solid '+cfg.color : 'none';
+    circle.style.outlineOffset = '3px';
   });
   loadRecallBrand(name);
 }
@@ -4661,17 +4656,16 @@ async function loadRecallBrand(name){
   const cfg = RECALL_BRANDS[name];
   const color = cfg.color;
 
-  // Remote Areas — رابط مباشر
+  // If brand has direct link — show button only
   if(cfg.link){
-    cont.innerHTML=
-      '<div class="ref-brand-section" style="margin-top:4px">'
-      +'<div style="padding:12px 18px;background:linear-gradient(135deg,'+color+','+color+'cc);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:10px">'
-      +'<span style="font-size:18px">'+cfg.icon+'</span><span style="font-size:14px;font-weight:700">'+name+'</span>'
+    cont.innerHTML='<div class="ref-brand-section">'
+    +'<div style="padding:14px 20px;background:linear-gradient(135deg,'+color+','+color+'bb);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:10px">'
+      +'<span style="font-size:20px">'+cfg.icon+'</span><span style="font-size:15px;font-weight:700">'+name+'</span>'
       +'</div>'
       +'<div class="ref-tab-content" style="text-align:center;padding:40px">'
-      +'<div style="font-size:36px;margin-bottom:12px">🌍</div>'
+      +'<div style="font-size:40px;margin-bottom:12px">🌍</div>'
       +'<div style="font-size:14px;color:#555;margin-bottom:20px">سجلي بيانات المناطق النائية مباشرة في Google Sheets</div>'
-      +'<a href="'+cfg.link+'" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:'+color+';color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.15)">📝 Open Sheet</a>'
+      +'<a href="'+cfg.link+'" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:'+color+';color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.15)">📝 Open Remote Areas Sheet</a>'
       +'</div></div>';
     return;
   }
@@ -4679,10 +4673,9 @@ async function loadRecallBrand(name){
   const sheets = REF_SHEETS[cfg.key];
 
   if(!sheets.tabs || sheets.tabs.length===0){
-    cont.innerHTML=
-      '<div class="ref-brand-section" style="margin-top:4px">'
-      +'<div style="padding:12px 18px;background:linear-gradient(135deg,'+color+','+color+'cc);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:10px">'
-      +'<span style="font-size:18px">'+cfg.icon+'</span><span style="font-size:14px;font-weight:700">'+name+'</span>'
+    cont.innerHTML='<div class="ref-brand-section">'
+      +'<div style="padding:14px 20px;background:linear-gradient(135deg,'+color+','+color+'bb);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:10px">'
+      +'<span style="font-size:20px">'+cfg.icon+'</span><span style="font-size:15px;font-weight:700">'+name+'</span>'
       +'</div>'
       +'<div class="ref-tab-content" style="text-align:center;padding:40px;color:#aaa">📭 No recalls yet for '+name+'.</div>'
       +'</div>';
@@ -4691,22 +4684,21 @@ async function loadRecallBrand(name){
 
   const tabs = sheets.tabs;
 
-  // ── Brand section مثل Nissan بالضبط ──
-  cont.innerHTML =
-    '<div class="ref-brand-section" style="margin-top:4px">'
-    // هيدر ملون بلون البراند
-    +'<div style="padding:12px 18px;background:linear-gradient(135deg,'+color+','+color+'cc);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:10px">'
-    +'<span style="font-size:18px">'+cfg.icon+'</span>'
-    +'<span style="font-size:14px;font-weight:700">'+name+'</span>'
+  // Build brand section — exactly like ref-brand-section in showRefBrandPage
+  cont.innerHTML = '<div class="ref-brand-section">'
+    // Colored header
+    +'<div style="padding:14px 20px;background:linear-gradient(135deg,'+color+','+color+'bb);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:10px">'
+    +'<span style="font-size:20px">'+cfg.icon+'</span>'
+    +'<span style="font-size:15px;font-weight:700">'+name+'</span>'
     +'</div>'
-    // تابات وسط — مثل Nissan
-    +'<div class="ref-sub-tabs" id="recallSubTabs_'+name.replace(/\s/g,'_')+'" style="justify-content:center">'
+    // Sub-tabs — same class as Nissan brand page
+    +'<div class="ref-sub-tabs" id="recallSubTabs_'+name.replace(/\s/g,'_')+'">'
     +tabs.map((t,i)=>'<button class="ref-sub-tab'+(i===0?' active':'')+'" '
       +'style="'+(i===0?'background:'+color+';color:#fff;border-color:'+color:'')+'" '
       +'onclick="selectRecallTab(\''+name+'\','+i+',this)">'+t+'</button>'
     ).join('')
     +'</div>'
-    // محتوى التاب
+    // Tab content container
     +'<div class="ref-tab-content"><div id="recallTabContent" style="text-align:center;padding:24px;color:#bbb">⏳ Loading...</div></div>'
     +'</div>';
 
