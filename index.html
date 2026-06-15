@@ -1289,8 +1289,12 @@ async function loadSchedule(){
   const rows = await fetchCSV('Daily Off Schedule');
   SCHEDULE_DATA = rows;
   try{
-    const weeklyRows = await fetchCSV('Weekly Calls & Break');
-    WEEKLY_DATA = weeklyRows;
+    const weeklyRows = await fetchCSV('Daily Off Schedule & Weekly Cal');
+    WEEKLY_DATA = weeklyRows.filter(function(r){
+      const vals = Object.values(r).map(v=>String(v||'').trim());
+      const v0 = vals[0]||'';
+      return v0 && (v0.includes('Week')||v0.includes('June')||v0.includes('July')||v0.includes('Aug')||/\d{1,2}[-\/]\d{1,2}/.test(v0)||v0.includes('-'));
+    });
   }catch(e){
     console.warn('Weekly Calls & Break fetch failed:', e);
     WEEKLY_DATA = [];
@@ -3824,9 +3828,8 @@ async function togglePetrominWarranty(){
   }
 }
 
-function switchInstrTab(brand, tab){
-  const BRAND_COLORS={nissan:'#c0272d',stellantis:'#1565c0',baic:'#f9a825'};
-  const color=BRAND_COLORS[brand]||'#c0272d';
+function switchInstrTab(brand, tab, color){
+  color = color || '#c0272d';
   ['warranty','pms'].forEach(t=>{
     const btn=document.getElementById('instrTab_'+t+'_'+brand);
     const body=document.getElementById('instrBody_'+t+'_'+brand);
@@ -4000,7 +4003,14 @@ async function renderInstructionTab(brand, cfg){
       +'</div>';
   }
 
-  const result=warrantyHtml+apptHtml+emailHtml+noteHtml;
+  const result=
+    '<div class="ref-sub-tabs" style="justify-content:center;margin-bottom:12px">'
+    +'<button class="ref-sub-tab active" id="instrTab_warranty_'+brand+'" style="background:'+color+';color:#fff;border-color:'+color+'" onclick="switchInstrTab(\''+brand+'\',\'warranty\',\''+color+'\')">🛡️ Warranty</button>'
+    +'<button class="ref-sub-tab" id="instrTab_pms_'+brand+'" onclick="switchInstrTab(\''+brand+'\',\'pms\',\''+color+'\')">🔧 PMS Services</button>'
+    +'</div>'
+    +'<div id="instrBody_warranty_'+brand+'">'+(warrantyHtml||'<div style="text-align:center;padding:24px;color:#aaa">No warranty data</div>')+emailHtml+noteHtml+'</div>'
+    +'<div id="instrBody_pms_'+brand+'" style="display:none">'+(apptHtml||'<div style="text-align:center;padding:24px;color:#aaa">No PMS data</div>')+'</div>';
+
   if(brand==='baic'){
     return '<div style="max-width:700px;margin:0 auto">'+result+'</div>';
   }
@@ -5066,9 +5076,9 @@ async function renderRef(){
     };
     const[subjectData,linksData,contactData,emailData]=await Promise.all([
       fetchFB(REF_SHEETS.main.id,['Subject','subject']),
-      fetchFB(REF_SHEETS.main.id,['Emails','Email','Link ','Links','Link']),
+      fetchFB(REF_SHEETS.main.id,['Emails ','Emails','Email','Link ','Links','Link']),
       fetchFB(REF_SHEETS.main.id,['Contact Number ','Contact Number','Contact Numbers']),
-      fetchFB(REF_SHEETS.main.id,['Emails','Email','email']),
+      fetchFB(REF_SHEETS.main.id,['Emails ','Emails','Email','email']),
     ]);
 
     const BRAND_CONFIGS=[
