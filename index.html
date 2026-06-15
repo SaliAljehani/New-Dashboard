@@ -677,14 +677,16 @@ async function loadAllData(){
     const nameMap={'Nesreen  Mansour':'Nesreen Mansour','Walaa Meezi ':'Walaa Meezi','Gofran Rafie ':'Ghofran Rafiei','Gofran Rafie':'Ghofran Rafiei','Asma Bawayan':'Asmaa M. Bawayan'};
     const normStatus=s=>{
       const v=String(s).trim().toLowerCase();
-      if(v==='office')return 'Office';
-      if(v.startsWith('work'))return 'Remote';
-      if(v==='off'||v==='eid al-fiter'||v==='off ')return 'Off';
-      if(v.startsWith('vacation'))return 'Vacation';
-      if(v==='sl'||v==='sickleave')return 'Sick';
-      if(v.startsWith('abasent')||v==='absent')return 'Absent';
-      if(v==='el')return 'EL';
-      return 'Other';
+      if(!v) return '';
+      if(v==='office') return 'Office';
+      if(v==='remote') return 'Remote';
+      if(v==='off'||v==='eid al-fiter'||v==='off ') return 'Off';
+      if(v.startsWith('vacation')) return 'Vacation';
+      if(v==='sl'||v==='sickleave'||v==='sick leave'||v==='sick') return 'Sick';
+      if(v.startsWith('absent')||v.startsWith('abasent')) return 'Absent';
+      if(v==='el') return 'EL';
+      if(v==='saturday shift') return 'Saturday Shift';
+      return '';
     };
     attRows.forEach(r=>{
       let agent=(r['Agent Name']||r['Agent']||'').trim();
@@ -709,7 +711,7 @@ async function loadAllData(){
       }
     }
       const st=normStatus(r['Status']||'');
-      if(!agent||!dt||dt.length<8)return;
+      if(!agent||!dt||dt.length<8||!st)return;
       if(!ATT[agent])ATT[agent]={};
       ATT[agent][dt]=st;
     });
@@ -3998,21 +4000,7 @@ async function renderInstructionTab(brand, cfg){
       +'</div>';
   }
 
-  const result=
-    // تابين داخليين
-    '<div class="ref-sub-tabs" style="justify-content:center;margin-bottom:12px">'
-    +'<button class="ref-sub-tab active" id="instrTab_warranty_'+brand+'" style="background:'+color+';color:#fff;border-color:'+color+'" onclick="switchInstrTab(\''+brand+'\',\'warranty\')">🛡️ Warranty</button>'
-    +'<button class="ref-sub-tab" id="instrTab_pms_'+brand+'" onclick="switchInstrTab(\''+brand+'\',\'pms\')">🔧 PMS Services</button>'
-    +'</div>'
-    // محتوى Warranty
-    +'<div id="instrBody_warranty_'+brand+'">'
-    +warrantyHtml+emailHtml+noteHtml
-    +'</div>'
-    // محتوى PMS Services
-    +'<div id="instrBody_pms_'+brand+'" style="display:none">'
-    +apptHtml
-    +'</div>';
-
+  const result=warrantyHtml+apptHtml+emailHtml+noteHtml;
   if(brand==='baic'){
     return '<div style="max-width:700px;margin:0 auto">'+result+'</div>';
   }
