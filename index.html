@@ -3902,7 +3902,16 @@ async function renderInstructionTab(brand, cfg){
     }
 
     if(mode==='warranty'){
-      if(sec && (c1||c2||title)){ warrantyRows.push({title: title||sec, c1: c1||title, c2}); return; }
+      if(sec.toLowerCase().includes('pms') && !c1 && !title){ return; }
+      if(sec){
+        // إذا c1 موجود → sec=section title, title=row title, c1=content
+        // إذا c1 فاضي → sec=title, title=content (Nissan structure)
+        const rowTitle = c1 ? title : sec;
+        const rowContent = c1 ? c1 : title;
+        const rowContent2 = c2||'';
+        if(rowContent) warrantyRows.push({title: rowTitle, c1: rowContent, c2: rowContent2});
+        return;
+      }
       if(!sec && !title && c1 && c1.length>15){ noteRows.push(c1); return; }
       return;
     }
