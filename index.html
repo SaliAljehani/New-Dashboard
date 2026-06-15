@@ -676,14 +676,14 @@ async function loadAllData(){
     ATT={};
     const nameMap={'Nesreen  Mansour':'Nesreen Mansour','Walaa Meezi ':'Walaa Meezi','Gofran Rafie ':'Ghofran Rafiei','Gofran Rafie':'Ghofran Rafiei','Asma Bawayan':'Asmaa M. Bawayan'};
     const normStatus=s=>{
-      const v=String(s).trim().toLowerCase();
+      const v=String(s).trim().toLowerCase().replace(/\s+/g,' ');
       if(!v) return '';
       if(v==='office') return 'Office';
-      if(v==='remote') return 'Remote';
-      if(v==='off'||v==='eid al-fiter'||v==='off ') return 'Off';
+      if(v==='remote'||v==='work r'||v==='work remote'||v==='wfh') return 'Remote';
+      if(v==='off'||v==='eid al-fiter'||v==='eid al-fitr'||v==='eid') return 'Off';
       if(v.startsWith('vacation')) return 'Vacation';
-      if(v==='sl'||v==='sickleave'||v==='sick leave'||v==='sick') return 'Sick';
-      if(v.startsWith('absent')||v.startsWith('abasent')) return 'Absent';
+      if(v==='sl'||v==='sickleave'||v==='sick leave'||v==='sick'||v==='sick l') return 'Sick';
+      if(v==='abasent'||v==='absent') return 'Absent';
       if(v==='el') return 'EL';
       if(v==='saturday shift') return 'Saturday Shift';
       return '';
@@ -1408,11 +1408,11 @@ const REF_SHEETS = {
     tabs: ['D50-1137Units','BJ40-1778Units','BJ40-845Units','X7-2234Units']
   },
   recallNissan: {
-    id: '1l71v2_-xf5T-4B7gw9ChvjY6wr309aGFfKXOl1NH1eI',
-    tabs: []
+    id: '1lXDeN1iUosG_JSADgdWhnkT5J1t3hhwXoSJdbmb4B88',
+    tabs: ['Nissan Recall']
   },
   recallStellantis: {
-    id: '1RnRDI6CSo2iKrC6C5rfOimy4OaCV0tvEn3LsS_6eYoY',
+    id: '104CXGHd1raokgGijhvHgt6AI2gdsqzANBH74Ehm01dM',
     tabs: ['Stellantis Recall']
   },
   recallRemote: {
@@ -5068,7 +5068,7 @@ async function renderRef(){
       fetchFB(REF_SHEETS.main.id,['Subject','subject']),
       fetchFB(REF_SHEETS.main.id,['Emails','Email','Link ','Links','Link']),
       fetchFB(REF_SHEETS.main.id,['Contact Number ','Contact Number','Contact Numbers']),
-      fetchFB(REF_SHEETS.main.id,['Email','email']),
+      fetchFB(REF_SHEETS.main.id,['Emails','Email','email']),
     ]);
 
     const BRAND_CONFIGS=[
@@ -5109,7 +5109,10 @@ async function renderRef(){
       :'<div style="color:#aaa;font-size:12px;padding:8px">—</div>';
 
     // LINKS
-    const linksArr=Array.isArray(linksData)?linksData:(linksData.rows||[]);
+    const linksArr=(Array.isArray(linksData)?linksData:(linksData.rows||[])).filter(r=>{
+      const vals=Object.values(r).map(x=>String(x||'').trim());
+      return vals.some(v=>v.startsWith('http')||(/\.(xlsx|pdf|docx)$/i.test(v)));
+    });
     const linkCards=linksArr.map(r=>{
       const keys=Object.keys(r);
       // Find by column name first, fallback to index
