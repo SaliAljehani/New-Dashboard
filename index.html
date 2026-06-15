@@ -3893,6 +3893,8 @@ async function renderInstructionTab(brand, cfg){
 
     if(sec==='Appointment Script'){ mode='appt'; apptHeaders=null; return; }
     if(!sec && title==='Email to'){ mode='email'; return; }
+    // تجاهل سطر PMS كـ header فقط
+    if(sec.toLowerCase().includes('pms') && !c1 && !title){ return; }
 
     if(mode==='appt' && !apptHeaders){
       apptHeaders=[sec,title,c1,c2];
@@ -3900,14 +3902,8 @@ async function renderInstructionTab(brand, cfg){
     }
 
     if(mode==='warranty'){
-      // كل الصفوف قبل Appointment Script تروح لـ warrantyRows
-      if(sec.toLowerCase().includes('pms')){ mode='pms'; return; }
       if(sec && (c1||c2||title)){ warrantyRows.push({title: title||sec, c1: c1||title, c2}); return; }
       if(!sec && !title && c1 && c1.length>15){ noteRows.push(c1); return; }
-      return;
-    }
-    if(mode==='pms'){
-      if(sec && (c1||title)){ apptRows.push({svc:sec,a:'',b:c1||title,c:c2}); return; }
       return;
     }
     if(mode==='appt'){
