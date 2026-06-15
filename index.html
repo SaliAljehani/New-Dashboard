@@ -1286,19 +1286,19 @@ function parseCSVRaw(text){
 }
 
 async function loadSchedule(){
-  const rows = await fetchCSV('Daily Off Schedule');
-  SCHEDULE_DATA = rows;
-  try{
-    const weeklyRows = await fetchCSV('Daily Off Schedule & Weekly Cal');
-    WEEKLY_DATA = weeklyRows.filter(function(r){
-      const vals = Object.values(r).map(v=>String(v||'').trim());
-      const v0 = vals[0]||'';
-      return v0 && (v0.includes('Week')||v0.includes('June')||v0.includes('July')||v0.includes('Aug')||/\d{1,2}[-\/]\d{1,2}/.test(v0)||v0.includes('-'));
-    });
-  }catch(e){
-    console.warn('Weekly Calls & Break fetch failed:', e);
-    WEEKLY_DATA = [];
-  }
+  const rows = await fetchCSV('Daily Off Schedule & Weekly Cal');
+  // Split: schedule rows before "Weekly Calls & Break", weekly rows after
+  const allFetched = Array.isArray(rows)?rows:(rows.rows||[]);
+  let hitWeekly = false;
+  const schedRows = [], weeklyRows = [];
+  allFetched.forEach(function(r){
+    const v0 = String(Object.values(r)[0]||'').trim();
+    if(v0==='Weekly Calls & Break'||v0==='Multi Campaign'){ hitWeekly=true; return; }
+    if(!hitWeekly) schedRows.push(r);
+    else if(v0 && v0!=='Week' && v0!=='WhatsApp') weeklyRows.push(r);
+  });
+  SCHEDULE_DATA = schedRows;
+  WEEKLY_DATA = weeklyRows;
   renderRoster();
 }
 
@@ -3956,7 +3956,7 @@ async function renderInstructionTab(brand, cfg){
         +'</div>';
     }
   }
-  const warrantyHtml=warrantyBody?mkCollapsibleOpen('🛡️ Warranty',warrantyBody,'instr_'+brand+'_warranty',color):'';
+  const warrantyHtml=warrantyBody?'<div style="margin-bottom:16px">'+warrantyBody+'</div>':'';
 
   // ===== Appointment Script section =====
   let apptBody='';
