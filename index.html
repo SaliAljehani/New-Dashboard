@@ -3902,17 +3902,20 @@ async function renderInstructionTab(brand, cfg){
     }
 
     if(mode==='warranty'){
-      if(sec.toLowerCase().includes('pms') && !c1 && !title){ return; }
-      if(sec){
-        // إذا c1 موجود → sec=section title, title=row title, c1=content
-        // إذا c1 فاضي → sec=title, title=content (Nissan structure)
-        const rowTitle = c1 ? title : sec;
-        const rowContent = c1 ? c1 : title;
-        const rowContent2 = c2||'';
-        if(rowContent) warrantyRows.push({title: rowTitle, c1: rowContent, c2: rowContent2});
-        return;
+      if(!sec) return;
+      if(sec.toLowerCase().includes('pms')) return; // تجاهل header PMS
+      const rowTitle = c1 ? title : sec;
+      const rowContent = c1 ? c1 : title;
+      const rowContent2 = c2||'';
+      if(!rowContent) return;
+      // Warranty rows = يحتوي warranty في العنوان
+      // PMS rows = maintenance, زيت, schedule
+      const isPMSRow = /maintenance|schedule|صيانة|زيت|oil|gear/i.test(rowTitle+rowContent);
+      if(isPMSRow){
+        apptRows.push({svc:rowTitle, a:'', b:rowContent, c:rowContent2});
+      } else {
+        warrantyRows.push({title: rowTitle, c1: rowContent, c2: rowContent2});
       }
-      if(!sec && !title && c1 && c1.length>15){ noteRows.push(c1); return; }
       return;
     }
     if(mode==='appt'){
