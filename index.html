@@ -3846,9 +3846,9 @@ function switchInstrTab(brand, tab, color){
 
 function mkCollapsible(title, bodyHtml, id, color){
   return '<div style="margin-bottom:16px">'
-    +'<div onclick="toggleRegion(\''+id+'\')" style="display:flex;align-items:center;gap:10px;padding:9px 16px;background:'+color+'12;border-radius:10px;border-left:4px solid '+color+';cursor:pointer">'
+    +'<div onclick="toggleRegion(\''+id+'\')" style="display:flex;align-items:center;justify-content:center;position:relative;padding:9px 16px;background:'+color+'12;border-radius:10px;border-left:4px solid '+color+';cursor:pointer">'
     +'<span style="font-size:13px;font-weight:700;color:'+color+'">'+title+'</span>'
-    +'<span id="ico_'+id+'" style="margin-left:auto;color:'+color+'">▶</span>'
+    +'<span id="ico_'+id+'" style="position:absolute;right:16px;color:'+color+'">▶</span>'
     +'</div>'
     +'<div id="'+id+'" style="display:none;margin-top:8px">'+bodyHtml+'</div>'
     +'</div>';
@@ -3856,9 +3856,9 @@ function mkCollapsible(title, bodyHtml, id, color){
 
 function mkCollapsibleOpen(title, bodyHtml, id, color){
   return '<div style="margin-bottom:16px">'
-    +'<div onclick="toggleRegion(\''+id+'\')" style="display:flex;align-items:center;gap:10px;padding:9px 16px;background:'+color+'12;border-radius:10px;border-left:4px solid '+color+';cursor:pointer">'
+    +'<div onclick="toggleRegion(\''+id+'\')" style="display:flex;align-items:center;justify-content:center;position:relative;padding:9px 16px;background:'+color+'12;border-radius:10px;border-left:4px solid '+color+';cursor:pointer">'
     +'<span style="font-size:13px;font-weight:700;color:'+color+'">'+title+'</span>'
-    +'<span id="ico_'+id+'" style="margin-left:auto;color:'+color+'">▼</span>'
+    +'<span id="ico_'+id+'" style="position:absolute;right:16px;color:'+color+'">▼</span>'
     +'</div>'
     +'<div id="'+id+'" style="display:block;margin-top:8px">'+bodyHtml+'</div>'
     +'</div>';
@@ -3892,8 +3892,6 @@ async function renderInstructionTab(brand, cfg){
     const c2=col2Key?String(r[col2Key]||'').trim():'';
 
     if(sec==='Appointment Script'){ mode='appt'; apptHeaders=null; return; }
-    // PMS Service/Sercive header → switch to pms mode (same as appt)
-    if(sec.toLowerCase().includes('pms')){ mode='pms'; return; }
     if(!sec && title==='Email to'){ mode='email'; return; }
 
     if(mode==='appt' && !apptHeaders){
@@ -3902,17 +3900,14 @@ async function renderInstructionTab(brand, cfg){
     }
 
     if(mode==='warranty'){
-      if(sec.toLowerCase().includes('warranty') && title){
-        warrantyRows.push({title,c1,c2});
-        return;
-      }
+      // كل الصفوف قبل Appointment Script تروح لـ warrantyRows
+      if(sec.toLowerCase().includes('pms')){ mode='pms'; return; }
+      if(sec && (c1||c2||title)){ warrantyRows.push({title: title||sec, c1: c1||title, c2}); return; }
       if(!sec && !title && c1 && c1.length>15){ noteRows.push(c1); return; }
       return;
     }
-    // PMS mode — each row is a PMS item {title, content}
     if(mode==='pms'){
-      if(sec && title){ apptRows.push({svc:sec,a:'',b:title,c:c2}); return; }
-      if(sec && c1){ apptRows.push({svc:sec,a:'',b:c1,c:c2}); return; }
+      if(sec && (c1||title)){ apptRows.push({svc:sec,a:'',b:c1||title,c:c2}); return; }
       return;
     }
     if(mode==='appt'){
@@ -3963,7 +3958,9 @@ async function renderInstructionTab(brand, cfg){
         +'</div>';
     }
   }
-  const warrantyHtml=warrantyBody?mkCollapsibleOpen('🛡️ Warranty',warrantyBody,'instr_'+brand+'_warranty',color):'';
+  const warrantyHtml=warrantyBody
+    ? mkCollapsibleOpen('🛡️ Warranty',warrantyBody,'instr_'+brand+'_warranty',color)
+    : mkCollapsible('🛡️ Warranty','<div style="text-align:center;padding:20px;color:#aaa">No warranty data</div>','instr_'+brand+'_warranty',color);
 
   // ===== Appointment Script section =====
   let apptBody='';
