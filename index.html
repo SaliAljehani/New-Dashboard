@@ -545,7 +545,7 @@ const TEAM_LOGOS={
   'BAIC':'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gAQTGF2YzU4LjkxLjEwMAD/2wBDAA4KCw0LCQ4NDA0QDw4RFiQXFhQUFiwgIRokNC43NjMuMjI6QVNGOj1OPjIySGJJTlZYXV5dOEVmbWVabFNbXVn/2wBDAQ8QEBYTFioXFypZOzI7WVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVn/wAARCABQAI4DASIAAhEBAxEB/8QAGwABAAMAAwEAAAAAAAAAAAAAAAQFBgECAwf/xAAyEAABBAADBAgGAgMAAAAAAAAAAQIDBAUREgYhMVQTFBUWIlGR0UFhcZOhsSPwUoKU/8QAGgEBAAMBAQEAAAAAAAAAAAAAAAECBAMFBv/EACQRAQACAQMDBAMAAAAAAAAAAAABAgMEERJBUaETFSGRFDFx/9oADAMBAAIRAxEAPwD6SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8JbdaF+iWxDG7jk56Ip07Rpc5X+633C3C09EoEXtGlzlf7rfcdo0ucr/db7g4W7JQIvaNLnK/3W+47Rpc5X+633Bwt2LmIVKCMW3YZDrz06l45EXvFhHPw+pn9prS2r7GwwyzxRs3PjiV7VVd65Km7yKbTJyVn/mX3KzL0cWipakWtM7ty3aDCnORrb0Kqq5IiLxLQwWB1nT4tXa+rMxrXa1V8GlN2/ib0mGbU4qYrRWoACWUAAAAADg5IWL2upYVasZ5LHGqt+vBPzkE1rNpiI6vme0FrruOW5UXNuvS36JuT9EizsziNaCSVzYXdE1HPYyRFc1PPIgYWkTsTrdZkRkKSIr3O4ZJvU0s20UNjGZIY2QQ1ppWtlsqqqr2N/Wafs5vp8lsmPjTFHxEKifZy5Wc1s0tRj3KiaFmRF3/ACO79lr7JYoldWWSVfC1JUzXcq5/TcT9orVXEL0OVqk+F8yZuZGqPazh4nfFPkSO16Xea5f6ePo69fRXT/NcuCfknaHH18/GJ67T0+lHPs5iEL4Gtjjm6dysYsT0cmacUXy4L6HW9gF2lB0zuhljR/RuWJ6O0u8lNLDjlCPEaWieKKotd3gY3dDKuSqq/wB8zyw7q0deHC607b08k62ZnRp4cm70TNfiqo38idkfk5o+bR4/v1s0OFz1qtFlRqqnVYsnrlu3cfye7MTrvaxU1+N2lPD8f6pXsoTpJGisdoWLVJ81zVcvXI82VLTWx/wvzZG5f9lMfrZe3h5c48dpmd1s3Ea7q6zNVytRyNyy35qSylbhskdqujWr0Ko10nkjkLs04bXtvzhnyVrG3GQAHZyAAAAAAqtocOnxXDuq15GR6norlfnvRPhu+eRagL0vNLRaP3DA9xbnN1/Rw7i3ebr+jjfAjjDZ7lqO/hge4t3m6/o4dxbvN1/RxvgOMHuWo7+GB7i3ebr+ji52a2bkwe1NPPLHI5zNDdCLu35rx+iGlA2hTJrs2Ss0tPxIcHIJYwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH//2Q=='
 };
 
-const SHEET_GIDS={'Agent':1123791969,'Agent Performance':810269545,'Attendance Data':1979596727,'Data Call':95246895,'Reference':910779499,'Weekly Calls & Break':1429234410,'Daily Off Schedule':1979894769,'Announcement Board':536403637,'Escalation':1827857824,'Escalation ':1827857824,'Employee of the MONTH':1892899267};
+const SHEET_GIDS={'Agent':1123791969,'Agent Performance':810269545,'Attendance Data':1979596727,'Data Call':95246895,'Reference':910779499,'Weekly Calls & Break':1429234410,'Daily Off Schedule':1979894769,'Daily Off Schedule & Weekly Cal':1979894769,'Announcement Board':536403637,'Escalation':1827857824,'Escalation ':1827857824,'Employee of the MONTH':1892899267,'Subject':0,'Emails ':0,'Emails':0,'Contact Number ':0,'Contact Number':0};
 // Use preloaded data if available (Apps Script), otherwise fetch
 async function loadSheet(name){
   if(window.__PRELOADED_DATA__ && window.__PRELOADED_DATA__[name]){
@@ -1286,13 +1286,12 @@ function parseCSVRaw(text){
 }
 
 async function loadSchedule(){
-  const rows = await fetchCSV('Daily Off Schedule & Weekly Cal');
-  // Split: schedule rows before "Weekly Calls & Break", weekly rows after
-  const allFetched = Array.isArray(rows)?rows:(rows.rows||[]);
+  const allFetched = await fetchCSVRaw(SHEET_ID, 'Daily Off Schedule & Weekly Cal');
   let hitWeekly = false;
   const schedRows = [], weeklyRows = [];
   allFetched.forEach(function(r){
-    const v0 = String(Object.values(r)[0]||'').trim();
+    const vals = Array.isArray(r)?r:Object.values(r);
+    const v0 = String(vals[0]||'').trim();
     if(v0==='Weekly Calls & Break'||v0==='Multi Campaign'){ hitWeekly=true; return; }
     if(!hitWeekly) schedRows.push(r);
     else if(v0 && v0!=='Week' && v0!=='WhatsApp') weeklyRows.push(r);
@@ -3956,7 +3955,13 @@ async function renderInstructionTab(brand, cfg){
         +'</div>';
     }
   }
-  const warrantyHtml=warrantyBody?'<div style="margin-bottom:16px">'+warrantyBody+'</div>':'';
+  const warrantyHtml=warrantyBody?
+    '<div style="margin-bottom:16px">'
+    +'<div style="display:flex;align-items:center;gap:10px;padding:9px 16px;background:'+color+'12;border-radius:10px;border-left:4px solid '+color+';margin-bottom:10px">'
+    +'<span style="font-size:13px;font-weight:700;color:'+color+'">🛡️ Warranty</span>'
+    +'</div>'
+    +warrantyBody
+    +'</div>':'';
 
   // ===== Appointment Script section =====
   let apptBody='';
