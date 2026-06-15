@@ -311,6 +311,7 @@ tr:last-child td{border-bottom:none}
 .ttn{padding:5px 14px;border-radius:20px;border:1.5px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#666}
 .ttn.active{color:#fff;border-color:transparent}
 .ttn.nissan.active{background:#c0272d}.ttn.petromin.active{background:#DAA520;color:#fff}.ttn.stellantis.active{background:#1565c0}
+@keyframes scrollText{0%{transform:translateX(60%)}100%{transform:translateX(-100%)}}
 footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px solid #eee;margin-top:20px;background:#fff}
 @media(max-width:900px){.krow{grid-template-columns:repeat(3,1fr)}.r2,.comp-grid,.call-krow{grid-template-columns:1fr}}
 </style>
@@ -323,7 +324,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <div style="background:rgba(192,39,45,.07);border-radius:20px;padding:6px 24px;border:1px solid rgba(192,39,45,.15);text-align:center">
       <h1 style="margin:0;font-size:15px">Inbound Daily Dashboard · Petromin Group</h1>
     </div>
-    <div id="motivationText" style="font-size:12px;font-weight:600;color:#c0272d;direction:rtl"></div>
+    <div style="max-width:100%;overflow:hidden;padding:0 8px"><div id="motivationText" style="font-size:12px;font-weight:600;color:#c0272d;direction:rtl;white-space:nowrap;display:inline-block;animation:scrollText 18s linear infinite" onmouseenter="this.style.animationPlayState='paused'" onmouseleave="this.style.animationPlayState='running'"></div></div>
   </div>
   <span class="lupd" id="lupd" onclick="loadAllData()" title="Click to refresh" style="flex-shrink:0;font-size:11px">🔄 Refresh</span>
 </div>
@@ -4584,7 +4585,7 @@ function renderRecallInRef(){
   const refContent = document.getElementById('refContent');
   if(!refContent) return;
   refContent.innerHTML =
-    '<div style="margin-bottom:12px;text-align:center"><button onclick="renderRef()" style="background:#f5f5f5;border:1.5px solid #ddd;padding:8px 22px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;color:#555">← Back to References</button></div>'
+    '<div style="margin-bottom:12px;text-align:left"><button onclick="renderRef()" style="background:#f5f5f5;border:1.5px solid #ddd;padding:8px 22px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;color:#555">← Back to References</button></div>'
     +'<div id="recallContent"></div>';
   RECALL_ACTIVE_BRAND = 'BAIC';
   RECALL_ACTIVE_TAB = 0;
@@ -4655,7 +4656,7 @@ async function loadRecallBrand(name){
   // If brand has direct link — show button only
   if(cfg.link){
     cont.innerHTML='<div class="ref-brand-section">'
-      +'<div style="padding:14px 20px;background:linear-gradient(135deg,'+color+','+color+'99);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:10px">'
+    +'<div style="padding:14px 20px;background:linear-gradient(135deg,'+color+','+color+'bb);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:10px">'
       +'<span style="font-size:20px">'+cfg.icon+'</span><span style="font-size:15px;font-weight:700">'+name+'</span>'
       +'</div>'
       +'<div class="ref-tab-content" style="text-align:center;padding:40px">'
@@ -4670,7 +4671,7 @@ async function loadRecallBrand(name){
 
   if(!sheets.tabs || sheets.tabs.length===0){
     cont.innerHTML='<div class="ref-brand-section">'
-      +'<div style="padding:14px 20px;background:linear-gradient(135deg,'+color+','+color+'99);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:10px">'
+      +'<div style="padding:14px 20px;background:linear-gradient(135deg,'+color+','+color+'bb);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:10px">'
       +'<span style="font-size:20px">'+cfg.icon+'</span><span style="font-size:15px;font-weight:700">'+name+'</span>'
       +'</div>'
       +'<div class="ref-tab-content" style="text-align:center;padding:40px;color:#aaa">📭 No recalls yet for '+name+'.</div>'
@@ -4683,7 +4684,7 @@ async function loadRecallBrand(name){
   // Build brand section — exactly like ref-brand-section in showRefBrandPage
   cont.innerHTML = '<div class="ref-brand-section">'
     // Colored header
-    +'<div style="padding:14px 20px;background:linear-gradient(135deg,'+color+','+color+'99);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:10px">'
+    +'<div style="padding:14px 20px;background:linear-gradient(135deg,'+color+','+color+'bb);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:10px">'
     +'<span style="font-size:20px">'+cfg.icon+'</span>'
     +'<span style="font-size:15px;font-weight:700">'+name+'</span>'
     +'</div>'
