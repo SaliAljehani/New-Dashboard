@@ -917,7 +917,7 @@ function renderAgent(name){
     let chtml = '';
     if(agInfo.badge) chtml += '<span style="display:flex;align-items:center;gap:5px;font-size:12px;color:#666"><span style="color:#c0272d">🪪</span> Badge: <strong>'+agInfo.badge+'</strong></span>';
     if(agInfo.phone) chtml += '<span style="display:flex;align-items:center;gap:5px;font-size:12px;color:#666"><span style="color:#c0272d">📱</span> '+agInfo.phone+'</span>';
-    if(agInfo.email) chtml += '<span style="display:flex;align-items:center;gap:5px;font-size:12px;color:#666"><span style="color:#c0272d">📧</span> <a href="mailto:'+agInfo.email+'" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">'+agInfo.email+'</a></span>';
+    if(agInfo.email) chtml += '<span style="display:flex;align-items:center;gap:5px;font-size:12px;color:#666"><span style="color:#c0272d">📧</span> <a href="mailto:'+agInfo.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">'+agInfo.email+'</a></span>';
     hcontact.innerHTML = chtml;
   } else { hcontact.innerHTML=''; }
   const avgDay=a.days?Math.round(a.I/a.days):0;
@@ -1461,7 +1461,7 @@ function makeRefTable(rows, vinFilter=''){
     if(!v) return '';
     let d = String(v).replace(/\n/g,'<br>');
     if(d.startsWith('http')) return `<a href="${d}" target="_blank" style="color:#c0272d;font-weight:600;text-decoration:none">🔗 فتح</a>`;
-    if(d.includes('@') && d.includes('.') && !d.includes(' ')) return `<a href="mailto:${d}" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">${d}</a>`;
+    if(d.includes('@') && d.includes('.') && !d.includes(' ')) return `<a href="mailto:${d}" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">${d}</a>`;
     if(q) d = d.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'), m=>`<mark style="background:#fff3cd;border-radius:2px;padding:0 2px">${m}</mark>`);
     return d;
   };
@@ -1632,7 +1632,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
   };
   const mkPill = e => {
     const s=e.trim(); if(!s) return '';
-    if(s.includes('@')) return '<a href="mailto:'+s+'" style="display:inline-flex;background:#e0f7f4;color:#00695c;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;margin:2px">'+s+'</a>';
+    if(s.includes('@')) return '<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'12;color:'+color+';padding:3px 9px;border-radius:6px;font-size:11px;font-weight:800;text-decoration:none;margin:2px;box-shadow:inset 0 0 0 1px '+color+'25">'+s+'</a>';
     return '<span style="font-size:11px;color:#444;padding:2px 4px;font-weight:600;margin:2px">'+s+'</span>';
   };
   const pills = v => v.split(',').map(mkPill).filter(Boolean).join('');
@@ -1709,7 +1709,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
       '<div style="padding:5px 0;border-bottom:1px solid #f5f5f5">'
       +(p.advisor?'<div style="font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:2px">👤 '+p.advisor+'</div>':'')
       +(p.phone?'<div style="font-size:12px;color:#333;margin-bottom:2px">📞 '+p.phone+'</div>':'')
-      +(p.email?'<div style="font-size:11px"><a href="mailto:'+p.email+'" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+p.email+'</a></div>':'')
+      +(p.email?'<div style="font-size:11px"><a href="mailto:'+p.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+p.email+'</a></div>':'')
       +'</div>'
     ).join('');
 
@@ -1720,7 +1720,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
           '<div style="padding:3px 0;border-bottom:1px solid #fef3c7">'
           +(g.name?'<div style="font-size:12px;font-weight:600;color:#1a1a2e">👤 '+g.name+'</div>':'')
           +(g.phone?'<div style="font-size:12px;color:#333">📞 '+g.phone+'</div>':'')
-          +(g.email?'<div style="font-size:11px"><a href="mailto:'+g.email+'" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+g.email+'</a></div>':'')
+          +(g.email?'<div style="font-size:11px"><a href="mailto:'+g.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+g.email+'</a></div>':'')
           +'</div>'
         ).join('')
         +'</div>'
@@ -1808,10 +1808,10 @@ function renderNissanBranchTab(arr, sheetName, brand){
       +'<th style="padding:8px 12px;color:#4db6ac;font-weight:600;border-bottom:1px solid #e0f0ee;text-align:center">📞 Phone</th>'
       +'<th style="padding:8px 12px;color:#4db6ac;font-weight:600;border-bottom:1px solid #e0f0ee;text-align:center">✉️ Email</th>'
       +'</tr></thead><tbody>'
-      +'<tr><td style="padding:7px 12px;font-weight:600;text-align:center">Turki Al Otaibi</td><td style="padding:7px 12px;text-align:center"><a href="tel:0541366666" style="color:#2e7d32;font-weight:600;text-decoration:none">📞 0541366666</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:t.alotaibi@petromin.com" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">t.alotaibi@petromin.com</a></td></tr>'
-      +'<tr style="background:#e0f2f1"><td style="padding:7px 12px;font-weight:600;text-align:center">Rashed Anzan</td><td style="padding:7px 12px;text-align:center"><a href="tel:0550044880" style="color:#2e7d32;font-weight:600;text-decoration:none">📞 0550044880</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:r.anzan@petromin.com" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">r.anzan@petromin.com</a></td></tr>'
-      +'<tr><td style="padding:7px 12px;font-weight:600;text-align:center">Fayez al Ardy</td><td style="padding:7px 12px;text-align:center"><a href="tel:0552733337" style="color:#2e7d32;font-weight:600;text-decoration:none">📞 0552733337</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:faiz.a@petromin.com" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">faiz.a@petromin.com</a></td></tr>'
-      +'<tr style="background:#e0f2f1"><td style="padding:7px 12px;font-weight:600;text-align:center">Shatha Saleh</td><td style="padding:7px 12px;text-align:center"><a href="tel:0507457733" style="color:#2e7d32;font-weight:600;text-decoration:none">📞 0507457733</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:shatha.s@petromin.com" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">shatha.s@petromin.com</a></td></tr>'
+      +'<tr><td style="padding:7px 12px;font-weight:600;text-align:center">Turki Al Otaibi</td><td style="padding:7px 12px;text-align:center"><a href="tel:0541366666" style="color:#2e7d32;font-weight:600;text-decoration:none">📞 0541366666</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:t.alotaibi@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">t.alotaibi@petromin.com</a></td></tr>'
+      +'<tr style="background:#e0f2f1"><td style="padding:7px 12px;font-weight:600;text-align:center">Rashed Anzan</td><td style="padding:7px 12px;text-align:center"><a href="tel:0550044880" style="color:#2e7d32;font-weight:600;text-decoration:none">📞 0550044880</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:r.anzan@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">r.anzan@petromin.com</a></td></tr>'
+      +'<tr><td style="padding:7px 12px;font-weight:600;text-align:center">Fayez al Ardy</td><td style="padding:7px 12px;text-align:center"><a href="tel:0552733337" style="color:#2e7d32;font-weight:600;text-decoration:none">📞 0552733337</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:faiz.a@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">faiz.a@petromin.com</a></td></tr>'
+      +'<tr style="background:#e0f2f1"><td style="padding:7px 12px;font-weight:600;text-align:center">Shatha Saleh</td><td style="padding:7px 12px;text-align:center"><a href="tel:0507457733" style="color:#2e7d32;font-weight:600;text-decoration:none">📞 0507457733</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:shatha.s@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">shatha.s@petromin.com</a></td></tr>'
       +'</tbody></table></div></div>'
       // Area Manager drawer
       +'<div id="areaMgrSection" style="display:none;margin-bottom:12px">'
@@ -1821,9 +1821,9 @@ function renderNissanBranchTab(arr, sheetName, brand){
       +'<th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th>'
       +'<th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th>'
       +'</tr></thead><tbody>'
-      +'<tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="background:#fff3cd;color:#7a5c00;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">ahmed.ateeq@petromin.com</a></td></tr>'
-      +'<tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="background:#fff3cd;color:#7a5c00;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">simon.white@petromin.com</a></td></tr>'
-      +'<tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="background:#fff3cd;color:#7a5c00;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">z.bakhurji@petromin.com</a></td></tr>'
+      +'<tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">ahmed.ateeq@petromin.com</a></td></tr>'
+      +'<tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">simon.white@petromin.com</a></td></tr>'
+      +'<tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">z.bakhurji@petromin.com</a></td></tr>'
       +'</tbody></table></div></div>';
   }
 
@@ -1876,7 +1876,7 @@ function renderTristarTab(arr){
       +'<div style="padding:10px 14px;text-align:center">'
       +(mgr?'<div style="font-size:12px;margin-bottom:5px">👤 '+mgr+'</div>':'')
       +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
-      +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+email+'</a></div>':'')
+      +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+email+'</a></div>':'')
       +(cc?'<div style="margin-bottom:5px;flex-wrap:wrap;display:flex;justify-content:center;gap:2px">'+fmtCC(cc)+'</div>':'')
       +(hours?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+hours+'</div>':'')
       +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
@@ -2073,7 +2073,7 @@ function renderStellantisSparePartsTab(arr){
   const emailKey=fc('email')||keys[5];
   const gpsKey=fc('gps','map','link')||keys[6];
 
-  const fmtEmails=(v,bg,tc)=>String(v||'').split(/,/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return s?'<span style="font-size:10px;font-weight:800;margin:1px">'+s+'</span>':'';return '<a href="mailto:'+s+'" style="display:inline-flex;background:'+bg+';color:'+tc+';padding:3px 9px;border-radius:5px;font-size:10px;font-weight:800;text-decoration:none;margin:2px;box-shadow:inset 0 0 0 1px currentColor">'+s+'</a>';}).filter(Boolean).join('');
+  const fmtEmails=(v,bg,tc)=>String(v||'').split(/,/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return s?'<span style="font-size:10px;font-weight:800;margin:1px">'+s+'</span>':'';return '<a href="mailto:'+s+'" style="display:inline-flex;background:#f0f6fc;color:#1565c0;padding:3px 9px;border-radius:5px;font-size:10px;font-weight:800;text-decoration:none;margin:2px;box-shadow:inset 0 0 0 1px #1565c020">'+s+'</a>';}).filter(Boolean).join('');
 
   // Separate branch rows from email section
   const branchRows=[], ccMap={};
@@ -2106,11 +2106,11 @@ function renderStellantisSparePartsTab(arr){
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">sali.aljehani@petromin.com</a></span></div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="background:#f0f6fc;color:#1565c0;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #1565c020">sali.aljehani@petromin.com</a></span></div>'
     +'</div>'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:CRTeam@petromin.com" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">CRTeam@petromin.com</a></span></div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:CRTeam@petromin.com" style="background:#f0f6fc;color:#1565c0;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #1565c020">CRTeam@petromin.com</a></span></div>'
     +'</div></div>';
 
   // Single open grid — all branches side by side, no city grouping/toggle
@@ -2132,8 +2132,8 @@ function renderStellantisSparePartsTab(arr){
       +'</div>'
       +'<div style="padding:10px 16px;text-align:center">'
       +(advisor?'<div style="font-size:12px;color:#333;margin-bottom:5px">👤 '+advisor+'</div>':'')
-      +(email?'<div style="margin-bottom:5px"><span style="background:#f1f8f1;color:#4a8a4f;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">TO</span>'+fmtEmails(email,'#f1f8f1','#4a8a4f')+'</div>':'')
-      +(cc?'<div style="margin-bottom:5px"><span style="background:#f0f6fc;color:#5a8fc9;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">CC</span>'+fmtEmails(cc,'#f0f6fc','#5a8fc9')+'</div>':'')
+      +(email?'<div style="margin-bottom:5px"><span style="background:#f0f6fc;color:#1565c0;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">TO</span>'+fmtEmails(email,'#f0f6fc','#1565c0')+'</div>':'')
+      +(cc?'<div style="margin-bottom:5px"><span style="background:#f0f6fc;color:#1565c0;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">CC</span>'+fmtEmails(cc,'#f0f6fc','#1565c0')+'</div>':'')
       +(gps&&gps.startsWith('http')?'<div style="margin-top:5px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px">🗺️ Location</a></div>':'')
       +(hours?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+hours+'</div>':'')
       +'</div></div>';
@@ -2149,7 +2149,7 @@ function renderStellantisPMSTab(arr, sheetName){
   const color='#1565c0';
   const keys=Object.keys(arr[0]||{});
   const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
-  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:#fef2f2;color:#c0272d;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:600;text-decoration:none;margin:1px">'+s+'</a>';}).filter(Boolean).join('');
+  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:#f0f6fc;color:#1565c0;padding:3px 9px;border-radius:5px;font-size:10px;font-weight:800;text-decoration:none;margin:2px;box-shadow:inset 0 0 0 1px #1565c020">'+s+'</a>';}).filter(Boolean).join('');
 
   const VALID_REGIONS=new Set(['Western','Central','Eastern','Southern','Northern','West','East','South','North']);
   const branchRows=arr.filter(r=>{const reg=String(r[keys[0]]||'').trim();return reg&&VALID_REGIONS.has(reg);});
@@ -2215,7 +2215,7 @@ function renderStellantisPMSTab(arr, sheetName){
           +(svc?'<div style="display:inline-block;background:'+rc+'15;color:'+rc+';padding:2px 10px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px">'+svc+'</div>':'')
           +(bm?'<div style="font-size:12px;margin-bottom:5px">👤 '+bm+'</div>':'')
           +(ph?'<div style="font-size:12px;margin-bottom:5px">📞 '+ph+'</div>':'')
-          +(em?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+em+'" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+em+'</a></div>':'')
+          +(em?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+em+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+em+'</a></div>':'')
           +(gps&&gps.startsWith('http')?'<div style="margin-top:8px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
           +(h&&h!==commonH?'<div style="font-size:10px;color:#888;margin-top:6px;border-top:1px solid #f0f0f0;padding-top:6px">🕐 '+h+'</div>':'')
           +'</div></div>';
@@ -2233,7 +2233,7 @@ function renderStellantisPACTab(arr){
   const mgrKey=keys[3], mobileKey=keys[4], emailKey=keys[5], gpsKey=keys[6];
 
   const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
-  const fmtE=(v,bg,tc)=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="background:'+bg+';color:'+tc+';padding:3px 8px;border-radius:4px;font-size:10px;font-weight:800;text-decoration:none;margin:2px;display:inline-flex;box-shadow:inset 0 0 0 1px currentColor">'+s+'</a>';}).filter(Boolean).join('');
+  const fmtE=(v,bg,tc)=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="background:#f0f6fc;color:#1565c0;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:800;text-decoration:none;margin:2px;display:inline-flex;box-shadow:inset 0 0 0 1px #1565c020">'+s+'</a>';}).filter(Boolean).join('');
 
   // Separate branch rows from RM section
   const branchRows=[], rmRows=[];
@@ -2257,13 +2257,13 @@ function renderStellantisPACTab(arr){
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">sali.aljehani@petromin.com</a></span></div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span><span style="font-size:11px;color:#444"><a href="mailto:cs.agent@petromin.com" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">cs.agent@petromin.com</a></span></div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="background:#f0f6fc;color:#1565c0;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #1565c020">sali.aljehani@petromin.com</a></span></div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span><span style="font-size:11px;color:#444"><a href="mailto:cs.agent@petromin.com" style="background:#f0f6fc;color:#1565c0;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #1565c020">cs.agent@petromin.com</a></span></div>'
     +'</div>'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:CRTeam@petromin.com" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">CRTeam@petromin.com</a></span></div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span><span style="font-size:11px;color:#444"><a href="mailto:cs.agent@petromin.com" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">cs.agent@petromin.com</a></span></div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:CRTeam@petromin.com" style="background:#f0f6fc;color:#1565c0;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #1565c020">CRTeam@petromin.com</a></span></div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span><span style="font-size:11px;color:#444"><a href="mailto:cs.agent@petromin.com" style="background:#f0f6fc;color:#1565c0;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #1565c020">cs.agent@petromin.com</a></span></div>'
     +'</div></div>';
 
   // Map branch -> RM for inline display
@@ -2292,7 +2292,7 @@ function renderStellantisPACTab(arr){
       +'<div style="padding:10px 14px;text-align:center">'
       +(mgr?'<div style="font-size:12px;color:#333;margin-bottom:4px">👤 '+mgr+'</div>':'')
       +(mobile?'<div style="font-size:12px;color:#333;margin-bottom:4px">📞 '+mobile+'</div>':'')
-      +(email?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="background:#fffbea;color:#a98a2e;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #f9a82533">✉️ '+email+'</a></div>':'')
+      +(email?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
       +(gps&&gps.startsWith('http')?'<div style="margin-top:4px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px">🗺️ Location</a></div>':'')
       +(rm?'<div style="font-size:10px;color:#999;margin-top:6px;padding-top:6px;border-top:1px solid #f5f5f5">🗺️ RM: '+rm.name+(rm.mobile?' · '+rm.mobile:'')+'</div>':'')
       +(hours?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+hours+'</div>':'')
@@ -2322,7 +2322,7 @@ function renderStellantisPACTab(arr){
         +'<div style="font-size:13px;font-weight:700;color:#333">'+am.name+'</div>'
         +'<div style="font-size:11px;color:#888;margin:3px 0">📦 '+am.branches+' branches</div>'
         +(am.mobiles.size?'<div style="font-size:12px;margin-bottom:4px">📞 '+[...am.mobiles].join(' / ')+'</div>':'')
-        +(am.email?'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="background:#fffbea;color:#a98a2e;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #f9a82533">✉️ '+am.email+'</a></div>':'')
+        +(am.email?'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+am.email+'</a></div>':'')
         +'</div>';
     }).join('')+'</div>'
     ,'stellantisPacAM',color):'';
@@ -2350,7 +2350,7 @@ function renderPACTab(arr){
   function mkRow(ico,val){
     if(!val||val==='-') return '';
     if(val.startsWith('http')) return '<div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:11px;margin-bottom:3px;direction:ltr"><span>'+ico+'</span><a href="'+val+'" target="_blank" style="color:#1565c0;font-weight:600;text-decoration:none">Open Location</a></div>';
-    if(val.includes('@')) return '<div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:11px;margin-bottom:3px;direction:ltr"><span>'+ico+'</span><a href="mailto:'+val+'" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">'+val+'</a></div>';
+    if(val.includes('@')) return '<div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:11px;margin-bottom:3px;direction:ltr"><span>'+ico+'</span><a href="mailto:'+val+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">'+val+'</a></div>';
     return '<div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;font-weight:600;color:#222;margin-bottom:3px;direction:ltr"><span>'+ico+'</span><span>'+val+'</span></div>';
   }
 
@@ -2413,7 +2413,7 @@ function renderPACTab(arr){
         return '<tr style="border-bottom:1px solid #f5f5f5">'
           +'<td style="padding:7px 12px;color:#555;text-align:center">'+city+'</td>'
           +'<td style="padding:7px 12px;font-weight:600;color:#1a1a2e">'+rm+'</td>'
-          +'<td style="padding:7px 12px;text-align:center">'+(email?'<a href="mailto:'+email+'" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">'+email+'</a>':'—')+'</td>'
+          +'<td style="padding:7px 12px;text-align:center">'+(email?'<a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">'+email+'</a>':'—')+'</td>'
           +'</tr>';
       }).filter(Boolean).join('')
       +'</tbody></table></div></div>';
@@ -2437,15 +2437,15 @@ function renderPACTab(arr){
     +'<th style="padding:8px 12px;text-align:center;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c033">Phone</th>'
     +'<th style="padding:8px 12px;text-align:center;color:#1565c0;font-weight:700;border-bottom:2px solid #1565c033">Email</th>'
     +'</tr></thead><tbody>'
-    +'<tr><td style="padding:7px 12px;color:#555;text-align:center">Sakaka</td><td style="padding:7px 12px;font-weight:600;text-align:center">Mohammed Sallam</td><td style="padding:7px 12px;text-align:center"><a href="tel:0555047230" style="color:#2e7d32;text-decoration:none;font-weight:600">📞 0555047230</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:m.sallam@petromin.com" style="background:#fff3cd;color:#7a5c00;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">m.sallam@petromin.com</a></td></tr>'
-    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555;text-align:center">Dwadmi</td><td style="padding:7px 12px;font-weight:600;text-align:center">Roummie Palma</td><td style="padding:7px 12px;text-align:center"><a href="tel:0539143824" style="color:#2e7d32;text-decoration:none;font-weight:600">📞 0539143824</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:roummie@petromin.com" style="background:#fff3cd;color:#7a5c00;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">roummie@petromin.com</a></td></tr>'
-    +'<tr><td style="padding:7px 12px;color:#555;text-align:center">Al Kharj</td><td style="padding:7px 12px;font-weight:600;text-align:center">Roummie Palma</td><td style="padding:7px 12px;text-align:center"><a href="tel:0539143824" style="color:#2e7d32;text-decoration:none;font-weight:600">📞 0539143824</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:roummie@petromin.com" style="background:#fff3cd;color:#7a5c00;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">roummie@petromin.com</a></td></tr>'
-    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555;text-align:center">Khafji</td><td style="padding:7px 12px;font-weight:600;text-align:center">Sumeet Bhat</td><td style="padding:7px 12px;text-align:center"><a href="tel:0557554409" style="color:#2e7d32;text-decoration:none;font-weight:600">📞 0557554409</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:sumeet.bhat@petromin.com" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">sumeet.bhat@petromin.com</a></td></tr>'
-    +'<tr><td style="padding:7px 12px;color:#555;text-align:center">Mohyail</td><td style="padding:7px 12px;font-weight:600;text-align:center">Chirag Dhingra</td><td style="padding:7px 12px;text-align:center"><a href="tel:0539200978" style="color:#2e7d32;text-decoration:none;font-weight:600">📞 0539200978</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:c.dhingra@petromin.com" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">c.dhingra@petromin.com</a></td></tr>'
-    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555;text-align:center">Khamis Mushait</td><td style="padding:7px 12px;font-weight:600;text-align:center">Chirag Dhingra</td><td style="padding:7px 12px;text-align:center"><a href="tel:0539200978" style="color:#2e7d32;text-decoration:none;font-weight:600">📞 0539200978</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:c.dhingra@petromin.com" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">c.dhingra@petromin.com</a></td></tr>'
-    +'<tr><td style="padding:7px 12px;color:#555;text-align:center">Yanbu</td><td style="padding:7px 12px;font-weight:600;text-align:center">Chirag Dhingra</td><td style="padding:7px 12px;text-align:center"><a href="tel:0539200978" style="color:#2e7d32;text-decoration:none;font-weight:600">📞 0539200978</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:c.dhingra@petromin.com" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">c.dhingra@petromin.com</a></td></tr>'
-    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555;text-align:center">Tabuk</td><td style="padding:7px 12px;font-weight:600;text-align:center">Chirag Dhingra</td><td style="padding:7px 12px;text-align:center"><a href="tel:0539200978" style="color:#2e7d32;text-decoration:none;font-weight:600">📞 0539200978</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:c.dhingra@petromin.com" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">c.dhingra@petromin.com</a></td></tr>'
-    +'<tr><td style="padding:7px 12px;color:#555;text-align:center">Taif</td><td style="padding:7px 12px;font-weight:600;text-align:center">Faizan Shams</td><td style="padding:7px 12px;text-align:center"><a href="tel:0550113348" style="color:#2e7d32;text-decoration:none;font-weight:600">📞 0550113348</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:f.shams@petromin.com" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">f.shams@petromin.com</a></td></tr>'
+    +'<tr><td style="padding:7px 12px;color:#555;text-align:center">Sakaka</td><td style="padding:7px 12px;font-weight:600;text-align:center">Mohammed Sallam</td><td style="padding:7px 12px;text-align:center"><a href="tel:0555047230" style="color:#2e7d32;text-decoration:none;font-weight:600">📞 0555047230</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:m.sallam@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">m.sallam@petromin.com</a></td></tr>'
+    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555;text-align:center">Dwadmi</td><td style="padding:7px 12px;font-weight:600;text-align:center">Roummie Palma</td><td style="padding:7px 12px;text-align:center"><a href="tel:0539143824" style="color:#2e7d32;text-decoration:none;font-weight:600">📞 0539143824</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:roummie@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">roummie@petromin.com</a></td></tr>'
+    +'<tr><td style="padding:7px 12px;color:#555;text-align:center">Al Kharj</td><td style="padding:7px 12px;font-weight:600;text-align:center">Roummie Palma</td><td style="padding:7px 12px;text-align:center"><a href="tel:0539143824" style="color:#2e7d32;text-decoration:none;font-weight:600">📞 0539143824</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:roummie@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">roummie@petromin.com</a></td></tr>'
+    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555;text-align:center">Khafji</td><td style="padding:7px 12px;font-weight:600;text-align:center">Sumeet Bhat</td><td style="padding:7px 12px;text-align:center"><a href="tel:0557554409" style="color:#2e7d32;text-decoration:none;font-weight:600">📞 0557554409</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:sumeet.bhat@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">sumeet.bhat@petromin.com</a></td></tr>'
+    +'<tr><td style="padding:7px 12px;color:#555;text-align:center">Mohyail</td><td style="padding:7px 12px;font-weight:600;text-align:center">Chirag Dhingra</td><td style="padding:7px 12px;text-align:center"><a href="tel:0539200978" style="color:#2e7d32;text-decoration:none;font-weight:600">📞 0539200978</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:c.dhingra@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">c.dhingra@petromin.com</a></td></tr>'
+    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555;text-align:center">Khamis Mushait</td><td style="padding:7px 12px;font-weight:600;text-align:center">Chirag Dhingra</td><td style="padding:7px 12px;text-align:center"><a href="tel:0539200978" style="color:#2e7d32;text-decoration:none;font-weight:600">📞 0539200978</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:c.dhingra@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">c.dhingra@petromin.com</a></td></tr>'
+    +'<tr><td style="padding:7px 12px;color:#555;text-align:center">Yanbu</td><td style="padding:7px 12px;font-weight:600;text-align:center">Chirag Dhingra</td><td style="padding:7px 12px;text-align:center"><a href="tel:0539200978" style="color:#2e7d32;text-decoration:none;font-weight:600">📞 0539200978</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:c.dhingra@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">c.dhingra@petromin.com</a></td></tr>'
+    +'<tr style="background:#f9f9f9"><td style="padding:7px 12px;color:#555;text-align:center">Tabuk</td><td style="padding:7px 12px;font-weight:600;text-align:center">Chirag Dhingra</td><td style="padding:7px 12px;text-align:center"><a href="tel:0539200978" style="color:#2e7d32;text-decoration:none;font-weight:600">📞 0539200978</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:c.dhingra@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">c.dhingra@petromin.com</a></td></tr>'
+    +'<tr><td style="padding:7px 12px;color:#555;text-align:center">Taif</td><td style="padding:7px 12px;font-weight:600;text-align:center">Faizan Shams</td><td style="padding:7px 12px;text-align:center"><a href="tel:0550113348" style="color:#2e7d32;text-decoration:none;font-weight:600">📞 0550113348</a></td><td style="padding:7px 12px;text-align:center"><a href="mailto:f.shams@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">f.shams@petromin.com</a></td></tr>'
     +'</tbody></table></div></div>'
     +'<div class="ref-cards-grid">'+cards+'</div>'
     +'</div>';
@@ -2458,7 +2458,7 @@ function renderBaicServiceTab(arr, apptArr){
   const regionCol=keys[0], cityCol=keys[1], branchCol=keys[2], mgrCol=keys[3], phoneCol=keys[4], emailCol=keys[5], gpsLinkCol=keys[7];
 
   const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
-  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:#fff3c4;color:#a8720a;padding:3px 9px;border-radius:5px;font-size:10px;font-weight:800;text-decoration:none;margin:2px;box-shadow:inset 0 0 0 1px #f9a82555">'+s+'</a>';}).filter(Boolean).join('');
+  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:#fffbea;color:#a98a2e;padding:3px 9px;border-radius:5px;font-size:10px;font-weight:800;text-decoration:none;margin:2px;box-shadow:inset 0 0 0 1px #f9a82533">'+s+'</a>';}).filter(Boolean).join('');
 
   const VALID_REGIONS=new Set(['West','Western','Central','Center','East','Eastern','South','Southern','North','Northern']);
   const REGION_ORDER=['West','Western','Central','Center','East','Eastern','South','Southern','North','Northern'];
@@ -2537,7 +2537,7 @@ function renderBaicServiceTab(arr, apptArr){
           +'<div style="padding:10px 14px;text-align:center">'
           +(mgr?'<div style="font-size:12px;color:#333;margin-bottom:5px">👤 '+mgr+'</div>':'')
           +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
-          +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="background:#fffbea;color:#a98a2e;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #f9a82533">✉️ '+email+'</a></div>':'')
+          +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
           +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
           +'</div></div>';
       }).join('')+'</div></div></div>';
@@ -2810,7 +2810,7 @@ function renderPetrominTireBatteryTab(arr){
         +'<div style="font-size:13px;font-weight:700;color:#333;margin:4px 0">'+s.name+'</div>'
         +(s.area?'<div style="font-size:11px;color:#888;margin-bottom:5px">📍 '+s.area+'</div>':'')
         +(s.mobile?'<div style="font-size:12px;margin-bottom:5px">📞 '+s.mobile+'</div>':'')
-        +(s.email?'<div style="font-size:11px"><a href="mailto:'+s.email.trim()+'" style="background:#fffbea;color:#a98a2e;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #f9a82533">✉️ '+s.email.trim()+'</a></div>':'')
+        +(s.email?'<div style="font-size:11px"><a href="mailto:'+s.email.trim()+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+s.email.trim()+'</a></div>':'')
         +'</div>';
     }).join('')+'</div>'
     ,'instr_tb_sup',color);
@@ -2971,7 +2971,7 @@ function renderNosFranchiseTab(arr){
           +(it.owner?'<div style="font-size:12px;color:#333;margin-bottom:3px">👤 '+it.owner+'</div>':'')
           +(it.supervisor?'<div style="font-size:11px;color:#666;margin-bottom:3px">🧑‍💼 '+it.supervisor+(it.mobile?' · '+it.mobile:'')+'</div>':'')
           +(it.company?'<div style="font-size:10px;color:#999;margin-top:4px">🏢 '+it.company+'</div>':'')
-          +(it.email?'<div style="font-size:11px;margin-top:4px"><a href="mailto:'+it.email+'" style="background:#fffbea;color:#a98a2e;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #f9a82533">✉️ '+it.email+'</a></div>':'')
+          +(it.email?'<div style="font-size:11px;margin-top:4px"><a href="mailto:'+it.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+it.email+'</a></div>':'')
           +'</div>';
       }).join('')+'</div></div></div>';
   }).join('');
@@ -3098,7 +3098,7 @@ function renderFotonTruckTab(arr){
       +(city?'<div style="font-size:11px;color:#888;margin:3px 0">📌 '+city+(addr?' · '+addr:'')+'</div>':'')
       +(contact&&contact!=='N/A'?'<div style="font-size:12px;color:#333;margin-bottom:4px">👤 '+contact+'</div>':'')
       +(mobile&&mobile!=='N/A'?'<div style="font-size:12px;margin-bottom:4px">📞 '+mobile+'</div>':'')
-      +(email&&email!=='N/A'?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="background:#fffbea;color:#a98a2e;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #f9a82533">✉️ '+email+'</a></div>':'')
+      +(email&&email!=='N/A'?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
       +(gpsLink&&gpsLink.startsWith('http')?'<div style="margin-top:4px"><a href="'+gpsLink+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
       +'</div>';
   }).join('')+'</div>';
@@ -3144,7 +3144,7 @@ function renderFotonPickupTab(arr){
         +'<div style="font-size:13px;font-weight:700;color:#333">'+am.name+'</div>'
         +'<div style="font-size:11px;color:#888;margin:3px 0">📦 '+am.branches+' branches</div>'
         +'<div style="font-size:12px;margin-bottom:4px">📞 '+[...am.mobiles].join(' / ')+'</div>'
-        +'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="background:#fffbea;color:#a98a2e;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #f9a82533">✉️ '+am.email+'</a></div>'
+        +'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+am.email+'</a></div>'
         +'</div>';
     }).join('')+'</div>'
     ,'fotonPickupAM',color):'';
@@ -3178,7 +3178,7 @@ function renderFotonPickupTab(arr){
           +'<div style="padding:10px 14px;text-align:center">'
           +(mgr?'<div style="font-size:12px;color:#333;margin-bottom:5px">👤 '+mgr+'</div>':'')
           +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
-          +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="background:#fffbea;color:#a98a2e;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #f9a82533">✉️ '+email+'</a></div>':'')
+          +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
           +(rm?'<div style="font-size:10px;color:#999;margin-top:6px;padding-top:6px;border-top:1px solid #f5f5f5">🗺️ RM: '+rm.name+(rm.mobile?' · '+rm.mobile:'')+'</div>':'')
           +(gpsLink?'<div style="margin-top:6px"><a href="'+gpsLink+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
           +'</div></div>';
@@ -3249,7 +3249,7 @@ function renderPetrominPACTab(arr){
         +'<div style="font-size:13px;font-weight:700;color:#333">'+am.name+'</div>'
         +'<div style="font-size:11px;color:#888;margin:3px 0">📦 '+am.branches+' branches</div>'
         +'<div style="font-size:12px;margin-bottom:4px">📞 '+[...am.mobiles].join(' / ')+'</div>'
-        +'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="background:#fffbea;color:#a98a2e;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #f9a82533">✉️ '+am.email+'</a></div>'
+        +'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+am.email+'</a></div>'
         +'</div>';
     }).join('')+'</div>'
     ,'petrominPacAM',color):'';
@@ -3284,7 +3284,7 @@ function renderPetrominPACTab(arr){
           +'<div style="padding:10px 14px;text-align:center">'
           +(mgr?'<div style="font-size:12px;color:#333;margin-bottom:5px">👤 '+mgr+'</div>':'')
           +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
-          +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="background:#fffbea;color:#a98a2e;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #f9a82533">✉️ '+email+'</a></div>':'')
+          +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
           +(rm?'<div style="font-size:10px;color:#999;margin-top:6px;padding-top:6px;border-top:1px solid #f5f5f5">🗺️ RM: '+rm.name+' · '+rm.mobile+'</div>':'')
           +(gpsLink?'<div style="margin-top:6px"><a href="'+gpsLink+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
           +'</div></div>';
@@ -3349,7 +3349,7 @@ function renderPetrominTristarTab(arr){
       +(mgr?'<div style="font-size:12px;color:#333;margin-bottom:5px">👤 '+mgr+' <span style="color:#aaa;font-size:10px">(Manager)</span></div>':'')
       +(lineMgr?'<div style="font-size:12px;color:#333;margin-bottom:5px">👤 '+lineMgr+' <span style="color:#aaa;font-size:10px">(Line Manager)</span></div>':'')
       +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
-      +(email?'<div style="font-size:11px"><a href="mailto:'+email+'" style="background:#fffbea;color:#a98a2e;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #f9a82533">✉️ '+email+'</a></div>':'')
+      +(email?'<div style="font-size:11px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
       +'</div></div>';
   }).join('')+'</div>';
 
@@ -3401,7 +3401,7 @@ function renderBodyShopTab(arr){
   const color='#7b0000';
   const keys=Object.keys(arr[0]||{});
   const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
-  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:#fef2f2;color:'+color+';padding:2px 7px;border-radius:5px;font-size:10px;font-weight:600;text-decoration:none;margin:1px">'+s+'</a>';}).filter(Boolean).join('');
+  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:#f5f0fa;color:#6a1b9a;padding:3px 9px;border-radius:5px;font-size:10px;font-weight:800;text-decoration:none;margin:2px;box-shadow:inset 0 0 0 1px #6a1b9a20">'+s+'</a>';}).filter(Boolean).join('');
 
   // Columns: Region, City, Branch Code-Branch, District, Manager, Phone, Email, Working Hours, SMS EN, SMS AR
   const regionCol=keys[0];  // Region
@@ -3425,13 +3425,13 @@ function renderBodyShopTab(arr){
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">sali.aljehani@petromin.com</a></span></div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span><span style="font-size:11px;color:#444"><a href="mailto:cs.agent@petromin.com" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">cs.agent@petromin.com</a></span></div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:sali.aljehani@petromin.com" style="background:#f5f0fa;color:#6a1b9a;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #6a1b9a20">sali.aljehani@petromin.com</a></span></div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span><span style="font-size:11px;color:#444"><a href="mailto:cs.agent@petromin.com" style="background:#f5f0fa;color:#6a1b9a;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #6a1b9a20">cs.agent@petromin.com</a></span></div>'
     +'</div>'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:CRTeam@petromin.com" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">CRTeam@petromin.com</a></span></div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span><span style="font-size:11px;color:#444"><a href="mailto:cs.agent@petromin.com" style="background:#f3f1fb;color:#6a5acd;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">cs.agent@petromin.com</a></span></div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">Manager Branch + <a href="mailto:CRTeam@petromin.com" style="background:#f5f0fa;color:#6a1b9a;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #6a1b9a20">CRTeam@petromin.com</a></span></div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span><span style="font-size:11px;color:#444"><a href="mailto:cs.agent@petromin.com" style="background:#f5f0fa;color:#6a1b9a;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #6a1b9a20">cs.agent@petromin.com</a></span></div>'
     +'</div></div>';
 
   // Group by region
@@ -3483,7 +3483,7 @@ function renderBodyShopTab(arr){
             '<div style="padding:5px 0;border-bottom:1px solid #f5f5f5">'
             +(p.mgr?'<div style="font-size:12px;color:#333;margin-bottom:2px">👤 '+p.mgr+'</div>':'')
             +(p.phone?'<div style="font-size:12px;color:#333;margin-bottom:2px">📞 '+p.phone+'</div>':'')
-            +(p.email?'<div style="font-size:11px"><a href="mailto:'+p.email+'" style="background:#fffbea;color:#a98a2e;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #f9a82533">✉️ '+p.email+'</a></div>':'')
+            +(p.email?'<div style="font-size:11px"><a href="mailto:'+p.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+p.email+'</a></div>':'')
             +'</div>'
           ).join('');
           return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
@@ -3523,7 +3523,7 @@ function renderNissanWarrantyTab(arr){
 function renderNissanAppTab(arr){
   const toEmails='sara.alwaqdany@nissan-me.ae, arwa.alharbi@nissan-me.ae';
   const ccEmail='marwah.albishri@nissan-me.ae';
-  const mkPill=e=>{const s=e.trim();if(!s||!s.includes('@'))return '';return '<a href="mailto:'+s+'" style="display:inline-flex;background:#fce4ec;color:#c0272d;padding:3px 10px;border-radius:6px;font-size:11px;text-decoration:none;margin:2px">'+s+'</a>';};
+  const mkPill=e=>{const s=e.trim();if(!s||!s.includes('@'))return '';return '<a href="mailto:'+s+'" style="display:inline-flex;background:#fdf0f1;color:#c0272d;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:800;text-decoration:none;margin:2px;box-shadow:inset 0 0 0 1px #c0272d20">'+s+'</a>';};
   const fmtPills=v=>v.split(/,/).map(mkPill).filter(Boolean).join('');
   const fields=[
     {f:'VIN',m:false},{f:'Customer Name',m:false},{f:'Phone Number',m:false},
@@ -3676,7 +3676,7 @@ function buildEmailSection(arr){
   const labelCol=cols.find(c=>c!==toCol&&c!==ccCol&&c!==queueCol&&!/queue/i.test(c))||cols[0];
   const fmtEmails=v=>String(v||'').split(/,|;|\n/).map(e=>{
     const em=e.trim();if(!em)return'';
-    return '<a href="mailto:'+em+'" style="display:inline-flex;align-items:center;background:#b2ebe4;color:#00564c;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:800;text-decoration:none;margin:2px 2px 2px 0;box-shadow:inset 0 0 0 1px #00695c55">'+em+'</a>';
+    return '<a href="mailto:'+em+'" style="display:inline-flex;align-items:center;background:#eafaf8;color:#00897b;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:800;text-decoration:none;margin:2px 2px 2px 0;box-shadow:inset 0 0 0 1px #00897b20">'+em+'</a>';
   }).filter(Boolean).join('');
   return '<div style="display:flex;flex-direction:column;gap:8px">'+data.map(r=>{
     const label=String(r[labelCol]||'').trim();
@@ -3728,7 +3728,7 @@ function showRefBrandPage(brand){
     +(brand==='stellantis'?'<button onclick="loadVehicleModels(\'stellantis\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Vehicle <span id="ico_stellantisModels">▼</span></button>':'')
     +(brand==='nissan'?'<button onclick="loadVehicleModels(\'nissan\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Vehicle <span id="ico_nissanModels">▼</span></button>':'')
     +(brand==='nissan'?'<button onclick="toggleRegion(\'nissanAreaMgrGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🗺️ Area Manager <span id="ico_nissanAreaMgrGlobal">▼</span></button>':'')
-    +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e3f2fd"><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="background:#fff3cd;color:#7a5c00;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">ahmed.ateeq@petromin.com</a></td></tr><tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="background:#fff3cd;color:#7a5c00;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">simon.white@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="background:#fff3cd;color:#7a5c00;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">z.bakhurji@petromin.com</a></td></tr></tbody></table></div>':'')
+    +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e3f2fd"><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">ahmed.ateeq@petromin.com</a></td></tr><tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">simon.white@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">z.bakhurji@petromin.com</a></td></tr></tbody></table></div>':'')
     +(brand==='baic'?'<button onclick="loadVehicleModels(\'baic\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Vehicles <span id="ico_baicModels">▼</span></button>':'')
     +(brand==='baic'?'<button onclick="toggleRegion(\'baicAreaMgrGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🗺️ Area Manager <span id="ico_baicAreaMgrGlobal">▼</span></button>':'')
     +(brand==='bodyshop'?'<button onclick="toggleRegion(\'bodyshopInstruction\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">📋 Instruction <span id="ico_bodyshopInstruction">▼</span></button>':'')
@@ -3739,9 +3739,9 @@ function showRefBrandPage(brand){
     +(brand==='stellantis'?'<div id="stellantisModelsDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:12px 16px"><div id="stellantisModelsContent" style="text-align:center;color:#aaa;font-size:12px">⏳ Loading...</div></div>':'')
     +(brand==='baic'?'<div id="baicModelsDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:12px 16px"><div id="baicModelsContent" style="text-align:center;color:#aaa;font-size:12px">⏳ Loading...</div></div>':'')
 
-    +(brand==='baic'?'<div id="baicAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:14px 16px"><div style="background:#fafafa;border-radius:12px;overflow:hidden;border:1px solid #eee;box-shadow:0 2px 8px rgba(0,0,0,.05)"><div style="background:#f9a82515;padding:10px 16px;font-size:13px;font-weight:700;color:#f9a825;border-bottom:1px solid #ffe082">🗺️ Area Manager</div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#fff8e1"><th style="padding:8px 12px;color:#f9a825;font-weight:700;border-bottom:2px solid #ffe082;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#f9a825;font-weight:700;border-bottom:2px solid #ffe082;text-align:center">👤 Branch Manager</th><th style="padding:8px 12px;color:#f9a825;font-weight:700;border-bottom:2px solid #ffe082;text-align:center">✉️ Email</th><th style="padding:8px 12px;color:#f9a825;font-weight:700;border-bottom:2px solid #ffe082;text-align:center">📞 Area Manager</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#f9a825">West · North · South</td><td style="padding:7px 12px;text-align:center">Roummie Palma</td><td style="padding:7px 12px;text-align:center"><a href="mailto:roummie@petromin.com" style="background:#fff3cd;color:#7a5c00;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">roummie@petromin.com</a></td><td style="padding:7px 12px;text-align:center">507103299</td></tr><tr style="background:#fff8e1"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#f9a825">East</td><td style="padding:7px 12px;text-align:center">Jimshad Mayin</td><td style="padding:7px 12px;text-align:center"><a href="mailto:jimshad.mayin@petromin.com" style="background:#fff3cd;color:#7a5c00;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">jimshad.mayin@petromin.com</a></td><td style="padding:7px 12px;text-align:center">557554409</td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#f9a825">Central<br><span style="font-size:10px;color:#999">Exit-14 · Kharj · Azeziah · Khurais · Al Badia</span></td><td style="padding:7px 12px;text-align:center">Mohammed Sallam</td><td style="padding:7px 12px;text-align:center"><a href="mailto:m.sallam@petromin.com" style="background:#fff3cd;color:#7a5c00;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">m.sallam@petromin.com</a></td><td style="padding:7px 12px;text-align:center">539143824</td></tr><tr style="background:#fff8e1"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#f9a825">Central<br><span style="font-size:10px;color:#999">Darb · Thumama · Al Massif · QassimLand · Unaizah</span></td><td style="padding:7px 12px;text-align:center">Mohammed Sallam</td><td style="padding:7px 12px;text-align:center"><a href="mailto:m.sallam@petromin.com" style="background:#fff3cd;color:#7a5c00;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">m.sallam@petromin.com</a></td><td style="padding:7px 12px;text-align:center">555047230</td></tr></tbody></table></div></div></div>':'')
+    +(brand==='baic'?'<div id="baicAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:14px 16px"><div style="background:#fafafa;border-radius:12px;overflow:hidden;border:1px solid #eee;box-shadow:0 2px 8px rgba(0,0,0,.05)"><div style="background:#f9a82515;padding:10px 16px;font-size:13px;font-weight:700;color:#f9a825;border-bottom:1px solid #ffe082">🗺️ Area Manager</div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#fff8e1"><th style="padding:8px 12px;color:#f9a825;font-weight:700;border-bottom:2px solid #ffe082;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#f9a825;font-weight:700;border-bottom:2px solid #ffe082;text-align:center">👤 Branch Manager</th><th style="padding:8px 12px;color:#f9a825;font-weight:700;border-bottom:2px solid #ffe082;text-align:center">✉️ Email</th><th style="padding:8px 12px;color:#f9a825;font-weight:700;border-bottom:2px solid #ffe082;text-align:center">📞 Area Manager</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#f9a825">West · North · South</td><td style="padding:7px 12px;text-align:center">Roummie Palma</td><td style="padding:7px 12px;text-align:center"><a href="mailto:roummie@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">roummie@petromin.com</a></td><td style="padding:7px 12px;text-align:center">507103299</td></tr><tr style="background:#fff8e1"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#f9a825">East</td><td style="padding:7px 12px;text-align:center">Jimshad Mayin</td><td style="padding:7px 12px;text-align:center"><a href="mailto:jimshad.mayin@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">jimshad.mayin@petromin.com</a></td><td style="padding:7px 12px;text-align:center">557554409</td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#f9a825">Central<br><span style="font-size:10px;color:#999">Exit-14 · Kharj · Azeziah · Khurais · Al Badia</span></td><td style="padding:7px 12px;text-align:center">Mohammed Sallam</td><td style="padding:7px 12px;text-align:center"><a href="mailto:m.sallam@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">m.sallam@petromin.com</a></td><td style="padding:7px 12px;text-align:center">539143824</td></tr><tr style="background:#fff8e1"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#f9a825">Central<br><span style="font-size:10px;color:#999">Darb · Thumama · Al Massif · QassimLand · Unaizah</span></td><td style="padding:7px 12px;text-align:center">Mohammed Sallam</td><td style="padding:7px 12px;text-align:center"><a href="mailto:m.sallam@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">m.sallam@petromin.com</a></td><td style="padding:7px 12px;text-align:center">555047230</td></tr></tbody></table></div></div></div>':'')
 
-    +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e3f2fd"><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="background:#fff3cd;color:#7a5c00;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">ahmed.ateeq@petromin.com</a></td></tr><tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="background:#fff3cd;color:#7a5c00;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">simon.white@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="background:#fff3cd;color:#7a5c00;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">z.bakhurji@petromin.com</a></td></tr></tbody></table></div>':'')
+    +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e3f2fd"><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">ahmed.ateeq@petromin.com</a></td></tr><tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">simon.white@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">z.bakhurji@petromin.com</a></td></tr></tbody></table></div>':'')
     +(brand==='bodyshop'?'<div id="bodyshopInstruction" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px;direction:rtl;text-align:right"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-right:4px solid #7b0000"><div style="font-size:13px;font-weight:700;color:#7b0000;margin-bottom:8px">📋 الإجراءات (قبل)</div><div style="font-size:11px;color:#555;line-height:1.8">يلزم توفير المستندات التالية:<br>1- استمارة المركبة<br>2- تقرير الجهة المباشرة للحادث (نجم أو المرور)<br>3- الرقم المرجعي لمطالبة التأمين<br><br>يُشترط حضور وتسليم المركبة من مالكها أو المفوّض رسميًا.<br>في حال تعذّر الحضور يجب تقديم تفويض خطي.</div></div><div style="background:#fff9f0;border-radius:10px;padding:14px;border-right:4px solid #e65100"><div style="font-size:13px;font-weight:700;color:#e65100;margin-bottom:8px">💰 التسعيرة</div><div style="font-size:11px;color:#555;line-height:1.8">يستغرق فحص المركبة وإرسال التسعيرة لشركة التأمين من 7 إلى 14 يوم عمل.<br><br>• قابلة للقيادة: تُسلَّم بعد الفحص<br>• غير قابلة للقيادة: تُحجز بالفرع لحين الإصلاح</div></div><div style="background:#f0fff4;border-radius:10px;padding:14px;border-right:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 الإصلاح</div><div style="font-size:11px;color:#555;line-height:1.8">يبدأ الإصلاح بعد موافقة التأمين، بحد أقصى 90 يوم عمل.<br><br>سيتم توفير قطع الغيار خلال هذه الفترة، وإشعاركم برسالة نصية عند توفرها.</div></div></div></div>':'')
     +'<div id="petrominWarrantyDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px"></div>'
     +'<div class="ref-sub-tabs" id="refSubTabs_'+brand+'" style="justify-content:center">'
