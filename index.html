@@ -35,8 +35,8 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .pnav{padding:7px 18px;border-radius:8px;border:1.5px solid #ddd;font-size:13px;font-weight:600;cursor:pointer;background:#fff;color:#444;transition:.15s}
 .pnav.active{background:rgba(192,39,45,.05);color:#c0272d;border-color:rgba(192,39,45,.2)}
 .pnav:hover:not(.active){background:#f5f5f5;border-color:#e0e0e0;color:#c0272d}
-.main{max-width:1300px;margin:0 auto;padding:18px 24px}
-.page2{display:none;max-width:1300px;margin:0 auto;padding:18px 24px}
+.main{max-width:1600px;margin:0 auto;padding:18px 24px}
+.page2{display:none;max-width:1600px;margin:0 auto;padding:18px 24px}
 .hero{background:#fff;border-radius:14px;padding:18px 22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;gap:18px;border-left:5px solid #c0272d}
 .av{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#e0e0e0,#eeeeee);display:flex;align-items:center;justify-content:center;color:#c0272d;font-size:18px;font-weight:700;flex-shrink:0;border:2px solid #bdbdbd}
 .hi2{font-size:18px;font-weight:700;color:#1a1a2e}
@@ -44,8 +44,8 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .rkbig{background:linear-gradient(135deg,#c0272d,#7b0000);color:#fff;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600}
 .krow{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px}
 .kc{background:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-top:3px solid #eee;text-align:center}
-.kc.c1{border-top-color:#c0272d}.kc.c2{border-top-color:#1565c0}.kc.c3{border-top-color:#2e7d32}
-.kc.c4{border-top-color:#e65100}.kc.c5{border-top-color:#6a1b9a}.kc.c6{border-top-color:#00695c}
+.kc.c1{border-top-color:#E3C5C5;background:#FBF7F7}.kc.c2{border-top-color:#D2CFC7;background:#F7F7F5}.kc.c3{border-top-color:#C5D4CB;background:#F6F8F7}
+.kc.c4{border-top-color:#D9CDBC;background:#F8F7F5}.kc.c5{border-top-color:#CBCDD9;background:#F7F7F8}.kc.c6{border-top-color:#D6C8D0;background:#F8F6F7}
 .klbl{font-size:10px;color:#444;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;text-align:center}
 .kval{font-size:20px;font-weight:700;color:#1a1a2e;text-align:center}
 .ksub{font-size:11px;color:#555;margin-top:2px}
@@ -469,7 +469,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     </div>
   </div>
 
-<div id="page3" style="display:none;max-width:1300px;margin:0 auto;padding:18px 24px">
+<div id="page3" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
     <input class="dir-search" type="text" placeholder="🔍 Search agent name..." oninput="filterDir(this.value)" id="dirSearch">
     <span style="font-size:12px;color:#aaa" id="dirCount"></span>
@@ -477,15 +477,15 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
   <div class="dir-grid" id="dirGrid"></div>
 </div>
 
-<div id="page4" style="display:none;max-width:1300px;margin:0 auto;padding:18px 24px">
+<div id="page4" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
   <div id="refContent"><div style="text-align:center;padding:30px;color:#aaa">⏳ Loading reference data...</div></div>
 </div>
 
-<div id="page5" style="display:none;max-width:1300px;margin:0 auto;padding:18px 24px"></div>
+<div id="page5" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px"></div>
 </div>
 
 
-<div id="page6" style="display:none;max-width:1300px;margin:0 auto;padding:18px 24px">
+<div id="page6" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
     <div style="font-size:16px;font-weight:700;color:#1a1a2e">📢 Announcement Board</div>
     <div style="font-size:12px;color:#888">Updates from Google Sheets automatically</div>
@@ -493,7 +493,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
   <div id="announceContent"><div style="text-align:center;padding:40px;color:#aaa">Loading announcements...</div></div>
 </div>
 
-<div id="page7" style="display:none;max-width:1300px;margin:0 auto;padding:18px 24px">
+<div id="page7" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
     <div style="font-size:16px;font-weight:700;color:#1a1a2e">⚠️ Escalation Cases</div>
     <div style="font-size:12px;color:#888">Updates from Google Sheets automatically</div>
@@ -501,7 +501,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
   <div id="escalationContent"><div style="text-align:center;padding:40px;color:#aaa">Loading escalations...</div></div>
 </div>
 
-<div id="page8" style="display:none;max-width:1300px;margin:0 auto;padding:18px 24px">
+<div id="page8" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
     <div style="font-size:16px;font-weight:700;color:#1a1a2e">🏆 Employee of the Month</div>
   </div>
@@ -515,7 +515,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 
 <!-- page9 merged into Team Schedules -->
 
-<div id="page10" style="display:none;max-width:1300px;margin:0 auto;padding:18px 24px">
+<div id="page10" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
   <div id="recallContent"><div style="text-align:center;padding:40px;color:#aaa">Loading...</div></div>
 </div>
 <footer style="position:relative">Inbound Daily Dashboard · Petromin Group · Connected to Google Sheets · Auto-updates on refresh<span style="position:absolute;left:14px;top:50%;transform:translateY(-50%)">By: Sali Aljehani</span><span style="position:absolute;right:14px;top:50%;transform:translateY(-50%)" id="lupd_footer" style="color:#c0272d;font-weight:600">🔄 Loading...</span></footer>
@@ -1041,13 +1041,13 @@ function renderAttendance(name){
   const byM={};
   Object.entries(rows).forEach(([d,s])=>{const m=d.slice(0,7);if(!byM[m])byM[m]={};byM[m][d]=s;});
   let html=`<div class="ms-grid">
-    <div class="ms-card" style="border-left-color:#2e7d32"><div class="ms-name">🏢 Office</div><div class="ms-val">${tot.Office}</div></div>
-    <div class="ms-card" style="border-left-color:#1565c0"><div class="ms-name">🏠 Remote</div><div class="ms-val">${tot.Remote}</div></div>
-    <div class="ms-card" style="border-left-color:#6a1b9a"><div class="ms-name">🌴 Vacation</div><div class="ms-val">${tot.Vacation}</div></div>
-    <div class="ms-card" style="border-left-color:#e65100"><div class="ms-name">🤒 Sick Leave</div><div class="ms-val">${tot.Sick}</div></div>
-    <div class="ms-card" style="border-left-color:#888"><div class="ms-name">– Off</div><div class="ms-val">${tot.Off}</div></div>
-    <div class="ms-card" style="border-left-color:#c0272d"><div class="ms-name">❌ Absent</div><div class="ms-val">${tot.Absent}</div></div>
-    <div class="ms-card" style="border-left-color:#00838f"><div class="ms-name">📅 Saturday Shift</div><div class="ms-val">${tot['Saturday Shift']}</div></div>
+    <div class="ms-card" style="border-left-color:#A8C4B0;background:#F6F8F7"><div class="ms-name">🏢 Office</div><div class="ms-val">${tot.Office}</div></div>
+    <div class="ms-card" style="border-left-color:#A8B8D4;background:#F7F7F8"><div class="ms-name">🏠 Remote</div><div class="ms-val">${tot.Remote}</div></div>
+    <div class="ms-card" style="border-left-color:#C8B4D4;background:#F8F6F7"><div class="ms-name">🌴 Vacation</div><div class="ms-val">${tot.Vacation}</div></div>
+    <div class="ms-card" style="border-left-color:#D9B98C;background:#F8F7F5"><div class="ms-name">🤒 Sick Leave</div><div class="ms-val">${tot.Sick}</div></div>
+    <div class="ms-card" style="border-left-color:#C9C6BC;background:#F7F7F5"><div class="ms-name">– Off</div><div class="ms-val">${tot.Off}</div></div>
+    <div class="ms-card" style="border-left-color:#D4A8A8;background:#FBF7F7"><div class="ms-name">❌ Absent</div><div class="ms-val">${tot.Absent}</div></div>
+    <div class="ms-card" style="border-left-color:#9BC0C2;background:#F6F8F8"><div class="ms-name">📅 Saturday Shift</div><div class="ms-val">${tot['Saturday Shift']}</div></div>
   </div>`;
   Object.keys(byM).sort().forEach(m=>{
     const days=byM[m];
@@ -4646,7 +4646,7 @@ function renderAnnouncements(){
   if(!el) return;
 
   const priorityColor = {'High':'#c0272d','Medium':'#e65100','Low':'#2e7d32'};
-  const priorityLabel = {'High':'عاجل','Medium':'مهم','Low':'عام'};
+  const priorityLabel = {'High':'Urgent','Medium':'Important','Low':'General'};
   const priorityIcon = {'High':'🚨','Medium':'📌','Low':'📋'};
 
   const items = ANNOUNCEMENTS.filter(function(r){
@@ -4669,28 +4669,28 @@ function renderAnnouncements(){
     // Header
     +'<div style="text-align:center;background:#FAF9F7;border-radius:14px;padding:16px 20px;margin-bottom:20px;border-bottom:3px solid #c0272d;box-shadow:0 1px 4px rgba(0,0,0,.05)">'
     +'<div style="font-size:11px;color:#999;letter-spacing:.2em;text-transform:uppercase;margin-bottom:4px">'+dateStr+'</div>'
-    +'<div style="font-size:20px;font-weight:700;color:#3A352B">📢 لوحة آخر التحديثات</div>'
-    +'<div style="font-size:11px;color:#999;margin-top:4px">آخر التحديثات والمستجدات لفريق العمل</div>'
+    +'<div style="font-size:20px;font-weight:700;color:#3A352B">📢 Latest Updates</div>'
+    +'<div style="font-size:11px;color:#999;margin-top:4px">Recent updates and news for the team</div>'
     +'</div>';
 
   if(!items.length){
     html += '<div style="text-align:center;padding:40px 20px;color:#bbb;background:#fafafa;border-radius:14px">'
       +'<div style="font-size:28px;margin-bottom:8px">📋</div>'
-      +'<div style="font-size:12px">لا توجد تحديثات حالياً — سيتم عرضها هنا فور إضافتها في الشيت</div>'
+      +'<div style="font-size:12px">No updates yet — they will appear here as soon as added to the sheet</div>'
       +'</div>';
   }else{
     html += '<div style="display:flex;flex-direction:column;gap:10px">';
     items.forEach(function(it){
       var color = priorityColor[it.priority]||'#888';
       var icon = priorityIcon[it.priority]||'📢';
-      var label = priorityLabel[it.priority]||'تحديث';
+      var label = priorityLabel[it.priority]||'Update';
       var isNew = it.date===today;
       html += '<div style="display:flex;gap:12px;background:#fff;border-radius:12px;padding:13px 16px;border:1px solid #eee;border-right:4px solid '+color+'">'
         +'<div style="font-size:20px;flex-shrink:0;line-height:1.3">'+icon+'</div>'
         +'<div style="flex:1;min-width:0">'
         +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">'
         +'<span style="font-size:14px;font-weight:700;color:#1a1a2e">'+it.title+'</span>'
-        +(isNew?'<span style="font-size:9px;font-weight:800;background:'+color+';color:#fff;padding:1px 7px;border-radius:8px">جديد</span>':'')
+        +(isNew?'<span style="font-size:9px;font-weight:800;background:'+color+';color:#fff;padding:1px 7px;border-radius:8px">New</span>':'')
         +'</div>'
         +(it.msg?'<div style="font-size:12px;color:#666;line-height:1.8;direction:rtl;text-align:right;white-space:pre-wrap;margin-bottom:6px">'+it.msg+'</div>':'')
         +'<div style="display:flex;align-items:center;gap:10px;font-size:10px;color:#aaa">'
