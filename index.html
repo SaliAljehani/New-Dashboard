@@ -1348,26 +1348,33 @@ function renderDir(filter=''){
     ? AGENTS_DIR.filter(a=>a.name.toLowerCase().includes(filter.toLowerCase()))
     : AGENTS_DIR;
   document.getElementById('dirCount').textContent = list.length + ' agents';
+
+  // لوحة ألوان هادئة جداً متناسقة مع هوية الداشبورد (أحمر بترومين + رمادي محايد)
+  const DIR_PALETTE=[
+    {bg:'#FBF7F7',av:'#F0DEDE',avText:'#9B4A4A',text:'#6B3636'},
+    {bg:'#F7F7F5',av:'#E3E1DC',avText:'#6B6862',text:'#55524C'},
+    {bg:'#F6F8F7',av:'#DCE6E0',avText:'#516B5C',text:'#41544A'},
+    {bg:'#F8F7F5',av:'#E8E2D8',avText:'#8A7456',text:'#6B5C44'},
+    {bg:'#F7F7F8',av:'#E1E2E8',avText:'#5C6178',text:'#4A4E60'},
+    {bg:'#F8F6F7',av:'#E6DEE3',avText:'#7C5C6B',text:'#634B57'}
+  ];
+
   document.getElementById('dirGrid').innerHTML =
-    '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)">'
-    +'<table style="width:100%;border-collapse:collapse;font-size:13px">'
-    +'<thead><tr style="background:#f7f7f9">'
-    +'<th style="padding:10px 16px;text-align:right;color:#888;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid #eee">Agent</th>'
-    +'<th style="padding:10px 16px;text-align:center;color:#888;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid #eee">Badge</th>'
-    +'<th style="padding:10px 16px;text-align:center;color:#888;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid #eee">Phone</th>'
-    +'<th style="padding:10px 16px;text-align:center;color:#888;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.03em;border-bottom:1px solid #eee">Email</th>'
-    +'</tr></thead><tbody>'
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">'
     +list.map((a,idx)=>{
       const init = a.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-      const c = getAvatarColor(a.name);
-      return '<tr style="background:'+(idx%2===0?'#fff':'#fafbfc')+';transition:.15s" onmouseover="this.style.background=\'#f5f5fa\'" onmouseout="this.style.background=\''+(idx%2===0?'#fff':'#fafbfc')+'\'">'
-        +'<td style="padding:10px 16px;border-bottom:1px solid #f2f2f2"><div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:50%;background:'+c.bg+';border:1.5px solid '+c.border+';color:'+c.text+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">'+init+'</div><span style="font-weight:600;color:#1a1a2e">'+a.name+'</span></div></td>'
-        +'<td style="padding:10px 16px;text-align:center;border-bottom:1px solid #f2f2f2;color:#888;font-family:monospace">'+(a.badge||'–')+'</td>'
-        +'<td style="padding:10px 16px;text-align:center;border-bottom:1px solid #f2f2f2;color:#555">'+(a.phone||'–')+'</td>'
-        +'<td style="padding:10px 16px;text-align:center;border-bottom:1px solid #f2f2f2">'+(a.email?'<a href="mailto:'+a.email+'" style="color:#1565c0;text-decoration:none;font-size:12px">'+a.email+'</a>':'–')+'</td>'
-        +'</tr>';
+      const p = DIR_PALETTE[idx%DIR_PALETTE.length];
+      return '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:'+p.bg+';border-radius:12px;border:1px solid rgba(0,0,0,.03)">'
+        +'<div style="width:32px;height:32px;border-radius:50%;background:'+p.av+';display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:'+p.avText+';flex-shrink:0">'+init+'</div>'
+        +'<div style="flex:1;min-width:0">'
+        +'<p style="font-weight:600;font-size:12px;margin:0;color:'+p.text+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+a.name+'</p>'
+        +'<p style="font-size:10px;color:'+p.avText+';margin:1px 0 0;opacity:.85">Badge '+(a.badge||'–')+'</p>'
+        +'<div style="display:flex;align-items:center;gap:4px;font-size:10px;color:'+p.avText+';margin-top:3px;opacity:.85">📱 '+(a.phone||'–')+'</div>'
+        +(a.email?'<a href="mailto:'+a.email+'" style="display:flex;align-items:center;gap:4px;font-size:10px;color:'+p.avText+';text-decoration:none;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.85">📧 '+a.email+'</a>':'')
+        +'</div>'
+        +'</div>';
     }).join('')
-    +'</tbody></table></div>';
+    +'</div>';
 }
 
 function filterDir(v){ renderDir(v); }
