@@ -9,7 +9,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',system-ui,sans-serif;font-size:12px;background:#e2e4ed;color:#1a1a2e;min-height:100vh}
+body{font-family:'Inter',system-ui,sans-serif;font-size:12px;background:#FAF9F6;color:#1a1a2e;min-height:100vh}
 .header{background:linear-gradient(135deg,#fafafa,#f5f5f5);padding:10px 20px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.06);position:relative;border-bottom:3px solid #c0272d}
 .header h1{color:#7b0000;font-size:16px;font-weight:700}
 .lupd{font-size:12px;color:#c0272d;background:rgba(192,39,45,.08);padding:4px 12px;border-radius:20px;cursor:pointer;border:1px solid rgba(192,39,45,.2)}
@@ -547,16 +547,30 @@ const TEAM_LOGOS={
 
 const SHEET_GIDS={'Agent':1123791969,'Agent Performance':810269545,'Attendance Data':1979596727,'Data Call':95246895,'Reference':910779499,'Weekly Calls & Break':1429234410,'Daily Off Schedule':1979894769,'Daily Off Schedule & Weekly Cal':1979894769,'Announcement Board':536403637,'Escalation':1827857824,'Escalation ':1827857824,'Employee of the MONTH':1892899267,'Subject':0,'Emails ':0,'Emails':0,'Contact Number ':0,'Contact Number':0,'Vacation Schedule 2026':0};
 // Use preloaded data if available (Apps Script), otherwise fetch
-async function loadSheet(name){
+async function loadSheet(name, retries){
   if(window.__PRELOADED_DATA__ && window.__PRELOADED_DATA__[name]){
     return window.__PRELOADED_DATA__[name];
   }
+  retries = retries===undefined ? 2 : retries;
   // Fallback: direct fetch (for GitHub Pages)
   const gid = SHEET_GIDS[name] || '';
   const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${SHEET_ID}&gid=${gid}`;
-  const res = await fetch(url);
-  if(!res.ok) throw new Error('Proxy error: ' + res.status + ' for ' + name);
-  return await res.json();
+  const controller = new AbortController();
+  const timeoutId = setTimeout(()=>controller.abort(), 15000);
+  try{
+    const res = await fetch(url, {signal: controller.signal});
+    clearTimeout(timeoutId);
+    if(!res.ok) throw new Error('Proxy error: ' + res.status + ' for ' + name);
+    return await res.json();
+  }catch(err){
+    clearTimeout(timeoutId);
+    if(retries>0){
+      console.warn('loadSheet retry for', name, '— attempts left:', retries, err.message);
+      await new Promise(r=>setTimeout(r,800));
+      return loadSheet(name, retries-1);
+    }
+    throw new Error((err.name==='AbortError'?'Timeout loading ':'Failed to load ')+name+' — '+err.message);
+  }
 }
 
 
@@ -1268,15 +1282,29 @@ let ANNOUNCEMENTS = [];
 let ESCALATIONS = [];
 let EOM_DATA = [];
 
-async function fetchCSVRaw(sheetId, sheetName){
+async function fetchCSVRaw(sheetId, sheetName, retries){
+  retries = retries===undefined ? 2 : retries;
   const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=`+encodeURIComponent(sheetName);
-  const res = await fetch(url);
-  const text = await res.text();
-  const json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}')+1));
-  const cols = json.table.cols.map(c=>c.label||'');
-  const rows = json.table.rows.map(r=>r.c.map(c=>c?(c.f!==undefined?c.f:c.v):''));
-  console.log('fetchCSVRaw(json)', sheetName, 'cols:', cols, 'rows:', rows.length, 'sample:', rows[0]);
-  return [cols, ...rows];
+  const controller = new AbortController();
+  const timeoutId = setTimeout(()=>controller.abort(), 15000);
+  try{
+    const res = await fetch(url, {signal: controller.signal});
+    clearTimeout(timeoutId);
+    const text = await res.text();
+    const json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}')+1));
+    const cols = json.table.cols.map(c=>c.label||'');
+    const rows = json.table.rows.map(r=>r.c.map(c=>c?(c.f!==undefined?c.f:c.v):''));
+    console.log('fetchCSVRaw(json)', sheetName, 'cols:', cols, 'rows:', rows.length, 'sample:', rows[0]);
+    return [cols, ...rows];
+  }catch(err){
+    clearTimeout(timeoutId);
+    if(retries>0){
+      console.warn('fetchCSVRaw retry for', sheetName, '— attempts left:', retries, err.message);
+      await new Promise(r=>setTimeout(r,800));
+      return fetchCSVRaw(sheetId, sheetName, retries-1);
+    }
+    throw new Error((err.name==='AbortError'?'Timeout loading ':'Failed to load ')+sheetName+' — '+err.message);
+  }
 }
 
 function parseCSVRaw(text){
@@ -1457,17 +1485,29 @@ let REF_CACHE = {};
 let REF_ACTIVE_TABS = {nissan:0, stellantis:0, bodyshop:0, baic:0, baicRecall:0};
 let VIN_FILTERS = {};
 
-async function fetchSheet(spreadsheetId, sheetName){
+async function fetchSheet(spreadsheetId, sheetName, retries){
   const key = `${spreadsheetId}__${sheetName}`;
   if(REF_CACHE[key]) return REF_CACHE[key];
-  
-  // Get GID for this sheet name
+
+  retries = retries===undefined ? 2 : retries;
   const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${spreadsheetId}&sheetName=${encodeURIComponent(sheetName)}`;
-  const res = await fetch(url);
-  const rows = await res.json();
-  
-  REF_CACHE[key] = rows;
-  return rows;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(()=>controller.abort(), 15000);
+  try{
+    const res = await fetch(url, {signal: controller.signal});
+    clearTimeout(timeoutId);
+    const rows = await res.json();
+    REF_CACHE[key] = rows;
+    return rows;
+  }catch(err){
+    clearTimeout(timeoutId);
+    if(retries>0){
+      console.warn('fetchSheet retry for', sheetName, '— attempts left:', retries, err.message);
+      await new Promise(r=>setTimeout(r,800));
+      return fetchSheet(spreadsheetId, sheetName, retries-1);
+    }
+    throw new Error((err.name==='AbortError'?'Timeout loading ':'Failed to load ')+sheetName+' — '+err.message);
+  }
 }
 
 function makeRefTable(rows, vinFilter=''){
