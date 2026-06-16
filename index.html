@@ -59,7 +59,7 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:16px}
 .ac{background:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 1px 4px rgba(0,0,0,.06);cursor:pointer;transition:.2s;border:2px solid transparent}
 .ac:hover{border-color:#bdbdbd;transform:translateY(-2px)}
-.ac.sel{border-color:#c0272d;background:#fef2f2}
+.ac.sel{border-color:#c0272d}
 .acn{font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:7px}
 .acs{display:flex;gap:6px;flex-wrap:wrap}
 .acp{font-size:10px;color:#555;background:#d8d8d8;padding:2px 7px;border-radius:8px}
@@ -605,10 +605,12 @@ function showMotivation(){
   },180000);
 }
 
-async function loadAllData(){
-  document.getElementById('loadingDiv').style.display='flex';
-  document.getElementById('mainContent').style.display='none';
-  document.getElementById('errDiv').style.display='none';
+async function loadAllData(silent){
+  if(!silent){
+    document.getElementById('loadingDiv').style.display='flex';
+    document.getElementById('mainContent').style.display='none';
+    document.getElementById('errDiv').style.display='none';
+  }
   try{
     // Load Agent Performance
     setProgress(10,'Loading Agent Performance...');
@@ -777,9 +779,11 @@ async function loadAllData(){
     console.log('All data loaded!');
     
     // Init UI
-    initUI();
-    document.getElementById('loadingDiv').style.display='none';
-    document.getElementById('mainContent').style.display='block';
+    initUI(silent);
+    if(!silent){
+      document.getElementById('loadingDiv').style.display='none';
+      document.getElementById('mainContent').style.display='block';
+    }
     const now=new Date().toLocaleString('en-GB');
     document.getElementById('lupd').textContent='🔄 Refresh';
     const footerEl=document.getElementById('lupd_footer');
@@ -787,14 +791,16 @@ async function loadAllData(){
 
   }catch(err){
     console.error('loadAllData fatal error:', err);
-    document.getElementById('loadingDiv').style.display='none';
-    document.getElementById('errDiv').style.display='block';
-    document.getElementById('errMsg').textContent='Error: '+err.message;
+    if(!silent){
+      document.getElementById('loadingDiv').style.display='none';
+      document.getElementById('errDiv').style.display='block';
+      document.getElementById('errMsg').textContent='Error: '+err.message;
+    }
     console.error(err);
   }
 }
 
-function initUI(){
+function initUI(silent){
   // Date range
   const allD=Object.values(D).flat().map(r=>r[0]).filter(Boolean).sort();
   if(allD.length){
@@ -804,12 +810,16 @@ function initUI(){
   }
   // Agent select
   const s=document.getElementById('agSel');
+  const prevAgent = s.value;
   s.innerHTML='<option value="">— All Agents —</option>';
   Object.keys(D).sort().forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;s.appendChild(o);});
-  // Show Team Directory first
-  [1,2,4,5].forEach(i=>{const el=document.getElementById('page'+i);if(el)el.style.display='none';});
-  document.getElementById('page3').style.display='block';
-  document.querySelector('.ctrl').style.display='none';
+  if(prevAgent) s.value=prevAgent;
+  if(!silent){
+    // Show Team Directory first — only on initial load, not on silent background refresh
+    [1,2,4,5].forEach(i=>{const el=document.getElementById('page'+i);if(el)el.style.display='none';});
+    document.getElementById('page3').style.display='block';
+    document.querySelector('.ctrl').style.display='none';
+  }
   renderDir();
   renderAll();
 }
@@ -822,7 +832,12 @@ function ag(rows){let I=0,T=0,W=0,DI=0,tS=0,tN=0,hS=0,hN=0;rows.forEach(r=>{I+=r
 
 // ── RENDER ALL ───────────────────────────────────────────────────────────────
 const AVATAR_COLORS=[
-  {bg:'linear-gradient(135deg,#e0e0e0,#eeeeee)',border:'#bdbdbd',text:'#c0272d'},
+  {bg:'#F0DEDE',border:'#E3C5C5',text:'#9B4A4A',cardBg:'#FBF7F7'},
+  {bg:'#E3E1DC',border:'#D2CFC7',text:'#6B6862',cardBg:'#F7F7F5'},
+  {bg:'#DCE6E0',border:'#C5D4CB',text:'#516B5C',cardBg:'#F6F8F7'},
+  {bg:'#E8E2D8',border:'#D9CDBC',text:'#8A7456',cardBg:'#F8F7F5'},
+  {bg:'#E1E2E8',border:'#CBCDD9',text:'#5C6178',cardBg:'#F7F7F8'},
+  {bg:'#E6DEE3',border:'#D6C8D0',text:'#7C5C6B',cardBg:'#F8F6F7'}
 ];
 
 // Assign random-but-stable color per agent name
@@ -842,15 +857,15 @@ function renderAll(){
       const a=am[nm];
       const init=nm.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
       const c=getAvatarColor(nm);
-      return`<div class="ac${nm===CA?' sel':''}" onclick="selAgent('${nm}')">
+      return`<div class="ac${nm===CA?' sel':''}" style="background:${c.cardBg}" onclick="selAgent('${nm}')">
         <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px">
-          <div style="width:34px;height:34px;border-radius:50%;background:${c.bg};border:2px solid ${c.border};display:flex;align-items:center;justify-content:center;color:${c.text};font-size:12px;font-weight:700;flex-shrink:0">${init}</div>
-          <div><div class="acn">${nm}</div><div style="font-size:10px;color:#aaa">#${i+1} · ${a.days} days</div></div>
+          <div style="width:34px;height:34px;border-radius:50%;background:${c.bg};border:1px solid ${c.border};display:flex;align-items:center;justify-content:center;color:${c.text};font-size:12px;font-weight:700;flex-shrink:0">${init}</div>
+          <div><div class="acn" style="color:${c.text}">${nm}</div><div style="font-size:10px;color:${c.text};opacity:.65">#${i+1} · ${a.days} days</div></div>
         </div>
         <div class="acs">
-          <div class="acp">In <span>${N(a.I)}</span></div>
-          <div class="acp">Tkt <span>${N(a.T)}</span></div>
-          <div class="acp">WA <span>${N(a.W)}</span></div>
+          <div class="acp" style="background:${c.bg}55;color:${c.text}">In <span style="color:${c.text}">${N(a.I)}</span></div>
+          <div class="acp" style="background:${c.bg}55;color:${c.text}">Tkt <span style="color:${c.text}">${N(a.T)}</span></div>
+          <div class="acp" style="background:${c.bg}55;color:${c.text}">WA <span style="color:${c.text}">${N(a.W)}</span></div>
         </div>
       </div>`;
     }).join('');
@@ -4631,7 +4646,7 @@ function renderAnnouncements(){
   if(!el) return;
 
   const priorityColor = {'High':'#c0272d','Medium':'#e65100','Low':'#2e7d32'};
-  const priorityBg = {'High':'linear-gradient(135deg,#fafafa,#fff)','Medium':'linear-gradient(135deg,#fafafa,#fff)','Low':'linear-gradient(135deg,#fafafa,#fff)'};
+  const priorityLabel = {'High':'عاجل','Medium':'مهم','Low':'عام'};
   const priorityIcon = {'High':'🚨','Medium':'📌','Low':'📋'};
 
   const items = ANNOUNCEMENTS.filter(function(r){
@@ -4644,56 +4659,50 @@ function renderAnnouncements(){
       msg: String(r[keys[2]]||'').trim(),
       priority: String(r[keys[3]]||'').trim()
     };
-  });
+  }).sort(function(a,b){ return (b.date||'').localeCompare(a.date||''); });
 
   const today = new Date().toISOString().split('T')[0];
   const dateStr = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
-  const TOTAL_SLOTS = Math.max(6, items.length + 2);
-  const slots = items.slice();
-  while(slots.length < TOTAL_SLOTS) slots.push(null);
-
-  let html = '<div style="max-width:960px;margin:0 auto;padding:8px">'
+  let html = '<div style="max-width:760px;margin:0 auto;padding:8px">'
 
     // Header
-    +'<div style="text-align:center;background:linear-gradient(135deg,#f5f5f5,#eeeeee);border-radius:14px;padding:16px 20px;margin-bottom:20px;border-bottom:3px solid #c0272d;box-shadow:0 2px 8px rgba(0,0,0,.07)">'
+    +'<div style="text-align:center;background:#FAF9F7;border-radius:14px;padding:16px 20px;margin-bottom:20px;border-bottom:3px solid #c0272d;box-shadow:0 1px 4px rgba(0,0,0,.05)">'
     +'<div style="font-size:11px;color:#999;letter-spacing:.2em;text-transform:uppercase;margin-bottom:4px">'+dateStr+'</div>'
-    +'<div style="font-size:22px;font-weight:900;color:#1a1a2e">📢 Announcement Board</div>'
-    +'</div>'
+    +'<div style="font-size:20px;font-weight:700;color:#3A352B">📢 لوحة آخر التحديثات</div>'
+    +'<div style="font-size:11px;color:#999;margin-top:4px">آخر التحديثات والمستجدات لفريق العمل</div>'
+    +'</div>';
 
-    // Grid
-    +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px">';
-
-  slots.forEach(function(it){
-    if(!it){
-      html += '<div style="background:#fafafa;border-radius:14px;border:2px dashed #e0e0e0;min-height:120px;display:flex;align-items:center;justify-content:center;padding:20px">'
-        +'<div style="text-align:center;color:#ccc">'
-        +'<div style="font-size:28px;margin-bottom:6px">📋</div>'
-        +'<div style="font-size:11px;font-weight:600">Coming Soon</div>'
+  if(!items.length){
+    html += '<div style="text-align:center;padding:40px 20px;color:#bbb;background:#fafafa;border-radius:14px">'
+      +'<div style="font-size:28px;margin-bottom:8px">📋</div>'
+      +'<div style="font-size:12px">لا توجد تحديثات حالياً — سيتم عرضها هنا فور إضافتها في الشيت</div>'
+      +'</div>';
+  }else{
+    html += '<div style="display:flex;flex-direction:column;gap:10px">';
+    items.forEach(function(it){
+      var color = priorityColor[it.priority]||'#888';
+      var icon = priorityIcon[it.priority]||'📢';
+      var label = priorityLabel[it.priority]||'تحديث';
+      var isNew = it.date===today;
+      html += '<div style="display:flex;gap:12px;background:#fff;border-radius:12px;padding:13px 16px;border:1px solid #eee;border-right:4px solid '+color+'">'
+        +'<div style="font-size:20px;flex-shrink:0;line-height:1.3">'+icon+'</div>'
+        +'<div style="flex:1;min-width:0">'
+        +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">'
+        +'<span style="font-size:14px;font-weight:700;color:#1a1a2e">'+it.title+'</span>'
+        +(isNew?'<span style="font-size:9px;font-weight:800;background:'+color+';color:#fff;padding:1px 7px;border-radius:8px">جديد</span>':'')
+        +'</div>'
+        +(it.msg?'<div style="font-size:12px;color:#666;line-height:1.8;direction:rtl;text-align:right;white-space:pre-wrap;margin-bottom:6px">'+it.msg+'</div>':'')
+        +'<div style="display:flex;align-items:center;gap:10px;font-size:10px;color:#aaa">'
+        +'<span>'+it.date+'</span>'
+        +'<span style="color:'+color+';font-weight:700">'+label+'</span>'
+        +'</div>'
         +'</div></div>';
-      return;
-    }
-    var color = priorityColor[it.priority]||'#c0272d';
-    var bg = 'linear-gradient(135deg,#fafafa,#fff)';
-    var icon = priorityIcon[it.priority]||'📢';
-    var isNew = it.date===today;
-    var isHigh = it.priority==='High';
-    html += '<div style="background:'+bg+';border-radius:14px;border:2px solid '+color+'33;box-shadow:0 3px 10px rgba(0,0,0,.08);overflow:hidden">'
-      +'<div style="background:'+color+';padding:8px 14px;display:flex;align-items:center;justify-content:space-between">'
-      +(isHigh
-        ?'<span style="font-size:14px;font-weight:900;color:#fff;letter-spacing:.05em">🚨 IMPORTANT</span>'
-        :'<span style="font-size:11px;font-weight:800;color:#fff">'+icon+' '+it.priority.toUpperCase()+'</span>')
-      +'<div style="display:flex;align-items:center;gap:6px">'
-      +(isNew?'<span style="font-size:9px;font-weight:800;background:#fff;color:'+color+';padding:1px 7px;border-radius:8px">✨ NEW</span>':'')
-      +'<span style="font-size:10px;color:rgba(255,255,255,.85)">'+it.date+'</span>'
-      +'</div></div>'
-      +'<div style="padding:14px 16px">'
-      +'<div style="font-size:14px;font-weight:800;color:#1a1a2e;line-height:1.4;margin-bottom:'+(it.msg?'10px':'0')+'">'+it.title+'</div>'
-      +(it.msg?'<div style="font-size:12px;color:#555;line-height:1.8;direction:rtl;text-align:right;white-space:pre-wrap;padding-top:8px;border-top:1px solid '+color+'22">'+it.msg+'</div>':'')
-      +'</div></div>';
-  });
+    });
+    html += '</div>';
+  }
 
-  html += '</div></div>';
+  html += '</div>';
   el.innerHTML = html;
 }
 
@@ -5431,7 +5440,8 @@ async function loadVehicleModels(brand){
 window.addEventListener('DOMContentLoaded', () => { loadAllData(); showMotivation(); });
 
 // تحديث تلقائي للبيانات كل 5 دقائق
-setInterval(() => { loadAllData(); }, 300000);
+// تحديث تلقائي للبيانات كل 5 دقائق — بدون أي تأثير على الشاشة (يعمل في الخلفية بهدوء)
+setInterval(() => { loadAllData(true); }, 300000);
 </script>
 </body>
 </html>
