@@ -415,11 +415,11 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
             <th style="color:#1a1a2e;font-size:11px">Date</th>
             <th class="tr" style="white-space:nowrap">Login Time<br><span style="color:#2e7d32;font-size:10px;font-weight:600">9:00:00</span></th>
             <th class="tr" style="white-space:nowrap">Total Ready Duration<br><span style="color:#2e7d32;font-size:10px;font-weight:600">8:00:00</span></th>
-            <th class="tr" style="white-space:nowrap">Auto Call-Off Duration<br><span style="color:#2e7d32;font-size:10px;font-weight:600">0:20:00</span></th>
+            <th class="tr" style="white-space:nowrap">Auto Call-Off Duration<br><span style="color:#2e7d32;font-size:10px;font-weight:600">0:30:55</span></th>
             <th class="tr" style="white-space:nowrap">Total Break Duration<br><span style="color:#2e7d32;font-size:10px;font-weight:600">1:00:00</span></th>
-            <th class="tr" style="white-space:nowrap">Avg. Talk Time<br><span style="color:#2e7d32;font-size:10px;font-weight:600">0:04:00</span></th>
-            <th class="tr" style="white-space:nowrap">Avg. ACW Duration<br><span style="color:#2e7d32;font-size:10px;font-weight:600">0:00:30</span></th>
-            <th class="tr" style="white-space:nowrap">Avg. Handling Time<br><span style="color:#2e7d32;font-size:10px;font-weight:600">0:04:00</span></th>
+            <th class="tr" style="white-space:nowrap">Avg. Talk Time<br><span style="color:#2e7d32;font-size:10px;font-weight:600">0:04:20</span></th>
+            <th class="tr" style="white-space:nowrap">Avg. ACW Duration<br><span style="color:#2e7d32;font-size:10px;font-weight:600">0:00:10</span></th>
+            <th class="tr" style="white-space:nowrap">Avg. Handling Time<br><span style="color:#2e7d32;font-size:10px;font-weight:600">0:04:28</span></th>
             <th class="tr" style="color:#1a1a2e;font-size:11px">Manual Dials</th>
             <th class="tr" style="color:#1a1a2e;font-size:11px">Connected Inbound</th>
             <th class="tr" style="color:#1a1a2e;font-size:11px">Tickets</th>
@@ -920,7 +920,7 @@ function fmtS(s){
   const h=Math.floor(s/3600);
   const m=Math.floor((s%3600)/60);
   const sec=Math.round(s%60);
-  return(h>0?h+':':'')+(m<10&&h>0?'0':'')+m+':'+(sec<10?'0':'')+sec;
+  return h+':'+(m<10?'0':'')+m+':'+(sec<10?'0':'')+sec;
 }
 function renderAgent(name){
   const rows=frows(name).slice().sort((a,b)=>a[0].localeCompare(b[0]));
