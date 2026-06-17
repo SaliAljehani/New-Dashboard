@@ -1354,10 +1354,21 @@ async function loadSchedule(){
   // [...,-1]=column K (agent name / section marker), which is what we use.
   const schedRows = [], weeklyRows = [];
   let wSection = 'call';
+  let dailyKeys = null;
   arr.forEach(function(r){
     const vals = Object.values(r);
     const agentName = String(vals[0]||'').trim();
-    if(agentName) schedRows.push(r);
+    if(agentName){
+      // Keep ONLY the Agent Name + 7 day columns (the first 8 values).
+      // The remaining keys ("" and "Multi Campaign") belong to the
+      // side-by-side Weekly Calls & Break table and must not leak in here,
+      // otherwise two bogus extra columns (Break Time / agent names)
+      // appear at the end of the Daily Off Schedule table.
+      if(!dailyKeys) dailyKeys = Object.keys(r).slice(0, 8);
+      const cleanRow = {};
+      dailyKeys.forEach(function(k, ki){ cleanRow[k] = vals[ki]; });
+      schedRows.push(cleanRow);
+    }
 
     if(vals.length < 2) return;
     const agent2 = String(vals[vals.length-1]||'').trim();
