@@ -1343,13 +1343,31 @@ async function loadSchedule(){
   const raw = await loadSheet('Daily Off Schedule & Weekly Cal');
   const arr = Array.isArray(raw) ? raw : (raw.rows||[]);
   if(!arr.length){ renderRoster(); return; }
-  let hitWeekly = false;
+  // This sheet has TWO tables side-by-side, not stacked vertically:
+  //   columns A-H = Daily Off Schedule (Agent Name + 7 days)
+  //   columns J-L = Weekly Calls & Break ("Multi Campaign" / "WhatsApp" sections)
+  // The header row has blank cells for columns I, J and L, so when the
+  // sheet is converted to row-objects keyed by header text, those three
+  // blank-named columns collide on the same "" key and only the LAST one
+  // (column L) survives. That makes columns I/J/L collapse into the final
+  // two values of Object.values(r): [...,-2]=column L (break time),
+  // [...,-1]=column K (agent name / section marker), which is what we use.
   const schedRows = [], weeklyRows = [];
+  let wSection = 'call';
   arr.forEach(function(r){
-    const v0 = String(Object.values(r)[0]||'').trim();
-    if(v0==='Weekly Calls & Break'||v0==='Multi Campaign'){ hitWeekly=true; return; }
-    if(!hitWeekly) schedRows.push(r);
-    else if(v0 && v0!=='Week') weeklyRows.push(r);
+    const vals = Object.values(r);
+    const agentName = String(vals[0]||'').trim();
+    if(agentName) schedRows.push(r);
+
+    if(vals.length < 2) return;
+    const agent2 = String(vals[vals.length-1]||'').trim();
+    const brk2 = String(vals[vals.length-2]||'').trim();
+    if(!agent2 && !brk2) return;
+    const agent2L = agent2.toLowerCase();
+    if(agent2L==='agent name') return; // sub-header row
+    if(agent2L==='multi campaign') return; // table title row
+    if(agent2L==='whatsapp'){ wSection='chat'; return; } // section switch
+    weeklyRows.push({section: wSection, agent: agent2, brk: brk2});
   });
   SCHEDULE_DATA = schedRows;
   WEEKLY_DATA = weeklyRows;
@@ -4599,19 +4617,8 @@ function renderRoster(){
   // Build weekly breaks table
   var weeklyHTML = '';
   if(WEEKLY_DATA && WEEKLY_DATA.length){
-    var callRows=[], chatRows=[], wSection='call';
-    WEEKLY_DATA.forEach(function(r){
-      var vals=Object.values(r).map(function(v){return String(v||'').trim();});
-      var v0=vals[0]||'', v1=vals[1]||'', v2=vals[2]||'';
-      if(!v0&&!v1&&!v2) return;
-      if(v0==='Week'||v0==='week') return;
-      if(v0==='Multi Campaign'||v0==='multi campaign') return;
-      if(v0==='WhatsApp'||v0==='whatsapp'){wSection='chat';return;}
-      // تحقق إذا أي خلية تحتوي WhatsApp كعنوان
-      if(vals.some(function(v){return v==='WhatsApp'||v==='whatsapp';})){wSection='chat';return;}
-      var row={week:v0, agent:v1, brk:v2};
-      if(wSection==='call') callRows.push(row); else chatRows.push(row);
-    });
+    var callRows = WEEKLY_DATA.filter(function(r){return r.section==='call';});
+    var chatRows = WEEKLY_DATA.filter(function(r){return r.section==='chat';});
 
     function fmtTime(v){
       var s=String(v||'').trim();
@@ -4627,18 +4634,14 @@ function renderRoster(){
         +'<div style="background:'+color+'18;border-bottom:3px solid '+color+';padding:12px 16px;font-size:14px;font-weight:800;color:'+color+';text-align:center;letter-spacing:.02em">'+title+'</div>'
         +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
         +'<thead><tr style="background:'+color+'10">'
-        +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center;font-size:12px">📅 Week</th>'
         +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center;font-size:12px">👤 Agent Name</th>'
         +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center;font-size:12px">⏰ Break Time</th>'
         +'</tr></thead><tbody>';
       brows.forEach(function(r,i){
-        var week=String(r.week||'').trim();
         var agent=String(r.agent||'').trim();
         var brk=String(r.brk||'').trim();
         if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(brk)) brk=fmtTime(brk);
-        if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(agent)&&!brk){brk=fmtTime(agent);agent='';}
         t+='<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+';border-bottom:1px solid #f0f0f0">'
-          +'<td style="padding:8px 14px;text-align:center"><span style="background:#fff8e1;color:#f57f17;padding:3px 12px;border-radius:4px;font-weight:700;font-size:12px">'+week+'</span></td>'
           +'<td style="padding:8px 14px;text-align:center"><span style="background:#f5f5f5;color:#333;padding:3px 12px;border-radius:4px;font-weight:700;font-size:12px">'+agent+'</span></td>'
           +'<td style="padding:8px 14px;text-align:center;font-weight:700;color:#2e7d32;font-size:13px">'+brk+'</td>'
           +'</tr>';
