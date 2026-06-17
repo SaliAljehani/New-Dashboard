@@ -277,15 +277,15 @@ tr:last-child td{border-bottom:none}
 .month-title{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
 .month-totals{display:flex;gap:6px;flex-wrap:wrap}
 .mtot{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600}
-.mtot.office{background:#e8f5e9;color:#1b5e20}.mtot.remote{background:#e8f5e9;color:#1b5e20}
+.mtot.office{background:#e8f5e9;color:#1b5e20}.mtot.remote{background:#e3f2fd;color:#0d47a1}
 .mtot.off{background:#f1efe8;color:#777}.mtot.vacation{background:#f3e5f5;color:#4a148c}
-.mtot.sick{background:#f1efe8;color:#777}.mtot.absent{background:#f1efe8;color:#777}.mtot.satshift{background:#e8f5e9;color:#1b5e20}
+.mtot.sick{background:#fff3e0;color:#9e5400}.mtot.absent{background:#fde8ea;color:#b0282e}.mtot.satshift{background:#e0f7fa;color:#00696f}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}
 .cal-day{border-radius:8px;padding:4px 2px;text-align:center;font-size:13px;font-weight:600;min-height:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2;gap:2px}
-.cal-day.office{background:#e8f5e9;color:#1b5e20}.cal-day.remote{background:#e8f5e9;color:#1b5e20}
+.cal-day.office{background:#e8f5e9;color:#1b5e20}.cal-day.remote{background:#e3f2fd;color:#0d47a1}
 .cal-day.off{background:#f1efe8;color:#999}.cal-day.vacation{background:#f3e5f5;color:#4a148c}
-.cal-day.sick{background:#f1efe8;color:#999}.cal-day.absent{background:#f1efe8;color:#999}.cal-day.satshift{background:#e8f5e9;color:#1b5e20;font-weight:700}
-.cal-day.el{background:#f1efe8;color:#999}.cal-day.empty{background:transparent}
+.cal-day.sick{background:#fff3e0;color:#9e5400}.cal-day.absent{background:#fde8ea;color:#b0282e}.cal-day.satshift{background:#e0f7fa;color:#00696f;font-weight:700}
+.cal-day.el{background:#ede7f6;color:#4527a0}.cal-day.empty{background:transparent}
 .cal-day.wd{font-size:13px;color:#444;background:transparent;font-weight:700}
 .ms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:14px}
 .ms-card{background:#fff;border-radius:8px;padding:10px 12px;box-shadow:0 1px 3px rgba(0,0,0,.06);border-left:3px solid #eee;text-align:center}
@@ -1064,14 +1064,14 @@ function renderAttendance(name){
     <div class="ms-card" style="border-left-color:#D4A8A8;background:#FBF7F7"><div class="ms-name">❌ Absent</div><div class="ms-val">${tot.Absent}</div></div>
     <div class="ms-card" style="border-left-color:#9BC0C2;background:#F6F8F8"><div class="ms-name">📅 Saturday Shift</div><div class="ms-val">${tot['Saturday Shift']}</div></div>
   </div>`;
-  html+=`<div style="display:flex;gap:14px;flex-wrap:wrap;margin:14px 2px 18px;font-size:12px;color:#555">
-    <span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#e8f5e9;margin-left:5px"></span>🏢 Office</span>
-    <span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#e8f5e9;margin-left:5px"></span>🏠 Remote</span>
-    <span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#f3e5f5;margin-left:5px"></span>🌴 Vacation</span>
-    <span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#f1efe8;margin-left:5px"></span>🤒 Sick Leave</span>
-    <span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#f1efe8;margin-left:5px"></span>Off</span>
-    <span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#f1efe8;margin-left:5px"></span>❌ Absent</span>
-    <span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#e8f5e9;margin-left:5px"></span>📅 Saturday Shift</span>
+  html+=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin:14px 2px 18px">
+    <span class="mtot office">🏢 Office</span>
+    <span class="mtot remote">🏠 Remote</span>
+    <span class="mtot vacation">🌴 Vacation</span>
+    <span class="mtot sick">🤒 Sick Leave</span>
+    <span class="mtot off">Off</span>
+    <span class="mtot absent">❌ Absent</span>
+    <span class="mtot satshift">📅 Saturday Shift</span>
   </div>`;
   Object.keys(byM).sort().forEach(m=>{
     const days=byM[m];
@@ -1802,7 +1802,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
         +'</div>'
       : '';
 
-    return '<div class="ref-card" style="padding:0;overflow:hidden">'
+    return '<div style="background:#fff;border-radius:10px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+col_color+';direction:ltr">'
       // Branch name — colored header box
       +'<div style="background:'+col_color+'18;border-bottom:2px solid '+col_color+'22;padding:10px 14px;margin-bottom:0;text-align:center">'
       +'<div style="font-size:13px;font-weight:700;color:'+col_color+'">'+b.name.replace(/\s*\(.*?\)\s*/g,'').replace(/\n/g,' ').trim()+'</div>'
@@ -2829,7 +2829,7 @@ function renderPetrominLocationListTab(arr, kind){
       +'<div onclick="toggleRegion(\''+gid+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px"><span style="font-size:13px;font-weight:700;color:'+rc+'">'+g+'</span><span style="font-size:11px;color:#aaa">('+its.length+')</span><span id="ico_'+gid+'" style="margin-left:auto;color:'+rc+'">▼</span></div>'
       +'<div id="'+gid+'"><div class="ref-cards-grid">'+its.map(it=>{
         const link=it.link&&it.link.startsWith('http')?it.link:mapLink(it.coord);
-        return '<div class="ref-card" style="padding:9px 12px;text-align:center;border-top:3px solid '+rc+'">'
+        return '<div style="background:#fff;border-radius:10px;padding:9px 12px;text-align:center;border-top:3px solid '+rc+';box-shadow:0 1px 4px rgba(0,0,0,.06);direction:ltr">'
           +'<div style="font-size:12px;font-weight:700;color:#333">'+icon+' '+it.station+'</div>'
           +(it.city?'<div style="font-size:10px;color:#888;margin:3px 0">📌 '+it.city+'</div>':'')
           +(it.type?'<div style="font-size:10px;color:'+rc+';font-weight:700">'+it.type+'</div>':'')
@@ -3041,7 +3041,7 @@ function renderNosFranchiseTab(arr){
       +'<span style="font-size:11px;color:#aaa">('+items.length+')</span>'
       +'<span id="ico_'+gid+'" style="margin-left:auto;color:'+color+'">▼</span></div>'
       +'<div id="'+gid+'"><div class="ref-cards-grid">'+items.map(it=>{
-        return '<div class="ref-card" style="padding:10px 14px;text-align:center;border-top:3px solid '+color+'">'
+        return '<div style="background:#fff;border-radius:10px;padding:10px 14px;text-align:center;border-top:3px solid '+color+';box-shadow:0 1px 4px rgba(0,0,0,.06);direction:ltr">'
           +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+it.branch+'</div>'
           +(it.district?'<div style="font-size:11px;color:#888;margin:3px 0">📌 '+it.district+'</div>':'')
           +(it.owner?'<div style="font-size:12px;color:#555;margin-bottom:3px">👤 '+it.owner+'</div>':'')
