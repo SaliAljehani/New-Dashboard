@@ -277,16 +277,16 @@ tr:last-child td{border-bottom:none}
 .month-title{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
 .month-totals{display:flex;gap:6px;flex-wrap:wrap}
 .mtot{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600}
-.mtot.office{background:#e8f5e9;color:#2e7d32}.mtot.remote{background:#e3f2fd;color:#1565c0}
-.mtot.off{background:#d8d8d8;color:#666}.mtot.vacation{background:#f3e5f5;color:#6a1b9a}
-.mtot.sick{background:#fff3e0;color:#e65100}.mtot.absent{background:#fde;color:#c0272d}.mtot.satshift{background:#e0f7fa;color:#00838f}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:10px}
-.cal-day{border-radius:5px;padding:4px 2px;text-align:center;font-size:10px;font-weight:600;min-height:32px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2}
-.cal-day.office{background:#e8f5e9;color:#2e7d32}.cal-day.remote{background:#e3f2fd;color:#1565c0}
-.cal-day.off{background:#d8d8d8;color:#bbb}.cal-day.vacation{background:#f3e5f5;color:#6a1b9a}
-.cal-day.sick{background:#fff3e0;color:#e65100}.cal-day.absent{background:#fde;color:#c0272d}.cal-day.satshift{background:#e0f7fa;color:#00838f;font-weight:700}
-.cal-day.el{background:#e0f7fa;color:#00695c}.cal-day.empty{background:transparent}
-.cal-day.wd{font-size:9px;color:#666;background:transparent;font-weight:400}
+.mtot.office{background:#e8f5e9;color:#1b5e20}.mtot.remote{background:#e8f5e9;color:#1b5e20}
+.mtot.off{background:#f1efe8;color:#777}.mtot.vacation{background:#f3e5f5;color:#4a148c}
+.mtot.sick{background:#f1efe8;color:#777}.mtot.absent{background:#f1efe8;color:#777}.mtot.satshift{background:#e8f5e9;color:#1b5e20}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}
+.cal-day{border-radius:8px;padding:4px 2px;text-align:center;font-size:13px;font-weight:600;min-height:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2;gap:2px}
+.cal-day.office{background:#e8f5e9;color:#1b5e20}.cal-day.remote{background:#e8f5e9;color:#1b5e20}
+.cal-day.off{background:#f1efe8;color:#999}.cal-day.vacation{background:#f3e5f5;color:#4a148c}
+.cal-day.sick{background:#f1efe8;color:#999}.cal-day.absent{background:#f1efe8;color:#999}.cal-day.satshift{background:#e8f5e9;color:#1b5e20;font-weight:700}
+.cal-day.el{background:#f1efe8;color:#999}.cal-day.empty{background:transparent}
+.cal-day.wd{font-size:10px;color:#666;background:transparent;font-weight:400}
 .ms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:14px}
 .ms-card{background:#fff;border-radius:8px;padding:10px 12px;box-shadow:0 1px 3px rgba(0,0,0,.06);border-left:3px solid #eee;text-align:center}
 .ms-val{font-size:18px;font-weight:700;color:#1a1a2e;text-align:center}
@@ -1064,11 +1064,20 @@ function renderAttendance(name){
     <div class="ms-card" style="border-left-color:#D4A8A8;background:#FBF7F7"><div class="ms-name">❌ Absent</div><div class="ms-val">${tot.Absent}</div></div>
     <div class="ms-card" style="border-left-color:#9BC0C2;background:#F6F8F8"><div class="ms-name">📅 Saturday Shift</div><div class="ms-val">${tot['Saturday Shift']}</div></div>
   </div>`;
+  html+=`<div style="display:flex;gap:14px;flex-wrap:wrap;margin:14px 2px 18px;font-size:12px;color:#555">
+    <span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#e8f5e9;margin-left:5px"></span>🏢 Office</span>
+    <span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#e8f5e9;margin-left:5px"></span>🏠 Remote</span>
+    <span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#f3e5f5;margin-left:5px"></span>🌴 Vacation</span>
+    <span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#f1efe8;margin-left:5px"></span>🤒 Sick Leave</span>
+    <span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#f1efe8;margin-left:5px"></span>Off</span>
+    <span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#f1efe8;margin-left:5px"></span>❌ Absent</span>
+    <span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#e8f5e9;margin-left:5px"></span>📅 Saturday Shift</span>
+  </div>`;
   Object.keys(byM).sort().forEach(m=>{
     const days=byM[m];
     const mT={};Object.values(days).forEach(s=>{mT[s]=(mT[s]||0)+1;});
     const yr=parseInt(m.split('-')[0]),mo=parseInt(m.split('-')[1]);
-    const first=(new Date(yr,mo-1,1).getDay()+6)%7;
+    const first=new Date(yr,mo-1,1).getDay();
     const dim=new Date(yr,mo,0).getDate();
     html+=`<div class="month-block">
       <div class="month-title">
@@ -1084,14 +1093,15 @@ function renderAttendance(name){
         </div>
       </div>
       <div class="cal-grid">
-        <div class="cal-day wd">Mon</div><div class="cal-day wd">Tue</div><div class="cal-day wd">Wed</div>
-        <div class="cal-day wd">Thu</div><div class="cal-day wd">Fri</div><div class="cal-day wd">Sat</div><div class="cal-day wd">Sun</div>
+        <div class="cal-day wd">Sunday</div><div class="cal-day wd">Monday</div><div class="cal-day wd">Tuesday</div>
+        <div class="cal-day wd">Wednesday</div><div class="cal-day wd">Thursday</div><div class="cal-day wd">Friday</div><div class="cal-day wd">Saturday</div>
         ${Array(first).fill('<div class="cal-day empty"></div>').join('')}
         ${Array.from({length:dim},(_,i)=>{
           const d=i+1,ds=m+'-'+String(d).padStart(2,'0');
           const st=days[ds];
           if(!st)return`<div class="cal-day off"><div>${d}</div></div>`;
-          return`<div class="cal-day ${scls(st)}" title="${ds}: ${st}"><div>${d}</div><div style="font-size:9px">${slbl(st)}</div></div>`;
+          const showIcon=st!=='Office'&&st!=='Off';
+          return`<div class="cal-day ${scls(st)}" title="${ds}: ${st}"><div>${d}</div>${showIcon?'<div style="font-size:9px">'+slbl(st)+'</div>':''}</div>`;
         }).join('')}
       </div>
     </div>`;
