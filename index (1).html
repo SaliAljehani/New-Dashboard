@@ -9,7 +9,9 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',system-ui,sans-serif;font-size:12px;background:#FAF9F6;color:#1a1a2e;min-height:100vh}
+body{font-family:'Inter',system-ui,sans-serif;font-size:12px;background:#FCFBF9;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column}
+#mainContent{flex:1;display:flex;flex-direction:column}
+footer{margin-top:auto}
 .header{background:linear-gradient(135deg,#fafafa,#f5f5f5);padding:10px 20px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.06);position:relative;border-bottom:3px solid #c0272d}
 .header h1{color:#7b0000;font-size:16px;font-weight:700}
 .lupd{font-size:12px;color:#c0272d;background:rgba(192,39,45,.08);padding:4px 12px;border-radius:20px;cursor:pointer;border:1px solid rgba(192,39,45,.2)}
@@ -44,8 +46,8 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .rkbig{background:linear-gradient(135deg,#c0272d,#7b0000);color:#fff;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600}
 .krow{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px}
 .kc{background:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-top:3px solid #eee;text-align:center}
-.kc.c1{border-top-color:#C99A9A}.kc.c2{border-top-color:#A8A39A}.kc.c3{border-top-color:#8FAD9C}
-.kc.c4{border-top-color:#BFA47E}.kc.c5{border-top-color:#9698B8}.kc.c6{border-top-color:#B594A7}
+.kc.c1{border-top-color:#E3C5C5;background:#FBF7F7}.kc.c2{border-top-color:#D2CFC7;background:#F7F7F5}.kc.c3{border-top-color:#C5D4CB;background:#F6F8F7}
+.kc.c4{border-top-color:#D9CDBC;background:#F8F7F5}.kc.c5{border-top-color:#CBCDD9;background:#F7F7F8}.kc.c6{border-top-color:#D6C8D0;background:#F8F6F7}
 .klbl{font-size:10px;color:#444;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;text-align:center}
 .kval{font-size:20px;font-weight:700;color:#1a1a2e;text-align:center}
 .ksub{font-size:11px;color:#555;margin-top:2px}
@@ -796,7 +798,7 @@ async function loadAllData(silent){
     initUI(silent);
     if(!silent){
       document.getElementById('loadingDiv').style.display='none';
-      document.getElementById('mainContent').style.display='block';
+      document.getElementById('mainContent').style.display='flex';
     }
     const now=new Date().toLocaleString('en-GB');
     document.getElementById('lupd').textContent='🔄 Refresh';
@@ -1055,13 +1057,13 @@ function renderAttendance(name){
   const byM={};
   Object.entries(rows).forEach(([d,s])=>{const m=d.slice(0,7);if(!byM[m])byM[m]={};byM[m][d]=s;});
   let html=`<div class="ms-grid">
-    <div class="ms-card" style="border-left-color:#7CA98B;background:#fff"><div class="ms-name">🏢 Office</div><div class="ms-val">${tot.Office}</div></div>
-    <div class="ms-card" style="border-left-color:#7C95C2;background:#fff"><div class="ms-name">🏠 Remote</div><div class="ms-val">${tot.Remote}</div></div>
-    <div class="ms-card" style="border-left-color:#AC8FC2;background:#fff"><div class="ms-name">🌴 Vacation</div><div class="ms-val">${tot.Vacation}</div></div>
-    <div class="ms-card" style="border-left-color:#C99B5C;background:#fff"><div class="ms-name">🤒 Sick Leave</div><div class="ms-val">${tot.Sick}</div></div>
-    <div class="ms-card" style="border-left-color:#A8A39A;background:#fff"><div class="ms-name">– Off</div><div class="ms-val">${tot.Off}</div></div>
-    <div class="ms-card" style="border-left-color:#C77E7E;background:#fff"><div class="ms-name">❌ Absent</div><div class="ms-val">${tot.Absent}</div></div>
-    <div class="ms-card" style="border-left-color:#5FA0A3;background:#fff"><div class="ms-name">📅 Saturday Shift</div><div class="ms-val">${tot['Saturday Shift']}</div></div>
+    <div class="ms-card" style="border-left-color:#A8C4B0;background:#F6F8F7"><div class="ms-name">🏢 Office</div><div class="ms-val">${tot.Office}</div></div>
+    <div class="ms-card" style="border-left-color:#A8B8D4;background:#F7F7F8"><div class="ms-name">🏠 Remote</div><div class="ms-val">${tot.Remote}</div></div>
+    <div class="ms-card" style="border-left-color:#C8B4D4;background:#F8F6F7"><div class="ms-name">🌴 Vacation</div><div class="ms-val">${tot.Vacation}</div></div>
+    <div class="ms-card" style="border-left-color:#D9B98C;background:#F8F7F5"><div class="ms-name">🤒 Sick Leave</div><div class="ms-val">${tot.Sick}</div></div>
+    <div class="ms-card" style="border-left-color:#C9C6BC;background:#F7F7F5"><div class="ms-name">– Off</div><div class="ms-val">${tot.Off}</div></div>
+    <div class="ms-card" style="border-left-color:#D4A8A8;background:#FBF7F7"><div class="ms-name">❌ Absent</div><div class="ms-val">${tot.Absent}</div></div>
+    <div class="ms-card" style="border-left-color:#9BC0C2;background:#F6F8F8"><div class="ms-name">📅 Saturday Shift</div><div class="ms-val">${tot['Saturday Shift']}</div></div>
   </div>`;
   Object.keys(byM).sort().forEach(m=>{
     const days=byM[m];
@@ -4685,9 +4687,18 @@ function renderAnnouncements(){
   const el = document.getElementById('page6');
   if(!el) return;
 
-  const priorityColor = {'High':'#c0272d','Medium':'#e65100','Low':'#2e7d32'};
-  const priorityLabel = {'High':'Urgent','Medium':'Important','Low':'General'};
+  // لوحة ألوان هادئة جداً متناسقة مع باقي الداشبورد
+  const ANN_PALETTE=[
+    {bg:'#FBF7F7',border:'#E3C5C5',accent:'#9B4A4A'},
+    {bg:'#F7F7F5',border:'#D2CFC7',accent:'#6B6862'},
+    {bg:'#F6F8F7',border:'#C5D4CB',accent:'#516B5C'},
+    {bg:'#F8F7F5',border:'#D9CDBC',accent:'#8A7456'},
+    {bg:'#F7F7F8',border:'#CBCDD9',accent:'#5C6178'},
+    {bg:'#F8F6F7',border:'#D6C8D0',accent:'#7C5C6B'}
+  ];
+
   const priorityIcon = {'High':'🚨','Medium':'📌','Low':'📋'};
+  const priorityLabel = {'High':'Urgent','Medium':'Important','Low':'General'};
 
   const items = ANNOUNCEMENTS.filter(function(r){
     return Object.values(r).some(function(v){return v&&String(v).trim();});
@@ -4713,34 +4724,39 @@ function renderAnnouncements(){
     +'<div style="font-size:11px;color:#999;margin-top:4px">Recent updates and news for the team</div>'
     +'</div>';
 
-  if(!items.length){
-    html += '<div style="text-align:center;padding:40px 20px;color:#bbb;background:#fafafa;border-radius:14px">'
-      +'<div style="font-size:28px;margin-bottom:8px">📋</div>'
-      +'<div style="font-size:12px">No updates yet — they will appear here as soon as added to the sheet</div>'
+  html += '<div style="display:flex;flex-direction:column;gap:10px">';
+
+  items.forEach(function(it,idx){
+    const p = ANN_PALETTE[idx%ANN_PALETTE.length];
+    var icon = priorityIcon[it.priority]||'📢';
+    var label = priorityLabel[it.priority]||'Update';
+    var isNew = it.date===today;
+    html += '<div style="display:flex;gap:12px;background:'+p.bg+';border-radius:12px;padding:13px 16px;border:1px solid '+p.border+'">'
+      +'<div style="font-size:20px;flex-shrink:0;line-height:1.3">'+icon+'</div>'
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">'
+      +'<span style="font-size:14px;font-weight:700;color:'+p.accent+'">'+it.title+'</span>'
+      +(isNew?'<span style="font-size:9px;font-weight:800;background:'+p.accent+';color:#fff;padding:1px 7px;border-radius:8px">New</span>':'')
+      +'</div>'
+      +(it.msg?'<div style="font-size:12px;color:#666;line-height:1.8;direction:rtl;text-align:right;white-space:pre-wrap;margin-bottom:6px">'+it.msg+'</div>':'')
+      +'<div style="display:flex;align-items:center;gap:10px;font-size:10px;color:#aaa">'
+      +'<span>'+it.date+'</span>'
+      +'<span style="color:'+p.accent+';font-weight:700;opacity:.85">'+label+'</span>'
+      +'</div>'
+      +'</div></div>';
+  });
+
+  // كروت فاضية إضافية (Coming Soon) بنفس الستايل الهادئ
+  const EMPTY_SLOTS = 3;
+  for(let i=0;i<EMPTY_SLOTS;i++){
+    const p = ANN_PALETTE[(items.length+i)%ANN_PALETTE.length];
+    html += '<div style="display:flex;align-items:center;justify-content:center;gap:10px;background:'+p.bg+';border-radius:12px;padding:18px 16px;border:1.5px dashed '+p.border+'">'
+      +'<span style="font-size:18px;opacity:.5">📋</span>'
+      +'<span style="font-size:11px;color:'+p.accent+';opacity:.6;font-weight:600">More updates coming soon</span>'
       +'</div>';
-  }else{
-    html += '<div style="display:flex;flex-direction:column;gap:10px">';
-    items.forEach(function(it){
-      var color = priorityColor[it.priority]||'#888';
-      var icon = priorityIcon[it.priority]||'📢';
-      var label = priorityLabel[it.priority]||'Update';
-      var isNew = it.date===today;
-      html += '<div style="display:flex;gap:12px;background:#fff;border-radius:12px;padding:13px 16px;border:1px solid #eee;border-right:4px solid '+color+'">'
-        +'<div style="font-size:20px;flex-shrink:0;line-height:1.3">'+icon+'</div>'
-        +'<div style="flex:1;min-width:0">'
-        +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap">'
-        +'<span style="font-size:14px;font-weight:700;color:#1a1a2e">'+it.title+'</span>'
-        +(isNew?'<span style="font-size:9px;font-weight:800;background:'+color+';color:#fff;padding:1px 7px;border-radius:8px">New</span>':'')
-        +'</div>'
-        +(it.msg?'<div style="font-size:12px;color:#666;line-height:1.8;direction:rtl;text-align:right;white-space:pre-wrap;margin-bottom:6px">'+it.msg+'</div>':'')
-        +'<div style="display:flex;align-items:center;gap:10px;font-size:10px;color:#aaa">'
-        +'<span>'+it.date+'</span>'
-        +'<span style="color:'+color+';font-weight:700">'+label+'</span>'
-        +'</div>'
-        +'</div></div>';
-    });
-    html += '</div>';
   }
+
+  html += '</div>';
 
   html += '</div>';
   el.innerHTML = html;
