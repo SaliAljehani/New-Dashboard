@@ -2534,7 +2534,7 @@ function renderBaicServiceTab(arr, apptArr){
   const regionCol=keys[0], cityCol=keys[1], branchCol=keys[2], mgrCol=keys[3], phoneCol=keys[4], emailCol=keys[5], gpsLinkCol=keys[7];
 
   const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
-  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:#fffbea;color:#a98a2e;padding:3px 9px;border-radius:5px;font-size:10px;font-weight:800;text-decoration:none;margin:2px;box-shadow:inset 0 0 0 1px #f9a82533">'+s+'</a>';}).filter(Boolean).join('');
+  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-size:10px;font-weight:800;text-decoration:none;margin:2px;box-shadow:inset 0 0 0 1px '+color+'33">'+s+'</a>';}).filter(Boolean).join('');
 
   const VALID_REGIONS=new Set(['West','Western','Central','Center','East','Eastern','South','Southern','North','Northern']);
   const REGION_ORDER=['West','Western','Central','Center','East','Eastern','South','Southern','North','Northern'];
@@ -2908,7 +2908,7 @@ function renderPetrominTireBatteryTab(arr){
     ,'instr_tb_tireservice',color);
 
   // Section 4: Tire locations grouped by region
-  const REGION_COLORS={'CR East':'#1565c0','CR North':'#1565c0','CR SOUTH':'#1565c0','ER NORTH':'#2e7d32','ER SOUTH':'#2e7d32','SOUTHERN REGION':'#6a1b9a','WR NORTH':'#c0272d','WR SOUTH':'#c0272d'};
+  const REGION_COLORS={'CR East':'#1565c0','CR North':'#1565c0','CR SOUTH':'#1565c0','ER NORTH':'#2e7d32','ER SOUTH':'#2e7d32','SOUTHERN REGION':'#6a1b9a','WR NORTH':'#c0272d','WR SOUTH':'#c0272d',West:'#c0272d',Western:'#c0272d',Central:'#1565c0',Center:'#1565c0',East:'#2e7d32',Eastern:'#2e7d32',South:'#6a1b9a',Southern:'#6a1b9a',North:'#e65100',Northern:'#e65100'};
   const locGroups={};
   locations.forEach(l=>{
     const reg=l.region||'Other';
@@ -4706,6 +4706,9 @@ function renderAnnouncements(){
     {bg:'#F8F6F7',border:'#D6C8D0',accent:'#7C5C6B'}
   ];
 
+  // تنويع بسيط وعفوي بزوايا الكروت بدل الشكل الموحّد لكل خبر
+  const ANN_RADII=['8px','22px','6px 22px 6px 22px','22px 6px 22px 6px','16px','4px 18px 4px 18px'];
+
   const items = ANNOUNCEMENTS.filter(function(r){
     return Object.values(r).some(function(v){return v&&String(v).trim();});
   }).map(function(r){
@@ -4733,8 +4736,9 @@ function renderAnnouncements(){
 
   items.forEach(function(it,idx){
     const p = ANN_PALETTE[idx%ANN_PALETTE.length];
+    const radius = ANN_RADII[idx%ANN_RADII.length];
     var isRTL=/[\u0600-\u06FF]/.test(it.text.substring(0,15));
-    html += '<div style="background:'+p.bg+';border-radius:12px;padding:14px 16px;border:1px solid '+p.border+'">'
+    html += '<div style="background:'+p.bg+';border-radius:'+radius+';padding:14px 16px;border:1px solid '+p.border+'">'
       +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">'
       +(it.tag?'<span style="font-size:10px;font-weight:800;background:'+p.accent+';color:#fff;padding:2px 10px;border-radius:10px;text-transform:uppercase;letter-spacing:.03em">'+it.tag+'</span>':'')
       +(it.type?'<span style="font-size:10px;font-weight:700;color:'+p.accent+';opacity:.8">'+it.type+'</span>':'')
