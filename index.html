@@ -2830,7 +2830,7 @@ function renderPetrominLocationListTab(arr, kind){
       +'<div id="'+gid+'"><div class="ref-cards-grid">'+its.map(it=>{
         const link=it.link&&it.link.startsWith('http')?it.link:mapLink(it.coord);
         return '<div style="background:#fff;border-radius:10px;padding:9px 12px;text-align:center;border-top:3px solid '+rc+';box-shadow:0 1px 4px rgba(0,0,0,.06);direction:ltr">'
-          +'<div style="font-size:12px;font-weight:700;color:#333">'+icon+' '+it.station+'</div>'
+          +'<div style="font-size:12px;font-weight:700;color:'+rc+'">'+icon+' '+it.station+'</div>'
           +(it.city?'<div style="font-size:10px;color:#888;margin:3px 0">📌 '+it.city+'</div>':'')
           +(it.type?'<div style="font-size:10px;color:'+rc+';font-weight:700">'+it.type+'</div>':'')
           +(it.mgr?'<div style="font-size:11px;color:#666;margin-top:3px">👤 '+it.mgr+'</div>':'')
