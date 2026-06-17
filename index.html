@@ -1340,46 +1340,51 @@ function parseCSVRaw(text){
 }
 
 async function loadSchedule(){
-  const raw = await loadSheet('Daily Off Schedule & Weekly Cal');
-  const arr = Array.isArray(raw) ? raw : (raw.rows||[]);
-  if(!arr.length){ renderRoster(); return; }
   // This sheet has TWO tables side-by-side, not stacked vertically:
-  //   columns A-H = Daily Off Schedule (Agent Name + 7 days)
-  //   columns J-L = Weekly Calls & Break ("Multi Campaign" / "WhatsApp" sections)
-  // The header row has blank cells for columns I, J and L, so when the
-  // sheet is converted to row-objects keyed by header text, those three
-  // blank-named columns collide on the same "" key and only the LAST one
-  // (column L) survives. That makes columns I/J/L collapse into the final
-  // two values of Object.values(r): [...,-2]=column L (break time),
-  // [...,-1]=column K (agent name / section marker), which is what we use.
-  const schedRows = [], weeklyRows = [];
-  let wSection = 'call';
-  let dailyKeys = null;
-  arr.forEach(function(r){
-    const vals = Object.values(r);
-    const agentName = String(vals[0]||'').trim();
-    if(agentName){
-      // Keep ONLY the Agent Name + 7 day columns (the first 8 values).
-      // The remaining keys ("" and "Multi Campaign") belong to the
-      // side-by-side Weekly Calls & Break table and must not leak in here,
-      // otherwise two bogus extra columns (Break Time / agent names)
-      // appear at the end of the Daily Off Schedule table.
-      if(!dailyKeys) dailyKeys = Object.keys(r).slice(0, 8);
-      const cleanRow = {};
-      dailyKeys.forEach(function(k, ki){ cleanRow[k] = vals[ki]; });
-      schedRows.push(cleanRow);
-    }
+  //   columns A-H (idx 0-7) = Daily Off Schedule (Agent Name + 7 days)
+  //   columns J-L (idx 9-11) = Weekly Calls & Break ("Multi Campaign" / "WhatsApp")
+  // We use fetchCSVRaw (positional arrays via the gviz endpoint) instead of
+  // loadSheet's named-key objects, because columns I, J and L all have a
+  // blank header in row 1 — when converted to {header: value} objects those
+  // three blank-named columns collide on the same "" key and the Week
+  // column's data gets silently overwritten/lost. Reading by column index
+  // avoids that entirely.
+  let arr2d;
+  try{
+    arr2d = await fetchCSVRaw(SHEET_ID, 'Daily Off Schedule & Weekly Calls & Break');
+  }catch(e){
+    console.warn('loadSchedule failed', e);
+    renderRoster();
+    return;
+  }
+  if(!arr2d || arr2d.length < 2){ renderRoster(); return; }
+  const header = arr2d[0];
+  const dataRows = arr2d.slice(1);
+  const dailyKeys = header.slice(0, 8);
 
-    if(vals.length < 2) return;
-    const agent2 = String(vals[vals.length-1]||'').trim();
-    const brk2 = String(vals[vals.length-2]||'').trim();
-    if(!agent2 && !brk2) return;
+  const schedRows = [];
+  dataRows.forEach(function(r){
+    const agentName = String(r[0]||'').trim();
+    if(!agentName) return;
+    const row = {};
+    dailyKeys.forEach(function(k, ki){ row[k] = r[ki]; });
+    schedRows.push(row);
+  });
+
+  const weeklyRows = [];
+  let wSection = 'call';
+  dataRows.forEach(function(r){
+    const week = String(r[9]||'').trim();
+    const agent2 = String(r[10]||'').trim();
+    const brk2 = String(r[11]||'').trim();
+    if(!week && !agent2 && !brk2) return;
     const agent2L = agent2.toLowerCase();
     if(agent2L==='agent name') return; // sub-header row
     if(agent2L==='multi campaign') return; // table title row
     if(agent2L==='whatsapp'){ wSection='chat'; return; } // section switch
-    weeklyRows.push({section: wSection, agent: agent2, brk: brk2});
+    weeklyRows.push({section: wSection, week: week, agent: agent2, brk: brk2});
   });
+
   SCHEDULE_DATA = schedRows;
   WEEKLY_DATA = weeklyRows;
   renderRoster();
@@ -4645,14 +4650,17 @@ function renderRoster(){
         +'<div style="background:'+color+'18;border-bottom:3px solid '+color+';padding:12px 16px;font-size:14px;font-weight:800;color:'+color+';text-align:center;letter-spacing:.02em">'+title+'</div>'
         +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
         +'<thead><tr style="background:'+color+'10">'
+        +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center;font-size:12px">📅 Week</th>'
         +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center;font-size:12px">👤 Agent Name</th>'
         +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center;font-size:12px">⏰ Break Time</th>'
         +'</tr></thead><tbody>';
       brows.forEach(function(r,i){
+        var week=String(r.week||'').trim();
         var agent=String(r.agent||'').trim();
         var brk=String(r.brk||'').trim();
         if(/^\d{1,2}:\d{2}(:\d{2})?$/.test(brk)) brk=fmtTime(brk);
         t+='<tr style="background:'+(i%2===0?'#fff':'#f9f9f9')+';border-bottom:1px solid #f0f0f0">'
+          +'<td style="padding:8px 14px;text-align:center"><span style="background:#fff8e1;color:#f57f17;padding:3px 12px;border-radius:4px;font-weight:700;font-size:12px">'+week+'</span></td>'
           +'<td style="padding:8px 14px;text-align:center"><span style="background:#f5f5f5;color:#333;padding:3px 12px;border-radius:4px;font-weight:700;font-size:12px">'+agent+'</span></td>'
           +'<td style="padding:8px 14px;text-align:center;font-weight:700;color:#2e7d32;font-size:13px">'+brk+'</td>'
           +'</tr>';
