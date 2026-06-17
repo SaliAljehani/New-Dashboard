@@ -627,10 +627,27 @@ async function loadAllData(silent){
     document.getElementById('errDiv').style.display='none';
   }
   try{
-    // Load Agent Performance
-    setProgress(10,'Loading Agent Performance...');
-    let apRows = [];
-    try{ apRows = await loadSheet('Agent Performance'); }catch(e){ console.warn('AP failed:',e); }
+    // Load ALL dashboard data in parallel instead of one-by-one.
+    // Previously each sheet (Agent Performance, Attendance, Calls, Directory,
+    // Schedule, Roster, Announcements, Escalations, EOM) was awaited in sequence,
+    // so the page could sit stuck on one step for a long time — especially when
+    // several agents open the dashboard at the same time and the proxy script
+    // gets busy. Running them together cuts total load time dramatically and
+    // makes a single slow sheet no longer block everything else.
+    setProgress(15,'Loading dashboard data...');
+    const [apRows, attRows, callRows] = await Promise.all([
+      loadSheet('Agent Performance').catch(e=>{ console.warn('AP failed:',e); return []; }),
+      loadSheet('Attendance Data'),
+      loadSheet('Data Call'),
+      loadAgentDir(),
+      loadSchedule().catch(e=>{ console.warn('Schedule failed:', e); }),
+      loadRoster().catch(e=>{ console.warn('Roster failed:', e); }),
+      loadAnnouncements().catch(e=>{ console.warn('Announcements failed:', e); }),
+      loadEscalations().catch(e=>{ console.warn('Escalations failed:', e); }),
+      loadEOM().catch(e=>{ console.warn('EOM failed:', e); })
+    ]);
+
+    setProgress(60,'Processing Agent Performance...');
     console.log('AP rows total:', apRows.length);
     if(apRows.length>0) {
       console.log('AP columns:', Object.keys(apRows[0]).join(', '));
@@ -687,9 +704,8 @@ async function loadAllData(silent){
     });
 
     console.log('D keys:', Object.keys(D).length, 'agents:', Object.keys(D).slice(0,3));
-    // Load Attendance
-    setProgress(40,'Loading Attendance Data...');
-    const attRows = await loadSheet('Attendance Data');
+    // Process Attendance
+    setProgress(75,'Processing Attendance Data...');
     ATT={};
     const nameMap={'Nesreen  Mansour':'Nesreen Mansour','Walaa Meezi ':'Walaa Meezi','Gofran Rafie ':'Ghofran Rafiei','Gofran Rafie':'Ghofran Rafiei','Asma Bawayan':'Asmaa M. Bawayan'};
     const normStatus=s=>{
@@ -733,9 +749,8 @@ async function loadAllData(silent){
       ATT[agent][dt]=st;
     });
 
-    // Load Call Data
-    setProgress(70,'Loading Call Data...');
-    const callRows = await loadSheet('Data Call');
+    // Process Call Data
+    setProgress(90,'Processing Call Data...');
     CALL={};CALL_M={};
     callRows.forEach(r=>{
       let team=(r['Team ']||r['Team']||r['team']||'').trim();
@@ -775,21 +790,9 @@ async function loadAllData(silent){
       if(!CALL_M[team][metric])CALL_M[team][metric]={};
       CALL_M[team][metric][m]=(CALL_M[team][metric][m]||0)+val;
     });
-
-    setProgress(85,'Loading Agent Directory...');
-    await loadAgentDir();
     // Debug: show stored call dates
     const callDates = Object.values(CALL).flatMap(t=>Object.values(t).flatMap(m=>Object.keys(m))).sort();
     console.log('Stored call dates sample:', callDates.slice(0,5), 'to', callDates.slice(-5));
-    setProgress(88,'Loading Schedule...');
-    try{ await loadSchedule(); }catch(e){ console.warn('Schedule failed:', e); }
-    setProgress(91,'Loading Roster...');
-    try{ await loadRoster(); }catch(e){ console.warn('Roster failed:', e); }
-    setProgress(94,'Loading Announcements...');
-    try{ await loadAnnouncements(); }catch(e){ console.warn('Announcements failed:', e); }
-    try{ await loadEscalations(); }catch(e){ console.warn('Escalations failed:', e); }
-    setProgress(98,'Loading Employee of Month...');
-    try{ await loadEOM(); }catch(e){ console.warn('EOM failed:', e); }
     setProgress(100,'Done!');
     console.log('All data loaded!');
     
