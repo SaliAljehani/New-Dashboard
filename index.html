@@ -1341,51 +1341,51 @@ function parseCSVRaw(text){
 
 async function loadSchedule(){
   // This sheet has TWO tables side-by-side, not stacked vertically:
-  //   columns A-H (idx 0-7) = Daily Off Schedule (Agent Name + 7 days)
-  //   columns J-L (idx 9-11) = Weekly Calls & Break ("Multi Campaign" / "WhatsApp")
-  // We use fetchCSVRaw (positional arrays via the gviz endpoint) instead of
-  // loadSheet's named-key objects, because columns I, J and L all have a
-  // blank header in row 1 — when converted to {header: value} objects those
-  // three blank-named columns collide on the same "" key and the Week
-  // column's data gets silently overwritten/lost. Reading by column index
-  // avoids that entirely.
-  let arr2d;
-  try{
-    arr2d = await fetchCSVRaw(SHEET_ID, 'Daily Off Schedule & Weekly Calls & Break');
-  }catch(e){
-    console.warn('loadSchedule failed', e);
-    renderRoster();
-    return;
-  }
-  if(!arr2d || arr2d.length < 2){ renderRoster(); return; }
-  const header = arr2d[0];
-  const dataRows = arr2d.slice(1);
-  const dailyKeys = header.slice(0, 8);
-
+  //   columns A-H = Daily Off Schedule (Agent Name + 7 days)
+  //   columns J-L = Weekly Calls & Break ("Multi Campaign" / "WhatsApp")
+  //
+  // Left table: use loadSheet's named-key rows (reliable here — each day
+  // column has unique header text). We only keep the first 8 entries of
+  // each row (Agent Name + 7 days); the remaining keys belong to the
+  // right-side table and would otherwise leak in as bogus extra columns.
+  const raw = await loadSheet('Daily Off Schedule & Weekly Cal');
+  const arr = Array.isArray(raw) ? raw : (raw.rows||[]);
   const schedRows = [];
-  dataRows.forEach(function(r){
-    const agentName = String(r[0]||'').trim();
+  arr.forEach(function(r){
+    const vals = Object.values(r);
+    const agentName = String(vals[0]||'').trim();
     if(!agentName) return;
+    const dailyKeys = Object.keys(r).slice(0, 8);
     const row = {};
-    dailyKeys.forEach(function(k, ki){ row[k] = r[ki]; });
+    dailyKeys.forEach(function(k, ki){ row[k] = vals[ki]; });
     schedRows.push(row);
   });
-
-  const weeklyRows = [];
-  let wSection = 'call';
-  dataRows.forEach(function(r){
-    const week = String(r[9]||'').trim();
-    const agent2 = String(r[10]||'').trim();
-    const brk2 = String(r[11]||'').trim();
-    if(!week && !agent2 && !brk2) return;
-    const agent2L = agent2.toLowerCase();
-    if(agent2L==='agent name') return; // sub-header row
-    if(agent2L==='multi campaign') return; // table title row
-    if(agent2L==='whatsapp'){ wSection='chat'; return; } // section switch
-    weeklyRows.push({section: wSection, week: week, agent: agent2, brk: brk2});
-  });
-
   SCHEDULE_DATA = schedRows;
+
+  // Right table: read positionally via fetchCSVRaw (gviz), because columns
+  // I, J and L all share a blank header in row 1 — in the named-key rows
+  // above those three blank-named columns collide on the same "" key,
+  // silently losing the "Week" column's data. Reading by column index
+  // (9=Week, 10=Agent Name, 11=Break Time) avoids that collision entirely.
+  let weeklyRows = [];
+  try{
+    const arr2d = await fetchCSVRaw(SHEET_ID, 'Daily Off Schedule & Weekly Calls & Break');
+    if(arr2d && arr2d.length > 1){
+      const dataRows = arr2d.slice(1);
+      let wSection = 'call';
+      dataRows.forEach(function(r){
+        const week = String(r[9]||'').trim();
+        const agent2 = String(r[10]||'').trim();
+        const brk2 = String(r[11]||'').trim();
+        if(!week && !agent2 && !brk2) return;
+        const agent2L = agent2.toLowerCase();
+        if(agent2L==='agent name') return; // sub-header row
+        if(agent2L==='multi campaign') return; // table title row
+        if(agent2L==='whatsapp'){ wSection='chat'; return; } // section switch
+        weeklyRows.push({section: wSection, week: week, agent: agent2, brk: brk2});
+      });
+    }
+  }catch(e){ console.warn('weekly calls & break fetch failed', e); }
   WEEKLY_DATA = weeklyRows;
   renderRoster();
 }
