@@ -286,7 +286,7 @@ tr:last-child td{border-bottom:none}
 .cal-day.off{background:#f1efe8;color:#999}.cal-day.vacation{background:#f3e5f5;color:#4a148c}
 .cal-day.sick{background:#f1efe8;color:#999}.cal-day.absent{background:#f1efe8;color:#999}.cal-day.satshift{background:#e8f5e9;color:#1b5e20;font-weight:700}
 .cal-day.el{background:#f1efe8;color:#999}.cal-day.empty{background:transparent}
-.cal-day.wd{font-size:10px;color:#666;background:transparent;font-weight:400}
+.cal-day.wd{font-size:13px;color:#444;background:transparent;font-weight:700}
 .ms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:14px}
 .ms-card{background:#fff;border-radius:8px;padding:10px 12px;box-shadow:0 1px 3px rgba(0,0,0,.06);border-left:3px solid #eee;text-align:center}
 .ms-val{font-size:18px;font-weight:700;color:#1a1a2e;text-align:center}
@@ -1042,7 +1042,7 @@ function renderAgent(name){
 // ── ATTENDANCE ───────────────────────────────────────────────────────────────
 function scls(s){return{Office:'office',Remote:'remote',Off:'off',Vacation:'vacation',Sick:'sick',Absent:'absent',EL:'el','Saturday Shift':'satshift'}[s]||'off';}
 function slbl(s){return{Office:'🏢',Remote:'🏠',Off:'–',Vacation:'🌴',Sick:'🤒',Absent:'❌',EL:'📋','Saturday Shift':'📅'}[s]||'–';}
-function mnm(m){const ns=['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return ns[parseInt(m.split('-')[1])]+' '+m.split('-')[0];}
+function mnm(m){const ns=['','January','February','March','April','May','June','July','August','September','October','November','December'];return ns[parseInt(m.split('-')[1])]+' '+m.split('-')[0];}
 
 function renderAttendance(name){
   const{f,t}=gf();
@@ -1783,8 +1783,8 @@ function renderNissanBranchTab(arr, sheetName, brand){
   const makeCard = (b, col_color) => {
     const persHTML = b.persons.map(p =>
       '<div style="padding:5px 0;border-bottom:1px solid #f5f5f5">'
-      +(p.advisor?'<div style="font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:2px">👤 '+p.advisor+'</div>':'')
-      +(p.phone?'<div style="font-size:12px;color:#333;margin-bottom:2px">📞 '+p.phone+'</div>':'')
+      +(p.advisor?'<div style="font-size:12px;font-weight:600;color:#555;margin-bottom:2px">👤 '+p.advisor+'</div>':'')
+      +(p.phone?'<div style="font-size:12px;color:#555;margin-bottom:2px">📞 '+p.phone+'</div>':'')
       +(p.email?'<div style="font-size:11px"><a href="mailto:'+p.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+p.email+'</a></div>':'')
       +'</div>'
     ).join('');
@@ -1794,8 +1794,8 @@ function renderNissanBranchTab(arr, sheetName, brand){
         +'<div style="font-size:10px;font-weight:700;color:#f9a825;text-transform:uppercase;margin-bottom:5px">🏢 Government Sales</div>'
         +b.gov.map(g=>
           '<div style="padding:3px 0;border-bottom:1px solid #fef3c7">'
-          +(g.name?'<div style="font-size:12px;font-weight:600;color:#1a1a2e">👤 '+g.name+'</div>':'')
-          +(g.phone?'<div style="font-size:12px;color:#333">📞 '+g.phone+'</div>':'')
+          +(g.name?'<div style="font-size:12px;font-weight:600;color:#555">👤 '+g.name+'</div>':'')
+          +(g.phone?'<div style="font-size:12px;color:#555">📞 '+g.phone+'</div>':'')
           +(g.email?'<div style="font-size:11px"><a href="mailto:'+g.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+g.email+'</a></div>':'')
           +'</div>'
         ).join('')
@@ -1812,7 +1812,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
       +(b.service?'<div style="display:inline-block;background:'+col_color+'15;color:'+col_color+';padding:2px 10px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px">'+b.service+'</div>':'')
       +persHTML
       +govHTML
-      +(b.phone&&!b.persons.some(p=>p.phone===b.phone)?'<div style="font-size:12px;margin-bottom:5px">📞 '+b.phone+'</div>':'')
+      +(b.phone&&!b.persons.some(p=>p.phone===b.phone)?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+b.phone+'</div>':'')
       +(b.gps&&b.gps.startsWith('http')?'<div style="margin-top:8px"><a href="'+b.gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
       +(b.hours&&b.regHours&&b.hours.trim()!==b.regHours.trim()?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+b.hours+'</div>':'')
       +'</div></div>';
@@ -1950,8 +1950,8 @@ function renderTristarTab(arr){
       +(dist?'<div style="font-size:11px;color:#888;margin-top:3px">📍 '+dist+'</div>':'')
       +'</div>'
       +'<div style="padding:10px 14px;text-align:center">'
-      +(mgr?'<div style="font-size:12px;margin-bottom:5px">👤 '+mgr+'</div>':'')
-      +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
+      +(mgr?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+mgr+'</div>':'')
+      +(phone?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+phone+'</div>':'')
       +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+email+'</a></div>':'')
       +(cc?'<div style="margin-bottom:5px;flex-wrap:wrap;display:flex;justify-content:center;gap:2px">'+fmtCC(cc)+'</div>':'')
       +(hours?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+hours+'</div>':'')
@@ -2207,7 +2207,7 @@ function renderStellantisSparePartsTab(arr){
       +(street?'<div style="font-size:11px;color:#555;margin-top:2px">📍 '+street+'</div>':'')
       +'</div>'
       +'<div style="padding:10px 16px;text-align:center">'
-      +(advisor?'<div style="font-size:12px;color:#333;margin-bottom:5px">👤 '+advisor+'</div>':'')
+      +(advisor?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+advisor+'</div>':'')
       +(email?'<div style="margin-bottom:5px"><span style="background:#f0f6fc;color:#1565c0;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">TO</span>'+fmtEmails(email,'#f0f6fc','#1565c0')+'</div>':'')
       +(cc?'<div style="margin-bottom:5px"><span style="background:#f0f6fc;color:#1565c0;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">CC</span>'+fmtEmails(cc,'#f0f6fc','#1565c0')+'</div>':'')
       +(gps&&gps.startsWith('http')?'<div style="margin-top:5px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px">🗺️ Location</a></div>':'')
@@ -2289,8 +2289,8 @@ function renderStellantisPMSTab(arr, sheetName){
           +(addr?'<div style="font-size:11px;color:#888;margin-top:4px">📍 '+addr+'</div>':'')
           +'</div><div style="padding:10px 14px;text-align:center">'
           +(svc?'<div style="display:inline-block;background:'+rc+'15;color:'+rc+';padding:2px 10px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px">'+svc+'</div>':'')
-          +(bm?'<div style="font-size:12px;margin-bottom:5px">👤 '+bm+'</div>':'')
-          +(ph?'<div style="font-size:12px;margin-bottom:5px">📞 '+ph+'</div>':'')
+          +(bm?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+bm+'</div>':'')
+          +(ph?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+ph+'</div>':'')
           +(em?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+em+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+em+'</a></div>':'')
           +(gps&&gps.startsWith('http')?'<div style="margin-top:8px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
           +(h&&h!==commonH?'<div style="font-size:10px;color:#888;margin-top:6px;border-top:1px solid #f0f0f0;padding-top:6px">🕐 '+h+'</div>':'')
@@ -2366,8 +2366,8 @@ function renderStellantisPACTab(arr){
       +(city?'<div style="font-size:11px;color:#666;margin-top:2px">📌 '+city+'</div>':'')
       +'</div>'
       +'<div style="padding:10px 14px;text-align:center">'
-      +(mgr?'<div style="font-size:12px;color:#333;margin-bottom:4px">👤 '+mgr+'</div>':'')
-      +(mobile?'<div style="font-size:12px;color:#333;margin-bottom:4px">📞 '+mobile+'</div>':'')
+      +(mgr?'<div style="font-size:12px;color:#555;margin-bottom:4px">👤 '+mgr+'</div>':'')
+      +(mobile?'<div style="font-size:12px;color:#555;margin-bottom:4px">📞 '+mobile+'</div>':'')
       +(email?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
       +(gps&&gps.startsWith('http')?'<div style="margin-top:4px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px">🗺️ Location</a></div>':'')
       +(rm?'<div style="font-size:10px;color:#999;margin-top:6px;padding-top:6px;border-top:1px solid #f5f5f5">🗺️ RM: '+rm.name+(rm.mobile?' · '+rm.mobile:'')+'</div>':'')
@@ -2397,7 +2397,7 @@ function renderStellantisPACTab(arr){
       return '<div class="ref-card" style="padding:10px 14px;text-align:center">'
         +'<div style="font-size:13px;font-weight:700;color:#333">'+am.name+'</div>'
         +'<div style="font-size:11px;color:#888;margin:3px 0">📦 '+am.branches+' branches</div>'
-        +(am.mobiles.size?'<div style="font-size:12px;margin-bottom:4px">📞 '+[...am.mobiles].join(' / ')+'</div>':'')
+        +(am.mobiles.size?'<div style="font-size:12px;color:#555;margin-bottom:4px">📞 '+[...am.mobiles].join(' / ')+'</div>':'')
         +(am.email?'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+am.email+'</a></div>':'')
         +'</div>';
     }).join('')+'</div>'
@@ -2427,7 +2427,7 @@ function renderPACTab(arr){
     if(!val||val==='-') return '';
     if(val.startsWith('http')) return '<div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:11px;margin-bottom:3px;direction:ltr"><span>'+ico+'</span><a href="'+val+'" target="_blank" style="color:#1565c0;font-weight:600;text-decoration:none">Open Location</a></div>';
     if(val.includes('@')) return '<div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:11px;margin-bottom:3px;direction:ltr"><span>'+ico+'</span><a href="mailto:'+val+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">'+val+'</a></div>';
-    return '<div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;font-weight:600;color:#222;margin-bottom:3px;direction:ltr"><span>'+ico+'</span><span>'+val+'</span></div>';
+    return '<div style="display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;font-weight:600;color:#555;margin-bottom:3px;direction:ltr"><span>'+ico+'</span><span>'+val+'</span></div>';
   }
 
   // Separate workshop rows from RM rows
@@ -2570,12 +2570,12 @@ function renderBaicServiceTab(arr, apptArr){
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
-    +(emTo.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">'+emTo.request.replace(/,\s*$/,'')+'</span></div>':'')
+    +(emTo.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">'+emTo.request.replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/g,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px '+color+'20">'+m+'</a>')+'</span></div>':'')
     +(emCc.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.request)+'</div>':'')
     +'</div>'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
-    +(emTo.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">'+emTo.complaint.replace(/,\s*$/,'')+'</span></div>':'')
+    +(emTo.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">'+emTo.complaint.replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/g,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px '+color+'20">'+m+'</a>')+'</span></div>':'')
     +(emCc.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.complaint)+'</div>':'')
     +'</div></div>';
 
@@ -2611,8 +2611,8 @@ function renderBaicServiceTab(arr, apptArr){
           +(city?'<div style="font-size:11px;color:#888;margin-top:3px">📌 '+city+'</div>':'')
           +'</div>'
           +'<div style="padding:10px 14px;text-align:center">'
-          +(mgr?'<div style="font-size:12px;color:#333;margin-bottom:5px">👤 '+mgr+'</div>':'')
-          +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
+          +(mgr?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+mgr+'</div>':'')
+          +(phone?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+phone+'</div>':'')
           +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
           +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
           +'</div></div>';
@@ -2885,7 +2885,7 @@ function renderPetrominTireBatteryTab(arr){
         +(s.region?'<div style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase">'+s.region+'</div>':'')
         +'<div style="font-size:13px;font-weight:700;color:#333;margin:4px 0">'+s.name+'</div>'
         +(s.area?'<div style="font-size:11px;color:#888;margin-bottom:5px">📍 '+s.area+'</div>':'')
-        +(s.mobile?'<div style="font-size:12px;margin-bottom:5px">📞 '+s.mobile+'</div>':'')
+        +(s.mobile?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+s.mobile+'</div>':'')
         +(s.email?'<div style="font-size:11px"><a href="mailto:'+s.email.trim()+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+s.email.trim()+'</a></div>':'')
         +'</div>';
     }).join('')+'</div>'
@@ -3044,7 +3044,7 @@ function renderNosFranchiseTab(arr){
         return '<div class="ref-card" style="padding:10px 14px;text-align:center;border-top:3px solid '+color+'">'
           +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+it.branch+'</div>'
           +(it.district?'<div style="font-size:11px;color:#888;margin:3px 0">📌 '+it.district+'</div>':'')
-          +(it.owner?'<div style="font-size:12px;color:#333;margin-bottom:3px">👤 '+it.owner+'</div>':'')
+          +(it.owner?'<div style="font-size:12px;color:#555;margin-bottom:3px">👤 '+it.owner+'</div>':'')
           +(it.supervisor?'<div style="font-size:11px;color:#666;margin-bottom:3px">🧑‍💼 '+it.supervisor+(it.mobile?' · '+it.mobile:'')+'</div>':'')
           +(it.company?'<div style="font-size:10px;color:#999;margin-top:4px">🏢 '+it.company+'</div>':'')
           +(it.email?'<div style="font-size:11px;margin-top:4px"><a href="mailto:'+it.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+it.email+'</a></div>':'')
@@ -3137,7 +3137,7 @@ function renderFotonInstructionTab(arr){
       return '<div class="ref-card" style="padding:10px 14px;text-align:center">'
         +'<div style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase">'+c.region+'</div>'
         +'<div style="font-size:13px;font-weight:700;color:#333;margin:4px 0">'+c.name+'</div>'
-        +'<div style="font-size:12px">📞 '+c.mobile+'</div>'
+        +'<div style="font-size:12px;color:#555">📞 '+c.mobile+'</div>'
         +'</div>';
     }).join('')+'</div></div>':'';
 
@@ -3172,8 +3172,8 @@ function renderFotonTruckTab(arr){
     return '<div class="ref-card" style="padding:10px 14px;text-align:center;border-top:3px solid '+color+'">'
       +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+branch+'</div>'
       +(city?'<div style="font-size:11px;color:#888;margin:3px 0">📌 '+city+(addr?' · '+addr:'')+'</div>':'')
-      +(contact&&contact!=='N/A'?'<div style="font-size:12px;color:#333;margin-bottom:4px">👤 '+contact+'</div>':'')
-      +(mobile&&mobile!=='N/A'?'<div style="font-size:12px;margin-bottom:4px">📞 '+mobile+'</div>':'')
+      +(contact&&contact!=='N/A'?'<div style="font-size:12px;color:#555;margin-bottom:4px">👤 '+contact+'</div>':'')
+      +(mobile&&mobile!=='N/A'?'<div style="font-size:12px;color:#555;margin-bottom:4px">📞 '+mobile+'</div>':'')
       +(email&&email!=='N/A'?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
       +(gpsLink&&gpsLink.startsWith('http')?'<div style="margin-top:4px"><a href="'+gpsLink+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
       +'</div>';
@@ -3219,7 +3219,7 @@ function renderFotonPickupTab(arr){
       return '<div class="ref-card" style="padding:10px 14px;text-align:center">'
         +'<div style="font-size:13px;font-weight:700;color:#333">'+am.name+'</div>'
         +'<div style="font-size:11px;color:#888;margin:3px 0">📦 '+am.branches+' branches</div>'
-        +'<div style="font-size:12px;margin-bottom:4px">📞 '+[...am.mobiles].join(' / ')+'</div>'
+        +'<div style="font-size:12px;color:#555;margin-bottom:4px">📞 '+[...am.mobiles].join(' / ')+'</div>'
         +'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+am.email+'</a></div>'
         +'</div>';
     }).join('')+'</div>'
@@ -3252,8 +3252,8 @@ function renderFotonPickupTab(arr){
           +(city?'<div style="font-size:11px;color:#888;margin-top:3px">📌 '+city+'</div>':'')
           +'</div>'
           +'<div style="padding:10px 14px;text-align:center">'
-          +(mgr?'<div style="font-size:12px;color:#333;margin-bottom:5px">👤 '+mgr+'</div>':'')
-          +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
+          +(mgr?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+mgr+'</div>':'')
+          +(phone?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+phone+'</div>':'')
           +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
           +(rm?'<div style="font-size:10px;color:#999;margin-top:6px;padding-top:6px;border-top:1px solid #f5f5f5">🗺️ RM: '+rm.name+(rm.mobile?' · '+rm.mobile:'')+'</div>':'')
           +(gpsLink?'<div style="margin-top:6px"><a href="'+gpsLink+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
@@ -3302,12 +3302,12 @@ function renderPetrominPACTab(arr){
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
-    +(emRows.Request?.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">'+emRows.Request.to.replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px '+color+'20">'+m+'</a>')+'</span></div>':'')
+    +(emRows.Request?.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">'+emRows.Request.to.replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/g,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px '+color+'20">'+m+'</a>')+'</span></div>':'')
     +(emRows.Request?.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emRows.Request.cc)+'</div>':'')
     +'</div>'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
-    +(emRows.Complaint?.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">'+emRows.Complaint.to.replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px '+color+'20">'+m+'</a>')+'</span></div>':'')
+    +(emRows.Complaint?.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">'+emRows.Complaint.to.replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/g,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px '+color+'20">'+m+'</a>')+'</span></div>':'')
     +(emRows.Complaint?.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emRows.Complaint.cc)+'</div>':'')
     +'</div></div>';
 
@@ -3324,7 +3324,7 @@ function renderPetrominPACTab(arr){
       return '<div class="ref-card" style="padding:10px 14px;text-align:center;max-width:220px">'
         +'<div style="font-size:13px;font-weight:700;color:#333">'+am.name+'</div>'
         +'<div style="font-size:11px;color:#888;margin:3px 0">📦 '+am.branches+' branches</div>'
-        +'<div style="font-size:12px;margin-bottom:4px">📞 '+[...am.mobiles].join(' / ')+'</div>'
+        +'<div style="font-size:12px;color:#555;margin-bottom:4px">📞 '+[...am.mobiles].join(' / ')+'</div>'
         +'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+am.email+'</a></div>'
         +'</div>';
     }).join('')+'</div>'
@@ -3358,8 +3358,8 @@ function renderPetrominPACTab(arr){
           +(city?'<div style="font-size:11px;color:#888;margin-top:3px">📌 '+city+'</div>':'')
           +'</div>'
           +'<div style="padding:10px 14px;text-align:center">'
-          +(mgr?'<div style="font-size:12px;color:#333;margin-bottom:5px">👤 '+mgr+'</div>':'')
-          +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
+          +(mgr?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+mgr+'</div>':'')
+          +(phone?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+phone+'</div>':'')
           +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
           +(rm?'<div style="font-size:10px;color:#999;margin-top:6px;padding-top:6px;border-top:1px solid #f5f5f5">🗺️ RM: '+rm.name+' · '+rm.mobile+'</div>':'')
           +(gpsLink?'<div style="margin-top:6px"><a href="'+gpsLink+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
@@ -3395,12 +3395,12 @@ function renderPetrominTristarTab(arr){
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
-    +(emTo.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">'+emTo.request.replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px '+color+'20">'+m+'</a>')+'</span></div>':'')
+    +(emTo.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">'+emTo.request.replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/g,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px '+color+'20">'+m+'</a>')+'</span></div>':'')
     +(emCc.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.request)+'</div>':'')
     +'</div>'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
-    +(emTo.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">'+emTo.complaint.replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px '+color+'20">'+m+'</a>')+'</span></div>':'')
+    +(emTo.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;color:#444">'+emTo.complaint.replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/g,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px '+color+'20">'+m+'</a>')+'</span></div>':'')
     +(emCc.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.complaint)+'</div>':'')
     +'</div></div>';
 
@@ -3422,9 +3422,9 @@ function renderPetrominTristarTab(arr){
       +(addr?'<div style="font-size:11px;color:#888;margin-top:3px">📌 '+addr+'</div>':'')
       +'</div>'
       +'<div style="padding:10px 14px;text-align:center">'
-      +(mgr?'<div style="font-size:12px;color:#333;margin-bottom:5px">👤 '+mgr+' <span style="color:#aaa;font-size:10px">(Manager)</span></div>':'')
-      +(lineMgr?'<div style="font-size:12px;color:#333;margin-bottom:5px">👤 '+lineMgr+' <span style="color:#aaa;font-size:10px">(Line Manager)</span></div>':'')
-      +(phone?'<div style="font-size:12px;margin-bottom:5px">📞 '+phone+'</div>':'')
+      +(mgr?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+mgr+' <span style="color:#aaa;font-size:10px">(Manager)</span></div>':'')
+      +(lineMgr?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+lineMgr+' <span style="color:#aaa;font-size:10px">(Line Manager)</span></div>':'')
+      +(phone?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+phone+'</div>':'')
       +(email?'<div style="font-size:11px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
       +'</div></div>';
   }).join('')+'</div>';
@@ -3557,8 +3557,8 @@ function renderBodyShopTab(arr){
           const b=branches[name];
           const persHTML=b.persons.map(p=>
             '<div style="padding:5px 0;border-bottom:1px solid #f5f5f5">'
-            +(p.mgr?'<div style="font-size:12px;color:#333;margin-bottom:2px">👤 '+p.mgr+'</div>':'')
-            +(p.phone?'<div style="font-size:12px;color:#333;margin-bottom:2px">📞 '+p.phone+'</div>':'')
+            +(p.mgr?'<div style="font-size:12px;color:#555;margin-bottom:2px">👤 '+p.mgr+'</div>':'')
+            +(p.phone?'<div style="font-size:12px;color:#555;margin-bottom:2px">📞 '+p.phone+'</div>':'')
             +(p.email?'<div style="font-size:11px"><a href="mailto:'+p.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+p.email+'</a></div>':'')
             +'</div>'
           ).join('');
