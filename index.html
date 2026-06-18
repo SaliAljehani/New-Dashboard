@@ -416,11 +416,11 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
             <th style="color:#1a1a2e;font-size:11px">Date</th>
             <th class="tr" style="white-space:nowrap">Login Time<br><span style="color:#2e7d32;font-size:10px;font-weight:600">9:00:00</span></th>
             <th class="tr" style="white-space:nowrap">Total Ready Duration<br><span style="color:#2e7d32;font-size:10px;font-weight:600">8:00:00</span></th>
-            <th class="tr" style="white-space:nowrap">Auto Call-Off Duration<br><span style="color:#2e7d32;font-size:10px;font-weight:600">0:30:55</span></th>
+            <th class="tr" style="white-space:nowrap">Auto Call-Off Duration<br><span style="color:#2e7d32;font-size:10px;font-weight:600">0:30:00</span></th>
             <th class="tr" style="white-space:nowrap">Total Break Duration<br><span style="color:#2e7d32;font-size:10px;font-weight:600">1:00:00</span></th>
-            <th class="tr" style="white-space:nowrap">Avg. Talk Time<br><span style="color:#2e7d32;font-size:10px;font-weight:600">0:04:20</span></th>
-            <th class="tr" style="white-space:nowrap">Avg. ACW Duration<br><span style="color:#2e7d32;font-size:10px;font-weight:600">0:00:10</span></th>
-            <th class="tr" style="white-space:nowrap">Avg. Handling Time<br><span style="color:#2e7d32;font-size:10px;font-weight:600">0:04:28</span></th>
+            <th class="tr" style="white-space:nowrap">Avg. Talk Time<br><span style="color:#2e7d32;font-size:10px;font-weight:600">0:04:00</span></th>
+            <th class="tr" style="white-space:nowrap">Avg. ACW Duration<br><span style="color:#2e7d32;font-size:10px;font-weight:600">0:00:30</span></th>
+            <th class="tr" style="white-space:nowrap">Avg. Handling Time<br><span style="color:#2e7d32;font-size:10px;font-weight:600">0:04:00</span></th>
             <th class="tr" style="color:#1a1a2e;font-size:11px">Manual Dials</th>
             <th class="tr" style="color:#1a1a2e;font-size:11px">Connected Inbound</th>
             <th class="tr" style="color:#1a1a2e;font-size:11px">Tickets</th>
@@ -1010,11 +1010,11 @@ function renderAgent(name){
   const dates=rows.map(r=>r[0].slice(5));
   document.getElementById('dtbody').innerHTML=[...rows].reverse().map(r=>{
     // Color coding: red=bad, green=good
-    const loginBad = r[8]<9;         // less than 9h login = red
+    const loginBad = r[8]>9;         // more than 9h login = red (likely forgot to log out)
     const readyBad = r[9]<8;         // less than 8h ready = red
-    const callOffBad = false;         // Auto Call-Off - no target
+    const callOffBad = r[11]>1800;    // more than 0:30:00 auto call-off = red
     const breakBad = r[10]>60;       // more than 60min break = red
-    const talkBad  = r[5]<240;       // less than 4min talk = red
+    const talkBad  = r[5]>240;       // more than 4min talk = red
     const acwBad   = r[6]>30;        // more than 30s ACW = red
     const ahtBad   = r[7]>240;       // more than 4min AHT = red
     const rc='style="background:#fde;color:#c0272d;font-weight:700"';
@@ -1023,7 +1023,7 @@ function renderAgent(name){
       <td style="font-weight:600">${r[0]}</td>
       <td class="tr" ${loginBad?rc:gc}>${fmtH(r[8])}</td>
       <td class="tr" ${readyBad?rc:gc}>${fmtH(r[9])}</td>
-      <td class="tr">${fmtS(r[11]||0)}</td>
+      <td class="tr" ${callOffBad?rc:gc}>${fmtS(r[11]||0)}</td>
       <td class="tr" ${breakBad?rc:gc}>${fmtM(r[10])}</td>
       <td class="tr" ${talkBad?rc:gc}>${fmtS(r[5])}</td>
       <td class="tr" ${acwBad?rc:gc}>${fmtS(r[6])}</td>
@@ -1066,11 +1066,11 @@ function renderAgent(name){
     const rc='background:#fde;color:#c0272d;font-weight:700';
     summaryHtml+=`<tr style="background:#e8f4fd;border-top:2px solid #1565c0">
       <td style="font-weight:700;color:#1565c0;white-space:nowrap">📊 ${MNAMES2[m]||m}<br><span style="font-size:10px;color:#888">${s.days} days</span></td>
-      <td class="tr" style="${avgLogin<9?rc:''}">${fmtH(avgLogin)}</td>
+      <td class="tr" style="${avgLogin>9?rc:''}">${fmtH(avgLogin)}</td>
       <td class="tr" style="${avgReady<8?rc:''}">${fmtH(avgReady)}</td>
-      <td class="tr">${fmtS(s.days?s.acof/s.days:0)}</td>
+      <td class="tr" style="${(s.days?s.acof/s.days:0)>1800?rc:''}">${fmtS(s.days?s.acof/s.days:0)}</td>
       <td class="tr" style="${avgBrk>60?rc:''}">${fmtM(avgBrk)}</td>
-      <td class="tr" style="${avgTalk<240?rc:''}">${fmtS(avgTalk)}</td>
+      <td class="tr" style="${avgTalk>240?rc:''}">${fmtS(avgTalk)}</td>
       <td class="tr" style="${avgAcw>30?rc:''}">${fmtS(avgAcw)}</td>
       <td class="tr" style="${avgAht>240?rc:''}">${fmtS(avgAht)}</td>
       <td class="tr" style="font-weight:700">${s.dials}</td>
