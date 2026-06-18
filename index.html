@@ -326,26 +326,8 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     </div>
     <div id="motivationText" style="width:100%;display:flex;align-items:center;justify-content:center;gap:0;transition:opacity 0.6s;min-height:26px;padding-bottom:6px;border-bottom:2px solid rgba(192,39,45,.15);margin-bottom:2px"></div>
   </div>
+  <span class="lupd" id="onlineBtn" title="عدد المتصلين الآن" style="flex-shrink:0;font-size:11px">👥 <span id="onlineCount">—</span> متصل</span>
   <span class="lupd" id="lupd" onclick="loadAllData()" title="Click to refresh" style="flex-shrink:0;font-size:11px">🔄 Refresh</span>
-  <div style="position:relative;flex-shrink:0">
-    <span class="lupd" id="onlineBtn" onclick="toggleOnlinePanel()" title="من متصل الآن" style="font-size:11px;cursor:pointer">👥 <span id="onlineCount">—</span> متصل</span>
-    <div id="onlinePanel" style="display:none;position:absolute;top:100%;left:0;margin-top:8px;background:#FFFDFB;border:1px solid #eee;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.10);padding:10px 14px;min-width:190px;max-height:260px;overflow-y:auto;z-index:80;text-align:right;direction:rtl">
-      <div style="font-size:11px;font-weight:700;color:#6B3636;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #f0e8e8">👥 المتصلون الآن</div>
-      <div id="onlineList" style="font-size:12px;color:#555;line-height:2"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ONE-TIME NAME SELECTION (so "who's online" can show real names) -->
-<div id="nameModalOverlay" style="display:none;position:fixed;inset:0;background:rgba(40,30,30,.35);z-index:200;align-items:center;justify-content:center">
-  <div style="background:#FFFDFB;border-radius:14px;padding:26px 28px;max-width:340px;width:90%;box-shadow:0 10px 30px rgba(0,0,0,.18);text-align:center;direction:rtl">
-    <div style="font-size:15px;font-weight:700;color:#6B3636;margin-bottom:6px">👋 مرحبًا بك</div>
-    <div style="font-size:12px;color:#777;margin-bottom:16px;line-height:1.7">قبل ما تبدأين، اختاري اسمك من القائمة — هذا يساعدنا نعرف مين متصل الحين بالداشبورد.</div>
-    <select id="nameModalSelect" style="width:100%;padding:9px 10px;border:1.5px solid #e8dede;border-radius:8px;font-size:13px;margin-bottom:14px;background:#fff;direction:rtl">
-      <option value="">— اختاري اسمك —</option>
-    </select>
-    <button id="nameModalConfirm" onclick="confirmAgentName()" style="width:100%;padding:10px;border:none;border-radius:8px;background:#C0272D;color:#fff;font-size:13px;font-weight:700;cursor:pointer">تأكيد</button>
-  </div>
 </div>
 
 <!-- LOADING STATE -->
@@ -639,38 +621,20 @@ function showMotivation(){
   },180000);
 }
 
-// ===== PRESENCE / "WHO'S ONLINE" =====
-const ONLINE_THRESHOLD_MS = 90000; // consider an agent "online" if seen in the last 90s
-let currentAgentName = localStorage.getItem('dashboardAgentName') || '';
+// ===== PRESENCE / "WHO'S ONLINE" (anonymous count, fully automatic) =====
 let presenceStarted = false;
-
-function ensureAgentNameSelected(){
-  if(currentAgentName) return;
-  const sel = document.getElementById('nameModalSelect');
-  if(sel && sel.options.length<=1 && AGENTS_DIR.length){
-    const names = AGENTS_DIR.map(a=>a.name).filter(Boolean).sort((a,b)=>a.localeCompare(b,'ar'));
-    names.forEach(n=>{
-      const opt=document.createElement('option');
-      opt.value=n; opt.textContent=n;
-      sel.appendChild(opt);
-    });
+const ONLINE_THRESHOLD_MS = 90000; // consider a viewer "online" if seen in the last 90s
+const VISITOR_ID = (function(){
+  let id = localStorage.getItem('dashboardVisitorId');
+  if(!id){
+    id = 'v_' + Date.now() + '_' + Math.random().toString(36).slice(2,9);
+    localStorage.setItem('dashboardVisitorId', id);
   }
-  document.getElementById('nameModalOverlay').style.display='flex';
-}
-
-function confirmAgentName(){
-  const sel = document.getElementById('nameModalSelect');
-  const val = sel ? sel.value : '';
-  if(!val){ sel.focus(); return; }
-  currentAgentName = val;
-  localStorage.setItem('dashboardAgentName', val);
-  document.getElementById('nameModalOverlay').style.display='none';
-  sendHeartbeat();
-}
+  return id;
+})();
 
 function sendHeartbeat(){
-  if(!currentAgentName) return;
-  const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${SHEET_ID}&ping=1&name=${encodeURIComponent(currentAgentName)}`;
+  const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${SHEET_ID}&ping=1&name=${encodeURIComponent(VISITOR_ID)}`;
   fetch(url).catch(()=>{}); // best-effort, never block the UI on this
 }
 
@@ -678,33 +642,18 @@ async function loadOnlineUsers(){
   try{
     const rows = await fetchSheet(SHEET_ID, 'Active Sessions');
     const now = Date.now();
-    const online = rows
-      .filter(r => (now - Number(r['LastSeen']||0)) < ONLINE_THRESHOLD_MS)
-      .map(r => r['Name'])
-      .filter(Boolean)
-      .sort((a,b)=>a.localeCompare(b,'ar'));
-    document.getElementById('onlineCount').textContent = online.length;
-    document.getElementById('onlineList').innerHTML = online.length
-      ? online.map(n=>'<div>🟢 '+n+'</div>').join('')
-      : '<div style="color:#aaa">لا يوجد متصلين حاليًا</div>';
+    const count = rows.filter(r => (now - Number(r['LastSeen']||0)) < ONLINE_THRESHOLD_MS).length;
+    document.getElementById('onlineCount').textContent = count;
   }catch(e){
     console.warn('loadOnlineUsers failed:', e);
   }
 }
 
-function toggleOnlinePanel(){
-  const panel = document.getElementById('onlinePanel');
-  const show = panel.style.display==='none';
-  panel.style.display = show ? 'block' : 'none';
-  if(show) loadOnlineUsers();
-}
-
 function initPresence(){
   if(presenceStarted) return;
   presenceStarted = true;
-  ensureAgentNameSelected();
-  if(currentAgentName) sendHeartbeat();
-  setInterval(()=>{ if(currentAgentName) sendHeartbeat(); }, 30000);
+  sendHeartbeat();
+  setInterval(sendHeartbeat, 30000);
   setInterval(loadOnlineUsers, 30000);
   loadOnlineUsers();
 }
