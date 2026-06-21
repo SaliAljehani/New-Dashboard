@@ -4311,7 +4311,7 @@ async function renderInstructionTab(brand, cfg){
     pmsBody='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
       +pmsRows.map((r,i)=>{
         const c=WARRANTY_COLORS[i%WARRANTY_COLORS.length];
-        return '<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid '+c+';direction:rtl;text-align:right">'
+        return '<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid '+c+';direction:rtl;text-align:center">'
           +(r.title?'<div style="font-size:13px;font-weight:700;color:'+c+';margin-bottom:8px">'+r.title+'</div>':'')
           +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+r.content+'</div>'
           +'</div>';
@@ -4334,7 +4334,7 @@ async function renderInstructionTab(brand, cfg){
       apptBody='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
         +apptRows.map((r,i)=>{
           const c=WARRANTY_COLORS[i%WARRANTY_COLORS.length];
-          return '<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid '+c+';direction:rtl;text-align:right">'
+          return '<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid '+c+';direction:rtl;text-align:center">'
             +'<div style="font-size:13px;font-weight:700;color:'+c+';margin-bottom:8px">'+r.svc+'</div>'
             +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+r.b+'</div>'
             +'</div>';
