@@ -3922,20 +3922,15 @@ function copySMS(id){
 function renderApptSMSTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#1565c0';
-  const keys = Object.keys(arr[0]||{});
-  const k0=keys[0]||'', k1=keys[1]||'', k2=keys[2]||''; // AR, City, EN
-
-  function gv(r,k){ var v=r[k]; return v?String(v).trim():''; }
 
   function mkCopyBtn(id){
     return '<button onclick="copySMS(&apos;'+id+'&apos;)" style="padding:3px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer;margin-top:4px">&#128203; Copy</button>'
       +'<span id="cp_'+id+'" style="font-size:10px;color:#2e7d32;display:none;margin-left:4px">&#10003;</span>';
   }
 
-  function mkSmsBox(id,label,text,clr){
+  function mkSmsBox(id,label,text,clr,isAR){
     if(!text) return '';
     var safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    var isAR=/[\u0600-\u06FF]/.test(text.substring(0,30));
     return '<div style="background:#fff;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
       +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
       +'<span style="font-size:10px;font-weight:700;color:'+clr+';text-transform:uppercase">'+label+'</span>'
@@ -3945,25 +3940,36 @@ function renderApptSMSTab(arr){
       +'</div>';
   }
 
-  function extractBranch(arText){
-    if(!arText) return '';
-    const m = arText.match(/الفرع:\s*([^\n]+)/);
+  function extractBranch(text){
+    if(!text) return '';
+    const m = text.match(/(?:الفرع|Branch)\s*[:：]\s*([^\n]+)/i);
     return m ? m[1].trim() : '';
   }
 
+  // Detect AR / EN / City from raw values by CONTENT rather than column
+  // position, so this works no matter what order the columns end up in on
+  // the Google Sheet (Arabic text = AR message, long non-Arabic text = EN
+  // message, short non-Arabic text = City).
   const cards = arr.map(function(r,i){
-    const ar = gv(r,k0), city = gv(r,k1), en = gv(r,k2);
+    const vals = Object.values(r).map(v=> v!==undefined&&v!==null ? String(v).trim() : '').filter(Boolean);
+    let ar='', en='', city='';
+    vals.forEach(function(v){
+      const hasArabic = /[\u0600-\u06FF]/.test(v);
+      if(hasArabic){ if(!ar) ar=v; }
+      else if(v.length>25){ if(!en) en=v; }
+      else { if(!city) city=v; }
+    });
     if(!ar && !en) return '';
-    const branch = extractBranch(ar);
-    const title = branch ? (branch+' — '+city) : (city||'Branch '+(i+1));
+    const branch = extractBranch(ar) || extractBranch(en);
+    const title = branch ? (branch+(city?' — '+city:'')) : (city||'Branch '+(i+1));
     return '<div class="ref-card" style="padding:0;overflow:hidden;text-align:left">'
       +'<div style="background:'+color+'18;border-bottom:2px solid '+color+'22;padding:10px 14px;border-radius:10px 10px 0 0;text-align:center">'
       +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+title+'</div>'
       +'</div>'
       +'<div style="padding:10px 14px">'
       +'<div style="font-size:10px;font-weight:700;color:#555;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">&#128197; Appointment SMS</div>'
-      +mkSmsBox('appt'+i+'_ar','AR',ar,color)
-      +mkSmsBox('appt'+i+'_en','EN',en,color)
+      +mkSmsBox('appt'+i+'_ar','AR',ar,color,true)
+      +mkSmsBox('appt'+i+'_en','EN',en,color,false)
       +'</div></div>';
   }).join('');
 
