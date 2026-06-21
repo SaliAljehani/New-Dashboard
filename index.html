@@ -1628,7 +1628,7 @@ const REF_SHEETS = {
   },
   stellantis: {
     id: '104CXGHd1raokgGijhvHgt6AI2gdsqzANBH74Ehm01dM',
-    tabs: ['Instruction','Showroom ','Service','Spare Parts ','PAC','Tristar','Showroom Sales Team','Offers']
+    tabs: ['Instruction','Showroom ','Service','SMS Appointment','Spare Parts ','PAC','Tristar','Showroom Sales Team','Offers']
   },
   bodyshop: {
     id: '1_Z8Ry4-Y7kNFYnhXNvn7QP8jt1S_n9JHdVC2zT6R6WE',
@@ -3919,6 +3919,63 @@ function copySMS(id){
   });
 }
 
+function renderApptSMSTab(arr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const color='#1565c0';
+  const keys = Object.keys(arr[0]||{});
+  const k0=keys[0]||'', k1=keys[1]||'', k2=keys[2]||''; // AR, City, EN
+
+  function gv(r,k){ var v=r[k]; return v?String(v).trim():''; }
+
+  function mkCopyBtn(id){
+    return '<button onclick="copySMS(&apos;'+id+'&apos;)" style="padding:3px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer;margin-top:4px">&#128203; Copy</button>'
+      +'<span id="cp_'+id+'" style="font-size:10px;color:#2e7d32;display:none;margin-left:4px">&#10003;</span>';
+  }
+
+  function mkSmsBox(id,label,text,clr){
+    if(!text) return '';
+    var safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    var isAR=/[\u0600-\u06FF]/.test(text.substring(0,30));
+    return '<div style="background:#fff;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
+      +'<span style="font-size:10px;font-weight:700;color:'+clr+';text-transform:uppercase">'+label+'</span>'
+      +mkCopyBtn(id)
+      +'</div>'
+      +'<div id="sms_'+id+'" style="font-size:11px;color:#444;line-height:1.6;white-space:pre-wrap;direction:'+(isAR?'rtl':'ltr')+';text-align:'+(isAR?'right':'left')+'">'+safe+'</div>'
+      +'</div>';
+  }
+
+  function extractBranch(arText){
+    if(!arText) return '';
+    const m = arText.match(/الفرع:\s*([^\n]+)/);
+    return m ? m[1].trim() : '';
+  }
+
+  const cards = arr.map(function(r,i){
+    const ar = gv(r,k0), city = gv(r,k1), en = gv(r,k2);
+    if(!ar && !en) return '';
+    const branch = extractBranch(ar);
+    const title = branch ? (branch+' — '+city) : (city||'Branch '+(i+1));
+    return '<div class="ref-card" style="padding:0;overflow:hidden;text-align:left">'
+      +'<div style="background:'+color+'18;border-bottom:2px solid '+color+'22;padding:10px 14px;border-radius:10px 10px 0 0;text-align:center">'
+      +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+title+'</div>'
+      +'</div>'
+      +'<div style="padding:10px 14px">'
+      +'<div style="font-size:10px;font-weight:700;color:#555;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">&#128197; Appointment SMS</div>'
+      +mkSmsBox('appt'+i+'_ar','AR',ar,color)
+      +mkSmsBox('appt'+i+'_en','EN',en,color)
+      +'</div></div>';
+  }).join('');
+
+  return '<div>'
+    +'<div style="margin-bottom:16px">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:'+color+'12;border-radius:8px;border-left:4px solid '+color+';margin-bottom:10px">'
+    +'<span style="font-size:13px;font-weight:700;color:'+color+'">&#128241; Appointment SMS</span>'
+    +'</div>'
+    +'<div class="ref-cards-grid">'+cards+'</div>'
+    +'</div></div>';
+}
+
 
 function buildEmailSection(arr){
   if(!arr||!arr.length) return '<div style="color:#aaa;padding:20px;text-align:center">No email data</div>';
@@ -4001,7 +4058,7 @@ function showRefBrandPage(brand){
     +'<div id="petrominWarrantyDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px"></div>'
     +'<div class="ref-sub-tabs" id="refSubTabs_'+brand+'" style="justify-content:center">'
     +tabs.map((t,i)=>{
-      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','PMS':'Service','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers'};
+      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','PMS':'Service','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📱 SMS Appointment'};
       const label=TAB_LABELS[t]||t;
       return '<button class="ref-sub-tab'+(i===0?' active':'')+'" '
         +'style="'+(i===0?'background:'+meta.color+';color:#fff;border-color:'+meta.color:'')+'" '
@@ -4564,6 +4621,10 @@ async function renderRefBrand(brand,tabIdx){
     }
     if(brand==='nissan' && sheetName.trim()==='SMS & Location'){
       container.innerHTML=renderSMSTab(arr, sheetName, brand);
+      return;
+    }
+    if(brand==='stellantis' && sheetName.trim()==='SMS Appointment'){
+      container.innerHTML=renderApptSMSTab(arr);
       return;
     }
     if(brand==='nissan' && (sheetName.trim()==='Nissan App 25-26'||sheetName.trim()==='Nissan APP 25-26')){
