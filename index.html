@@ -4290,10 +4290,14 @@ async function renderInstructionTab(brand, cfg){
         +'</div>';
     }else{
       const orderedRows = warrantyRows.slice().reverse();
-      warrantyBody='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
+      const wWrapStyle = orderedRows.length===1
+        ? 'display:flex;justify-content:center'
+        : 'display:grid;grid-template-columns:1fr 1fr;gap:12px';
+      const wCardWidth = orderedRows.length===1 ? 'max-width:420px;width:100%;' : '';
+      warrantyBody='<div style="'+wWrapStyle+'">'
         +orderedRows.map((w,i)=>{
           const c=WARRANTY_COLORS[i%WARRANTY_COLORS.length];
-          return '<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid '+c+';direction:rtl;text-align:center">'
+          return '<div style="'+wCardWidth+'background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid '+c+';direction:rtl;text-align:center">'
             +'<div style="font-size:13px;font-weight:700;color:'+c+';margin-bottom:8px">'+w.title+'</div>'
             +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+w.c1+'</div>'
             +'</div>';
@@ -4308,10 +4312,14 @@ async function renderInstructionTab(brand, cfg){
   // ===== PMS Services section =====
   let pmsBody='';
   if(pmsRows.length){
-    pmsBody='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
+    const wrapStyle = pmsRows.length===1
+      ? 'display:flex;justify-content:center'
+      : 'display:grid;grid-template-columns:1fr 1fr;gap:12px';
+    const cardWidth = pmsRows.length===1 ? 'max-width:420px;width:100%;' : '';
+    pmsBody='<div style="'+wrapStyle+'">'
       +pmsRows.map((r,i)=>{
         const c=WARRANTY_COLORS[i%WARRANTY_COLORS.length];
-        return '<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid '+c+';direction:rtl;text-align:center">'
+        return '<div style="'+cardWidth+'background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid '+c+';direction:rtl;text-align:center">'
           +(r.title?'<div style="font-size:13px;font-weight:700;color:'+c+';margin-bottom:8px">'+r.title+'</div>':'')
           +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+r.content+'</div>'
           +'</div>';
