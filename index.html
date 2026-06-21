@@ -4199,9 +4199,10 @@ async function renderInstructionTab(brand, cfg){
 
   const WARRANTY_COLORS=['#c0272d','#2e7d32','#1565c0','#6a1b9a','#e65100'];
 
-  const warrantyRows=[], apptRows=[], emailRows=[], noteRows=[];
+  const warrantyRows=[], pmsRows=[], apptRows=[], emailRows=[], noteRows=[];
   let mode='warranty';
   let apptHeaders=null;
+  let pendingPMSTitle=null;
 
   arr.forEach(r=>{
     const sec=String(r[secKey]||'').trim();
@@ -4222,6 +4223,21 @@ async function renderInstructionTab(brand, cfg){
     if(mode==='warranty'){
       if(!sec) return;
       if(sec.toLowerCase().includes('pms')) return; // تجاهل header PMS
+      const isPMSText = /maintenance|schedule|صيانة|زيت|oil|gear/i.test(sec);
+
+      // Some sheets (e.g. BAIC) put the PMS schedule text only in the
+      // Section column, leaving Title/Content empty — pair up a short
+      // "title" line followed by its longer "content" line into one card.
+      if(!title && !c1 && isPMSText){
+        if(pendingPMSTitle===null && sec.length<60){
+          pendingPMSTitle = sec;
+        } else {
+          pmsRows.push({title: pendingPMSTitle||'', content: sec});
+          pendingPMSTitle = null;
+        }
+        return;
+      }
+
       const rowTitle = c1 ? title : sec;
       const rowContent = c1 ? c1 : title;
       const rowContent2 = c2||'';
@@ -4230,7 +4246,7 @@ async function renderInstructionTab(brand, cfg){
       // PMS rows = maintenance, زيت, schedule
       const isPMSRow = /maintenance|schedule|صيانة|زيت|oil|gear/i.test(rowTitle);
       if(isPMSRow){
-        apptRows.push({svc:rowTitle, a:'', b:rowContent, c:rowContent2});
+        pmsRows.push({title:rowTitle, content:rowContent});
       } else {
         warrantyRows.push({title: rowTitle, c1: rowContent, c2: rowContent2});
       }
@@ -4289,6 +4305,23 @@ async function renderInstructionTab(brand, cfg){
     ? mkCollapsibleOpen('🛡️ Warranty',warrantyBody,'instr_'+brand+'_warranty',color)
     : mkCollapsible('🛡️ Warranty','<div style="text-align:center;padding:20px;color:#aaa">No warranty data</div>','instr_'+brand+'_warranty',color);
 
+  // ===== PMS Services section =====
+  let pmsBody='';
+  if(pmsRows.length){
+    pmsBody='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
+      +pmsRows.map((r,i)=>{
+        const c=WARRANTY_COLORS[i%WARRANTY_COLORS.length];
+        return '<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid '+c+';direction:rtl;text-align:right">'
+          +(r.title?'<div style="font-size:13px;font-weight:700;color:'+c+';margin-bottom:8px">'+r.title+'</div>':'')
+          +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+r.content+'</div>'
+          +'</div>';
+      }).join('')
+      +'</div>';
+  }
+  const pmsHtml=pmsBody
+    ? mkCollapsibleOpen('🔧 PMS Services',pmsBody,'instr_'+brand+'_pms',color)
+    : '';
+
   // ===== Appointment Script section =====
   let apptBody='';
   if(apptRows.length){
@@ -4333,8 +4366,8 @@ async function renderInstructionTab(brand, cfg){
     }
   }
   const apptHtml=apptBody
-    ? mkCollapsibleOpen('🔧 PMS Services',apptBody,'instr_'+brand+'_appt',color)
-    : mkCollapsible('🔧 PMS Services','<div style="text-align:center;padding:24px;color:#aaa;font-size:13px">📭 No PMS data yet — add Appointment Script section to the sheet</div>','instr_'+brand+'_appt',color);
+    ? mkCollapsibleOpen('📋 Appointment Script',apptBody,'instr_'+brand+'_appt',color)
+    : mkCollapsible('📋 Appointment Script','<div style="text-align:center;padding:24px;color:#aaa;font-size:13px">📭 No Appointment Script data yet</div>','instr_'+brand+'_appt',color);
 
   // ===== Email to section =====
   let emailHtml='';
@@ -4364,7 +4397,7 @@ async function renderInstructionTab(brand, cfg){
   const extraBody = emailHtml + noteHtml;
   const extraHtml = extraBody ? mkCollapsible('📋 Extra Information', extraBody, 'instr_'+brand+'_extra', color) : '';
 
-  const result= warrantyHtml + apptHtml + extraHtml;
+  const result= warrantyHtml + pmsHtml + apptHtml + extraHtml;
 
   if(brand==='baic'){
     return '<div style="max-width:700px;margin:0 auto">'+result+'</div>';
