@@ -334,7 +334,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .att-agent-table th{background:#f8f8f8;padding:6px 16px;font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid #eee;text-align:center}
 .att-agent-table td{padding:5px 16px;border-bottom:1px solid #f5f5f5;vertical-align:middle;text-align:center}
 .att-agent-table tr:last-child td{border-bottom:none}
-.att-agent-table tr:hover td{background:#fef9f9}
+.att-agent-table tr:hover td{background:#fafafa}
 .att-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
 .att-status-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700}
 .att-status-badge.office{background:#e8f5e9;color:#1b5e20}
@@ -905,22 +905,21 @@ function renderAttendanceTab(){
     const stCls = STATUS_CLASS[r.status]||'off';
     const stIco = STATUS_ICONS[r.status]||'—';
     const stLabel = r.status==='Sickleave'?'Sick Leave':r.status;
-    const rowBg = r.campaign==='WhatsApp' ? '#f0faf2' : r.campaign==='Multi Campaign' ? '#fdf0f5' : (i%2===0?'#fff':'#fefefe');
-    html += '<tr style="background:'+rowBg+'">'
+    html += '<tr style="background:#fff">'
       +'<td style="font-size:11px;color:#ccc;font-weight:700;text-align:center;width:44px">'+(i+1)+'</td>'
-      +'<td style="text-align:left;padding-left:24px"><div style="display:inline-flex;align-items:center;gap:10px">'
+      +'<td style="text-align:left;padding-left:24px"><div style="display:inline-flex;align-items:center;gap:10px;background:#f5f5f5;padding:5px 14px 5px 8px;border-radius:20px">'
       +'<div class="att-avatar" style="background:'+c.bg+';color:'+c.text+'">'+init+'</div>'
       +'<span style="font-weight:600;color:#1a1a2e;font-size:13px">'+r.name+'</span>'
       +'</div></td>'
-      +'<td style="text-align:center"><span class="att-status-badge '+stCls+'">'+stIco+' '+stLabel+'</span></td>'
+      +'<td style="text-align:center;vertical-align:middle"><span class="att-status-badge '+stCls+'">'+stIco+' '+stLabel+'</span></td>'
       +'<td style="text-align:center">'+(r.campaign
         ? (()=>{
             const cv=r.campaign;
-            let bg='#f0f4ff',cl='#3949ab',bc='#c5cae9';
-            if(cv==='WhatsApp'||cv.toLowerCase().includes('whatsapp')){bg='#e8f5e9';cl='#2e7d32';bc='#a5d6a7';}
-            else if(cv==='Multi Campaign'||cv.toLowerCase().includes('multi')){bg='#fce4ec';cl='#880e4f';bc='#f48fb1';}
-            else if(cv==='complaints support'||cv.toLowerCase().includes('complaint')){bg='#fce4ec';cl='#c0272d';bc='#ef9a9a';}
-            return '<span style="display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;background:'+bg+';color:'+cl+';border:1px solid '+bc+'">'+cv+'</span>';
+            let bg='#f5f5f5',cl='#555',bc='#ddd';
+            if(cv==='WhatsApp'||cv.toLowerCase().includes('whatsapp')){bg='#E8F5E9';cl='#256029';bc='#81C784';}
+            else if(cv==='Multi Campaign'||cv.toLowerCase().includes('multi')){bg='#FCE4EC';cl='#880E4F';bc='#F06292';}
+            else if(cv==='complaints support'||cv.toLowerCase().includes('complaint')){bg='#FFF3E0';cl='#E65100';bc='#FFB74D';}
+            return '<span style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:700;background:'+bg+';color:'+cl+';border:1.5px solid '+bc+'">'+cv+'</span>';
           })()
         : '<span style="color:#ddd;font-size:13px">—</span>')+'</td>'
       +'</tr>';
@@ -1068,7 +1067,9 @@ async function loadAllData(silent){
       const campVal = r['Campaign']||r['campaign']||r['CAMPAIGN']||r['Camp']||
                       r['Campaign ']||r[' Campaign']||
                       Object.values(r)[3]||'';
-      const camp=String(campVal).trim();
+      let camp=String(campVal).trim();
+      // Normalize typos
+      if(camp.toLowerCase().includes('sng') || camp.toLowerCase().includes('sngl') || camp.toLowerCase().includes('single')) camp='Multi Campaign';
       if(camp && camp !== 'undefined'){
         if(!window.__ATT_CAMP__)window.__ATT_CAMP__={};
         if(!window.__ATT_CAMP__[agent])window.__ATT_CAMP__[agent]={};
