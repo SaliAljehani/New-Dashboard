@@ -873,8 +873,8 @@ function renderAttendanceTab(){
         return '<span class="att-pill '+cls+'">'+ico+' '+lbl+' ('+counts[s]+')</span>';
       }).join('');
     // Add campaign pills
-    if(campCounts['WhatsApp']) html_pills += '<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7">💬 WhatsApp ('+campCounts['WhatsApp']+')</span>';
-    if(campCounts['Multi Campaign']) html_pills += '<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;background:#fce4ec;color:#880e4f;border:1px solid #f48fb1">📞 Multi Campaign ('+campCounts['Multi Campaign']+')</span>';
+    if(campCounts['WhatsApp']) html_pills += '<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;background:#DBEAFE;color:#1D4ED8;border:1px solid #93C5FD">💬 WhatsApp ('+campCounts['WhatsApp']+')</span>';
+    if(campCounts['Multi Campaign']) html_pills += '<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;background:#FFEDD5;color:#C2410C;border:1px solid #FDBA74">📞 Multi Campaign ('+campCounts['Multi Campaign']+')</span>';
     Object.entries(campCounts).filter(([k])=>k!=='WhatsApp'&&k!=='Multi Campaign').forEach(([k,v])=>{
       html_pills += '<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;background:#f0f4ff;color:#3949ab;border:1px solid #c5cae9">'+k+' ('+v+')</span>';
     });
@@ -918,8 +918,8 @@ function renderAttendanceTab(){
         ? (()=>{
             const cv=r.campaign;
             let bg='#f5f5f5',cl='#555',bc='#ddd';
-            if(cv==='WhatsApp'||cv.toLowerCase().includes('whatsapp')){bg='#dcfce7';cl='#166534';bc='#86efac';}
-            else if(cv==='Multi Campaign'||cv.toLowerCase().includes('multi')){bg='#fce7f3';cl='#9d174d';bc='#f9a8d4';}
+            if(cv==='WhatsApp'||cv.toLowerCase().includes('whatsapp')){bg='#DBEAFE';cl='#1D4ED8';bc='#93C5FD';}
+            else if(cv==='Multi Campaign'||cv.toLowerCase().includes('multi')){bg='#FFEDD5';cl='#C2410C';bc='#FDBA74';}
             else if(cv==='complaints support'||cv.toLowerCase().includes('complaint')){bg='#FFF3E0';cl='#E65100';bc='#FFB74D';}
             return '<span style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:700;background:'+bg+';color:'+cl+';border:1.5px solid '+bc+'">'+cv+'</span>';
           })()
