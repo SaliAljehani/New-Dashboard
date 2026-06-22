@@ -896,13 +896,20 @@ function renderAttendanceTab(){
     const stLabel = r.status==='Sickleave'?'Sick Leave':r.status;
     html += '<tr>'
       +'<td style="font-size:11px;color:#ccc;font-weight:700;text-align:center;width:44px">'+(i+1)+'</td>'
-      +'<td><div style="display:flex;align-items:center;gap:10px;justify-content:center">'
+      +'<td style="text-align:left;padding-left:24px"><div style="display:inline-flex;align-items:center;gap:10px">'
       +'<div class="att-avatar" style="background:'+c.bg+';color:'+c.text+'">'+init+'</div>'
-      +'<span style="font-weight:600;color:#1a1a2e">'+r.name+'</span>'
+      +'<span style="font-weight:600;color:#1a1a2e;font-size:13px">'+r.name+'</span>'
       +'</div></td>'
       +'<td style="text-align:center"><span class="att-status-badge '+stCls+'">'+stIco+' '+stLabel+'</span></td>'
       +'<td style="text-align:center">'+(r.campaign
-        ? '<span class="att-campaign-tag">'+r.campaign+'</span>'
+        ? (()=>{
+            const cv=r.campaign;
+            let bg='#f0f4ff',cl='#3949ab',bc='#c5cae9';
+            if(cv==='WhatsApp'||cv.toLowerCase().includes('whatsapp')){bg='#e8f5e9';cl='#2e7d32';bc='#a5d6a7';}
+            else if(cv==='Multi Campaign'||cv.toLowerCase().includes('multi')){bg='#fce4ec';cl='#880e4f';bc='#f48fb1';}
+            else if(cv==='complaints support'||cv.toLowerCase().includes('complaint')){bg='#fce4ec';cl='#c0272d';bc='#ef9a9a';}
+            return '<span style="display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;background:'+bg+';color:'+cl+';border:1px solid '+bc+'">'+cv+'</span>';
+          })()
         : '<span style="color:#ddd;font-size:13px">—</span>')+'</td>'
       +'</tr>';
   });
@@ -5111,12 +5118,12 @@ function renderRoster(){
     +'<div id="schedule_vacation" style="display:none"><iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRGq8k4RcP7K-rN9KkI93gmD51I3KjFVE2GYoofk85KS5PxOZVRfX8p_QEEBMxDvm-hiRfEt-dK2oZH/pubhtml?gid=644438759&single=true&widget=false&headers=false" style="width:100%;height:calc(100vh - 220px);border:none;display:block;border-radius:8px;margin-top:12px"></iframe></div>'
     +'<div id="schedule_attendance" style="display:none">'
     +'<div style="background:#fff;border-radius:10px;padding:10px 20px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-left:4px solid #c0272d">'
-    +'<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px">'
+    +'<div style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:8px">'
     +'<label style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">📅 Date:</label>'
     +'<input type="date" id="attDatePicker" style="font-size:13px;padding:6px 12px;border-radius:8px;border:1.5px solid #ddd;background:#fafafa;cursor:pointer;font-weight:600" onchange="renderAttendanceTab()">'
     +'<button class="att-today-btn" onclick="setAttToday()">📍 Today</button>'
     +'</div>'
-    +'<div id="attSummaryRow" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"></div>'
+    +'<div id="attSummaryRow" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:center"></div>'
     +'</div>'
     +'<div id="attTableContainer"></div>'
     +'</div>'
