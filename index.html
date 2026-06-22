@@ -314,6 +314,37 @@ tr:last-child td{border-bottom:none}
 .ttn.nissan.active{background:#c0272d}.ttn.petromin.active{background:#DAA520;color:#fff}.ttn.stellantis.active{background:#1565c0}
 footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px solid #eee;margin-top:20px;background:#fff}
 @media(max-width:900px){.krow{grid-template-columns:repeat(3,1fr)}.r2,.comp-grid,.call-krow{grid-template-columns:1fr}}
+
+/* ── ATTENDANCE TAB STYLES ── */
+.att-date-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.att-today-btn{padding:8px 16px;border-radius:10px;border:1.5px solid #c0272d;background:#fef2f2;color:#c0272d;font-size:12px;font-weight:700;cursor:pointer}
+.att-today-btn:hover{background:#c0272d;color:#fff}
+.att-summary-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.att-pill{font-size:11px;font-weight:700;padding:4px 12px;border-radius:12px}
+.att-pill.office{background:#e8f5e9;color:#1b5e20}
+.att-pill.remote{background:#e3f2fd;color:#0d47a1}
+.att-pill.vacation{background:#f3e5f5;color:#4a148c}
+.att-pill.sick{background:#fff3e0;color:#9e5400}
+.att-pill.off{background:#f1efe8;color:#777}
+.att-pill.absent{background:#fde8ea;color:#b0282e}
+.att-pill.complaints{background:#fce4ec;color:#880e4f}
+.att-table-wrap{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.att-table-title{padding:14px 18px;font-size:13px;font-weight:700;color:#1a1a2e;border-bottom:2px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between}
+.att-agent-table{width:100%;border-collapse:collapse;font-size:13px}
+.att-agent-table th{background:#f8f8f8;padding:10px 16px;font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid #eee;text-align:left}
+.att-agent-table td{padding:10px 16px;border-bottom:1px solid #f5f5f5;vertical-align:middle}
+.att-agent-table tr:last-child td{border-bottom:none}
+.att-agent-table tr:hover td{background:#fef9f9}
+.att-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.att-status-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700}
+.att-status-badge.office{background:#e8f5e9;color:#1b5e20}
+.att-status-badge.remote{background:#e3f2fd;color:#0d47a1}
+.att-status-badge.vacation{background:#f3e5f5;color:#4a148c}
+.att-status-badge.sick{background:#fff3e0;color:#9e5400}
+.att-status-badge.off{background:#f1efe8;color:#888}
+.att-status-badge.absent{background:#fde8ea;color:#b0282e}
+.att-status-badge.complaints{background:#fce4ec;color:#880e4f}
+.att-campaign-tag{padding:4px 10px;border-radius:8px;font-size:11px;font-weight:600;background:#f0f4ff;color:#3949ab;border:1px solid #c5cae9}
 </style>
 </head>
 <body>
@@ -752,6 +783,147 @@ function initPresence(){
   loadOnlineUsers();
 }
 
+
+function setAttToday(){
+  const today = new Date();
+  const y = today.getFullYear();
+  const m = String(today.getMonth()+1).padStart(2,'0');
+  const d = String(today.getDate()).padStart(2,'0');
+  const picker = document.getElementById('attDatePicker');
+  if(picker) picker.value = y+'-'+m+'-'+d;
+  renderAttendanceTab();
+}
+
+function renderAttendanceTab(){
+  const picker = document.getElementById('attDatePicker');
+  const container = document.getElementById('attTableContainer');
+  const summaryRow = document.getElementById('attSummaryRow');
+  if(!picker || !container) return;
+  const dateVal = picker.value;
+  if(!dateVal){
+    container.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">Please select a date.</div>';
+    return;
+  }
+
+  const AVATAR_COLORS=[
+    {bg:'#F0DEDE',text:'#9B4A4A'},{bg:'#E3E1DC',text:'#6B6862'},
+    {bg:'#DCE6E0',text:'#516B5C'},{bg:'#E8E2D8',text:'#8A7456'},
+    {bg:'#E1E2E8',text:'#5C6178'},{bg:'#E6DEE3',text:'#7C5C6B'}
+  ];
+  function getColor(name){ let h=0; for(let i=0;i<name.length;i++) h=(h*31+name.charCodeAt(i))&0xffff; return AVATAR_COLORS[h%AVATAR_COLORS.length]; }
+
+  const STATUS_ICONS = {
+    'Office':'🏢','Remote':'🏠','Vacation':'🌴','Sick':'🤒',
+    'Off':'—','Absent':'❌','EL':'📋','Saturday Shift':'📅',
+    'complaints support':'📞','Sickleave':'🤒'
+  };
+  const STATUS_CLASS = {
+    'Office':'office','Remote':'remote','Vacation':'vacation','Sick':'sick','Sickleave':'sick',
+    'Off':'off','Absent':'absent','EL':'el','Saturday Shift':'satshift','complaints support':'complaints'
+  };
+
+  // Build rows from ATT store
+  const rows = [];
+  Object.entries(ATT).forEach(([agent, dates])=>{
+    if(dates[dateVal]){
+      rows.push({ name: agent, status: dates[dateVal], campaign: '' });
+    }
+  });
+
+  // Add campaign from raw data
+  if(window.__ATT_RAW__ && window.__ATT_RAW__.length){
+    const nameMap={'Nesreen  Mansour':'Nesreen Mansour','Walaa Meezi ':'Walaa Meezi','Gofran Rafie ':'Ghofran Rafiei','Gofran Rafie':'Ghofran Rafiei','Asma Bawayan':'Asmaa M. Bawayan'};
+    window.__ATT_RAW__.forEach(r=>{
+      let dtVal = r['Date']||'';
+      let dt = '';
+      const gm = String(dtVal).match(/Date\((\d+),(\d+),(\d+)\)/);
+      if(gm) dt = parseInt(gm[1])+'-'+String(parseInt(gm[2])+1).padStart(2,'0')+'-'+String(parseInt(gm[3])).padStart(2,'0');
+      else if(String(dtVal).includes('/')){
+        const p=String(dtVal).split('/');
+        if(p.length===3) dt=(p[2].length===4?p[2]:'20'+p[2])+'-'+p[0].padStart(2,'0')+'-'+p[1].padStart(2,'0');
+      } else dt = String(dtVal).slice(0,10);
+      if(dt !== dateVal) return;
+      let agent = (r['Agent Name']||r['Agent']||'').trim();
+      agent = nameMap[agent]||agent;
+      const camp = String(r['Campaign']||r['campaign']||'').trim();
+      const found = rows.find(x=>x.name===agent);
+      if(found && camp) found.campaign = camp;
+    });
+  }
+
+  if(!rows.length){
+    container.innerHTML='<div style="text-align:center;padding:48px;color:#aaa">'
+      +'<div style="font-size:48px;margin-bottom:12px">📭</div>'
+      +'<div style="font-size:14px;font-weight:600;color:#666;margin-bottom:6px">No attendance data</div>'
+      +'<div style="font-size:12px">No records found for this date</div></div>';
+    if(summaryRow) summaryRow.innerHTML='';
+    return;
+  }
+
+  // Sort by status priority then name
+  const ORDER=['Office','complaints support','Remote','Sick','Sickleave','Vacation','Saturday Shift','EL','Off','Absent'];
+  rows.sort((a,b)=>{
+    const ai=ORDER.indexOf(a.status); const bi=ORDER.indexOf(b.status);
+    if(ai!==bi) return (ai===-1?99:ai)-(bi===-1?99:bi);
+    return a.name.localeCompare(b.name);
+  });
+
+  // Summary pills
+  const counts={};
+  rows.forEach(r=>{ const k=r.status; counts[k]=(counts[k]||0)+1; });
+  if(summaryRow){
+    const PILL_ORDER=['Office','complaints support','Remote','Sick','Sickleave','Vacation','Saturday Shift','EL','Off','Absent'];
+    summaryRow.innerHTML = '<span style="font-size:12px;font-weight:700;color:#888;margin-right:6px">'+rows.length+' agents</span>'
+      + PILL_ORDER.filter(s=>counts[s]).map(s=>{
+        const cls = STATUS_CLASS[s]||'off';
+        const ico = STATUS_ICONS[s]||'—';
+        const lbl = s==='Sickleave'?'Sick Leave':s;
+        return '<span class="att-pill '+cls+'">'+ico+' '+lbl+' ('+counts[s]+')</span>';
+      }).join('');
+  }
+
+  // Nice date display
+  const dObj = new Date(dateVal+'T12:00:00');
+  const DAY_NAMES=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const MON_NAMES=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const displayDate = DAY_NAMES[dObj.getDay()]+', '+dObj.getDate()+' '+MON_NAMES[dObj.getMonth()]+' '+dObj.getFullYear();
+
+  let html = '<div class="att-table-wrap">'
+    +'<div class="att-table-title">'
+    +'<span>📋 Attendance — '+displayDate+'</span>'
+    +'<span style="font-size:12px;font-weight:500;color:#aaa">'+rows.length+' agents</span>'
+    +'</div>'
+    +'<div style="overflow-x:auto"><table class="att-agent-table">'
+    +'<thead><tr>'
+    +'<th style="width:44px;text-align:center">#</th>'
+    +'<th>Agent Name</th>'
+    +'<th>Status</th>'
+    +'<th>Campaign</th>'
+    +'</tr></thead><tbody>';
+
+  rows.forEach((r,i)=>{
+    const init = r.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const c = getColor(r.name);
+    const stCls = STATUS_CLASS[r.status]||'off';
+    const stIco = STATUS_ICONS[r.status]||'—';
+    const stLabel = r.status==='Sickleave'?'Sick Leave':r.status;
+    html += '<tr>'
+      +'<td style="font-size:11px;color:#ccc;font-weight:700;text-align:center">'+(i+1)+'</td>'
+      +'<td><div style="display:flex;align-items:center;gap:10px">'
+      +'<div class="att-avatar" style="background:'+c.bg+';color:'+c.text+'">'+init+'</div>'
+      +'<span style="font-weight:600;color:#1a1a2e">'+r.name+'</span>'
+      +'</div></td>'
+      +'<td><span class="att-status-badge '+stCls+'">'+stIco+' '+stLabel+'</span></td>'
+      +'<td>'+(r.campaign
+        ? '<span class="att-campaign-tag">'+r.campaign+'</span>'
+        : '<span style="color:#ddd;font-size:13px">—</span>')+'</td>'
+      +'</tr>';
+  });
+
+  html += '</tbody></table></div></div>';
+  container.innerHTML = html;
+}
+
 async function loadAllData(silent){
   if(!silent){
     document.getElementById('loadingDiv').style.display='flex';
@@ -784,6 +956,7 @@ async function loadAllData(silent){
     // instead of replaying the same snapshot forever.
     window.__PRELOADED_DATA__ = null;
     window.__PRELOADED_RAW__ = null;
+    window.__ATT_RAW__ = attRows;
 
     setProgress(60,'Processing Agent Performance...');
     console.log('AP rows total:', apRows.length);
@@ -4931,6 +5104,7 @@ function renderRoster(){
     +'<div style="text-align:center;margin-bottom:16px">'
     +'<button onclick="switchScheduleTab(&apos;daily&apos;)" id="stab_daily" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:rgba(192,39,45,.08);color:#c0272d;border:1.5px solid rgba(192,39,45,.2);margin:4px">📅 Daily Off Schedule</button>'
     +'<button onclick="switchScheduleTab(&apos;weekly&apos;)" id="stab_weekly" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;margin:4px">📞 Weekly Calls & Break</button>'
+    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;margin:4px">📋 Attendance</button>'
     +'<button onclick="switchScheduleTab(&apos;vacation&apos;)" id="stab_vacation" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;margin:4px">🗓️ Vacation Schedule</button>'
     +'</div>'
     +'<div id="schedule_daily">'
@@ -4938,6 +5112,17 @@ function renderRoster(){
     +'</div>'
     +'<div id="schedule_weekly" style="display:none">'+weeklyHTML+'</div>'
     +'<div id="schedule_vacation" style="display:none"><iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRGq8k4RcP7K-rN9KkI93gmD51I3KjFVE2GYoofk85KS5PxOZVRfX8p_QEEBMxDvm-hiRfEt-dK2oZH/pubhtml?gid=644438759&single=true&widget=false&headers=false" style="width:100%;height:calc(100vh - 220px);border:none;display:block;border-radius:8px;margin-top:12px"></iframe></div>'
+    +'<div id="schedule_attendance" style="display:none">'
+    +'<div style="background:#fff;border-radius:14px;padding:18px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:5px solid #c0272d">'
+    +'<div class="att-date-row">'
+    +'<label style="font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.04em">📅 Select Date:</label>'
+    +'<input type="date" id="attDatePicker" style="font-size:14px;padding:8px 14px;border-radius:10px;border:2px solid #ddd;background:#fafafa;cursor:pointer;font-weight:600" onchange="renderAttendanceTab()">'
+    +'<button class="att-today-btn" onclick="setAttToday()">📍 Today</button>'
+    +'</div>'
+    +'<div class="att-summary-row" id="attSummaryRow"></div>'
+    +'</div>'
+    +'<div id="attTableContainer"></div>'
+    +'</div>'
     +'</div>';
 }
 
@@ -4959,12 +5144,17 @@ function switchScheduleTab(tab){
   document.getElementById('schedule_daily').style.display = tab==='daily' ? 'block' : 'none';
   document.getElementById('schedule_weekly').style.display = tab==='weekly' ? 'block' : 'none';
   document.getElementById('schedule_vacation').style.display = tab==='vacation' ? 'block' : 'none';
+  const attEl = document.getElementById('schedule_attendance');
+  if(attEl) attEl.style.display = tab==='attendance' ? 'block' : 'none';
   document.getElementById('stab_daily').style.background = tab==='daily' ? 'rgba(192,39,45,.08)' : '#fff';
   document.getElementById('stab_daily').style.color = tab==='daily' ? '#c0272d' : '#555';
   document.getElementById('stab_weekly').style.background = tab==='weekly' ? 'rgba(192,39,45,.08)' : '#fff';
   document.getElementById('stab_weekly').style.color = tab==='weekly' ? '#c0272d' : '#555';
   document.getElementById('stab_vacation').style.background = tab==='vacation' ? 'rgba(192,39,45,.08)' : '#fff';
   document.getElementById('stab_vacation').style.color = tab==='vacation' ? '#c0272d' : '#555';
+  const stabAtt = document.getElementById('stab_attendance');
+  if(stabAtt){ stabAtt.style.background = tab==='attendance' ? 'rgba(192,39,45,.08)' : '#fff'; stabAtt.style.color = tab==='attendance' ? '#c0272d' : '#555'; }
+  if(tab==='attendance') setAttToday();
 }
 
 function renderAnnouncements(){
