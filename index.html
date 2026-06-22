@@ -893,10 +893,10 @@ function renderAttendanceTab(){
     +'</div>'
     +'<div style="overflow-x:auto"><table class="att-agent-table">'
     +'<thead><tr>'
-    +'<th style="width:44px;text-align:center">#</th>'
-    +'<th style="text-align:left;padding-left:24px">Agent Name</th>'
-    +'<th style="text-align:center">Status</th>'
-    +'<th style="text-align:center">Campaign</th>'
+    +'<th style="width:40px;text-align:center">#</th>'
+    +'<th style="width:34%;text-align:left;padding-left:16px">Agent Name</th>'
+    +'<th style="width:33%;text-align:center">Status</th>'
+    +'<th style="width:33%;text-align:center">Campaign</th>'
     +'</tr></thead><tbody>';
 
   rows.forEach((r,i)=>{
@@ -905,14 +905,17 @@ function renderAttendanceTab(){
     const stCls = STATUS_CLASS[r.status]||'off';
     const stIco = STATUS_ICONS[r.status]||'—';
     const stLabel = r.status==='Sickleave'?'Sick Leave':r.status;
-    html += '<tr style="background:#fff">'
+    html += (()=>{
+      const rb=r.campaign==='WhatsApp'?'#EFF6FF':r.campaign==='Multi Campaign'?'#FFF0F5':'#fff';
+      return '<tr style="background:'+rb+'">';
+    })()
       +'<td style="font-size:11px;color:#ccc;font-weight:700;text-align:center;width:44px">'+(i+1)+'</td>'
-      +'<td style="text-align:left;padding-left:24px"><div style="display:inline-flex;align-items:center;gap:10px;background:#f5f5f5;padding:5px 14px 5px 8px;border-radius:20px">'
+      +'<td style="width:34%;text-align:left;padding-left:16px"><div style="display:inline-flex;align-items:center;gap:8px;background:#f5f5f5;padding:4px 12px 4px 6px;border-radius:20px">'
       +'<div class="att-avatar" style="background:'+c.bg+';color:'+c.text+'">'+init+'</div>'
       +'<span style="font-weight:600;color:#1a1a2e;font-size:13px">'+r.name+'</span>'
       +'</div></td>'
-      +'<td style="text-align:center;vertical-align:middle"><span class="att-status-badge '+stCls+'">'+stIco+' '+stLabel+'</span></td>'
-      +'<td style="text-align:center">'+(r.campaign
+      +'<td style="width:33%;text-align:center;vertical-align:middle"><span class="att-status-badge '+stCls+'">'+stIco+' '+stLabel+'</span></td>'
+      +'<td style="width:33%;text-align:center">'+(r.campaign
         ? (()=>{
             const cv=r.campaign;
             let bg='#f5f5f5',cl='#555',bc='#ddd';
@@ -5130,13 +5133,13 @@ function renderRoster(){
     +'<div id="schedule_weekly" style="display:none">'+weeklyHTML+'</div>'
     +'<div id="schedule_vacation" style="display:none"><iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRGq8k4RcP7K-rN9KkI93gmD51I3KjFVE2GYoofk85KS5PxOZVRfX8p_QEEBMxDvm-hiRfEt-dK2oZH/pubhtml?gid=644438759&single=true&widget=false&headers=false" style="width:100%;height:calc(100vh - 220px);border:none;display:block;border-radius:8px;margin-top:12px"></iframe></div>'
     +'<div id="schedule_attendance" style="display:none">'
-    +'<div style="background:#fff;border-radius:10px;padding:10px 20px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-left:4px solid #c0272d">'
-    +'<div style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:8px">'
+    +'<div style="background:#fff;border-radius:10px;padding:10px 16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-left:4px solid #c0272d">'
+    +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:7px">'
     +'<label style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">📅 Date:</label>'
     +'<input type="date" id="attDatePicker" style="font-size:13px;padding:6px 12px;border-radius:8px;border:1.5px solid #ddd;background:#fafafa;cursor:pointer;font-weight:600" onchange="renderAttendanceTab()">'
     +'<button class="att-today-btn" onclick="setAttToday()">📍 Today</button>'
     +'</div>'
-    +'<div id="attSummaryRow" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:center"></div>'
+    +'<div id="attSummaryRow" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"></div>'
     +'</div>'
     +'<div id="attTableContainer"></div>'
     +'</div>'
