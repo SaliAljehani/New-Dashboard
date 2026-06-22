@@ -5847,7 +5847,7 @@ async function renderRef(){
 
     const cItems=sGroups['Complaint']||[];
     const mainC=cItems[0]||null;
-    const allComplaintSubjects=cItems.flatMap(i=>i.subject.split('\n')).map(s=>s.trim()).filter(Boolean);
+    const allComplaintSubjects=cItems.flatMap(i=>i.subject.split(/\n| - /).map(s=>s.trim()).filter(Boolean));
     const subC=allComplaintSubjects.slice(1);
     if(mainC)mainC.subject=allComplaintSubjects[0]||mainC.subject;
 
@@ -5858,9 +5858,21 @@ async function renderRef(){
         +'<div class="ref-subj-subject">'+it.subject
         +(it.status?'<span class="ref-subj-badge" style="background:'+(it.status==='Open'?'#fde':'#e8f5e9')+';color:'+(it.status==='Open'?'#c0272d':'#2e7d32')+'">'+it.status+'</span>':'')
         +'</div>'
-        +(depts.length?'<div class="ref-subj-row"><span class="ref-subj-ico">📂</span><span>'+depts.map(d=>'<span style="display:inline-block;background:#f0f0f0;color:#666;font-size:11px;font-weight:600;padding:2px 9px;border-radius:6px;margin:2px">'+d+'</span>').join('')+'</span></div>':'')
-        +(it.desc?'<div class="ref-subj-row"><span class="ref-subj-ico">✏️</span><span>'+it.desc+'</span></div>':'')
-        +(cats.length?'<div class="ref-subj-row"><span class="ref-subj-ico">🏷️</span><span>'+cats.map(c=>'<span style="display:inline-block;background:#fff8e1;color:#9e7700;font-size:11px;font-weight:600;padding:2px 9px;border-radius:6px;margin:2px">'+c+'</span>').join('')+'</span></div>':'')
+        +(depts.length?(()=>{
+          const allDepts=depts.flatMap(d=>d.split(' - ').map(s=>s.trim()).filter(Boolean));
+          return '<div class="ref-subj-row"><span class="ref-subj-ico">📂</span><span>'+allDepts.map(d=>'<span style="display:inline-block;background:#f0f0f0;color:#555;font-size:11px;font-weight:600;padding:2px 9px;border-radius:6px;margin:2px">'+d+'</span>').join('')+'</span></div>';
+        })():'')
+        +(it.desc?(()=>{
+          const parts=it.desc.split(' - ').map(s=>s.trim()).filter(Boolean);
+          if(parts.length>1){
+            return '<div class="ref-subj-row"><span class="ref-subj-ico">✏️</span><span>'+parts.map(p=>'<span style="display:inline-block;background:#e3f2fd;color:#1565c0;font-size:11px;font-weight:600;padding:2px 9px;border-radius:6px;margin:2px">'+p+'</span>').join('')+'</span></div>';
+          }
+          return '<div class="ref-subj-row"><span class="ref-subj-ico">✏️</span><span>'+it.desc+'</span></div>';
+        })():'')
+        +(cats.length?(()=>{
+          const allCats=cats.flatMap(c=>c.split(' - ').map(s=>s.trim()).filter(Boolean));
+          return '<div class="ref-subj-row"><span class="ref-subj-ico">🏷️</span><span>'+allCats.map(c=>'<span style="display:inline-block;background:#fff8e1;color:#9e7700;font-size:11px;font-weight:600;padding:2px 9px;border-radius:6px;margin:2px">'+c+'</span>').join('')+'</span></div>';
+        })():'')
         +(it.notes?'<div class="ref-subj-row ref-subj-note"><span class="ref-subj-ico">💡</span><span>'+it.notes+'</span></div>':'')
         +(isCMain&&subTags&&subTags.length?'<div class="ref-subj-complaints">'+subTags.map(s=>'<span class="ref-subj-complaint-tag">'+s+'</span>').join('')+'</div>':'')
         +'</div>';
