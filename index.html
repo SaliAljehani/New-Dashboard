@@ -877,16 +877,15 @@ function renderAttendanceTab(){
   const displayDate = DAY_NAMES[dObj.getDay()]+', '+dObj.getDate()+' '+MON_NAMES[dObj.getMonth()]+' '+dObj.getFullYear();
 
   let html = '<div class="att-table-wrap">'
-    +'<div class="att-table-title">'
-    +'<span>📋 Attendance — '+displayDate+'</span>'
-    +'<span style="font-size:12px;font-weight:500;color:#aaa">'+rows.length+' agents</span>'
+    +'<div style="padding:14px 18px;font-size:13px;font-weight:700;color:#1a1a2e;border-bottom:2px solid #f0f0f0;text-align:center">'
+    +'📋 Attendance — '+displayDate
     +'</div>'
     +'<div style="overflow-x:auto"><table class="att-agent-table">'
     +'<thead><tr>'
     +'<th style="width:44px;text-align:center">#</th>'
-    +'<th>Agent Name</th>'
-    +'<th>Status</th>'
-    +'<th>Campaign</th>'
+    +'<th style="text-align:center">Agent Name</th>'
+    +'<th style="text-align:center">Status</th>'
+    +'<th style="text-align:center">Campaign</th>'
     +'</tr></thead><tbody>';
 
   rows.forEach((r,i)=>{
@@ -897,7 +896,7 @@ function renderAttendanceTab(){
     const stLabel = r.status==='Sickleave'?'Sick Leave':r.status;
     html += '<tr>'
       +'<td style="font-size:11px;color:#ccc;font-weight:700;text-align:center;width:44px">'+(i+1)+'</td>'
-      +'<td style="text-align:left"><div style="display:flex;align-items:center;gap:10px">'
+      +'<td><div style="display:flex;align-items:center;gap:10px;justify-content:center">'
       +'<div class="att-avatar" style="background:'+c.bg+';color:'+c.text+'">'+init+'</div>'
       +'<span style="font-weight:600;color:#1a1a2e">'+r.name+'</span>'
       +'</div></td>'
@@ -1046,9 +1045,12 @@ async function loadAllData(silent){
       if(!agent||!dt||dt.length<8||!st)return;
       if(!ATT[agent])ATT[agent]={};
       ATT[agent][dt]=st;
-      // Save campaign
-      const camp=String(r['Campaign']||r['campaign']||'').trim();
-      if(camp){
+      // Save campaign - try all possible column names + positional fallback
+      const campVal = r['Campaign']||r['campaign']||r['CAMPAIGN']||r['Camp']||
+                      r['Campaign ']||r[' Campaign']||
+                      Object.values(r)[3]||'';
+      const camp=String(campVal).trim();
+      if(camp && camp !== 'undefined'){
         if(!window.__ATT_CAMP__)window.__ATT_CAMP__={};
         if(!window.__ATT_CAMP__[agent])window.__ATT_CAMP__[agent]={};
         window.__ATT_CAMP__[agent][dt]=camp;
@@ -5108,10 +5110,12 @@ function renderRoster(){
     +'<div id="schedule_weekly" style="display:none">'+weeklyHTML+'</div>'
     +'<div id="schedule_vacation" style="display:none"><iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRGq8k4RcP7K-rN9KkI93gmD51I3KjFVE2GYoofk85KS5PxOZVRfX8p_QEEBMxDvm-hiRfEt-dK2oZH/pubhtml?gid=644438759&single=true&widget=false&headers=false" style="width:100%;height:calc(100vh - 220px);border:none;display:block;border-radius:8px;margin-top:12px"></iframe></div>'
     +'<div id="schedule_attendance" style="display:none">'
-    +'<div style="background:#fff;border-radius:10px;padding:10px 16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-left:4px solid #c0272d;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
+    +'<div style="background:#fff;border-radius:10px;padding:10px 20px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-left:4px solid #c0272d">'
+    +'<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px">'
     +'<label style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">📅 Date:</label>'
     +'<input type="date" id="attDatePicker" style="font-size:13px;padding:6px 12px;border-radius:8px;border:1.5px solid #ddd;background:#fafafa;cursor:pointer;font-weight:600" onchange="renderAttendanceTab()">'
     +'<button class="att-today-btn" onclick="setAttToday()">📍 Today</button>'
+    +'</div>'
     +'<div id="attSummaryRow" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"></div>'
     +'</div>'
     +'<div id="attTableContainer"></div>'
