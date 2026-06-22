@@ -331,8 +331,8 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .att-table-wrap{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .att-table-title{padding:14px 18px;font-size:13px;font-weight:700;color:#1a1a2e;border-bottom:2px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between}
 .att-agent-table{width:100%;border-collapse:collapse;font-size:13px}
-.att-agent-table th{background:#f8f8f8;padding:10px 16px;font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid #eee;text-align:left}
-.att-agent-table td{padding:10px 16px;border-bottom:1px solid #f5f5f5;vertical-align:middle}
+.att-agent-table th{background:#f8f8f8;padding:6px 16px;font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid #eee;text-align:center}
+.att-agent-table td{padding:5px 16px;border-bottom:1px solid #f5f5f5;vertical-align:middle;text-align:center}
 .att-agent-table tr:last-child td{border-bottom:none}
 .att-agent-table tr:hover td{background:#fef9f9}
 .att-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
@@ -830,24 +830,12 @@ function renderAttendanceTab(){
     }
   });
 
-  // Add campaign from raw data
-  if(window.__ATT_RAW__ && window.__ATT_RAW__.length){
-    const nameMap={'Nesreen  Mansour':'Nesreen Mansour','Walaa Meezi ':'Walaa Meezi','Gofran Rafie ':'Ghofran Rafiei','Gofran Rafie':'Ghofran Rafiei','Asma Bawayan':'Asmaa M. Bawayan'};
-    window.__ATT_RAW__.forEach(r=>{
-      let dtVal = r['Date']||'';
-      let dt = '';
-      const gm = String(dtVal).match(/Date\((\d+),(\d+),(\d+)\)/);
-      if(gm) dt = parseInt(gm[1])+'-'+String(parseInt(gm[2])+1).padStart(2,'0')+'-'+String(parseInt(gm[3])).padStart(2,'0');
-      else if(String(dtVal).includes('/')){
-        const p=String(dtVal).split('/');
-        if(p.length===3) dt=(p[2].length===4?p[2]:'20'+p[2])+'-'+p[0].padStart(2,'0')+'-'+p[1].padStart(2,'0');
-      } else dt = String(dtVal).slice(0,10);
-      if(dt !== dateVal) return;
-      let agent = (r['Agent Name']||r['Agent']||'').trim();
-      agent = nameMap[agent]||agent;
-      const camp = String(r['Campaign']||r['campaign']||'').trim();
-      const found = rows.find(x=>x.name===agent);
-      if(found && camp) found.campaign = camp;
+  // Add campaign from ATT_CAMP store (saved during data load)
+  if(window.__ATT_CAMP__){
+    rows.forEach(r=>{
+      if(window.__ATT_CAMP__[r.name] && window.__ATT_CAMP__[r.name][dateVal]){
+        r.campaign = window.__ATT_CAMP__[r.name][dateVal];
+      }
     });
   }
 
@@ -908,13 +896,13 @@ function renderAttendanceTab(){
     const stIco = STATUS_ICONS[r.status]||'—';
     const stLabel = r.status==='Sickleave'?'Sick Leave':r.status;
     html += '<tr>'
-      +'<td style="font-size:11px;color:#ccc;font-weight:700;text-align:center">'+(i+1)+'</td>'
-      +'<td><div style="display:flex;align-items:center;gap:10px">'
+      +'<td style="font-size:11px;color:#ccc;font-weight:700;text-align:center;width:44px">'+(i+1)+'</td>'
+      +'<td style="text-align:left"><div style="display:flex;align-items:center;gap:10px">'
       +'<div class="att-avatar" style="background:'+c.bg+';color:'+c.text+'">'+init+'</div>'
       +'<span style="font-weight:600;color:#1a1a2e">'+r.name+'</span>'
       +'</div></td>'
-      +'<td><span class="att-status-badge '+stCls+'">'+stIco+' '+stLabel+'</span></td>'
-      +'<td>'+(r.campaign
+      +'<td style="text-align:center"><span class="att-status-badge '+stCls+'">'+stIco+' '+stLabel+'</span></td>'
+      +'<td style="text-align:center">'+(r.campaign
         ? '<span class="att-campaign-tag">'+r.campaign+'</span>'
         : '<span style="color:#ddd;font-size:13px">—</span>')+'</td>'
       +'</tr>';
@@ -1017,7 +1005,7 @@ async function loadAllData(silent){
     console.log('D keys:', Object.keys(D).length, 'agents:', Object.keys(D).slice(0,3));
     // Process Attendance
     setProgress(75,'Processing Attendance Data...');
-    ATT={};
+    ATT={};window.__ATT_CAMP__={};
     const nameMap={'Nesreen  Mansour':'Nesreen Mansour','Walaa Meezi ':'Walaa Meezi','Gofran Rafie ':'Ghofran Rafiei','Gofran Rafie':'Ghofran Rafiei','Asma Bawayan':'Asmaa M. Bawayan'};
     const normStatus=s=>{
       const v=String(s).trim().toLowerCase().replace(/\s+/g,' ');
@@ -1058,6 +1046,13 @@ async function loadAllData(silent){
       if(!agent||!dt||dt.length<8||!st)return;
       if(!ATT[agent])ATT[agent]={};
       ATT[agent][dt]=st;
+      // Save campaign
+      const camp=String(r['Campaign']||r['campaign']||'').trim();
+      if(camp){
+        if(!window.__ATT_CAMP__)window.__ATT_CAMP__={};
+        if(!window.__ATT_CAMP__[agent])window.__ATT_CAMP__[agent]={};
+        window.__ATT_CAMP__[agent][dt]=camp;
+      }
     });
 
     // Process Call Data
@@ -5113,13 +5108,11 @@ function renderRoster(){
     +'<div id="schedule_weekly" style="display:none">'+weeklyHTML+'</div>'
     +'<div id="schedule_vacation" style="display:none"><iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRGq8k4RcP7K-rN9KkI93gmD51I3KjFVE2GYoofk85KS5PxOZVRfX8p_QEEBMxDvm-hiRfEt-dK2oZH/pubhtml?gid=644438759&single=true&widget=false&headers=false" style="width:100%;height:calc(100vh - 220px);border:none;display:block;border-radius:8px;margin-top:12px"></iframe></div>'
     +'<div id="schedule_attendance" style="display:none">'
-    +'<div style="background:#fff;border-radius:14px;padding:18px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:5px solid #c0272d">'
-    +'<div class="att-date-row">'
-    +'<label style="font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.04em">📅 Select Date:</label>'
-    +'<input type="date" id="attDatePicker" style="font-size:14px;padding:8px 14px;border-radius:10px;border:2px solid #ddd;background:#fafafa;cursor:pointer;font-weight:600" onchange="renderAttendanceTab()">'
+    +'<div style="background:#fff;border-radius:10px;padding:10px 16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-left:4px solid #c0272d;display:flex;align-items:center;gap:12px;flex-wrap:wrap">'
+    +'<label style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">📅 Date:</label>'
+    +'<input type="date" id="attDatePicker" style="font-size:13px;padding:6px 12px;border-radius:8px;border:1.5px solid #ddd;background:#fafafa;cursor:pointer;font-weight:600" onchange="renderAttendanceTab()">'
     +'<button class="att-today-btn" onclick="setAttToday()">📍 Today</button>'
-    +'</div>'
-    +'<div class="att-summary-row" id="attSummaryRow"></div>'
+    +'<div id="attSummaryRow" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"></div>'
     +'</div>'
     +'<div id="attTableContainer"></div>'
     +'</div>'
