@@ -859,15 +859,26 @@ function renderAttendanceTab(){
   // Summary pills
   const counts={};
   rows.forEach(r=>{ const k=r.status; counts[k]=(counts[k]||0)+1; });
+  // Count campaigns
+  const campCounts={};
+  rows.forEach(r=>{ if(r.campaign){ campCounts[r.campaign]=(campCounts[r.campaign]||0)+1; }});
+
   if(summaryRow){
     const PILL_ORDER=['Office','complaints support','Remote','Sick','Sickleave','Vacation','Saturday Shift','EL','Off','Absent'];
-    summaryRow.innerHTML = '<span style="font-size:12px;font-weight:700;color:#888;margin-right:6px">'+rows.length+' agents</span>'
-      + PILL_ORDER.filter(s=>counts[s]).map(s=>{
+    let html_pills = '<span style="font-size:12px;font-weight:700;color:#888;margin-right:6px">'+rows.length+' agents</span>';
+    html_pills += PILL_ORDER.filter(s=>counts[s]).map(s=>{
         const cls = STATUS_CLASS[s]||'off';
         const ico = STATUS_ICONS[s]||'—';
         const lbl = s==='Sickleave'?'Sick Leave':s;
         return '<span class="att-pill '+cls+'">'+ico+' '+lbl+' ('+counts[s]+')</span>';
       }).join('');
+    // Add campaign pills
+    if(campCounts['WhatsApp']) html_pills += '<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7">💬 WhatsApp ('+campCounts['WhatsApp']+')</span>';
+    if(campCounts['Multi Campaign']) html_pills += '<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;background:#fce4ec;color:#880e4f;border:1px solid #f48fb1">📞 Multi Campaign ('+campCounts['Multi Campaign']+')</span>';
+    Object.entries(campCounts).filter(([k])=>k!=='WhatsApp'&&k!=='Multi Campaign').forEach(([k,v])=>{
+      html_pills += '<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;background:#f0f4ff;color:#3949ab;border:1px solid #c5cae9">'+k+' ('+v+')</span>';
+    });
+    summaryRow.innerHTML = html_pills;
   }
 
   // Nice date display
@@ -883,7 +894,7 @@ function renderAttendanceTab(){
     +'<div style="overflow-x:auto"><table class="att-agent-table">'
     +'<thead><tr>'
     +'<th style="width:44px;text-align:center">#</th>'
-    +'<th style="text-align:center">Agent Name</th>'
+    +'<th style="text-align:left;padding-left:24px">Agent Name</th>'
     +'<th style="text-align:center">Status</th>'
     +'<th style="text-align:center">Campaign</th>'
     +'</tr></thead><tbody>';
@@ -894,7 +905,8 @@ function renderAttendanceTab(){
     const stCls = STATUS_CLASS[r.status]||'off';
     const stIco = STATUS_ICONS[r.status]||'—';
     const stLabel = r.status==='Sickleave'?'Sick Leave':r.status;
-    html += '<tr>'
+    const rowBg = r.campaign==='WhatsApp' ? '#f0faf2' : r.campaign==='Multi Campaign' ? '#fdf0f5' : (i%2===0?'#fff':'#fefefe');
+    html += '<tr style="background:'+rowBg+'">'
       +'<td style="font-size:11px;color:#ccc;font-weight:700;text-align:center;width:44px">'+(i+1)+'</td>'
       +'<td style="text-align:left;padding-left:24px"><div style="display:inline-flex;align-items:center;gap:10px">'
       +'<div class="att-avatar" style="background:'+c.bg+';color:'+c.text+'">'+init+'</div>'
