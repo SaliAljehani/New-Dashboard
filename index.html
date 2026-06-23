@@ -580,11 +580,11 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
   <div id="recallContent"><div style="text-align:center;padding:40px;color:#aaa">Loading...</div></div>
 </div>
 </div>
-<footer style="position:relative">Inbound Daily Dashboard · Petromin Group · Connected to Google Sheets · Auto-updates on refresh<span style="position:absolute;left:14px;top:50%;transform:translateY(-50%)">By: Sali Aljehani</span><span style="position:absolute;right:14px;top:50%;transform:translateY(-50%)" id="lupd_footer" style="color:#c0272d;font-weight:600">🔄 Loading...</span></footer>
+<footer style="position:relative">Inbound Daily Dashboard · Petromin Group · Connected to Excel · Auto-updates on refresh<span style="position:absolute;left:14px;top:50%;transform:translateY(-50%)">By: Sali Aljehani</span><span style="position:absolute;right:14px;top:50%;transform:translateY(-50%)" id="lupd_footer" style="color:#c0272d;font-weight:600">🔄 Loading...</span></footer>
 
 <script>
 const SHEET_ID = '1MRUWG3v9Neac-UselMf_HzlfiLtX64a9iJsIUV5FmRU';
-const BASE_CSV = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&sheet=`;
+// BASE_CSV removed — now reading from local JSON files
 
 // DATA STORES
 let D={}, ATT={}, CALL={}, CALL_M={};
@@ -609,30 +609,36 @@ const TEAM_LOGOS={
 
 const SHEET_GIDS={'Agent':1123791969,'Agent Performance':810269545,'Attendance Data':1979596727,'Data Call':95246895,'Reference':910779499,'Weekly Calls & Break':1429234410,'Daily Off Schedule':1979894769,'Daily Off Schedule & Weekly Cal':1979894769,'Announcement Board':536403637,'Escalation':1827857824,'Escalation ':1827857824,'Employee of the MONTH':1892899267,'Subject':0,'Emails ':0,'Emails':0,'Contact Number ':0,'Contact Number':0,'Vacation Schedule 2026':0};
 // Use preloaded data if available (Apps Script), otherwise fetch
-async function loadSheet(name, retries){
-  if(window.__PRELOADED_DATA__ && window.__PRELOADED_DATA__[name]){
-    return window.__PRELOADED_DATA__[name];
-  }
-  retries = retries===undefined ? 2 : retries;
-  // Fallback: direct fetch (for GitHub Pages)
-  const gid = SHEET_GIDS[name] || '';
-  const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${SHEET_ID}&gid=${gid}`;
-  const controller = new AbortController();
-  const timeoutId = setTimeout(()=>controller.abort(), 15000);
-  try{
-    const res = await fetch(url, {signal: controller.signal});
-    clearTimeout(timeoutId);
-    if(!res.ok) throw new Error('Proxy error: ' + res.status + ' for ' + name);
-    return await res.json();
-  }catch(err){
-    clearTimeout(timeoutId);
-    if(retries>0){
-      console.warn('loadSheet retry for', name, '— attempts left:', retries, err.message);
-      await new Promise(r=>setTimeout(r,800));
-      return loadSheet(name, retries-1);
-    }
-    throw new Error((err.name==='AbortError'?'Timeout loading ':'Failed to load ')+name+' — '+err.message);
-  }
+// ── LOCAL JSON CACHE ─────────────────────────────────────────────────────────
+const __JSON_CACHE__ = {};
+const __SHEET_ID_TO_KEY__ = {
+  '1MRUWG3v9Neac-UselMf_HzlfiLtX64a9iJsIUV5FmRU': 'main',
+  '1lXDeN1iUosG_JSADgdWhnkT5J1t3hhwXoSJdbmb4B88': 'nissan',
+  '104CXGHd1raokgGijhvHgt6AI2gdsqzANBH74Ehm01dM': 'stellantis',
+  '11M28wIA4Ee84ohrIqzXtobK7X-QsrruoL4MwjoGz-6k': 'petromin',
+  '1FQaNEkC-gKFIJLT5hBE9qzBL7pXf_m5Aot35h622hR4': 'baic',
+  '1_Z8Ry4-Y7kNFYnhXNvn7QP8jt1S_n9JHdVC2zT6R6WE': 'bodyshop',
+  '1gKtlJ2VNz8ddL5yOuIgGCgAGGkqeizzZ_r9NZ1FNaj0': 'nos',
+  '1PBhYlWtWqGZFZi_wgjDTlUaoN6O0QeS4P1CHcd40H4Y': 'foton',
+  '1FuHyS6n5BxKpSMy2jShFzd0gaq9s8pElFfnwjNfOGf0': 'baic',
+  '1qOIoWAGNl3-0cha12rjNksUsEapffeZ20Ioz7vm7Rbk': 'recallRemote',
+  '1sgWulUi7UFe_J3t_U8pAzjwGBjr4_hAXBvej-KCINbs': 'recallSearch',
+};
+async function __loadJSON__(key){
+  if(__JSON_CACHE__[key]) return __JSON_CACHE__[key];
+  const res = await fetch(`data/${key}.json`);
+  if(!res.ok) throw new Error('Cannot load data/'+key+'.json');
+  __JSON_CACHE__[key] = await res.json();
+  return __JSON_CACHE__[key];
+}
+
+async function loadSheet(name){
+  const file = await __loadJSON__('main');
+  // Try exact match, then trimmed match
+  if(file[name]) return file[name];
+  const found = Object.keys(file).find(k=>k.trim()===name.trim());
+  if(found) return file[found];
+  return [];
 }
 
 
@@ -743,9 +749,7 @@ function changeAgentName(){
 }
 
 function sendHeartbeat(){
-  if(!currentAgentName) return;
-  const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${SHEET_ID}&ping=1&name=${encodeURIComponent(currentAgentName)}`;
-  fetch(url).catch(()=>{}); // best-effort, never block the UI on this
+  // Disabled — no longer using Google Sheets
 }
 
 async function loadOnlineUsers(){
@@ -1627,32 +1631,16 @@ let ANNOUNCEMENTS = [];
 let ESCALATIONS = [];
 let EOM_DATA = [];
 
-async function fetchCSVRaw(sheetId, sheetName, retries){
-  if(window.__PRELOADED_RAW__ && window.__PRELOADED_RAW__[sheetName]){
-    return window.__PRELOADED_RAW__[sheetName];
-  }
-  retries = retries===undefined ? 2 : retries;
-  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=`+encodeURIComponent(sheetName);
-  const controller = new AbortController();
-  const timeoutId = setTimeout(()=>controller.abort(), 15000);
-  try{
-    const res = await fetch(url, {signal: controller.signal});
-    clearTimeout(timeoutId);
-    const text = await res.text();
-    const json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}')+1));
-    const cols = json.table.cols.map(c=>c.label||'');
-    const rows = json.table.rows.map(r=>r.c.map(c=>c?(c.f!==undefined?c.f:c.v):''));
-    console.log('fetchCSVRaw(json)', sheetName, 'cols:', cols, 'rows:', rows.length, 'sample:', rows[0]);
-    return [cols, ...rows];
-  }catch(err){
-    clearTimeout(timeoutId);
-    if(retries>0){
-      console.warn('fetchCSVRaw retry for', sheetName, '— attempts left:', retries, err.message);
-      await new Promise(r=>setTimeout(r,800));
-      return fetchCSVRaw(sheetId, sheetName, retries-1);
-    }
-    throw new Error((err.name==='AbortError'?'Timeout loading ':'Failed to load ')+sheetName+' — '+err.message);
-  }
+async function fetchCSVRaw(sheetId, sheetName){
+  const key = __SHEET_ID_TO_KEY__[sheetId] || 'main';
+  const file = await __loadJSON__(key);
+  // Try exact match then trimmed
+  let rows = file[sheetName] || file[Object.keys(file).find(k=>k.trim()===sheetName.trim())] || [];
+  if(!rows.length) return [[]];
+  // Convert array-of-objects to 2D array [headers, ...rows]
+  const cols = Object.keys(rows[0]);
+  const data = rows.map(r=>cols.map(c=>r[c]||''));
+  return [cols, ...data];
 }
 
 function parseCSVRaw(text){
@@ -1867,29 +1855,14 @@ let REF_CACHE = {};
 let REF_ACTIVE_TABS = {nissan:0, stellantis:0, bodyshop:0, baic:0, baicRecall:0};
 let VIN_FILTERS = {};
 
-async function fetchSheet(spreadsheetId, sheetName, retries){
-  const key = `${spreadsheetId}__${sheetName}`;
-  if(REF_CACHE[key]) return REF_CACHE[key];
-
-  retries = retries===undefined ? 2 : retries;
-  const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${spreadsheetId}&sheetName=${encodeURIComponent(sheetName)}`;
-  const controller = new AbortController();
-  const timeoutId = setTimeout(()=>controller.abort(), 15000);
-  try{
-    const res = await fetch(url, {signal: controller.signal});
-    clearTimeout(timeoutId);
-    const rows = await res.json();
-    REF_CACHE[key] = rows;
-    return rows;
-  }catch(err){
-    clearTimeout(timeoutId);
-    if(retries>0){
-      console.warn('fetchSheet retry for', sheetName, '— attempts left:', retries, err.message);
-      await new Promise(r=>setTimeout(r,800));
-      return fetchSheet(spreadsheetId, sheetName, retries-1);
-    }
-    throw new Error((err.name==='AbortError'?'Timeout loading ':'Failed to load ')+sheetName+' — '+err.message);
-  }
+async function fetchSheet(spreadsheetId, sheetName){
+  const cacheKey = `${spreadsheetId}__${sheetName}`;
+  if(REF_CACHE[cacheKey]) return REF_CACHE[cacheKey];
+  const key = __SHEET_ID_TO_KEY__[spreadsheetId] || 'main';
+  const file = await __loadJSON__(key);
+  const rows = file[sheetName] || file[Object.keys(file).find(k=>k.trim()===sheetName.trim())] || [];
+  REF_CACHE[cacheKey] = rows;
+  return rows;
 }
 
 function makeRefTable(rows, vinFilter=''){
