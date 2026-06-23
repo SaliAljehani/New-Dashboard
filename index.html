@@ -683,7 +683,7 @@ function showMotivation(){
 
 // ===== PRESENCE / "WHO'S ONLINE" (named, one-time selection) =====
 let presenceStarted = false;
-const ONLINE_THRESHOLD_MS = 90000; // consider a viewer "online" if seen in the last 90s
+const ONLINE_THRESHOLD_MS = 180000; // consider a viewer "online" if seen in the last 3 min
 let currentAgentName = localStorage.getItem('dashboardAgentName') || '';
 
 function ensureAgentNameSelected(){
