@@ -753,7 +753,7 @@ async function loadOnlineUsers(){
     const rows = await fetchSheet(SHEET_ID, 'Active Sessions');
     const now = Date.now();
     const online = rows
-    
+      .filter(r => { const raw=r['LastSeen']||r['Last Seen']||''; let ts=0; const num=Number(String(raw).replace(/,/g,'')); if(!isNaN(num)&&num>1e12){ts=num;}else if(!isNaN(num)&&num>40000&&num<100000){ts=(num-25569)*86400000;}else if(raw){const p=new Date(raw);if(!isNaN(p))ts=p.getTime();} return ts>0&&(now-ts)<ONLINE_THRESHOLD_MS; })
       .map(r => r['Name'])
       .filter(Boolean)
       .sort((a,b)=>a.localeCompare(b,'ar'));
