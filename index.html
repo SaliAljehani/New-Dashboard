@@ -753,7 +753,7 @@ async function loadOnlineUsers(){
     const rows = await fetchSheet(SHEET_ID, 'Active Sessions');
     const now = Date.now();
     const online = rows
-      .filter(r => (now - Number(r['LastSeen']||0)) < ONLINE_THRESHOLD_MS)
+    
       .map(r => r['Name'])
       .filter(Boolean)
       .sort((a,b)=>a.localeCompare(b,'ar'));
