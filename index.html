@@ -5480,7 +5480,7 @@ function renderNewWeeklySchedule(){
     +'<span style="background:#FAE8E8;color:#7B3A3A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Multi-Camp</span>'
     +'</div>';
 
-  let html = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;justify-content:center">';
+  let html = '<div style="display:flex;justify-content:center;margin-bottom:16px">';
   weeks.forEach((w,i)=>{
     const isAct = i===activeIdx;
     html += '<button onclick="filterNewWeek('+i+')" id="nwk_'+i+'" style="'
