@@ -5358,18 +5358,8 @@ function renderNewWeeklySchedule(){
   }
 
   const today = new Date();
-  const todayStr = today.toISOString().slice(0,10);
-  const MON_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const DAY_SHORT=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-  // Parse the raw 2D array
-  // Structure from screenshot: each week block starts with a date-range header row,
-  // then a header row (Agent | Saturday | Sunday | Monday | Tuesday | Wednesday | Thursday | Friday),
-  // then agent data rows
   const raw = NEW_WEEKLY_DATA;
-
-  // Detect week blocks: look for rows where col[0] looks like a week range (e.g. "Jul 18 – Jul 24, 2026")
-  // or where col[1] = "Saturday" (day header)
   const weeks = [];
   let curWeek = null;
   let agentColHeaders = null;
@@ -5379,21 +5369,18 @@ function renderNewWeeklySchedule(){
     const c0 = String(row[0]||'').trim();
     const c1 = String(row[1]||'').trim();
 
-    // Detect agent header row: col[1]='Saturday'
     if(c1.toLowerCase()==='saturday' || c1.toLowerCase()==='sat'){
       agentColHeaders = row.map(c=>String(c||'').trim());
       continue;
     }
 
-    // Detect week label row: non-empty col[0] with no agent-like col[1], or contains "–"
     if(c0 && !c1 && c0.includes('2026')){
-      if(curWeek) weeks.push(curWeek);
+      if(curWeek && curWeek.agents.length) weeks.push(curWeek);
       curWeek = {label: c0, agents: []};
       agentColHeaders = null;
       continue;
     }
 
-    // Data row: first col = agent name
     if(curWeek && c0 && c0.toLowerCase()!=='agent' && agentColHeaders){
       const agentRow = {name: c0, days: {}};
       agentColHeaders.forEach((h, hi)=>{
@@ -5410,24 +5397,31 @@ function renderNewWeeklySchedule(){
     return;
   }
 
-  // Find active week (last week by default, or current if detectable)
-  let activeIdx = weeks.length - 1;
+  function parseLabelDates(label){
+    const months={january:0,february:1,march:2,april:3,may:4,june:5,july:6,august:7,september:8,october:9,november:10,december:11,
+      jan:0,feb:1,mar:2,apr:3,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+    const m = label.match(/(\w+)\s+(\d+)\s*[\u2013\-]\s*(\w+)\s+(\d+),?\s*(\d{4})/i);
+    if(!m) return {start:null,end:null};
+    const yr = parseInt(m[5]);
+    const sm = months[m[1].toLowerCase()], sd = parseInt(m[2]);
+    const em = months[m[3].toLowerCase()], ed = parseInt(m[4]);
+    return { start: new Date(yr, sm, sd), end: new Date(yr, em, ed) };
+  }
 
-  // Legend
-  const legendHTML = '<div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;padding:8px 0">'
-    +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#F1948A;color:#7B241C;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">OFF</span> Day Off</span>'
-    +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#AED6F1;color:#1A5276;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">Live Chat</span> Live Chat</span>'
-    +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#A9DFBF;color:#1E8449;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">Multi-Camp</span> Multi Campaign</span>'
-    +'</div>';
+  let activeIdx = weeks.length - 1;
+  weeks.forEach((w,i)=>{
+    const {start,end} = parseLabelDates(w.label);
+    if(start && end && today >= start && today <= end) activeIdx = i;
+  });
 
   function cellBadge(v){
     if(!v) return '';
     const vl = v.toLowerCase();
     let bg,col;
-    if(vl==='off'){bg='#F1948A';col='#7B241C';}
-    else if(vl==='live chat'){bg='#AED6F1';col='#1A5276';}
-    else if(vl.includes('multi')){bg='#A9DFBF';col='#1E8449';}
-    else{bg='#D7DBDD';col='#2C3E50';}
+    if(vl==='off'){bg='#FADBD8';col='#922B21';}
+    else if(vl==='live chat'){bg='#D6EAF8';col='#1A5276';}
+    else if(vl.includes('multi')){bg='#D5F5E3';col='#1E8449';}
+    else{bg='#F2F3F4';col='#2C3E50';}
     return '<span style="display:inline-block;background:'+bg+';color:'+col+';font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;white-space:nowrap">'+v+'</span>';
   }
 
@@ -5437,27 +5431,33 @@ function renderNewWeeklySchedule(){
     const dayNames = ['Saturday','Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
     const orderedKeys = dayNames.filter(d=>dayKeys.some(k=>k.toLowerCase()===d.toLowerCase()));
     if(!orderedKeys.length) orderedKeys.push(...dayKeys);
+    // Add Break Time if present
+    const breakKey = dayKeys.find(k=>k.toLowerCase().includes('break'));
+    if(breakKey) orderedKeys.push(breakKey);
 
     let tbl = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px">';
-    tbl += '<thead><tr style="background:rgba(212,196,168,.22)">'
-      +'<th style="padding:9px 14px;text-align:center;min-width:150px;font-size:12px;font-weight:700;color:#2c2c2c;border-bottom:2px solid rgba(212,196,168,.5);position:sticky;left:0;background:rgba(212,196,168,.22);z-index:2">Agent Name</th>';
+    tbl += '<thead><tr style="background:rgba(0,0,0,.04)">'
+      +'<th style="padding:9px 14px;text-align:center;min-width:150px;font-size:12px;font-weight:700;color:#2c2c2c;border-bottom:2px solid rgba(0,0,0,.08);position:sticky;left:0;background:rgba(0,0,0,.04);z-index:2">Agent Name</th>';
     orderedKeys.forEach(d=>{
       const wknd = d==='Friday'||d==='Saturday';
-      tbl += '<th style="padding:6px 4px;text-align:center;min-width:90px;font-weight:700;border-bottom:2px solid rgba(212,196,168,.5);'
-        +'background:'+(wknd?'rgba(212,196,168,.32)':'rgba(212,196,168,.12)')+';'
-        +'color:'+(wknd?'#5D4037':'#333')+'"><div style="font-size:11px;font-weight:700">'+d+'</div></th>';
+      const isBreak = d.toLowerCase().includes('break');
+      tbl += '<th style="padding:6px 4px;text-align:center;min-width:'+(isBreak?'80':'90')+'px;font-weight:700;border-bottom:2px solid rgba(0,0,0,.08);'
+        +'background:'+(isBreak?'rgba(192,39,45,.05)':wknd?'rgba(0,0,0,.07)':'rgba(0,0,0,.04)')+';'
+        +'color:'+(isBreak?'#c0272d':wknd?'#5D4037':'#333')+'"><div style="font-size:11px;font-weight:700">'+d+'</div></th>';
     });
     tbl += '</tr></thead><tbody>';
 
     w.agents.forEach((ag,ai)=>{
-      const rowBg = ai%2===0?'#fff':'rgba(212,196,168,.06)';
-      tbl += '<tr style="background:'+rowBg+'"><td style="padding:6px 10px;text-align:center;border-bottom:1px solid rgba(212,196,168,.2);position:sticky;left:0;background:'+rowBg+';z-index:1">'
-        +'<span style="display:inline-block;background:rgba(212,196,168,.38);color:#1a1a2e;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap">'+ag.name+'</span></td>';
+      const rowBg = ai%2===0?'#fff':'rgba(0,0,0,.02)';
+      tbl += '<tr style="background:'+rowBg+'"><td style="padding:6px 10px;text-align:center;border-bottom:1px solid rgba(0,0,0,.06);position:sticky;left:0;background:'+rowBg+';z-index:1">'
+        +'<span style="display:inline-block;background:rgba(0,0,0,.05);color:#1a1a2e;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap">'+ag.name+'</span></td>';
       orderedKeys.forEach(d=>{
         const matchKey = Object.keys(ag.days).find(k=>k.toLowerCase()===d.toLowerCase())||d;
         const v = ag.days[matchKey]||'';
         const wknd = d==='Friday'||d==='Saturday';
-        tbl += '<td style="padding:4px 3px;text-align:center;border-bottom:1px solid rgba(212,196,168,.12);background:'+(wknd?'rgba(212,196,168,.1)':'')+'">'+cellBadge(v)+'</td>';
+        const isBreak = d.toLowerCase().includes('break');
+        const cellStyle = 'padding:4px 3px;text-align:center;border-bottom:1px solid rgba(0,0,0,.06);background:'+(isBreak?'rgba(192,39,45,.03)':wknd?'rgba(0,0,0,.03)':'');
+        tbl += '<td style="'+cellStyle+'">'+(isBreak&&v?'<span style="font-size:11px;font-weight:600;color:#555">'+v+'</span>':cellBadge(v))+'</td>';
       });
       tbl += '</tr>';
     });
@@ -5465,7 +5465,12 @@ function renderNewWeeklySchedule(){
     return tbl;
   }
 
-  // Week filter buttons
+  const legendHTML = '<div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;padding:8px 0">'
+    +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#FADBD8;color:#922B21;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">OFF</span> Day Off</span>'
+    +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#D6EAF8;color:#1A5276;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">Live Chat</span> Live Chat</span>'
+    +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#D5F5E3;color:#1E8449;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">Multi-Camp</span> Multi Campaign</span>'
+    +'</div>';
+
   let html = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;justify-content:center">';
   weeks.forEach((w,i)=>{
     const isAct = i===activeIdx;
