@@ -5239,44 +5239,46 @@ let VACATION_DATA = [];
 
 async function loadVacationData(){
   try{
-    const raw = await fetchCSVRaw(SHEET_ID, 'Vacation Schedule 2026');
-    if(!raw || raw.length < 3){ return; }
+    const rows = await loadSheet('Vacation Schedule 2026');
+    if(!rows || rows.length < 3){ console.warn('Vacation: no data'); return; }
     
     const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     const months = [];
-    let i = 0;
     
-    while(i < raw.length){
-      const row = raw[i];
+    // loadSheet returns array of objects with headers as keys
+    // The sheet structure: row1=month name (col A), row2=# Agent Name Sun Mon...
+    // row3=blank blank 4 5 6..., row4+=agents
+    // Since loadSheet uses row1 as headers, we need raw approach
+    // Let's use the keys from first row
+    
+    // Actually rows from loadSheet are objects. Let's get all values
+    const allKeys = rows.length > 0 ? Object.keys(rows[0]) : [];
+    
+    // Build raw 2D from objects
+    const raw2d = rows.map(r => allKeys.map(k => r[k]||''));
+    
+    let i = 0;
+    while(i < raw2d.length){
+      const row = raw2d[i];
       const c0 = String(row[0]||'').trim();
       
-      // Month title row — col A has month name like "January 2026."
       if(c0 && c0.match(/\w+ 2026/)){
         const monthName = c0.replace('.','').trim();
         i++;
         
-        // Skip to header row (#, Agent Name, days...)
-        while(i < raw.length && String(raw[i][0]||'').trim() === '') i++;
-        if(i >= raw.length) break;
-        
-        // Header row: col[0]=#, col[1]=Agent Name, col[2..]=day numbers
-        const headerRow = raw[i];
-        const days = [];
-        // Find day name row (next row has Sun/Mon/Tue...)
-        // Actually in this sheet: row2 has day names, row3 has day numbers
-        // Let me check: headerRow[2] onwards are day names (Sun, Mon...)
-        // Then next row has numbers
-        
-        // Row i: # | Agent Name | Sun | Mon | Tue | ...
+        // next row: # | Agent Name | Sun | Mon ...
+        if(i >= raw2d.length) break;
+        const headerRow = raw2d[i];
         const dayNames = [];
         for(let j=2; j<headerRow.length; j++){
           const v = String(headerRow[j]||'').trim();
-          if(v) dayNames.push({col:j, name:v});
+          if(v && DAY_NAMES.includes(v)) dayNames.push({col:j, name:v});
         }
         i++;
         
-        // Row i+1: blank | blank | 4 | 5 | 6 | ...
-        const numRow = raw[i];
+        // next row: blank | blank | 4 | 5 | 6 ...
+        if(i >= raw2d.length) break;
+        const numRow = raw2d[i];
         const daysList = [];
         dayNames.forEach(d=>{
           const num = parseInt(numRow[d.col]);
@@ -5284,15 +5286,13 @@ async function loadVacationData(){
         });
         i++;
         
-        // Now read agent rows until empty row or next month
         const agents = [];
-        while(i < raw.length){
-          const r = raw[i];
+        while(i < raw2d.length){
+          const r = raw2d[i];
           const agName = String(r[1]||'').trim();
-          if(!agName){ i++; break; } // empty row = end of month
           const c0r = String(r[0]||'').trim();
-          if(c0r && c0r.match(/\w+ 2026/)){ break; } // next month
-          
+          if(c0r && c0r.match(/\w+ 2026/)){ break; }
+          if(!agName){ i++; continue; }
           const cells = daysList.map(d => String(r[d.col]||'').trim());
           agents.push({name: agName, cells: cells});
           i++;
@@ -5306,6 +5306,7 @@ async function loadVacationData(){
       }
     }
     
+    console.log('Vacation months loaded:', months.length);
     if(months.length) VACATION_DATA = months;
   } catch(e){
     console.warn('Vacation load failed:', e);
