@@ -5197,8 +5197,8 @@ function renderRoster(){
     +'<button onclick="switchScheduleTab(&apos;weeklyNew&apos;)" id="stab_weeklyNew" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;margin:4px">📅 Daily Off + Weekly Calls & Break</button>'
     +'<button onclick="switchScheduleTab(&apos;vacation&apos;)" id="stab_vacation" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;margin:4px">🗓️ Vacation Schedule</button>'
     +'</div>'
-    +'<div id="schedule_weeklyNew" style="display:none"><div style="text-align:center;padding:30px;color:#aaa">Loading...</div></div>'
-    +'<div id="schedule_vacation" style="display:none"><iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRGq8k4RcP7K-rN9KkI93gmD51I3KjFVE2GYoofk85KS5PxOZVRfX8p_QEEBMxDvm-hiRfEt-dK2oZH/pubhtml?gid=644438759&single=true&widget=false&headers=false" style="width:100%;height:calc(100vh - 220px);border:none;display:block;border-radius:8px;margin-top:12px"></iframe></div>'
+    +'<div id="schedule_weeklyNew" style="display:none;background:#FAF7F2;border-radius:14px;padding:16px;"><div style="text-align:center;padding:30px;color:#aaa">Loading...</div></div>'
+    +'<div id="schedule_vacation" style="display:none;background:#FAF7F2;border-radius:14px;padding:8px;"><iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRGq8k4RcP7K-rN9KkI93gmD51I3KjFVE2GYoofk85KS5PxOZVRfX8p_QEEBMxDvm-hiRfEt-dK2oZH/pubhtml?gid=644438759&single=true&widget=false&headers=false" style="width:100%;height:calc(100vh - 220px);border:none;display:block;border-radius:8px;margin-top:4px"></iframe></div>'
     +'<div id="schedule_attendance">'
     +'<div style="background:#fff;border-radius:10px;padding:10px 16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-left:4px solid #c0272d">'
     +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:7px">'
@@ -5242,6 +5242,9 @@ function hexToRgb(hex){ const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice
 function renderVacationSchedule(){
   const el = document.getElementById('schedule_vacation');
   if(!el) return;
+  el.style.background = '#FAF7F2';
+  el.style.borderRadius = '14px';
+  el.style.padding = '16px';
   const months = VACATION_DATA;
   if(!months.length){ el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">No data</div>'; return; }
   const today = new Date();
@@ -5352,6 +5355,9 @@ function showVacMonth(idx){
 function renderNewWeeklySchedule(){
   const el = document.getElementById('schedule_weeklyNew');
   if(!el) return;
+  el.style.background = '#FAF7F2';
+  el.style.borderRadius = '14px';
+  el.style.padding = '16px';
   if(!NEW_WEEKLY_DATA || NEW_WEEKLY_DATA.length < 2){
     el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">⏳ Loading data...</div>';
     return;
