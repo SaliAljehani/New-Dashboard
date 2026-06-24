@@ -5117,8 +5117,8 @@ function renderRoster(){
         if(v){
           var bg,col;
           if(isOff){bg='#F1948A';col='#7B241C';}
-          else if(isLive){bg='#A8D4C4';col='#1A4A3E';}
-          else if(isMulti){bg='#D4A8A8';col='#6B2A2A';}
+          else if(isLive){bg='#C8E8DF';col='#2A6B5A';}
+          else if(isMulti){bg='#E8C8C8';col='#7B3A3A';}
           else{bg='#D7DBDD';col='#2C3E50';}
           badge='<span style="display:inline-block;background:'+bg+';color:'+col+';font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;white-space:nowrap">'+v+'</span>';
         }
@@ -5133,8 +5133,8 @@ function renderRoster(){
   // Legend
   var legendHTML='<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;padding:8px 0">'
     +'<span style="background:#FADBD8;color:#922B21;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">OFF</span>'
-    +'<span style="background:#A8D4C4;color:#1A4A3E;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Live Chat</span>'
-    +'<span style="background:#D4A8A8;color:#6B2A2A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Multi-Camp</span>'
+    +'<span style="background:#C8E8DF;color:#2A6B5A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Live Chat</span>'
+    +'<span style="background:#E8C8C8;color:#7B3A3A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Multi-Camp</span>'
     +'</div>';
 
   // All week tables (hidden except active)
@@ -5425,8 +5425,8 @@ function renderNewWeeklySchedule(){
     const vl = v.toLowerCase();
     let bg,col;
     if(vl==='off'){bg='#FADBD8';col='#922B21';}
-    else if(vl==='live chat'){bg='#A8D4C4';col='#1A4A3E';}
-    else if(vl.includes('multi')){bg='#D4A8A8';col='#6B2A2A';}
+    else if(vl==='live chat'){bg='#C8E8DF';col='#2A6B5A';}
+    else if(vl.includes('multi')){bg='#E8C8C8';col='#7B3A3A';}
     else{bg='#F2F3F4';col='#2C3E50';}
     return '<span style="display:inline-block;background:'+bg+';color:'+col+';font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;white-space:nowrap">'+v+'</span>';
   }
@@ -5448,7 +5448,7 @@ function renderNewWeeklySchedule(){
       const wknd = d==='Friday'||d==='Saturday';
       const isBreak = d.toLowerCase().includes('break');
       tbl += '<th style="padding:6px 4px;text-align:center;min-width:'+(isBreak?'80':'90')+'px;font-weight:700;border-bottom:2px solid rgba(0,0,0,.08);'
-        +'background:'+(isBreak?'rgba(192,39,45,.05)':d==="Friday"?'#EDE8E2':'#F5F2EE')+';'
+        +'background:'+(isBreak?'rgba(192,39,45,.05)':d==="Friday"?'rgba(180,160,140,.12)':'#F5F2EE')+';'
         +'color:'+(isBreak?'#c0272d':d==="Friday"?'#5D4037':'#333')+'"><div style="font-size:11px;font-weight:700">'+d+'</div></th>';
     });
     tbl += '</tr></thead><tbody>';
@@ -5462,7 +5462,7 @@ function renderNewWeeklySchedule(){
         const v = ag.days[matchKey]||'';
         const wknd = d==='Friday'||d==='Saturday';
         const isBreak = d.toLowerCase().includes('break');
-        const cellStyle = 'padding:4px 3px;text-align:center;border-bottom:1px solid #EAE4DC;background:'+(isBreak?'rgba(192,39,45,.03)':d==="Friday"?'#EDE8E2':'');
+        const cellStyle = 'padding:4px 3px;text-align:center;border-bottom:1px solid #EAE4DC;background:'+(isBreak?'rgba(192,39,45,.03)':d==="Friday"?'rgba(180,160,140,.08)':'');
         tbl += '<td style="'+cellStyle+'">'+(isBreak&&v?'<span style="font-size:11px;font-weight:600;color:#555">'+v+'</span>':cellBadge(v))+'</td>';
       });
       tbl += '</tr>';
@@ -5473,16 +5473,19 @@ function renderNewWeeklySchedule(){
 
   const legendHTML = '<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;padding:8px 0">'
     +'<span style="background:#FADBD8;color:#922B21;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">OFF</span>'
-    +'<span style="background:#A8D4C4;color:#1A4A3E;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Live Chat</span>'
-    +'<span style="background:#D4A8A8;color:#6B2A2A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Multi-Camp</span>'
+    +'<span style="background:#C8E8DF;color:#2A6B5A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Live Chat</span>'
+    +'<span style="background:#E8C8C8;color:#7B3A3A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Multi-Camp</span>'
     +'</div>';
 
   let html = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;justify-content:center">';
   weeks.forEach((w,i)=>{
     const isAct = i===activeIdx;
     html += '<button onclick="filterNewWeek('+i+')" id="nwk_'+i+'" style="'
-      +'padding:6px 14px;border-radius:20px;border:none;font-size:11px;font-weight:700;cursor:pointer;transition:.2s;'
-      +(isAct?'background:#c0272d;color:#fff;box-shadow:0 2px 6px rgba(192,39,45,.3);':'background:#f5f5f5;color:#555;')
+      +'padding:6px 18px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;transition:.2s;'
+      +'border:1.5px solid '+(isAct?'rgba(192,39,45,.3)':'#e0e0e0')+';'
+      +'background:'+(isAct?'rgba(192,39,45,.08)':'#fff')+';'
+      +'color:'+(isAct?'#c0272d':'#666')+';'
+      +(isAct?'box-shadow:0 2px 6px rgba(192,39,45,.12);':'')
       +'">'+w.label+'</button>';
   });
   html += '</div>';
@@ -5499,9 +5502,10 @@ function renderNewWeeklySchedule(){
 function filterNewWeek(idx){
   document.querySelectorAll('[id^="nwt_"]').forEach((el,i)=>{ el.style.display=i===idx?'block':'none'; });
   document.querySelectorAll('[id^="nwk_"]').forEach((btn,i)=>{
-    btn.style.background = i===idx?'#c0272d':'#f5f5f5';
-    btn.style.color = i===idx?'#fff':'#555';
-    btn.style.boxShadow = i===idx?'0 2px 6px rgba(192,39,45,.3)':'';
+    btn.style.background = i===idx?'rgba(192,39,45,.08)':'#fff';
+    btn.style.color = i===idx?'#c0272d':'#666';
+    btn.style.border = i===idx?'1.5px solid rgba(192,39,45,.3)':'1.5px solid #e0e0e0';
+    btn.style.boxShadow = i===idx?'0 2px 6px rgba(192,39,45,.12)':'';
   });
 }
 
