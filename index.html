@@ -598,7 +598,7 @@ const TEAM_LOGOS={
   'BAIC':'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gAQTGF2YzU4LjkxLjEwMAD/2wBDAA4KCw0LCQ4NDA0QDw4RFiQXFhQUFiwgIRokNC43NjMuMjI6QVNGOj1OPjIySGJJTlZYXV5dOEVmbWVabFNbXVn/2wBDAQ8QEBYTFioXFypZOzI7WVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVn/wAARCABQAI4DASIAAhEBAxEB/8QAGwABAAMAAwEAAAAAAAAAAAAAAAQFBgECAwf/xAAyEAABBAADBAgGAgMAAAAAAAAAAQIDBAUREgYhMVQTFBUWIlGR0UFhcZOhsSPwUoKU/8QAGgEBAAMBAQEAAAAAAAAAAAAAAAECBAMFBv/EACQRAQACAQMDBAMAAAAAAAAAAAABAgMEERJBUaETFSGRFDFx/9oADAMBAAIRAxEAPwD6SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8JbdaF+iWxDG7jk56Ip07Rpc5X+633C3C09EoEXtGlzlf7rfcdo0ucr/db7g4W7JQIvaNLnK/3W+47Rpc5X+633Bwt2LmIVKCMW3YZDrz06l45EXvFhHPw+pn9prS2r7GwwyzxRs3PjiV7VVd65Km7yKbTJyVn/mX3KzL0cWipakWtM7ty3aDCnORrb0Kqq5IiLxLQwWB1nT4tXa+rMxrXa1V8GlN2/ib0mGbU4qYrRWoACWUAAAAADg5IWL2upYVasZ5LHGqt+vBPzkE1rNpiI6vme0FrruOW5UXNuvS36JuT9EizsziNaCSVzYXdE1HPYyRFc1PPIgYWkTsTrdZkRkKSIr3O4ZJvU0s20UNjGZIY2QQ1ppWtlsqqqr2N/Wafs5vp8lsmPjTFHxEKifZy5Wc1s0tRj3KiaFmRF3/ACO79lr7JYoldWWSVfC1JUzXcq5/TcT9orVXEL0OVqk+F8yZuZGqPazh4nfFPkSO16Xea5f6ePo69fRXT/NcuCfknaHH18/GJ67T0+lHPs5iEL4Gtjjm6dysYsT0cmacUXy4L6HW9gF2lB0zuhljR/RuWJ6O0u8lNLDjlCPEaWieKKotd3gY3dDKuSqq/wB8zyw7q0deHC607b08k62ZnRp4cm70TNfiqo38idkfk5o+bR4/v1s0OFz1qtFlRqqnVYsnrlu3cfye7MTrvaxU1+N2lPD8f6pXsoTpJGisdoWLVJ81zVcvXI82VLTWx/wvzZG5f9lMfrZe3h5c48dpmd1s3Ea7q6zNVytRyNyy35qSylbhskdqujWr0Ko10nkjkLs04bXtvzhnyVrG3GQAHZyAAAAAAqtocOnxXDuq15GR6norlfnvRPhu+eRagL0vNLRaP3DA9xbnN1/Rw7i3ebr+jjfAjjDZ7lqO/hge4t3m6/o4dxbvN1/RxvgOMHuWo7+GB7i3ebr+ji52a2bkwe1NPPLHI5zNDdCLu35rx+iGlA2hTJrs2Ss0tPxIcHIJYwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH//2Q=='
 };
 
-const SHEET_GIDS={'Agent':1123791969,'Agent Performance':810269545,'Attendance Data':1979596727,'Data Call':95246895,'Reference':910779499,'Weekly Calls & Break':1429234410,'Daily Off Schedule':1979894769,'Daily Off Schedule & Weekly Cal':1979894769,'Announcement Board':536403637,'Escalation':1827857824,'Escalation ':1827857824,'Employee of the MONTH':1892899267,'Subject':0,'Emails ':0,'Emails':0,'Contact Number ':0,'Contact Number':0,'Vacation Schedule 2026':0};
+const SHEET_GIDS={'Agent':1123791969,'Agent Performance':810269545,'Attendance Data':1979596727,'Data Call':95246895,'Reference':910779499,'Weekly Calls & Break':1429234410,'Daily Off Schedule':1979894769,'Daily Off Schedule & Weekly Cal':1979894769,'Announcement Board':536403637,'Escalation':1827857824,'Escalation ':1827857824,'Employee of the MONTH':1892899267,'Subject':0,'Emails ':0,'Emails':0,'Contact Number ':0,'Contact Number':0,'Vacation Schedule 2026':0,'Daily Off Schedule & Weekly Calls & Breakk':920710775};
 // Use preloaded data if available (Apps Script), otherwise fetch
 async function loadSheet(name, retries){
   if(window.__PRELOADED_DATA__ && window.__PRELOADED_DATA__[name]){
@@ -1614,6 +1614,7 @@ function rf(){
 // ── DIRECTORY DATA ──────────────────────────────────────────────────────
 let SCHEDULE_DATA = [];
 let WEEKLY_DATA = [];
+let NEW_WEEKLY_DATA = [];
 let ANNOUNCEMENTS = [];
 let ESCALATIONS = [];
 let EOM_DATA = [];
@@ -1715,6 +1716,15 @@ async function loadSchedule(){
     }
   }catch(e){ console.warn('weekly calls & break fetch failed', e); }
   WEEKLY_DATA = weeklyRows;
+
+  // New combined sheet: Daily Off Schedule & Weekly Calls & Breakk (gid 920710775)
+  try{
+    const newArr2d = await fetchCSVRaw(SHEET_ID, 'Daily Off Schedule & Weekly Calls & Breakk');
+    if(newArr2d && newArr2d.length > 1){
+      NEW_WEEKLY_DATA = newArr2d;
+    }
+  }catch(e){ console.warn('new weekly sheet fetch failed', e); NEW_WEEKLY_DATA=[]; }
+
   renderRoster();
 }
 
@@ -5183,17 +5193,13 @@ function renderRoster(){
 
   el.innerHTML = '<div style="padding:4px">'
     +'<div style="text-align:center;margin-bottom:16px">'
-    +'<button onclick="switchScheduleTab(&apos;daily&apos;)" id="stab_daily" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:rgba(192,39,45,.08);color:#c0272d;border:1.5px solid rgba(192,39,45,.2);margin:4px">📅 Daily Off Schedule</button>'
-    +'<button onclick="switchScheduleTab(&apos;weekly&apos;)" id="stab_weekly" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;margin:4px">📞 Weekly Calls & Break</button>'
-    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;margin:4px">📋 Attendance</button>'
+    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:rgba(192,39,45,.08);color:#c0272d;border:1.5px solid rgba(192,39,45,.2);margin:4px">📋 Attendance</button>'
+    +'<button onclick="switchScheduleTab(&apos;weeklyNew&apos;)" id="stab_weeklyNew" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;margin:4px">📅 Daily Off + Weekly Calls & Break</button>'
     +'<button onclick="switchScheduleTab(&apos;vacation&apos;)" id="stab_vacation" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;margin:4px">🗓️ Vacation Schedule</button>'
     +'</div>'
-    +'<div id="schedule_daily">'
-    +tableHTML
-    +'</div>'
-    +'<div id="schedule_weekly" style="display:none">'+weeklyHTML+'</div>'
+    +'<div id="schedule_weeklyNew" style="display:none"><div style="text-align:center;padding:30px;color:#aaa">Loading...</div></div>'
     +'<div id="schedule_vacation" style="display:none"><iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRGq8k4RcP7K-rN9KkI93gmD51I3KjFVE2GYoofk85KS5PxOZVRfX8p_QEEBMxDvm-hiRfEt-dK2oZH/pubhtml?gid=644438759&single=true&widget=false&headers=false" style="width:100%;height:calc(100vh - 220px);border:none;display:block;border-radius:8px;margin-top:12px"></iframe></div>'
-    +'<div id="schedule_attendance" style="display:none">'
+    +'<div id="schedule_attendance">'
     +'<div style="background:#fff;border-radius:10px;padding:10px 16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-left:4px solid #c0272d">'
     +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:7px">'
     +'<label style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">📅 Date:</label>'
@@ -5343,22 +5349,170 @@ function showVacMonth(idx){
 }
 
 
+function renderNewWeeklySchedule(){
+  const el = document.getElementById('schedule_weeklyNew');
+  if(!el) return;
+  if(!NEW_WEEKLY_DATA || NEW_WEEKLY_DATA.length < 2){
+    el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">⏳ Loading data...</div>';
+    return;
+  }
+
+  const today = new Date();
+  const todayStr = today.toISOString().slice(0,10);
+  const MON_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const DAY_SHORT=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  // Parse the raw 2D array
+  // Structure from screenshot: each week block starts with a date-range header row,
+  // then a header row (Agent | Saturday | Sunday | Monday | Tuesday | Wednesday | Thursday | Friday),
+  // then agent data rows
+  const raw = NEW_WEEKLY_DATA;
+
+  // Detect week blocks: look for rows where col[0] looks like a week range (e.g. "Jul 18 – Jul 24, 2026")
+  // or where col[1] = "Saturday" (day header)
+  const weeks = [];
+  let curWeek = null;
+  let agentColHeaders = null;
+
+  for(let ri = 0; ri < raw.length; ri++){
+    const row = raw[ri];
+    const c0 = String(row[0]||'').trim();
+    const c1 = String(row[1]||'').trim();
+
+    // Detect agent header row: col[1]='Saturday'
+    if(c1.toLowerCase()==='saturday' || c1.toLowerCase()==='sat'){
+      agentColHeaders = row.map(c=>String(c||'').trim());
+      continue;
+    }
+
+    // Detect week label row: non-empty col[0] with no agent-like col[1], or contains "–"
+    if(c0 && !c1 && c0.includes('2026')){
+      if(curWeek) weeks.push(curWeek);
+      curWeek = {label: c0, agents: []};
+      agentColHeaders = null;
+      continue;
+    }
+
+    // Data row: first col = agent name
+    if(curWeek && c0 && c0.toLowerCase()!=='agent' && agentColHeaders){
+      const agentRow = {name: c0, days: {}};
+      agentColHeaders.forEach((h, hi)=>{
+        if(hi===0) return;
+        agentRow.days[h||('col'+hi)] = String(row[hi]||'').trim();
+      });
+      curWeek.agents.push(agentRow);
+    }
+  }
+  if(curWeek && curWeek.agents.length) weeks.push(curWeek);
+
+  if(!weeks.length){
+    el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">No schedule data found.</div>';
+    return;
+  }
+
+  // Find active week (last week by default, or current if detectable)
+  let activeIdx = weeks.length - 1;
+
+  // Legend
+  const legendHTML = '<div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;padding:8px 0">'
+    +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#F1948A;color:#7B241C;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">OFF</span> Day Off</span>'
+    +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#AED6F1;color:#1A5276;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">Live Chat</span> Live Chat</span>'
+    +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#A9DFBF;color:#1E8449;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">Multi-Camp</span> Multi Campaign</span>'
+    +'</div>';
+
+  function cellBadge(v){
+    if(!v) return '';
+    const vl = v.toLowerCase();
+    let bg,col;
+    if(vl==='off'){bg='#F1948A';col='#7B241C';}
+    else if(vl==='live chat'){bg='#AED6F1';col='#1A5276';}
+    else if(vl.includes('multi')){bg='#A9DFBF';col='#1E8449';}
+    else{bg='#D7DBDD';col='#2C3E50';}
+    return '<span style="display:inline-block;background:'+bg+';color:'+col+';font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;white-space:nowrap">'+v+'</span>';
+  }
+
+  function buildWeekTable(w){
+    if(!w || !w.agents.length) return '<div style="padding:20px;text-align:center;color:#aaa">No data</div>';
+    const dayKeys = w.agents[0] ? Object.keys(w.agents[0].days) : [];
+    const dayNames = ['Saturday','Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
+    const orderedKeys = dayNames.filter(d=>dayKeys.some(k=>k.toLowerCase()===d.toLowerCase()));
+    if(!orderedKeys.length) orderedKeys.push(...dayKeys);
+
+    let tbl = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px">';
+    tbl += '<thead><tr style="background:rgba(212,196,168,.22)">'
+      +'<th style="padding:9px 14px;text-align:center;min-width:150px;font-size:12px;font-weight:700;color:#2c2c2c;border-bottom:2px solid rgba(212,196,168,.5);position:sticky;left:0;background:rgba(212,196,168,.22);z-index:2">Agent Name</th>';
+    orderedKeys.forEach(d=>{
+      const wknd = d==='Friday'||d==='Saturday';
+      tbl += '<th style="padding:6px 4px;text-align:center;min-width:90px;font-weight:700;border-bottom:2px solid rgba(212,196,168,.5);'
+        +'background:'+(wknd?'rgba(212,196,168,.32)':'rgba(212,196,168,.12)')+';'
+        +'color:'+(wknd?'#5D4037':'#333')+'"><div style="font-size:11px;font-weight:700">'+d+'</div></th>';
+    });
+    tbl += '</tr></thead><tbody>';
+
+    w.agents.forEach((ag,ai)=>{
+      const rowBg = ai%2===0?'#fff':'rgba(212,196,168,.06)';
+      tbl += '<tr style="background:'+rowBg+'"><td style="padding:6px 10px;text-align:center;border-bottom:1px solid rgba(212,196,168,.2);position:sticky;left:0;background:'+rowBg+';z-index:1">'
+        +'<span style="display:inline-block;background:rgba(212,196,168,.38);color:#1a1a2e;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap">'+ag.name+'</span></td>';
+      orderedKeys.forEach(d=>{
+        const matchKey = Object.keys(ag.days).find(k=>k.toLowerCase()===d.toLowerCase())||d;
+        const v = ag.days[matchKey]||'';
+        const wknd = d==='Friday'||d==='Saturday';
+        tbl += '<td style="padding:4px 3px;text-align:center;border-bottom:1px solid rgba(212,196,168,.12);background:'+(wknd?'rgba(212,196,168,.1)':'')+'">'+cellBadge(v)+'</td>';
+      });
+      tbl += '</tr>';
+    });
+    tbl += '</tbody></table></div>';
+    return tbl;
+  }
+
+  // Week filter buttons
+  let html = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;justify-content:center">';
+  weeks.forEach((w,i)=>{
+    const isAct = i===activeIdx;
+    html += '<button onclick="filterNewWeek('+i+')" id="nwk_'+i+'" style="'
+      +'padding:6px 14px;border-radius:20px;border:none;font-size:11px;font-weight:700;cursor:pointer;transition:.2s;'
+      +(isAct?'background:#c0272d;color:#fff;box-shadow:0 2px 6px rgba(192,39,45,.3);':'background:#f5f5f5;color:#555;')
+      +'">'+w.label+'</button>';
+  });
+  html += '</div>';
+  html += legendHTML;
+  html += '<div id="new_week_tables">';
+  weeks.forEach((w,i)=>{
+    html += '<div id="nwt_'+i+'" style="display:'+(i===activeIdx?'block':'none')+'">'+buildWeekTable(w)+'</div>';
+  });
+  html += '</div>';
+
+  el.innerHTML = html;
+}
+
+function filterNewWeek(idx){
+  document.querySelectorAll('[id^="nwt_"]').forEach((el,i)=>{ el.style.display=i===idx?'block':'none'; });
+  document.querySelectorAll('[id^="nwk_"]').forEach((btn,i)=>{
+    btn.style.background = i===idx?'#c0272d':'#f5f5f5';
+    btn.style.color = i===idx?'#fff':'#555';
+    btn.style.boxShadow = i===idx?'0 2px 6px rgba(192,39,45,.3)':'';
+  });
+}
+
 function switchScheduleTab(tab){
-  document.getElementById('schedule_daily').style.display = tab==='daily' ? 'block' : 'none';
-  document.getElementById('schedule_weekly').style.display = tab==='weekly' ? 'block' : 'none';
+  document.getElementById('schedule_weeklyNew').style.display = tab==='weeklyNew' ? 'block' : 'none';
   document.getElementById('schedule_vacation').style.display = tab==='vacation' ? 'block' : 'none';
   const attEl = document.getElementById('schedule_attendance');
   if(attEl) attEl.style.display = tab==='attendance' ? 'block' : 'none';
-  document.getElementById('stab_daily').style.background = tab==='daily' ? 'rgba(192,39,45,.08)' : '#fff';
-  document.getElementById('stab_daily').style.color = tab==='daily' ? '#c0272d' : '#555';
-  document.getElementById('stab_weekly').style.background = tab==='weekly' ? 'rgba(192,39,45,.08)' : '#fff';
-  document.getElementById('stab_weekly').style.color = tab==='weekly' ? '#c0272d' : '#555';
+  document.getElementById('stab_weeklyNew').style.background = tab==='weeklyNew' ? 'rgba(192,39,45,.08)' : '#fff';
+  document.getElementById('stab_weeklyNew').style.color = tab==='weeklyNew' ? '#c0272d' : '#555';
+  document.getElementById('stab_weeklyNew').style.border = tab==='weeklyNew' ? '1.5px solid rgba(192,39,45,.2)' : 'none';
   document.getElementById('stab_vacation').style.background = tab==='vacation' ? 'rgba(192,39,45,.08)' : '#fff';
   document.getElementById('stab_vacation').style.color = tab==='vacation' ? '#c0272d' : '#555';
   const stabAtt = document.getElementById('stab_attendance');
-  if(stabAtt){ stabAtt.style.background = tab==='attendance' ? 'rgba(192,39,45,.08)' : '#fff'; stabAtt.style.color = tab==='attendance' ? '#c0272d' : '#555'; }
+  if(stabAtt){
+    stabAtt.style.background = tab==='attendance' ? 'rgba(192,39,45,.08)' : '#fff';
+    stabAtt.style.color = tab==='attendance' ? '#c0272d' : '#555';
+    stabAtt.style.border = tab==='attendance' ? '1.5px solid rgba(192,39,45,.2)' : 'none';
+  }
   if(tab==='attendance') setAttToday();
   if(tab==='vacation'){ renderVacationSchedule(); }
+  if(tab==='weeklyNew'){ renderNewWeeklySchedule(); }
 }
 
 function renderAnnouncements(){
