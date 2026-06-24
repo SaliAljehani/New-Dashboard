@@ -5081,13 +5081,13 @@ function renderRoster(){
 
     var tbl='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px">';
     // Header row: Agent Name | day1 | day2 ...
-    tbl+='<thead><tr style="background:#FAF8F5">'
-      +'<th style="padding:9px 14px;text-align:center;min-width:150px;font-size:12px;font-weight:700;color:#2c2c2c;border-bottom:1px solid #E8E0D8;position:sticky;left:0;background:#FAF8F5;z-index:2">Agent Name</th>';
+    tbl+='<thead><tr style="background:#F5F2EE">'
+      +'<th style="padding:9px 14px;text-align:center;min-width:150px;font-size:12px;font-weight:700;color:#2c2c2c;border-bottom:1px solid #E8E0D8;position:sticky;left:0;background:#F5F2EE;z-index:2">Agent Name</th>';
     days.forEach(function(x){
       var wknd=(x.dayIdx===5||x.dayIdx===6); // Fri or Sat
       var isT=(x.d.toISOString().slice(0,10)===todayStr);
       tbl+='<th style="padding:6px 4px;text-align:center;min-width:90px;font-weight:700;border-bottom:2px solid rgba(212,196,168,.5);'
-        +'background:'+(isT?'rgba(192,39,45,.06)':wknd?'rgba(180,160,140,.05)':'#FAF8F5')+';'
+        +'background:'+(isT?'rgba(192,39,45,.06)':wknd?'rgba(180,160,140,.08)':'#F5F2EE')+';'
         +'color:'+(isT?'#c0272d':wknd?'#5D4037':'#333')+'">'
         +'<div style="font-size:9px;font-weight:600">'+DAY_SHORT[x.dayIdx]+'</div>'
         +'<div style="font-size:12px;font-weight:800">'+x.d.getDate()+' '+MON_SHORT[x.d.getMonth()]+'</div>'
@@ -5102,7 +5102,7 @@ function renderRoster(){
       // Try to parse date from key — if it's a date column key not a name, skip
       var maybeDate=parseDate(agKey);
       if(maybeDate&&maybeDate.getFullYear()>2000) return; // skip date-keyed columns
-      var rowBg=ai%2===0?'#FFFFFF':'#FAF8F5';
+      var rowBg=ai%2===0?'#FFFFFF':'#F5F2EE';
       tbl+='<tr style="background:'+rowBg+'"><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #EAE4DC;position:sticky;left:0;background:'+rowBg+';z-index:1">'
         +'<span style="display:inline-block;background:#EDE8E2;color:#1a1a2e;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap">'+agName+'</span></td>';
       days.forEach(function(x){
@@ -5318,9 +5318,9 @@ function renderVacationSchedule(){
       m.days.forEach((day,ci)=>{         const v=ag.cells[ci]||'';
         const isOff=v==='Off', isV=v==='V'||v==='v';
         const wknd=day&&(day.name==='Fri'||day.name==='Sat');
-        const cellBg=wknd?`rgba(${TABLE_RGB},.15)`:'';
+        const cellBg=day.name==='Fri'?'rgba(180,160,140,.1)':(wknd?`rgba(${TABLE_RGB},.10)`:'');
         let badge='';
-        if(isOff) badge=`<span style="display:inline-block;background:#F1948A;color:#7B241C;font-size:9px;font-weight:700;padding:2px 6px;border-radius:5px;box-shadow:0 1px 3px rgba(123,36,28,.18)">Off</span>`;
+        if(isOff) badge=`<span style="display:inline-block;background:#FADBD8;color:#A93226;font-size:9px;font-weight:700;padding:2px 6px;border-radius:5px">Off</span>`;
         else if(isV) badge=`<span style="display:inline-block;background:#A8D4C4;color:#1A4A3E;font-size:9px;font-weight:700;padding:2px 6px;border-radius:5px">V</span>`;
         html+=`<td style="padding:3px 1px;text-align:center;border-bottom:1px solid rgba(${TABLE_RGB},.12);background:${cellBg}">${badge}</td>`;
       });
@@ -5445,8 +5445,8 @@ function renderNewWeeklySchedule(){
     if(breakKey) orderedKeys.push(breakKey);
 
     let tbl = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px">';
-    tbl += '<thead><tr style="background:#FAF8F5">'
-      +'<th style="padding:9px 14px;text-align:center;min-width:150px;font-size:12px;font-weight:700;color:#2c2c2c;border-bottom:1px solid #E8E0D8;position:sticky;left:0;background:#FAF8F5;z-index:2">Agent Name</th>';
+    tbl += '<thead><tr style="background:#F5F2EE">'
+      +'<th style="padding:9px 14px;text-align:center;min-width:150px;font-size:12px;font-weight:700;color:#2c2c2c;border-bottom:1px solid #E8E0D8;position:sticky;left:0;background:#F5F2EE;z-index:2">Agent Name</th>';
     orderedKeys.forEach(d=>{
       const wknd = d==='Friday'||d==='Saturday';
       const isBreak = d.toLowerCase().includes('break');
