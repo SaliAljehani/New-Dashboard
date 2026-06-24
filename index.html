@@ -1566,7 +1566,7 @@ function showPage(n,btn){
   document.getElementById('page4').style.display=n===4?'block':'none';
   document.getElementById('page5').style.display=n===5?'block':'none';
   document.getElementById('page6').style.display=n===6?'block':'none';
-  document.getElementById('page7').style.display=n===7?'block':'none';
+  if(document.getElementById('page7')) document.getElementById('page7').style.display=n===7?'block':'none';
   document.querySelectorAll('.pnav').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   // Hide filter bar on Team Directory and Daily Reference
