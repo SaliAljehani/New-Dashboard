@@ -5061,16 +5061,16 @@ function renderRoster(){
     if(wDays.some(function(x){return x.d.toISOString().slice(0,10)===todayStr;})) activeWk=wk;
   });
 
-  // Week filter buttons
-  var filterHTML='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;justify-content:center">';
+  // Week filter dropdown
+  var filterHTML='<div style="display:flex;justify-content:center;margin-bottom:16px">'
+    +'<select onchange="filterDailyWeek(this.value)" id="dwk_select" style="'
+    +'padding:8px 20px;border-radius:20px;border:1.5px solid rgba(192,39,45,.25);'
+    +'background:#fff;color:#c0272d;font-size:12px;font-weight:700;cursor:pointer;outline:none;'
+    +'box-shadow:0 2px 6px rgba(192,39,45,.08)">';
   weekKeys.forEach(function(wk){
-    var isAct=wk===activeWk;
-    filterHTML+='<button onclick="filterDailyWeek(\''+wk+'\')" id="dwk_'+wk+'" style="'
-      +'padding:6px 14px;border-radius:20px;border:none;font-size:11px;font-weight:700;cursor:pointer;transition:.2s;'
-      +(isAct?'background:#c0272d;color:#fff;box-shadow:0 2px 6px rgba(192,39,45,.3);':'background:#f5f5f5;color:#555;')
-      +'">'+weekMap[wk].label+'</button>';
+    filterHTML+='<option value="'+wk+'"'+(wk===activeWk?' selected':'')+'>'+weekMap[wk].label+'</option>';
   });
-  filterHTML+='</div>';
+  filterHTML+='</select></div>';
 
   // Build table for a given week key
   function buildWeekTable(wk){
@@ -5102,7 +5102,7 @@ function renderRoster(){
       // Try to parse date from key — if it's a date column key not a name, skip
       var maybeDate=parseDate(agKey);
       if(maybeDate&&maybeDate.getFullYear()>2000) return; // skip date-keyed columns
-      var rowBg=ai%2===0?'#FFFFFF':'#FDFCFB';
+      var rowBg=ai%2===0?'#FFFFFF':'#FAF8F5';
       tbl+='<tr style="background:'+rowBg+'"><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #EAE4DC;position:sticky;left:0;background:'+rowBg+';z-index:1">'
         +'<span style="display:inline-block;background:#EDE8E2;color:#1a1a2e;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap">'+agName+'</span></td>';
       days.forEach(function(x){
