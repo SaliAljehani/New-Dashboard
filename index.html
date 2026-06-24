@@ -613,6 +613,8 @@ const SHEET_GIDS={'Agent':1123791969,'Agent Performance':810269545,'Attendance D
 const GRAPH_CLIENT_ID = '66941015-85b0-480d-bb59-26ba7b5fc957';
 const GRAPH_TENANT_ID = 'd86a8023-6d04-405a-8392-efd09473ff16';
 const GRAPH_CLIENT_SECRET = 'UpQ8Q~~nNn9pQSAVllu~mw25Y8R3d3dZMP9-Dc3N';
+const GRAPH_USERNAME = 'sali.aljehani@petromin.com';
+const GRAPH_PASSWORD = 'Salma@1619'; // ← ضعي كلمة المرور هنا
 const GRAPH_FOLDER = 'Dashboard Data';
 
 // File name → Excel file name mapping
@@ -649,14 +651,16 @@ let __GRAPH_TOKEN_EXP__ = 0;
 
 async function __getGraphToken__(){
   if(__GRAPH_TOKEN__ && Date.now() < __GRAPH_TOKEN_EXP__ - 60000) return __GRAPH_TOKEN__;
+  // Using ROPC (Resource Owner Password Credentials) with public client flow
   const res = await fetch(`https://login.microsoftonline.com/${GRAPH_TENANT_ID}/oauth2/v2.0/token`, {
     method: 'POST',
     headers: {'Content-Type':'application/x-www-form-urlencoded'},
     body: new URLSearchParams({
       client_id: GRAPH_CLIENT_ID,
-      client_secret: GRAPH_CLIENT_SECRET,
-      scope: 'https://graph.microsoft.com/.default',
-      grant_type: 'client_credentials'
+      scope: 'https://graph.microsoft.com/Files.Read.All offline_access',
+      grant_type: 'password',
+      username: GRAPH_USERNAME,
+      password: GRAPH_PASSWORD
     })
   });
   const data = await res.json();
