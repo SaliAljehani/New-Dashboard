@@ -580,7 +580,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
   <div id="recallContent"><div style="text-align:center;padding:40px;color:#aaa">Loading...</div></div>
 </div>
 </div>
-<footer style="position:relative">Inbound Daily Dashboard · Petromin Group · Connected to Excel · Auto-updates on refresh<span style="position:absolute;left:14px;top:50%;transform:translateY(-50%)">By: Sali Aljehani</span><span style="position:absolute;right:14px;top:50%;transform:translateY(-50%)" id="lupd_footer" style="color:#c0272d;font-weight:600">🔄 Loading...</span></footer>
+<footer style="position:relative">Inbound Daily Dashboard · Petromin Group · Connected to Excel (OneDrive) · Auto-updates on refresh<span style="position:absolute;left:14px;top:50%;transform:translateY(-50%)">By: Sali Aljehani</span><span style="position:absolute;right:14px;top:50%;transform:translateY(-50%)" id="lupd_footer" style="color:#c0272d;font-weight:600">🔄 Loading...</span></footer>
 
 <script>
 const SHEET_ID = '1MRUWG3v9Neac-UselMf_HzlfiLtX64a9iJsIUV5FmRU';
@@ -609,8 +609,26 @@ const TEAM_LOGOS={
 
 const SHEET_GIDS={'Agent':1123791969,'Agent Performance':810269545,'Attendance Data':1979596727,'Data Call':95246895,'Reference':910779499,'Weekly Calls & Break':1429234410,'Daily Off Schedule':1979894769,'Daily Off Schedule & Weekly Cal':1979894769,'Announcement Board':536403637,'Escalation':1827857824,'Escalation ':1827857824,'Employee of the MONTH':1892899267,'Subject':0,'Emails ':0,'Emails':0,'Contact Number ':0,'Contact Number':0,'Vacation Schedule 2026':0};
 // Use preloaded data if available (Apps Script), otherwise fetch
-// ── LOCAL JSON CACHE ─────────────────────────────────────────────────────────
-const __JSON_CACHE__ = {};
+// ── MICROSOFT GRAPH API ──────────────────────────────────────────────────────
+const GRAPH_CLIENT_ID = '66941015-85b0-480d-bb59-26ba7b5fc957';
+const GRAPH_TENANT_ID = 'd86a8023-6d04-405a-8392-efd09473ff16';
+const GRAPH_CLIENT_SECRET = 'UpQ8Q~~nNn9pQSAVllu~mw25Y8R3d3dZMP9-Dc3N';
+const GRAPH_FOLDER = 'Dashboard Data';
+
+// File name → Excel file name mapping
+const __FILE_MAP__ = {
+  main:         'NEW DASHBOARD.xlsx',
+  nissan:       'Nissan Reference.xlsx',
+  stellantis:   'Stellantis Reference.xlsx',
+  petromin:     'Petromin Reference.xlsx',
+  baic:         'BAIC Reference.xlsx',
+  bodyshop:     'Body Shop & Paint.xlsx',
+  nos:          'National Oil Stop.xlsx',
+  foton:        'Foton Reference.xlsx',
+  recallRemote: 'Recall - Remote Areas.xlsx',
+  recallSearch: 'Recall Search.xlsx',
+};
+
 const __SHEET_ID_TO_KEY__ = {
   '1MRUWG3v9Neac-UselMf_HzlfiLtX64a9iJsIUV5FmRU': 'main',
   '1lXDeN1iUosG_JSADgdWhnkT5J1t3hhwXoSJdbmb4B88': 'nissan',
@@ -624,21 +642,76 @@ const __SHEET_ID_TO_KEY__ = {
   '1qOIoWAGNl3-0cha12rjNksUsEapffeZ20Ioz7vm7Rbk': 'recallRemote',
   '1sgWulUi7UFe_J3t_U8pAzjwGBjr4_hAXBvej-KCINbs': 'recallSearch',
 };
-async function __loadJSON__(key){
-  if(__JSON_CACHE__[key]) return __JSON_CACHE__[key];
-  const res = await fetch(`data/${key}.json`);
-  if(!res.ok) throw new Error('Cannot load data/'+key+'.json');
-  __JSON_CACHE__[key] = await res.json();
-  return __JSON_CACHE__[key];
+
+const __JSON_CACHE__ = {};
+let __GRAPH_TOKEN__ = null;
+let __GRAPH_TOKEN_EXP__ = 0;
+
+async function __getGraphToken__(){
+  if(__GRAPH_TOKEN__ && Date.now() < __GRAPH_TOKEN_EXP__ - 60000) return __GRAPH_TOKEN__;
+  const res = await fetch(`https://login.microsoftonline.com/${GRAPH_TENANT_ID}/oauth2/v2.0/token`, {
+    method: 'POST',
+    headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    body: new URLSearchParams({
+      client_id: GRAPH_CLIENT_ID,
+      client_secret: GRAPH_CLIENT_SECRET,
+      scope: 'https://graph.microsoft.com/.default',
+      grant_type: 'client_credentials'
+    })
+  });
+  const data = await res.json();
+  if(!data.access_token) throw new Error('Graph token failed: ' + JSON.stringify(data));
+  __GRAPH_TOKEN__ = data.access_token;
+  __GRAPH_TOKEN_EXP__ = Date.now() + (data.expires_in * 1000);
+  return __GRAPH_TOKEN__;
+}
+
+async function __loadExcelSheet__(fileKey, sheetName){
+  const cacheKey = fileKey + '::' + sheetName;
+  if(__JSON_CACHE__[cacheKey]) return __JSON_CACHE__[cacheKey];
+  const token = await __getGraphToken__();
+  const fileName = __FILE_MAP__[fileKey];
+  // Get file ID
+  const searchRes = await fetch(
+    `https://graph.microsoft.com/v1.0/me/drive/root:/${GRAPH_FOLDER}/${fileName}`,
+    {headers: {Authorization: 'Bearer ' + token}}
+  );
+  const fileData = await searchRes.json();
+  if(!fileData.id) throw new Error('File not found: ' + fileName);
+  const driveId = fileData.parentReference?.driveId;
+  const itemId = fileData.id;
+  // Get sheet range
+  const rangeRes = await fetch(
+    `https://graph.microsoft.com/v1.0/drives/${driveId}/items/${itemId}/workbook/worksheets/${encodeURIComponent(sheetName)}/usedRange`,
+    {headers: {Authorization: 'Bearer ' + token}}
+  );
+  const rangeData = await rangeRes.json();
+  if(!rangeData.values || !rangeData.values.length) return [];
+  const [headers, ...rows] = rangeData.values;
+  const result = rows
+    .filter(r => r.some(v => v !== null && v !== ''))
+    .map(r => {
+      const obj = {};
+      headers.forEach((h, i) => { obj[String(h||'').trim() || 'col_'+i] = r[i] !== null ? String(r[i]) : ''; });
+      return obj;
+    });
+  __JSON_CACHE__[cacheKey] = result;
+  return result;
 }
 
 async function loadSheet(name){
-  const file = await __loadJSON__('main');
-  // Try exact match, then trimmed match
-  if(file[name]) return file[name];
-  const found = Object.keys(file).find(k=>k.trim()===name.trim());
-  if(found) return file[found];
-  return [];
+  try {
+    const result = await __loadExcelSheet__('main', name.trim());
+    return result;
+  } catch(e) {
+    // Try trimmed name variants
+    const variants = [name, name.trim(), name.trim() + ' ', ' ' + name.trim()];
+    for(const v of variants){
+      try { return await __loadExcelSheet__('main', v); } catch(e2){}
+    }
+    console.warn('loadSheet failed for:', name, e);
+    return [];
+  }
 }
 
 
@@ -1633,14 +1706,16 @@ let EOM_DATA = [];
 
 async function fetchCSVRaw(sheetId, sheetName){
   const key = __SHEET_ID_TO_KEY__[sheetId] || 'main';
-  const file = await __loadJSON__(key);
-  // Try exact match then trimmed
-  let rows = file[sheetName] || file[Object.keys(file).find(k=>k.trim()===sheetName.trim())] || [];
-  if(!rows.length) return [[]];
-  // Convert array-of-objects to 2D array [headers, ...rows]
-  const cols = Object.keys(rows[0]);
-  const data = rows.map(r=>cols.map(c=>r[c]||''));
-  return [cols, ...data];
+  try {
+    const rows = await __loadExcelSheet__(key, sheetName.trim());
+    if(!rows.length) return [[]];
+    const cols = Object.keys(rows[0]);
+    const data = rows.map(r=>cols.map(c=>r[c]||''));
+    return [cols, ...data];
+  } catch(e) {
+    console.warn('fetchCSVRaw failed:', sheetName, e);
+    return [[]];
+  }
 }
 
 function parseCSVRaw(text){
@@ -1859,10 +1934,14 @@ async function fetchSheet(spreadsheetId, sheetName){
   const cacheKey = `${spreadsheetId}__${sheetName}`;
   if(REF_CACHE[cacheKey]) return REF_CACHE[cacheKey];
   const key = __SHEET_ID_TO_KEY__[spreadsheetId] || 'main';
-  const file = await __loadJSON__(key);
-  const rows = file[sheetName] || file[Object.keys(file).find(k=>k.trim()===sheetName.trim())] || [];
-  REF_CACHE[cacheKey] = rows;
-  return rows;
+  try {
+    const rows = await __loadExcelSheet__(key, sheetName.trim());
+    REF_CACHE[cacheKey] = rows;
+    return rows;
+  } catch(e) {
+    console.warn('fetchSheet failed:', sheetName, e);
+    return [];
+  }
 }
 
 function makeRefTable(rows, vinFilter=''){
