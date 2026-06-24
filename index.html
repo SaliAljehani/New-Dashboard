@@ -5315,7 +5315,7 @@ function renderVacationSchedule(){
         +`<span style="display:inline-block;background:rgba(${TABLE_RGB},.45);color:#1a1a2e;`
         +`padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap">`
         +`${ag.name}</span></td>`;
-      ag.cells.forEach((v,ci)=>{
+      m.days.forEach((day,ci)=>{         const v=ag.cells[ci]||'';
         const isOff=v==='Off', isV=v==='V'||v==='v';
         const day=m.days[ci];
         const wknd=day&&(day.name==='Fri'||day.name==='Sat');
