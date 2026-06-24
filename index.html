@@ -5457,7 +5457,7 @@ function renderNewWeeklySchedule(){
     tbl += '</tr></thead><tbody>';
 
     w.agents.forEach((ag,ai)=>{
-      const rowBg = ai%2===0?'#FFFFFF':'#FDFCFB';
+      const rowBg = ai%2===0?'#FFFFFF':'#F5F2EE';
       tbl += '<tr style="background:'+rowBg+'"><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #D9CFC4;position:sticky;left:0;background:'+rowBg+';z-index:1">'
         +'<span style="display:inline-block;background:#EDE8E2;color:#1a1a2e;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap">'+ag.name+'</span></td>';
       orderedKeys.forEach(d=>{
