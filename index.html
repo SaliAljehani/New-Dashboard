@@ -5117,8 +5117,8 @@ function renderRoster(){
         if(v){
           var bg,col;
           if(isOff){bg='#FADBD8';col='#A93226';}
-          else if(isLive){bg='#D5EEE8';col='#2A6B5A';}
-          else if(isMulti){bg='#F2D9D9';col='#7B3A3A';}
+          else if(isLive){bg='#EAF6F2';col='#2A6B5A';}
+          else if(isMulti){bg='#FAE8E8';col='#7B3A3A';}
           else{bg='#D7DBDD';col='#2C3E50';}
           badge='<span style="display:inline-block;background:'+bg+';color:'+col+';font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;white-space:nowrap">'+v+'</span>';
         }
@@ -5133,8 +5133,8 @@ function renderRoster(){
   // Legend
   var legendHTML='<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;padding:8px 0">'
     +'<span style="background:#FADBD8;color:#922B21;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">OFF</span>'
-    +'<span style="background:#D5EEE8;color:#2A6B5A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Live Chat</span>'
-    +'<span style="background:#F2D9D9;color:#7B3A3A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Multi-Camp</span>'
+    +'<span style="background:#EAF6F2;color:#2A6B5A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Live Chat</span>'
+    +'<span style="background:#FAE8E8;color:#7B3A3A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Multi-Camp</span>'
     +'</div>';
 
   // All week tables (hidden except active)
@@ -5429,8 +5429,8 @@ function renderNewWeeklySchedule(){
     const vl = v.toLowerCase();
     let bg,col;
     if(vl==='off'){bg='#FADBD8';col='#922B21';}
-    else if(vl==='live chat'){bg='#D5EEE8';col='#2A6B5A';}
-    else if(vl.includes('multi')){bg='#F2D9D9';col='#7B3A3A';}
+    else if(vl==='live chat'){bg='#EAF6F2';col='#2A6B5A';}
+    else if(vl.includes('multi')){bg='#FAE8E8';col='#7B3A3A';}
     else{bg='#F2F3F4';col='#2C3E50';}
     return '<span style="display:inline-block;background:'+bg+';color:'+col+';font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;white-space:nowrap">'+v+'</span>';
   }
@@ -5477,8 +5477,8 @@ function renderNewWeeklySchedule(){
 
   const legendHTML = '<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;padding:8px 0">'
     +'<span style="background:#FADBD8;color:#922B21;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">OFF</span>'
-    +'<span style="background:#D5EEE8;color:#2A6B5A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Live Chat</span>'
-    +'<span style="background:#F2D9D9;color:#7B3A3A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Multi-Camp</span>'
+    +'<span style="background:#EAF6F2;color:#2A6B5A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Live Chat</span>'
+    +'<span style="background:#FAE8E8;color:#7B3A3A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Multi-Camp</span>'
     +'</div>';
 
   let html = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;justify-content:center">';
