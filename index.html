@@ -5081,13 +5081,13 @@ function renderRoster(){
 
     var tbl='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px">';
     // Header row: Agent Name | day1 | day2 ...
-    tbl+='<thead><tr style="background:rgba(212,196,168,.22)">'
-      +'<th style="padding:9px 14px;text-align:center;min-width:150px;font-size:12px;font-weight:700;color:#2c2c2c;border-bottom:2px solid rgba(212,196,168,.5);position:sticky;left:0;background:rgba(212,196,168,.22);z-index:2">Agent Name</th>';
+    tbl+='<thead><tr style="background:#F5F2EE">'
+      +'<th style="padding:9px 14px;text-align:center;min-width:150px;font-size:12px;font-weight:700;color:#2c2c2c;border-bottom:1px solid #E8E0D8;position:sticky;left:0;background:#F5F2EE;z-index:2">Agent Name</th>';
     days.forEach(function(x){
       var wknd=(x.dayIdx===5||x.dayIdx===6); // Fri or Sat
       var isT=(x.d.toISOString().slice(0,10)===todayStr);
       tbl+='<th style="padding:6px 4px;text-align:center;min-width:90px;font-weight:700;border-bottom:2px solid rgba(212,196,168,.5);'
-        +'background:'+(isT?'rgba(192,39,45,.08)':wknd?'rgba(212,196,168,.32)':'rgba(212,196,168,.12)')+';'
+        +'background:'+(isT?'rgba(192,39,45,.06)':wknd?'rgba(180,160,140,.08)':'#F5F2EE')+';'
         +'color:'+(isT?'#c0272d':wknd?'#5D4037':'#333')+'">'
         +'<div style="font-size:9px;font-weight:600">'+DAY_SHORT[x.dayIdx]+'</div>'
         +'<div style="font-size:12px;font-weight:800">'+x.d.getDate()+' '+MON_SHORT[x.d.getMonth()]+'</div>'
@@ -5102,9 +5102,9 @@ function renderRoster(){
       // Try to parse date from key — if it's a date column key not a name, skip
       var maybeDate=parseDate(agKey);
       if(maybeDate&&maybeDate.getFullYear()>2000) return; // skip date-keyed columns
-      var rowBg=ai%2===0?'#fff':'rgba(212,196,168,.06)';
-      tbl+='<tr style="background:'+rowBg+'"><td style="padding:6px 10px;text-align:center;border-bottom:1px solid rgba(212,196,168,.2);position:sticky;left:0;background:'+rowBg+';z-index:1">'
-        +'<span style="display:inline-block;background:rgba(212,196,168,.38);color:#1a1a2e;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap">'+agName+'</span></td>';
+      var rowBg=ai%2===0?'#FFFFFF':'#F9F6F2';
+      tbl+='<tr style="background:'+rowBg+'"><td style="padding:6px 10px;text-align:center;border-bottom:1px solid #EAE4DC;position:sticky;left:0;background:'+rowBg+';z-index:1">'
+        +'<span style="display:inline-block;background:#EDE8E2;color:#1a1a2e;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap">'+agName+'</span></td>';
       days.forEach(function(x){
         var v=String(x.r[agKey]||'').trim();
         var isOff=v.toLowerCase()==='off';
@@ -5116,13 +5116,13 @@ function renderRoster(){
         var badge='';
         if(v){
           var bg,col;
-          if(isOff){bg='#F1948A';col='#7B241C';}
-          else if(isLive){bg='#C8E8DF';col='#2A6B5A';}
-          else if(isMulti){bg='#E8C8C8';col='#7B3A3A';}
+          if(isOff){bg='#FADBD8';col='#A93226';}
+          else if(isLive){bg='#D5EEE8';col='#2A6B5A';}
+          else if(isMulti){bg='#F2D9D9';col='#7B3A3A';}
           else{bg='#D7DBDD';col='#2C3E50';}
           badge='<span style="display:inline-block;background:'+bg+';color:'+col+';font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;white-space:nowrap">'+v+'</span>';
         }
-        tbl+='<td style="padding:4px 3px;text-align:center;border-bottom:1px solid rgba(212,196,168,.12);background:'+cellBg+'">'+badge+'</td>';
+        tbl+='<td style="padding:4px 3px;text-align:center;border-bottom:1px solid #EAE4DC;background:'+cellBg+'">'+badge+'</td>';
       });
       tbl+='</tr>';
     });
@@ -5133,8 +5133,8 @@ function renderRoster(){
   // Legend
   var legendHTML='<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;padding:8px 0">'
     +'<span style="background:#FADBD8;color:#922B21;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">OFF</span>'
-    +'<span style="background:#C8E8DF;color:#2A6B5A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Live Chat</span>'
-    +'<span style="background:#E8C8C8;color:#7B3A3A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Multi-Camp</span>'
+    +'<span style="background:#D5EEE8;color:#2A6B5A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Live Chat</span>'
+    +'<span style="background:#F2D9D9;color:#7B3A3A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Multi-Camp</span>'
     +'</div>';
 
   // All week tables (hidden except active)
@@ -5270,7 +5270,11 @@ function renderVacationSchedule(){
   });
   html += '</div>';
 
-  // ── جداول الشهور ──
+  // ── Legend فوق الجدول ──
+  html += `<div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:10px 0 16px">
+    <span style="font-size:11px;color:#666;display:flex;align-items:center;gap:5px"><span style="background:#FADBD8;color:#A93226;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px">Off</span> Day Off</span>
+    <span style="font-size:11px;color:#666;display:flex;align-items:center;gap:5px"><span style="background:#D5EEE8;color:#2A6B5A;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px">V</span> Vacation</span>
+  </div>`;
   // لون ثابت للجدول = لون أبريل
   const TABLE_HEX = '#D4C4A8';
   const TABLE_RGB = hexToRgb(TABLE_HEX);
@@ -5425,8 +5429,8 @@ function renderNewWeeklySchedule(){
     const vl = v.toLowerCase();
     let bg,col;
     if(vl==='off'){bg='#FADBD8';col='#922B21';}
-    else if(vl==='live chat'){bg='#C8E8DF';col='#2A6B5A';}
-    else if(vl.includes('multi')){bg='#E8C8C8';col='#7B3A3A';}
+    else if(vl==='live chat'){bg='#D5EEE8';col='#2A6B5A';}
+    else if(vl.includes('multi')){bg='#F2D9D9';col='#7B3A3A';}
     else{bg='#F2F3F4';col='#2C3E50';}
     return '<span style="display:inline-block;background:'+bg+';color:'+col+';font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;white-space:nowrap">'+v+'</span>';
   }
@@ -5473,8 +5477,8 @@ function renderNewWeeklySchedule(){
 
   const legendHTML = '<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;padding:8px 0">'
     +'<span style="background:#FADBD8;color:#922B21;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">OFF</span>'
-    +'<span style="background:#C8E8DF;color:#2A6B5A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Live Chat</span>'
-    +'<span style="background:#E8C8C8;color:#7B3A3A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Multi-Camp</span>'
+    +'<span style="background:#D5EEE8;color:#2A6B5A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Live Chat</span>'
+    +'<span style="background:#F2D9D9;color:#7B3A3A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Multi-Camp</span>'
     +'</div>';
 
   let html = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;justify-content:center">';
