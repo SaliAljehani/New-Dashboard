@@ -5117,8 +5117,8 @@ function renderRoster(){
         if(v){
           var bg,col;
           if(isOff){bg='#F1948A';col='#7B241C';}
-          else if(isLive){bg='#F5EFE6';col='#6B5744';}
-          else if(isMulti){bg='#F5EFE6';col='#6B5744';}
+          else if(isLive){bg='#FAF7F2';col='#5C4A32';}
+          else if(isMulti){bg='#FAF7F2';col='#5C4A32';}
           else{bg='#D7DBDD';col='#2C3E50';}
           badge='<span style="display:inline-block;background:'+bg+';color:'+col+';font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;white-space:nowrap">'+v+'</span>';
         }
@@ -5133,8 +5133,8 @@ function renderRoster(){
   // Legend
   var legendHTML='<div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;padding:8px 0">'
     +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#F1948A;color:#7B241C;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">OFF</span> Day Off</span>'
-    +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#F5EFE6;color:#6B5744;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">Live Chat</span> Live Chat</span>'
-    +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#F5EFE6;color:#6B5744;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">Multi-Camp</span> Multi Campaign</span>'
+    +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#FAF7F2;color:#5C4A32;border:1px solid #E8DDD0;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">Live Chat</span> Live Chat</span>'
+    +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#FAF7F2;color:#5C4A32;border:1px solid #E8DDD0;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">Multi-Camp</span> Multi Campaign</span>'
     +'</div>';
 
   // All week tables (hidden except active)
@@ -5318,7 +5318,7 @@ function renderVacationSchedule(){
         const cellBg=wknd?`rgba(${TABLE_RGB},.15)`:'';
         let badge='';
         if(isOff) badge=`<span style="display:inline-block;background:#F1948A;color:#7B241C;font-size:9px;font-weight:700;padding:2px 6px;border-radius:5px;box-shadow:0 1px 3px rgba(123,36,28,.18)">Off</span>`;
-        else if(isV) badge=`<span style="display:inline-block;background:#F5EFE6;color:#6B5744;font-size:9px;font-weight:700;padding:2px 6px;border-radius:5px">V</span>`;
+        else if(isV) badge=`<span style="display:inline-block;background:#FAF7F2;color:#5C4A32;border:1px solid #E8DDD0;font-size:9px;font-weight:700;padding:2px 6px;border-radius:5px">V</span>`;
         html+=`<td style="padding:3px 1px;text-align:center;border-bottom:1px solid rgba(${TABLE_RGB},.12);background:${cellBg}">${badge}</td>`;
       });
       html+='</tr>';
@@ -5327,7 +5327,7 @@ function renderVacationSchedule(){
 
     // مفتاح الألوان
     html+=`<div style="display:flex;gap:16px;margin-top:14px;padding-top:12px;border-top:1px solid rgba(${TABLE_RGB},.25);justify-content:center">`;
-    html+=`<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:5px"><span style="background:#F5EFE6;color:#6B5744;font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px">V</span> Vacation</span>`;
+    html+=`<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:5px"><span style="background:#FAF7F2;color:#5C4A32;border:1px solid #E8DDD0;font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px">V</span> Vacation</span>`;
     html+=`<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:5px"><span style="background:#F1948A;color:#7B241C;font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px">Off</span> Day Off</span>`;
     html+='</div>';
 
@@ -5425,8 +5425,8 @@ function renderNewWeeklySchedule(){
     const vl = v.toLowerCase();
     let bg,col;
     if(vl==='off'){bg='#FADBD8';col='#922B21';}
-    else if(vl==='live chat'){bg='#F5EFE6';col='#6B5744';}
-    else if(vl.includes('multi')){bg='#F5EFE6';col='#6B5744';}
+    else if(vl==='live chat'){bg='#FAF7F2';col='#5C4A32';}
+    else if(vl.includes('multi')){bg='#FAF7F2';col='#5C4A32';}
     else{bg='#F2F3F4';col='#2C3E50';}
     return '<span style="display:inline-block;background:'+bg+';color:'+col+';font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;white-space:nowrap">'+v+'</span>';
   }
@@ -5473,8 +5473,8 @@ function renderNewWeeklySchedule(){
 
   const legendHTML = '<div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;padding:8px 0">'
     +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#FADBD8;color:#922B21;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">OFF</span> Day Off</span>'
-    +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#F5EFE6;color:#6B5744;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">Live Chat</span> Live Chat</span>'
-    +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#F5EFE6;color:#6B5744;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">Multi-Camp</span> Multi Campaign</span>'
+    +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#FAF7F2;color:#5C4A32;border:1px solid #E8DDD0;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">Live Chat</span> Live Chat</span>'
+    +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#FAF7F2;color:#5C4A32;border:1px solid #E8DDD0;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">Multi-Camp</span> Multi Campaign</span>'
     +'</div>';
 
   let html = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;justify-content:center">';
