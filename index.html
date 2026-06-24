@@ -424,7 +424,6 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <button class="pnav" onclick="showPage(8,this)">🏆 Employee of the Month</button>
     <button class="pnav" onclick="showPage(4,this)">📁 Daily Reference</button>
     <button class="pnav" onclick="showPage(2,this)">📞 Calls & WhatsApp Report</button>
-    <button class="pnav" onclick="showPage(7,this)">⚠️ Escalation</button>
   </div>
 
   <!-- PAGE 1 -->
@@ -552,14 +551,6 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <div style="font-size:12px;color:#888">Updates from Google Sheets automatically</div>
   </div>
   <div id="announceContent"><div style="text-align:center;padding:40px;color:#aaa">Loading announcements...</div></div>
-</div>
-
-<div id="page7" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
-    <div style="font-size:16px;font-weight:700;color:#1a1a2e">⚠️ Escalation Cases</div>
-    <div style="font-size:12px;color:#888">Updates from Google Sheets automatically</div>
-  </div>
-  <div id="escalationContent"><div style="text-align:center;padding:40px;color:#aaa">Loading escalations...</div></div>
 </div>
 
 <div id="page8" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
@@ -5007,73 +4998,144 @@ function renderRoster(){
     return v && v !== dateKey && !agents.includes(v);
   });
   // Only take rows before "Weekly Calls & Break" header
-  const rows = [];
+  const rawRows = [];
   for(var ri=0;ri<allRows.length;ri++){
     var v=String(allRows[ri][dateKey]||'').trim();
     if(v==='Weekly Calls & Break'||v==='Multi Campaign'||v==='WhatsApp') break;
-    rows.push(allRows[ri]);
+    rawRows.push(allRows[ri]);
   }
 
-  // Build schedule table
-  var tableHTML = '<div style="overflow-x:auto">'
-    +'<table style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px">'
-    +'<thead><tr style="background:#f5f5f5">'
-    +'<th style="padding:8px 12px;text-align:center;min-width:130px;color:#555;font-weight:700">Date</th>';
-  agents.forEach(function(a){
-    var headerText = a;
-    var parsed = new Date(a);
-    if(!isNaN(parsed) && parsed.getFullYear() > 2000){
-      var ms=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      var ds=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-      headerText = ds[parsed.getDay()]+' '+parsed.getDate()+'-'+ms[parsed.getMonth()];
-    }
-    tableHTML += '<th data-agent="'+a+'" style="padding:8px 10px;text-align:center;white-space:nowrap;transition:background .2s;background:#f5f5f5;color:#333;font-weight:700"><span style="background:#f5f5f5;padding:2px 8px;border-radius:4px">'+headerText+'</span></th>';
-  });
-  tableHTML += '</tr></thead><tbody>';
+  // Parse dates and group into weeks (Sat–Fri)
+  var DAY_NAMES=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var MON_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var DAY_SHORT=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
-  rows.forEach(function(r,i){
-    var dateVal = String(r[dateKey]||'').trim();
-    var displayDate = dateVal;
-    var isToday = false;
-    var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    
-    // Try parsing the date
-    var d = null;
-    var datePart = dateVal.split('T')[0];
-    var dp = datePart.split('-');
-    if(dp.length===3 && dp[0].length===4){
-      // YYYY-MM-DD format
-      var yr=parseInt(dp[0]),mo=parseInt(dp[1])-1,dy=parseInt(dp[2]);
-      d=new Date(yr,mo,dy);
-    } else {
-      // Try parsing long format like "Sun Jun 14 2026 00:00:00"
-      var parsed = new Date(dateVal);
-      if(!isNaN(parsed)) d = parsed;
+  function parseDate(dateVal){
+    var s=String(dateVal||'').trim();
+    var dp=s.split('T')[0].split('-');
+    if(dp.length===3&&dp[0].length===4) return new Date(parseInt(dp[0]),parseInt(dp[1])-1,parseInt(dp[2]));
+    var p=new Date(s); return isNaN(p)?null:p;
+  }
+
+  // Build parsed rows: [{date, dayName, displayShort, agentData}]
+  var parsedRows = rawRows.map(function(r){
+    var dateVal=String(r[dateKey]||'').trim();
+    var d=parseDate(dateVal);
+    var dayIdx=d?d.getDay():null;
+    return {d:d, dateVal:dateVal, dayIdx:dayIdx, r:r};
+  }).filter(function(x){return x.d;});
+
+  // Group by week — key = "Sat dd Mon – Fri dd Mon"
+  var weeks=[], weekMap={}, weekKeys=[];
+  parsedRows.forEach(function(x){
+    // week key: find the Saturday of the week (weekday 6)
+    var d=x.d;
+    var sat=new Date(d); sat.setDate(d.getDate()-(d.getDay()+1)%7); // prev Saturday (SA week)
+    var wk=sat.toISOString().slice(0,10);
+    if(!weekMap[wk]){
+      var fri=new Date(sat); fri.setDate(sat.getDate()+6);
+      var label=DAY_SHORT[sat.getDay()]+' '+sat.getDate()+' '+MON_SHORT[sat.getMonth()]
+        +' – '+DAY_SHORT[fri.getDay()]+' '+fri.getDate()+' '+MON_SHORT[fri.getMonth()]+' '+fri.getFullYear();
+      weekMap[wk]={label:label, days:[]};
+      weekKeys.push(wk);
     }
-    
-    if(d && !isNaN(d)){
-      var dy2=d.getDate(), mo2=d.getMonth(), yr2=d.getFullYear();
-      displayDate=days[d.getDay()]+', '+dy2+' '+months[mo2];
-      isToday=(today.getFullYear()===yr2&&today.getMonth()===mo2&&today.getDate()===dy2);
-    } else {
-      isToday=dateVal.startsWith(days[today.getDay()]);
-    }
-    var rowBg=isToday?'#fff3cd':(i%2===0?'#fff':'#f9f9f9');
-    tableHTML+='<tr style="background:'+rowBg+';cursor:pointer" onclick="this.style.background=this.style.background==\'#e3f2fd\'?\''+rowBg+'\':\'#e3f2fd\'">'
-      +'<td style="padding:7px 12px;text-align:center;white-space:nowrap;background:'+(isToday?'#fff3cd':'#fff')+'">'
-      +'<span style="background:'+(isToday?'#c0272d':'#f5f5f5')+';color:'+(isToday?'#fff':'#555')+';padding:2px 10px;border-radius:4px;font-weight:600;font-size:11px">'
-      +displayDate+(isToday?' 📍':'')+'</span></td>';
-    agents.forEach(function(a){
-      var v=String(r[a]||'').trim();
-      var isOff=v.toLowerCase()==='off';
-      tableHTML+='<td data-agent="'+a+'" style="padding:7px 10px;text-align:center;transition:background .2s">'
-        +(v?'<span style="display:inline-block;padding:2px 10px;border-radius:10px;font-weight:600;font-size:11px;background:'+(isOff?'#ffebee':'#e8f5e9')+';color:'+(isOff?'#c0272d':'#2e7d32')+'">'+v+'</span>':'')
-        +'</td>';
-    });
-    tableHTML+='</tr>';
+    weekMap[wk].days.push(x);
   });
-  tableHTML+='</tbody></table></div>';
+  weekKeys.sort();
+
+  // Find current week
+  var todayStr=today.toISOString().slice(0,10);
+  var activeWk=weekKeys[weekKeys.length-1]||'';
+  weekKeys.forEach(function(wk){
+    var w=weekMap[wk]; var wDays=w.days;
+    if(wDays.some(function(x){return x.d.toISOString().slice(0,10)===todayStr;})) activeWk=wk;
+  });
+
+  // Week filter buttons
+  var filterHTML='<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;justify-content:center">';
+  weekKeys.forEach(function(wk){
+    var isAct=wk===activeWk;
+    filterHTML+='<button onclick="filterDailyWeek(\''+wk+'\')" id="dwk_'+wk+'" style="'
+      +'padding:6px 14px;border-radius:20px;border:none;font-size:11px;font-weight:700;cursor:pointer;transition:.2s;'
+      +(isAct?'background:#c0272d;color:#fff;box-shadow:0 2px 6px rgba(192,39,45,.3);':'background:#f5f5f5;color:#555;')
+      +'">'+weekMap[wk].label+'</button>';
+  });
+  filterHTML+='</div>';
+
+  // Build table for a given week key
+  function buildWeekTable(wk){
+    var w=weekMap[wk]; if(!w) return '';
+    var days=w.days;
+    // Sort days Sat→Fri
+    days.sort(function(a,b){return a.d-b.d;});
+
+    var tbl='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px">';
+    // Header row: Agent Name | day1 | day2 ...
+    tbl+='<thead><tr style="background:rgba(212,196,168,.22)">'
+      +'<th style="padding:9px 14px;text-align:center;min-width:150px;font-size:12px;font-weight:700;color:#2c2c2c;border-bottom:2px solid rgba(212,196,168,.5);position:sticky;left:0;background:rgba(212,196,168,.22);z-index:2">Agent Name</th>';
+    days.forEach(function(x){
+      var wknd=(x.dayIdx===5||x.dayIdx===6); // Fri or Sat
+      var isT=(x.d.toISOString().slice(0,10)===todayStr);
+      tbl+='<th style="padding:6px 4px;text-align:center;min-width:90px;font-weight:700;border-bottom:2px solid rgba(212,196,168,.5);'
+        +'background:'+(isT?'rgba(192,39,45,.08)':wknd?'rgba(212,196,168,.32)':'rgba(212,196,168,.12)')+';'
+        +'color:'+(isT?'#c0272d':wknd?'#5D4037':'#333')+'">'
+        +'<div style="font-size:9px;font-weight:600">'+DAY_SHORT[x.dayIdx]+'</div>'
+        +'<div style="font-size:12px;font-weight:800">'+x.d.getDate()+' '+MON_SHORT[x.d.getMonth()]+'</div>'
+        +(isT?'<div style="font-size:8px;color:#c0272d;font-weight:700">Today</div>':'')
+        +'</th>';
+    });
+    tbl+='</tr></thead><tbody>';
+
+    // Agent rows
+    agents.forEach(function(agKey,ai){
+      var agName=agKey;
+      // Try to parse date from key — if it's a date column key not a name, skip
+      var maybeDate=parseDate(agKey);
+      if(maybeDate&&maybeDate.getFullYear()>2000) return; // skip date-keyed columns
+      var rowBg=ai%2===0?'#fff':'rgba(212,196,168,.06)';
+      tbl+='<tr style="background:'+rowBg+'"><td style="padding:6px 10px;text-align:center;border-bottom:1px solid rgba(212,196,168,.2);position:sticky;left:0;background:'+rowBg+';z-index:1">'
+        +'<span style="display:inline-block;background:rgba(212,196,168,.38);color:#1a1a2e;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap">'+agName+'</span></td>';
+      days.forEach(function(x){
+        var v=String(x.r[agKey]||'').trim();
+        var isOff=v.toLowerCase()==='off';
+        var isLive=v.toLowerCase()==='live chat';
+        var isMulti=v.toLowerCase()==='multi-camp'||v.toLowerCase()==='multi campaign';
+        var wknd=(x.dayIdx===5||x.dayIdx===6);
+        var isT=(x.d.toISOString().slice(0,10)===todayStr);
+        var cellBg=isT?'rgba(192,39,45,.04)':wknd?'rgba(212,196,168,.1)':'';
+        var badge='';
+        if(v){
+          var bg,col;
+          if(isOff){bg='#F1948A';col='#7B241C';}
+          else if(isLive){bg='#AED6F1';col='#1A5276';}
+          else if(isMulti){bg='#A9DFBF';col='#1E8449';}
+          else{bg='#D7DBDD';col='#2C3E50';}
+          badge='<span style="display:inline-block;background:'+bg+';color:'+col+';font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;white-space:nowrap">'+v+'</span>';
+        }
+        tbl+='<td style="padding:4px 3px;text-align:center;border-bottom:1px solid rgba(212,196,168,.12);background:'+cellBg+'">'+badge+'</td>';
+      });
+      tbl+='</tr>';
+    });
+    tbl+='</tbody></table></div>';
+    return tbl;
+  }
+
+  // Legend
+  var legendHTML='<div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;padding:8px 0">'
+    +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#F1948A;color:#7B241C;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">OFF</span> Day Off</span>'
+    +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#AED6F1;color:#1A5276;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">Live Chat</span> Live Chat</span>'
+    +'<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:4px"><span style="background:#A9DFBF;color:#1E8449;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">Multi-Camp</span> Multi Campaign</span>'
+    +'</div>';
+
+  // All week tables (hidden except active)
+  var allTablesHTML='<div id="daily_week_tables">';
+  weekKeys.forEach(function(wk){
+    allTablesHTML+='<div id="dwt_'+wk+'" style="display:'+(wk===activeWk?'block':'none')+'">'
+      +buildWeekTable(wk)+'</div>';
+  });
+  allTablesHTML+='</div>';
+
+  var tableHTML=filterHTML+legendHTML+allTablesHTML;
 
   // Build weekly breaks table
   var weeklyHTML = '';
@@ -5146,17 +5208,22 @@ function renderRoster(){
 }
 
 function highlightScheduleAgent(name){
-  // Reset all cells
-  document.querySelectorAll('#schedule_daily [data-agent]').forEach(function(el){
-    el.style.background='';
-    el.style.fontWeight='';
+  // no-op: old column highlight — kept for backward compatibility
+}
+
+function filterDailyWeek(wk){
+  document.querySelectorAll('[id^="dwt_"]').forEach(function(el){
+    el.style.display='none';
   });
-  if(!name)return;
-  // Highlight selected agent column
-  document.querySelectorAll('#schedule_daily [data-agent="'+name+'"]').forEach(function(el){
-    el.style.background='#fff3cd';
-    el.style.fontWeight='700';
+  var target=document.getElementById('dwt_'+wk);
+  if(target) target.style.display='block';
+  document.querySelectorAll('[id^="dwk_"]').forEach(function(btn){
+    btn.style.background='#f5f5f5';
+    btn.style.color='#555';
+    btn.style.boxShadow='';
   });
+  var active=document.getElementById('dwk_'+wk);
+  if(active){ active.style.background='#c0272d'; active.style.color='#fff'; active.style.boxShadow='0 2px 6px rgba(192,39,45,.3)'; }
 }
 
 
@@ -5195,31 +5262,33 @@ function renderVacationSchedule(){
   html += '</div>';
 
   // ── جداول الشهور ──
+  // لون ثابت للجدول = لون أبريل
+  const TABLE_HEX = '#D4C4A8';
+  const TABLE_RGB = hexToRgb(TABLE_HEX);
+
   months.forEach((m,mi)=>{
     const mShort = m.month.split(' ')[0];
-    const hex = VAC_COLORS[mShort]||'#BBBBBB';
-    const rgb = hexToRgb(hex);
     const isActive = mi===activeIdx;
 
     html += `<div id="vmonth_${mi}" style="display:${isActive?'block':'none'};overflow-x:auto;`
-      +`background:rgba(${rgb},.06);border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.05);padding:20px">`;
+      +`background:rgba(${TABLE_RGB},.08);border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.06);padding:20px">`;
 
     // عنوان الشهر
     html += `<div style="font-size:15px;font-weight:700;color:#2a2a2a;text-align:center;margin-bottom:16px;`
-      +`padding:10px 20px;background:rgba(${rgb},.28);border-radius:10px;letter-spacing:.04em">`
+      +`padding:10px 20px;background:rgba(${TABLE_RGB},.35);border-radius:10px;letter-spacing:.04em">`
       +`${m.month}</div>`;
 
     html += '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px">';
 
     // هيدر الأيام
-    html += `<thead><tr style="background:rgba(${rgb},.18)">`;
-    html += `<th style="padding:9px 14px;text-align:center;border-bottom:2px solid rgba(${rgb},.4);`
-      +`min-width:150px;position:sticky;left:0;background:rgba(${rgb},.18);z-index:2;`
+    html += `<thead><tr style="background:rgba(${TABLE_RGB},.22)">`;
+    html += `<th style="padding:9px 14px;text-align:center;border-bottom:2px solid rgba(${TABLE_RGB},.45);`
+      +`min-width:150px;position:sticky;left:0;background:rgba(${TABLE_RGB},.22);z-index:2;`
       +`font-size:12px;font-weight:700;color:#2c2c2c">Agent Name</th>`;
     m.days.forEach(d=>{
       const wknd = d.name==='Fri'||d.name==='Sat';
-      html += `<th style="padding:4px 2px;text-align:center;border-bottom:2px solid rgba(${rgb},.4);`
-        +`min-width:28px;background:${wknd?`rgba(${rgb},.35)`:`rgba(${rgb},.18)`};color:${wknd?'#5D4037':'#333'}">`
+      html += `<th style="padding:4px 2px;text-align:center;border-bottom:2px solid rgba(${TABLE_RGB},.45);`
+        +`min-width:28px;background:${wknd?`rgba(${TABLE_RGB},.42)`:`rgba(${TABLE_RGB},.22)`};color:${wknd?'#5D4037':'#333'}">`
         +`<div style="font-size:9px;font-weight:600">${d.name}</div>`
         +`<div style="font-size:11px;font-weight:800">${d.num}</div></th>`;
     });
@@ -5227,29 +5296,28 @@ function renderVacationSchedule(){
 
     // صفوف الموظفات
     m.agents.forEach((ag,ai)=>{
-      const rowBg = ai%2===0?'rgba(255,255,255,.7)':`rgba(${rgb},.07)`;
+      const rowBg = ai%2===0?'rgba(255,255,255,.75)':`rgba(${TABLE_RGB},.09)`;
       html += `<tr style="background:${rowBg}">`;
-      // اسم الموظفة — تضليل واضح بلون الشهر
-      html += `<td style="padding:6px 10px;border-bottom:1px solid rgba(${rgb},.15);position:sticky;left:0;background:${rowBg};z-index:1;text-align:center">`
-        +`<span style="display:inline-block;background:rgba(${rgb},.35);color:#1a1a2e;`
+      html += `<td style="padding:6px 10px;border-bottom:1px solid rgba(${TABLE_RGB},.18);position:sticky;left:0;background:${rowBg};z-index:1;text-align:center">`
+        +`<span style="display:inline-block;background:rgba(${TABLE_RGB},.45);color:#1a1a2e;`
         +`padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap">`
         +`${ag.name}</span></td>`;
       ag.cells.forEach((v,ci)=>{
         const isOff=v==='Off', isV=v==='V'||v==='v';
         const day=m.days[ci];
         const wknd=day&&(day.name==='Fri'||day.name==='Sat');
-        const cellBg=wknd?`rgba(${rgb},.12)`:'';
+        const cellBg=wknd?`rgba(${TABLE_RGB},.15)`:'';
         let badge='';
         if(isOff) badge=`<span style="display:inline-block;background:#F1948A;color:#7B241C;font-size:9px;font-weight:700;padding:2px 6px;border-radius:5px;box-shadow:0 1px 3px rgba(123,36,28,.18)">Off</span>`;
         else if(isV) badge=`<span style="display:inline-block;background:#85C1E9;color:#1A5276;font-size:9px;font-weight:700;padding:2px 6px;border-radius:5px;box-shadow:0 1px 3px rgba(26,82,118,.18)">V</span>`;
-        html+=`<td style="padding:3px 1px;text-align:center;border-bottom:1px solid rgba(${rgb},.1);background:${cellBg}">${badge}</td>`;
+        html+=`<td style="padding:3px 1px;text-align:center;border-bottom:1px solid rgba(${TABLE_RGB},.12);background:${cellBg}">${badge}</td>`;
       });
       html+='</tr>';
     });
     html+='</tbody></table></div>';
 
     // مفتاح الألوان
-    html+=`<div style="display:flex;gap:16px;margin-top:14px;padding-top:12px;border-top:1px solid rgba(${rgb},.2);justify-content:center">`;
+    html+=`<div style="display:flex;gap:16px;margin-top:14px;padding-top:12px;border-top:1px solid rgba(${TABLE_RGB},.25);justify-content:center">`;
     html+=`<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:5px"><span style="background:#85C1E9;color:#1A5276;font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px">V</span> Vacation</span>`;
     html+=`<span style="font-size:11px;color:#666;display:flex;align-items:center;gap:5px"><span style="background:#F1948A;color:#7B241C;font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px">Off</span> Day Off</span>`;
     html+='</div>';
