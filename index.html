@@ -5317,7 +5317,6 @@ function renderVacationSchedule(){
         +`${ag.name}</span></td>`;
       m.days.forEach((day,ci)=>{         const v=ag.cells[ci]||'';
         const isOff=v==='Off', isV=v==='V'||v==='v';
-        const day=m.days[ci];
         const wknd=day&&(day.name==='Fri'||day.name==='Sat');
         const cellBg=wknd?`rgba(${TABLE_RGB},.15)`:'';
         let badge='';
