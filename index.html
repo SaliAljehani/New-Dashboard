@@ -5335,6 +5335,7 @@ async function loadVacationData(){
     }
     
     console.log('Vacation months loaded:', months.length);
+    console.log('Vacation raw rows:', raw.length, 'sample row 0:', JSON.stringify(raw[0]), 'row 1:', JSON.stringify(raw[1]), 'row 2:', JSON.stringify(raw[2]));
     if(months.length) VACATION_DATA = months;
   } catch(e){
     console.warn('Vacation load failed:', e);
