@@ -5199,7 +5199,7 @@ function renderRoster(){
     +'<button onclick="switchScheduleTab(&apos;vacation&apos;)" id="stab_vacation" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;margin:4px">🗓️ Vacation Schedule</button>'
     +'</div>'
     +'<div id="schedule_weeklyNew" style="display:none;background:#F5F2EE;border-radius:14px;padding:16px;">'+tableHTML+'</div>'
-    +'<div id="schedule_vacation" style="display:none;background:#FDFCFA;border-radius:14px;padding:8px;"><iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRGq8k4RcP7K-rN9KkI93gmD51I3KjFVE2GYoofk85KS5PxOZVRfX8p_QEEBMxDvm-hiRfEt-dK2oZH/pubhtml?gid=644438759&single=true&widget=false&headers=false" style="width:100%;height:calc(100vh - 220px);border:none;display:block;border-radius:8px;margin-top:4px"></iframe></div>'
+    +'<div id="schedule_vacation" style="display:none;background:#FDFCFA;border-radius:14px;padding:8px;"></div>'
     +'<div id="schedule_attendance">'
     +'<div style="background:#fff;border-radius:10px;padding:10px 16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-left:4px solid #c0272d">'
     +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:7px">'
@@ -5239,7 +5239,20 @@ let VACATION_DATA = [];
 
 async function loadVacationData(){
   try{
-    const raw = await fetchCSVRaw(SHEET_ID, 'Vacation Schedule 2026');
+    // Use loadSheet (proxy) instead of fetchCSVRaw (gviz) to get raw 2D display values
+    // that preserve day-name headers (Sun, Mon...) and date numbers correctly
+    const proxyResult = await loadSheet('Vacation Schedule 2026');
+    // proxy returns array of key-value row objects; convert to 2D array
+    let raw;
+    if(Array.isArray(proxyResult) && proxyResult.length && typeof proxyResult[0] === 'object' && !Array.isArray(proxyResult[0])){
+      // named-key rows — extract keys as header row then values
+      const keys = Object.keys(proxyResult[0]);
+      raw = [keys, ...proxyResult.map(r => keys.map(k => String(r[k]||'')))];
+    } else if(Array.isArray(proxyResult) && proxyResult.length && Array.isArray(proxyResult[0])){
+      raw = proxyResult;
+    } else {
+      raw = proxyResult;
+    }
     if(!raw || raw.length < 3){ console.warn('Vacation: no data'); return; }
     
     const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -5435,7 +5448,7 @@ function showVacMonth(idx){
 function renderNewWeeklySchedule(){
   const el = document.getElementById('schedule_weeklyNew');
   if(!el) return;
-  el.style.background = '#FDFCFA';
+  el.style.background = '#F5F2EE';
   el.style.borderRadius = '14px';
   el.style.padding = '16px';
   if(!NEW_WEEKLY_DATA || NEW_WEEKLY_DATA.length < 2){
@@ -5557,7 +5570,7 @@ function renderNewWeeklySchedule(){
     +'<span style="background:#FAE8E8;color:#7B3A3A;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Multi-Camp</span>'
     +'</div>';
 
-  let html = '<div style="display:flex;justify-content:center;margin-bottom:16px">';
+  let html = '<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-bottom:16px">';
   weeks.forEach((w,i)=>{
     const isAct = i===activeIdx;
     html += '<button onclick="filterNewWeek('+i+')" id="nwk_'+i+'" style="'
