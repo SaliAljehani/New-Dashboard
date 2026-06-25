@@ -11,7 +11,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#F8F7F4;font-family:'Inter',system-ui,sans-serif;font-size:12px;background:#FCFBF9;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column}
 #loadingDiv,#errDiv,#mainContent{flex:1 0 auto}
-.header{background:linear-gradient(135deg,#fafafa,#f5f5f5);padding:10px 20px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.06);position:relative;border-bottom:3px solid #c0272d}
+.header{background:linear-gradient(135deg,#fafafa,#f5f5f5);padding:10px 20px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.06);position:relative}
 .header h1{color:#7b0000;font-size:16px;font-weight:700}
 .lupd{font-size:12px;color:#c0272d;background:rgba(192,39,45,.08);padding:4px 12px;border-radius:20px;cursor:pointer;border:1px solid rgba(192,39,45,.2)}
 .lupd:hover{background:rgba(192,39,45,.15)}
@@ -24,7 +24,7 @@ body{background:#F8F7F4;font-family:'Inter',system-ui,sans-serif;font-size:12px;
 .err{background:#fde;color:#c0272d;padding:16px 24px;border-radius:10px;margin:20px;font-size:14px;display:flex;align-items:center;gap:10px}
 .ctrl{background:#fff;border-bottom:1px solid #e8eaed;padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
 .ctrl label{font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
-select,input[type=date]{font-size:13px;padding:6px 10px;border-radius:8px;border:1.5px solid #ddd;background:#F0EFEA;color:#333;cursor:pointer}
+select,input[type=date]{font-size:13px;padding:6px 10px;border-radius:8px;border:1.5px solid #ddd;background:#fafafa;color:#333;cursor:pointer}
 select:focus,input[type=date]:focus{border-color:#c0272d}
 select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .rbtn{padding:6px 14px;border-radius:8px;border:1.5px solid #ddd;background:#fff;color:#444;font-size:12px;cursor:pointer;font-weight:500}
@@ -32,7 +32,7 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .rfbtn{padding:6px 14px;border-radius:8px;border:1.5px solid #c0272d;background:#fef2f2;color:#c0272d;font-size:12px;cursor:pointer;font-weight:600}
 .rfbtn:hover{background:#c0272d;color:#fff}
 .ptag{display:inline-block;background:#fef2f2;color:#c0272d;border:1px solid #fcc;border-radius:8px;padding:3px 10px;font-size:11px;font-weight:600}
-.page-nav{display:flex;background:#fff;padding:0;border-bottom:1px solid #ede8e0;justify-content:center;overflow-x:auto}
+.page-nav{display:flex;background:#fff;padding:0;border-bottom:3px solid #c0272d;justify-content:center;overflow-x:auto}
 .pnav{padding:10px 16px;border-radius:0;border:none;font-size:12px;font-weight:500;cursor:pointer;background:#fff;color:#bbb;transition:.15s;white-space:nowrap;border-bottom:2px solid transparent}
 .pnav.active{color:#c0272d;font-weight:800;border-bottom:3px solid #c0272d}
 .pnav:hover:not(.active){color:#c0272d}
@@ -182,7 +182,7 @@ tr:last-child td{border-bottom:none}
 
 /* Global search */
 .ref-global-search{background:#fff;border-radius:12px;padding:12px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;gap:10px;border-left:4px solid #c0272d}
-.ref-global-inp{flex:1;padding:9px 16px;border-radius:24px;border:1.5px solid #ddd;font-size:13px;outline:none;background:#F0EFEA}
+.ref-global-inp{flex:1;padding:9px 16px;border-radius:24px;border:1.5px solid #ddd;font-size:13px;outline:none;background:#fafafa}
 .ref-global-inp:focus{border-color:#c0272d;background:#fff}
 .ref-global-clear{padding:7px 16px;background:#f5f5f5;color:#666;border:1px solid #ddd;border-radius:20px;font-size:12px;cursor:pointer;font-weight:600;white-space:nowrap}
 .ref-global-clear:hover{background:#fde;color:#c0272d;border-color:#c0272d}
@@ -194,7 +194,7 @@ tr:last-child td{border-bottom:none}
 
 /* Contact pills */
 .ref-contacts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
-.ref-contact-pill{background:#F0EFEA;border-radius:10px;padding:11px 14px;border:1px solid #eee;transition:.15s}
+.ref-contact-pill{background:#fafafa;border-radius:10px;padding:11px 14px;border:1px solid #eee;transition:.15s}
 .ref-contact-pill:hover{border-color:#c0272d;background:#fff}
 .ref-contact-pill-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#aaa;margin-bottom:4px}
 .ref-contact-pill-val{font-size:15px;font-weight:700;color:#1a1a2e;letter-spacing:.02em}
@@ -204,7 +204,7 @@ tr:last-child td{border-bottom:none}
 
 /* Subject groups */
 .ref-subj-group{margin-bottom:14px}
-.ref-subj-group-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:5px 10px;margin-bottom:6px;border-radius:0 6px 6px 0;background:#F0EFEA}
+.ref-subj-group-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:5px 10px;margin-bottom:6px;border-radius:0 6px 6px 0;background:#fafafa}
 .ref-subj-item{padding:10px 12px;border-bottom:1px solid #f0f0f0;background:#fff;border-radius:6px;margin-bottom:4px;transition:.15s}
 .ref-subj-item:hover{background:#fef9f9}
 .ref-subj-subject{font-size:13px;font-weight:700;color:#1a1a2e;display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px}
@@ -231,7 +231,7 @@ tr:last-child td{border-bottom:none}
 .ref-brand-meta{font-size:11px;opacity:.75;margin-top:2px;font-weight:400}
 .ref-chevron{font-size:14px;transition:transform .25s}
 .ref-chevron.open{transform:rotate(180deg)}
-.ref-sub-tabs{display:flex;gap:6px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid #f0f0f0;background:#F0EFEA}
+.ref-sub-tabs{display:flex;gap:6px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid #f0f0f0;background:#fafafa}
 .ref-sub-tab{padding:5px 14px;border-radius:20px;border:1.5px solid #ddd;font-size:11px;font-weight:600;cursor:pointer;background:#fff;color:#555;transition:.15s;white-space:nowrap;text-align:center}
 .ref-sub-tab.active{color:#fff;border-color:transparent}
 .ref-sub-tab:hover:not(.active){border-color:#bdbdbd;color:#555}
@@ -241,7 +241,7 @@ tr:last-child td{border-bottom:none}
 .ref-region-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#888;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #eee;display:flex;align-items:center;gap:6px}
 .ref-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:16px}
 .ref-card{background:#f9fbff;border-radius:10px;padding:14px;border:1px solid #e8eaed;transition:.2s;text-align:center;direction:ltr}
-.ref-card:hover{border-color:#bdbdbd;background:#F0EFEA;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.ref-card:hover{border-color:#bdbdbd;background:#fafafa;box-shadow:0 4px 12px rgba(0,0,0,.08)}
 .ref-card-title{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px}
 .ref-card-row{display:flex;align-items:flex-start;gap:7px;margin-bottom:5px;font-size:12px;color:#555}
 .ref-card-code{display:inline-block;background:#eef2ff;color:#3949ab;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:6px}
@@ -334,7 +334,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .att-agent-table th{background:#f8f8f8;padding:6px 16px;font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid #eee;text-align:center}
 .att-agent-table td{padding:5px 16px;border-bottom:1px solid #f5f5f5;vertical-align:middle;text-align:center}
 .att-agent-table tr:last-child td{border-bottom:none}
-.att-agent-table tr:hover td{background:#F0EFEA}
+.att-agent-table tr:hover td{background:#fafafa}
 .att-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
 .att-status-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700}
 .att-status-badge.office{background:#EAF0EA;color:#3A5C3A}
@@ -352,7 +352,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 <div class="header">
   <img src="data:image/png;base64,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" style="height:58px;object-fit:contain;border-radius:6px;flex-shrink:0" alt="Petromin">
   <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px">
-    <h1 style="margin:0;font-size:22px;font-weight:700;color:#A0362A;text-align:center">Inbound Daily Dashboard · Petromin Group</h1>
+    <h1 style="margin:0;font-size:22px;font-weight:700;color:#B03030;text-align:center">Inbound Daily Dashboard · Petromin Group</h1>
   </div>
   <div style="position:relative;flex-shrink:0">
     <span class="lupd" id="onlineBtn" onclick="toggleOnlinePanel()" title="Who's online" style="font-size:11px;cursor:pointer">👥 <span id="onlineCount">—</span> Online</span>
@@ -423,7 +423,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <button class="pnav" onclick="showPage(2,this)">📞 Calls & WhatsApp Report</button>
   </div>
 
-  <div id="motivationText" style="display:flex;width:100%;background:#fff;border-top:1px solid #EDE8E0;border-bottom:2px solid rgba(192,39,45,.15);padding:8px 0;transition:opacity .6s;min-height:36px"></div>
+  <div id="motivationText" style="display:flex;width:100%;background:#fff;border-bottom:1px solid #EDE8E0;padding:8px 0;transition:opacity .6s;min-height:36px"></div>
   <!-- PAGE 1 -->
   <div id="page1" class="main">
     <div id="vAll">
@@ -4243,7 +4243,7 @@ function showRefBrandPage(brand){
     +(brand==='stellantis'?'<div id="stellantisModelsDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:12px 16px"><div id="stellantisModelsContent" style="text-align:center;color:#aaa;font-size:12px">⏳ Loading...</div></div>':'')
     +(brand==='baic'?'<div id="baicModelsDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:12px 16px"><div id="baicModelsContent" style="text-align:center;color:#aaa;font-size:12px">⏳ Loading...</div></div>':'')
 
-    +(brand==='baic'?'<div id="baicAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:14px 16px"><div style="background:#F0EFEA;border-radius:12px;overflow:hidden;border:1px solid #eee;box-shadow:0 2px 8px rgba(0,0,0,.05)"><div style="background:#f9a82515;padding:10px 16px;font-size:13px;font-weight:700;color:#f9a825;border-bottom:1px solid #ffe082">🗺️ Area Manager</div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#fff8e1"><th style="padding:8px 12px;color:#f9a825;font-weight:700;border-bottom:2px solid #ffe082;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#f9a825;font-weight:700;border-bottom:2px solid #ffe082;text-align:center">👤 Branch Manager</th><th style="padding:8px 12px;color:#f9a825;font-weight:700;border-bottom:2px solid #ffe082;text-align:center">✉️ Email</th><th style="padding:8px 12px;color:#f9a825;font-weight:700;border-bottom:2px solid #ffe082;text-align:center">📞 Area Manager</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#f9a825">West · North · South</td><td style="padding:7px 12px;text-align:center">Roummie Palma</td><td style="padding:7px 12px;text-align:center"><a href="mailto:roummie@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">roummie@petromin.com</a></td><td style="padding:7px 12px;text-align:center">507103299</td></tr><tr style="background:#fff8e1"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#f9a825">East</td><td style="padding:7px 12px;text-align:center">Jimshad Mayin</td><td style="padding:7px 12px;text-align:center"><a href="mailto:jimshad.mayin@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">jimshad.mayin@petromin.com</a></td><td style="padding:7px 12px;text-align:center">557554409</td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#f9a825">Central<br><span style="font-size:10px;color:#999">Exit-14 · Kharj · Azeziah · Khurais · Al Badia</span></td><td style="padding:7px 12px;text-align:center">Mohammed Sallam</td><td style="padding:7px 12px;text-align:center"><a href="mailto:m.sallam@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">m.sallam@petromin.com</a></td><td style="padding:7px 12px;text-align:center">539143824</td></tr><tr style="background:#fff8e1"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#f9a825">Central<br><span style="font-size:10px;color:#999">Darb · Thumama · Al Massif · QassimLand · Unaizah</span></td><td style="padding:7px 12px;text-align:center">Mohammed Sallam</td><td style="padding:7px 12px;text-align:center"><a href="mailto:m.sallam@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">m.sallam@petromin.com</a></td><td style="padding:7px 12px;text-align:center">555047230</td></tr></tbody></table></div></div></div>':'')
+    +(brand==='baic'?'<div id="baicAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:14px 16px"><div style="background:#fafafa;border-radius:12px;overflow:hidden;border:1px solid #eee;box-shadow:0 2px 8px rgba(0,0,0,.05)"><div style="background:#f9a82515;padding:10px 16px;font-size:13px;font-weight:700;color:#f9a825;border-bottom:1px solid #ffe082">🗺️ Area Manager</div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#fff8e1"><th style="padding:8px 12px;color:#f9a825;font-weight:700;border-bottom:2px solid #ffe082;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#f9a825;font-weight:700;border-bottom:2px solid #ffe082;text-align:center">👤 Branch Manager</th><th style="padding:8px 12px;color:#f9a825;font-weight:700;border-bottom:2px solid #ffe082;text-align:center">✉️ Email</th><th style="padding:8px 12px;color:#f9a825;font-weight:700;border-bottom:2px solid #ffe082;text-align:center">📞 Area Manager</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#f9a825">West · North · South</td><td style="padding:7px 12px;text-align:center">Roummie Palma</td><td style="padding:7px 12px;text-align:center"><a href="mailto:roummie@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">roummie@petromin.com</a></td><td style="padding:7px 12px;text-align:center">507103299</td></tr><tr style="background:#fff8e1"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#f9a825">East</td><td style="padding:7px 12px;text-align:center">Jimshad Mayin</td><td style="padding:7px 12px;text-align:center"><a href="mailto:jimshad.mayin@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">jimshad.mayin@petromin.com</a></td><td style="padding:7px 12px;text-align:center">557554409</td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#f9a825">Central<br><span style="font-size:10px;color:#999">Exit-14 · Kharj · Azeziah · Khurais · Al Badia</span></td><td style="padding:7px 12px;text-align:center">Mohammed Sallam</td><td style="padding:7px 12px;text-align:center"><a href="mailto:m.sallam@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">m.sallam@petromin.com</a></td><td style="padding:7px 12px;text-align:center">539143824</td></tr><tr style="background:#fff8e1"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#f9a825">Central<br><span style="font-size:10px;color:#999">Darb · Thumama · Al Massif · QassimLand · Unaizah</span></td><td style="padding:7px 12px;text-align:center">Mohammed Sallam</td><td style="padding:7px 12px;text-align:center"><a href="mailto:m.sallam@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">m.sallam@petromin.com</a></td><td style="padding:7px 12px;text-align:center">555047230</td></tr></tbody></table></div></div></div>':'')
 
     +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#e3f2fd"><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#1565c0;font-weight:700;border-bottom:2px solid #90caf9;text-align:center">✉️ Area Manager Emails</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">ahmed.ateeq@petromin.com</a></td></tr><tr style="background:#e3f2fd"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">simon.white@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">z.bakhurji@petromin.com</a></td></tr></tbody></table></div>':'')
     +(brand==='bodyshop'?'<div id="bodyshopInstruction" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px;direction:rtl;text-align:right"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-right:4px solid #7b0000"><div style="font-size:13px;font-weight:700;color:#7b0000;margin-bottom:8px">📋 الإجراءات (قبل)</div><div style="font-size:11px;color:#555;line-height:1.8">يلزم توفير المستندات التالية:<br>1- استمارة المركبة<br>2- تقرير الجهة المباشرة للحادث (نجم أو المرور)<br>3- الرقم المرجعي لمطالبة التأمين<br><br>يُشترط حضور وتسليم المركبة من مالكها أو المفوّض رسميًا.<br>في حال تعذّر الحضور يجب تقديم تفويض خطي.</div></div><div style="background:#fff9f0;border-radius:10px;padding:14px;border-right:4px solid #e65100"><div style="font-size:13px;font-weight:700;color:#e65100;margin-bottom:8px">💰 التسعيرة</div><div style="font-size:11px;color:#555;line-height:1.8">يستغرق فحص المركبة وإرسال التسعيرة لشركة التأمين من 7 إلى 14 يوم عمل.<br><br>• قابلة للقيادة: تُسلَّم بعد الفحص<br>• غير قابلة للقيادة: تُحجز بالفرع لحين الإصلاح</div></div><div style="background:#f0fff4;border-radius:10px;padding:14px;border-right:4px solid #2e7d32"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 الإصلاح</div><div style="font-size:11px;color:#555;line-height:1.8">يبدأ الإصلاح بعد موافقة التأمين، بحد أقصى 90 يوم عمل.<br><br>سيتم توفير قطع الغيار خلال هذه الفترة، وإشعاركم برسالة نصية عند توفرها.</div></div></div></div>':'')
@@ -5196,7 +5196,7 @@ function renderRoster(){
     +'<div style="background:#fff;border-radius:10px;padding:10px 16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-left:4px solid #c0272d">'
     +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:7px">'
     +'<label style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">📅 Date:</label>'
-    +'<input type="date" id="attDatePicker" style="font-size:13px;padding:6px 12px;border-radius:8px;border:1.5px solid #ddd;background:#F0EFEA;cursor:pointer;font-weight:600" onchange="renderAttendanceTab()">'
+    +'<input type="date" id="attDatePicker" style="font-size:13px;padding:6px 12px;border-radius:8px;border:1.5px solid #ddd;background:#fafafa;cursor:pointer;font-weight:600" onchange="renderAttendanceTab()">'
     +'<button class="att-today-btn" onclick="setAttToday()">📍 Today</button>'
     +'</div>'
     +'<div id="attSummaryRow" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"></div>'
@@ -5938,7 +5938,7 @@ function renderStellantisRecallTab(arr, color){
       +'<span id="ico_'+cardId+'" style="color:#bbb;font-size:14px">▼</span>'
       +'</div>'
       // Description — hidden by default
-      +(c.desc?'<div id="'+cardId+'" style="display:none;padding:12px 16px;border-top:1px solid #f0f0f0;background:#F0EFEA">'
+      +(c.desc?'<div id="'+cardId+'" style="display:none;padding:12px 16px;border-top:1px solid #f0f0f0;background:#fafafa">'
         +'<div style="font-size:12px;color:#444;line-height:1.8;direction:'+(isAr?'rtl':'ltr')+';text-align:'+(isAr?'right':'left')+'">'+c.desc.replace(/,\s*\n/g,'<br>').replace(/\n/g,'<br>')+'</div>'
         +'</div>':'')
       +'</div>';
@@ -6169,7 +6169,7 @@ function renderEOM(){
               +'</div>';
           }).join('')
           +'</div>'
-        :'<div style="text-align:center;padding:20px;color:#aaa;font-size:12px;background:#F0EFEA;border-radius:12px">🕓 Pending — يتم التحديث قريباً</div>')
+        :'<div style="text-align:center;padding:20px;color:#aaa;font-size:12px;background:#fafafa;border-radius:12px">🕓 Pending — يتم التحديث قريباً</div>')
       +'</div>';
   }).join('');
 
