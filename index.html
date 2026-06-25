@@ -5280,7 +5280,7 @@ async function loadVacationData(){
       const c0 = String(row[0]||'').trim();
       
       if(c0 && c0.match(/\w+ 2026/)){
-        const monthName = c0.replace(/\.+$/,'').trim();
+        const monthName = (c0.match(/(\w+ 2026)/)||['',''])[1].trim();
         i++;
         if(i >= raw.length) break;
         
