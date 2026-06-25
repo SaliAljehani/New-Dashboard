@@ -5194,13 +5194,12 @@ function renderRoster(){
 
   el.innerHTML = '<div style="padding:4px">'
     +'<div style="text-align:center;margin-bottom:16px">'
-    +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:rgba(192,39,45,.08);color:#c0272d;border:1.5px solid rgba(192,39,45,.2);margin:4px">📅 Daily Off + Weekly Calls & Break</button>'
+    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:rgba(192,39,45,.08);color:#c0272d;border:1.5px solid rgba(192,39,45,.2);margin:4px">📋 Attendance</button>'
+    +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">📅 Daily Off + Weekly Calls & Break</button>'
     +'<button onclick="switchScheduleTab(&apos;vacation2026&apos;)" id="stab_vacation2026" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">🌴 Vacation Schedule 2026</button>'
     +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">📋 Attendance</button>'
     +'</div>'
-    +'<div id="schedule_dailyoff" style="display:block"></div>'
-    +'<div id="schedule_vacation2026" style="display:none"></div>'
-    +'<div id="schedule_attendance" style="display:none">'
+    +'<div id="schedule_attendance" style="display:block">'
     +'<div style="background:#fff;border-radius:10px;padding:10px 16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-left:4px solid #c0272d">'
     +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:7px">'
     +'<label style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">📅 Date:</label>'
@@ -5211,8 +5210,11 @@ function renderRoster(){
     +'</div>'
     +'<div id="attTableContainer"></div>'
     +'</div>'
+    +'<div id="schedule_dailyoff" style="display:none"></div>'
+    +'<div id="schedule_vacation2026" style="display:none"></div>'
+
     +'</div>';
-  renderDailyOff();
+  setAttToday();
 }
 
 function highlightScheduleAgent(name){
@@ -6438,14 +6440,8 @@ async function renderDailyOff(){
       var text=await res.text();
       DAILY_OFF_CACHE=text.split('\n').map(function(line){
         var cells=[],cur='',inQ=false;
-        for(var ci=0;ci<line.length;ci++){
-          var ch=line[ci];
-          if(ch==='"'){inQ=!inQ;}
-          else if(ch===','&&!inQ){cells.push(cur.trim());cur='';}
-          else{cur+=ch;}
-        }
-        cells.push(cur.trim());
-        return cells;
+        for(var ci=0;ci<line.length;ci++){var ch=line[ci];if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){cells.push(cur.trim());cur='';}else{cur+=ch;}}
+        cells.push(cur.trim());return cells;
       });
     }
     var raw = DAILY_OFF_CACHE;
@@ -6459,25 +6455,19 @@ async function renderDailyOff(){
     // Agent rows: col A = agent name, col B..H = values
     var weeks = [];
     var curWeek = null;
-    var DAY_COLS = ['saturday','sunday','monday','tuesday','wednesday','thursday','friday'];
+    var DAYS = ['Saturday','Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
     for(var i=0; i<raw.length; i++){
       var row = raw[i];
       var r0 = String(row[0]||'').trim();
-      var r1 = String(row[1]||'').trim();
       var r0l = r0.toLowerCase();
-      var r1l = r1.toLowerCase();
-      // Week label: r0 contains a year AND r0 is NOT "agent"
       if(r0 && /\d{4}/.test(r0) && r0l !== 'agent'){
         curWeek = {label: r0, agents: []};
         weeks.push(curWeek);
-        // next row is header — skip it
-        i++;
+        i++; // skip header row
         continue;
       }
-      // Skip header rows
-      if(r0l === 'agent' || DAY_COLS.includes(r1l)) continue;
-      // Agent row
-      if(curWeek && r0 && r0l !== 'agent'){
+      if(!r0 || r0l === 'agent') continue;
+      if(curWeek){
         curWeek.agents.push({
           name: r0,
           Saturday:  String(row[1]||'').trim(),
@@ -6511,21 +6501,22 @@ async function renderDailyOff(){
     }
 
     function buildTable(w){
-      var t='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;background:#FDFCF8">';
-      t+='<thead><tr style="background:#F5F0E8">';
-      t+='<th style="padding:10px 16px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:160px;font-weight:700;color:#5D4037">Agent Name</th>';
-      DAY_COLS.forEach(function(d){
-        var wknd=d==='Friday'||d==='Saturday';
-        t+='<th style="padding:8px 4px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:100px;font-weight:700;color:'+(wknd?'#8D6E63':'#5D4037')+';background:'+(wknd?'#EDE0D4':'#F5F0E8')+'">'+d+'</th>';
+      var HDR='#F5F2EE', BDR='#E5DDD5';
+      var t='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">';
+      t+='<thead><tr style="background:'+HDR+'">';
+      t+='<th style="padding:10px 16px;text-align:center;border-bottom:2px solid '+BDR+';min-width:160px;font-weight:700;color:#5D4037;background:'+HDR+';font-size:12px">Agent Name</th>';
+      DAYS.forEach(function(d){
+        var isFri=d==='Friday';
+        t+='<th style="padding:10px 8px;text-align:center;border-bottom:2px solid '+BDR+';min-width:110px;font-weight:700;color:'+(isFri?'#c0272d':'#5D4037')+';background:'+(isFri?'rgba(192,39,45,.06)':HDR)+';font-size:12px">'+d+'</th>';
       });
       t+='</tr></thead><tbody>';
       w.agents.forEach(function(ag,ai){
-        var rowBg=ai%2===0?'#FFFFFF':'#FAF7F2';
+        var rowBg=ai%2===0?'#FFFFFF':'#FAF8F5';
         t+='<tr style="background:'+rowBg+'">';
-        t+='<td style="padding:8px 14px;border-bottom:1px solid #EDE0D4;text-align:center"><span style="display:inline-block;background:#F5F0E8;color:#3E2723;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap">'+ag.name+'</span></td>';
-        DAY_COLS.forEach(function(d){
-          var wknd=d==='Friday'||d==='Saturday';
-          t+='<td style="padding:5px 3px;border-bottom:1px solid #EDE0D4;text-align:center;background:'+(wknd?'rgba(237,224,212,.2)':'')+'">'+badge(ag[d])+'</td>';
+        t+='<td style="padding:8px 14px;border-bottom:1px solid #EDE8E0;text-align:center"><span style="display:inline-block;background:'+HDR+';color:#3E2723;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap">'+ag.name+'</span></td>';
+        DAYS.forEach(function(d){
+          var isFri=d==='Friday';
+          t+='<td style="padding:6px 4px;border-bottom:1px solid #EDE8E0;text-align:center;background:'+(isFri?'rgba(192,39,45,.04)':'')+'">'+badge(ag[d])+'</td>';
         });
         t+='</tr>';
       });
@@ -6576,18 +6567,11 @@ async function renderVacation2026(){
   try{
     if(!VAC2026_CACHE){
       var vacUrl='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/export?format=csv&gid=644438759';
-      var vacRes=await fetch(vacUrl);
-      var vacText=await vacRes.text();
+      var vacRes=await fetch(vacUrl);var vacText=await vacRes.text();
       VAC2026_CACHE=vacText.split('\n').map(function(line){
         var cells=[],cur='',inQ=false;
-        for(var ci=0;ci<line.length;ci++){
-          var ch=line[ci];
-          if(ch==='"'){inQ=!inQ;}
-          else if(ch===','&&!inQ){cells.push(cur.trim());cur='';}
-          else{cur+=ch;}
-        }
-        cells.push(cur.trim());
-        return cells;
+        for(var ci=0;ci<line.length;ci++){var ch=line[ci];if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){cells.push(cur.trim());cur='';}else{cur+=ch;}}
+        cells.push(cur.trim());return cells;
       });
     }
     var raw = VAC2026_CACHE;
@@ -6694,11 +6678,7 @@ async function renderVacation2026(){
       html+='<button onclick="showVacMonth2026('+mi+')" id="vm26_'+mi+'" style="padding:7px 16px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid '+(isAct?mc.border:'#D7CCC8')+';background:'+(isAct?mc.bg:'#fff')+';color:'+(isAct?mc.col:'#888')+'">'+( MONTH_SHORT[m.month]||m.month)+'</button>';
     });
     html+='</div>';
-    // Legend
-    html+='<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px">';
-    html+='<span style="background:#FADBD8;color:#922B21;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px">Off</span>';
-    html+='<span style="background:#F5ECD7;color:#7D5A2E;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px">V — Vacation</span>';
-    html+='</div>';
+
     html+='<div id="vm26_tables">';
     months.forEach(function(m,mi){
       html+='<div id="vmt26_'+mi+'" style="display:'+(mi===activeMonth?'block':'none')+'">'+buildMonthTable(m)+'</div>';
