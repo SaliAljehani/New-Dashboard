@@ -33,9 +33,9 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .rfbtn:hover{background:#c0272d;color:#fff}
 .ptag{display:inline-block;background:#fef2f2;color:#c0272d;border:1px solid #fcc;border-radius:8px;padding:3px 10px;font-size:11px;font-weight:600}
 .page-nav{display:none}
-.pnav{padding:7px 18px;border-radius:8px;border:1.5px solid #ddd;font-size:13px;font-weight:600;cursor:pointer;background:#fff;color:#444;transition:.15s}
-.pnav.active{background:rgba(192,39,45,.08);color:#c0272d;border-color:rgba(192,39,45,.2)}
-.pnav:hover:not(.active){background:#f5f5f5;border-color:#e0e0e0;color:#c0272d}
+.pnav{padding:10px 16px;border-radius:0;border:none;border-right:1px solid #ede8e0;font-size:12px;font-weight:500;cursor:pointer;background:transparent;color:#999;transition:.15s;white-space:nowrap;border-bottom:2px solid transparent}
+.pnav.active{background:#fff;color:#c0272d;font-weight:700;border-bottom:2px solid #c0272d}
+.pnav:hover:not(.active){background:#fff;color:#c0272d}
 .main{max-width:1600px;margin:0 auto;padding:18px 24px}
 .page2{display:none;max-width:1600px;margin:0 auto;padding:18px 24px}
 .hero{background:#fff;border-radius:14px;padding:18px 22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;gap:18px;border-left:5px solid #c0272d}
@@ -366,7 +366,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <div style="background:rgba(192,39,45,.07);border-radius:22px;padding:10px 32px;border:1px solid rgba(192,39,45,.15);text-align:center">
       <h1 style="margin:0;font-size:18px">Inbound Daily Dashboard · Petromin Group</h1>
     </div>
-    <div id="motivationText" style="width:100%;display:flex;align-items:center;justify-content:center;gap:0;transition:opacity 0.6s;min-height:26px;padding-bottom:6px;border-bottom:2px solid rgba(192,39,45,.15);margin-bottom:2px"></div>
+    <div id="motivationText" style="width:100%;text-align:center;font-size:12px;font-weight:700;color:#c0272d;direction:rtl;transition:opacity 0.5s;min-height:22px;padding:4px 20px 6px;border-bottom:2px solid rgba(192,39,45,.12);margin-bottom:2px"></div>
   </div>
   <div style="position:relative;flex-shrink:0">
     <span class="lupd" id="onlineBtn" onclick="toggleOnlinePanel()" title="Who's online" style="font-size:11px;cursor:pointer">👥 <span id="onlineCount">—</span> Online</span>
@@ -659,34 +659,27 @@ const MOTIVATION_QUOTES=[
 ];
 
 function showMotivation(){
-  const el=document.getElementById('motivationText');
+  var el=document.getElementById('motivationText');
   if(!el) return;
-
-  const groups=[
-    ['⭐ خلف كل تقييم إيجابي قصة خدمة مميزة صنعتها أنت','✨ نتمنى لك يومًا مليئًا بالتميز والرضا والنتائج الرائعة','🏆 نجاحنا يبدأ من رضا عملائنا، ورضا عملائنا يبدأ من احترافيتك'],
-    ['🌟 صباح الإنجاز! ابدأ يومك بهمة وعزيمة','🎯 هدفنا اليوم: خدمة أسرع، تجربة أفضل، وعميل أكثر رضاً','💫 ابتسامتك واحترافيتك وسرعة استجابتك تصنع الفرق'],
-    ['🚀 كل مكالمة فرصة لتُظهر أفضل ما فيك','💡 التميز عادة وليس حدثاً، كن مميزاً في كل لحظة','🌈 فريقنا هو قوتنا، معاً نصنع النجاح'],
+  var quotes=[
+    '⭐ خلف كل تقييم إيجابي قصة خدمة مميزة صنعتها أنت',
+    '✨ نتمنى لك يومًا مليئًا بالتميز والرضا والنتائج الرائعة',
+    '?? نجاحنا يبدأ من رضا عملائنا، ورضا عملائنا يبدأ من احترافيتك',
+    '?? صباح الإنجاز! ابدأي يومك بهمة وعزيمة',
+    '?? هدفنا اليوم: خدمة أسرع، تجربة أفضل، وعميل أكثر رضاً',
+    '?? ابتسامتك واحترافيتك وسرعة استجابتك تصنع الفرق',
+    '?? كل مكالمة فرصة لتُظهري أفضل ما فيك',
+    '?? التميز عادة وليس حدثًا، كني مميزة في كل لحظة',
+    '?? فريقنا هو قوتنا، معًا نصنع النجاح'
   ];
-
-  function renderGroup(g){
+  var idx=0;
+  function show(){
     el.style.opacity='0';
-    setTimeout(function(){
-      el.innerHTML=g.map(function(q,qi){
-        return '<div style="flex:1;text-align:center;padding:0 20px;direction:rtl;font-size:13px;font-weight:700;color:#c0272d;'+(qi<2?'border-right:1px solid rgba(192,39,45,.2)':'')+'">'
-          +q+'</div>';
-      }).join('');
-      el.style.opacity='1';
-    },300);
+    setTimeout(function(){el.textContent=quotes[idx];el.style.opacity='1';},500);
   }
-
-  let idx=0;
-  renderGroup(groups[idx]);
-  setInterval(function(){
-    idx=(idx+1)%groups.length;
-    renderGroup(groups[idx]);
-  },180000);
+  show();
+  setInterval(function(){idx=(idx+1)%quotes.length;show();},120000);
 }
-
 // ===== PRESENCE / "WHO'S ONLINE" (named, one-time selection) =====
 let presenceStarted = false;
 const ONLINE_THRESHOLD_MS = 180000; // consider a viewer "online" if seen in the last 3 min
