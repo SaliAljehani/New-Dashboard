@@ -9,7 +9,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#FAFAF8;font-family:'Inter',system-ui,sans-serif;font-size:12px;background:#FCFBF9;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column}
+body{background:#F8F7F4;font-family:'Inter',system-ui,sans-serif;font-size:12px;background:#FCFBF9;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column}
 #loadingDiv,#errDiv,#mainContent{flex:1 0 auto}
 .header{background:linear-gradient(135deg,#fafafa,#f5f5f5);padding:10px 20px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.06);position:relative;border-bottom:3px solid #c0272d}
 .header h1{color:#7b0000;font-size:16px;font-weight:700}
@@ -352,7 +352,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 <div class="header">
   <img src="data:image/png;base64,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" style="height:58px;object-fit:contain;border-radius:6px;flex-shrink:0" alt="Petromin">
   <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px">
-    <h1 style="margin:0;font-size:22px;font-weight:700;color:#7b0000;text-align:center">Inbound Daily Dashboard · Petromin Group</h1>
+    <h1 style="margin:0;font-size:22px;font-weight:700;color:#A0362A;text-align:center">Inbound Daily Dashboard · Petromin Group</h1>
   </div>
   <div style="position:relative;flex-shrink:0">
     <span class="lupd" id="onlineBtn" onclick="toggleOnlinePanel()" title="Who's online" style="font-size:11px;cursor:pointer">👥 <span id="onlineCount">—</span> Online</span>
@@ -423,7 +423,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <button class="pnav" onclick="showPage(2,this)">📞 Calls & WhatsApp Report</button>
   </div>
 
-  <div id="motivationText" style="display:flex;width:100%;background:#fff;border-bottom:1px solid rgba(192,39,45,.1);padding:7px 0;transition:opacity .6s;min-height:36px"></div>
+  <div id="motivationText" style="display:flex;width:100%;background:#fff;border-top:1px solid #EDE8E0;border-bottom:2px solid rgba(192,39,45,.15);padding:8px 0;transition:opacity .6s;min-height:36px"></div>
   <!-- PAGE 1 -->
   <div id="page1" class="main">
     <div id="vAll">
@@ -6496,7 +6496,7 @@ async function renderDailyOff(){
     }
 
     function buildTable(w){
-      var t='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;background:#FDFCF8">';
+      var t='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;background:#F8F7F4">';
       t+='<thead><tr style="background:#F5F0E8">';
       t+='<th style="padding:10px 16px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:160px;font-weight:700;color:#5D4037">Agent Name</th>';
       DAY_COLS.forEach(function(d){
@@ -6518,7 +6518,7 @@ async function renderDailyOff(){
       return t;
     }
 
-    var html='<div style="background:#FDFCF8;border-radius:14px;padding:4px 16px 12px">';
+    var html='<div style="background:#F8F7F4;border-radius:14px;padding:4px 16px 12px">';
     html+='<div style="display:flex;justify-content:center;margin-bottom:10px;margin-top:2px">';
     html+='<select onchange="showDailyOffWeek(this.value)" id="dow_select" style="'
       +'padding:9px 24px;border-radius:8px;border:2px solid rgba(192,39,45,.25);'
@@ -6622,7 +6622,7 @@ async function renderVacation2026(){
     var MONTH_SHORT={January:'January',February:'February',March:'March',April:'April',May:'May',June:'June',July:'July',August:'August',September:'September',October:'October',November:'November',December:'December'};
 
     function buildMonthTable(m){
-      var t='<div style="overflow-x:auto"><table style="border-collapse:collapse;font-size:11px;background:#FDFCF8;width:100%">';
+      var t='<div style="overflow-x:auto"><table style="border-collapse:collapse;font-size:11px;background:#F8F7F4;width:100%">';
       t+='<thead><tr style="background:#F5F0E8">';
       t+='<th style="padding:8px 14px;text-align:center;border-bottom:2px solid #E8DDD0;border-right:2px solid #E8DDD0;min-width:150px;position:sticky;left:0;background:#F5F0E8;z-index:2;font-size:11px;color:#5D4037">Agent Name</th>';
       m.days.forEach(function(d){
@@ -6648,7 +6648,7 @@ async function renderVacation2026(){
       return t;
     }
 
-    var html='<div style="background:#FDFCF8;border-radius:14px;padding:16px">';
+    var html='<div style="background:#F8F7F4;border-radius:14px;padding:16px">';
     // Month tabs
     html+='<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:14px">';
     var MONTH_COLORS=[
