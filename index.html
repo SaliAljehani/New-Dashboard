@@ -6498,14 +6498,14 @@ async function renderDailyOff(){
     }
 
     function buildTable(w){
+      var HDR_BG='#F5F2EE';
+      var HDR_BORDER='#E5DDD5';
       var t='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">';
-      t+='<thead><tr style="background:#F5F2EE">';
-      t+='<th style="padding:10px 16px;text-align:center;border-bottom:2px solid #E5DDD5;min-width:160px;font-weight:700;color:#c0272d;background:rgba(192,39,45,.06);font-size:12px">Agent Name</th>';
+      t+='<thead><tr style="background:'+HDR_BG+'">';
+      t+='<th style="padding:10px 16px;text-align:center;border-bottom:2px solid '+HDR_BORDER+';min-width:160px;font-weight:700;color:#5D4037;background:'+HDR_BG+';font-size:12px">Agent Name</th>';
       DAYS.forEach(function(d){
         var isFri=d==='Friday';
-        var isSat=d==='Saturday';
-        var bg=isFri?'rgba(192,39,45,0.06)':isSat?'#F0EDE8':'#F5F2EE';
-        t+='<th style="padding:10px 8px;text-align:center;border-bottom:2px solid #E5DDD5;min-width:110px;font-weight:700;color:'+(isFri?'#c0272d':'#5D4037')+';background:'+bg+';font-size:12px">'+d+'</th>';
+        t+='<th style="padding:10px 8px;text-align:center;border-bottom:2px solid '+HDR_BORDER+';min-width:110px;font-weight:700;color:'+(isFri?'#c0272d':'#5D4037')+';background:'+(isFri?'rgba(192,39,45,.06)':HDR_BG)+';font-size:12px">'+d+'</th>';
       });
       t+='</tr></thead><tbody>';
       w.agents.forEach(function(ag,ai){
@@ -6514,8 +6514,7 @@ async function renderDailyOff(){
         t+='<td style="padding:8px 14px;border-bottom:1px solid #EDE8E0;text-align:center"><span style="display:inline-block;background:#F5F2EE;color:#3E2723;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap">'+ag.name+'</span></td>';
         DAYS.forEach(function(d){
           var isFri=d==='Friday';
-          var cellBg=isFri?'rgba(192,39,45,0.04)':'';
-          t+='<td style="padding:6px 4px;border-bottom:1px solid #EDE8E0;text-align:center;background:'+cellBg+'">'+badge(ag[d])+'</td>';
+          t+='<td style="padding:6px 4px;border-bottom:1px solid #EDE8E0;text-align:center;background:'+(isFri?'rgba(192,39,45,.04)':'')+'">'+badge(ag[d])+'</td>';
         });
         t+='</tr>';
       });
