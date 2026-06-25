@@ -5239,19 +5239,32 @@ let VACATION_DATA = [];
 
 async function loadVacationData(){
   try{
-    // Use loadSheet (proxy) instead of fetchCSVRaw (gviz) to get raw 2D display values
-    // that preserve day-name headers (Sun, Mon...) and date numbers correctly
-    const proxyResult = await loadSheet('Vacation Schedule 2026');
-    // proxy returns array of key-value row objects; convert to 2D array
+    // Use gviz with gid directly — avoids proxy header-collapse issue
+    // (proxy only sees 2 columns because row 1 has sparse headers)
+    const gid = 644438759;
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${gid}`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(()=>controller.abort(), 15000);
     let raw;
-    if(Array.isArray(proxyResult) && proxyResult.length && typeof proxyResult[0] === 'object' && !Array.isArray(proxyResult[0])){
-      // named-key rows — extract keys as header row then values
-      const keys = Object.keys(proxyResult[0]);
-      raw = [keys, ...proxyResult.map(r => keys.map(k => String(r[k]||'')))];
-    } else if(Array.isArray(proxyResult) && proxyResult.length && Array.isArray(proxyResult[0])){
-      raw = proxyResult;
-    } else {
-      raw = proxyResult;
+    try{
+      const res = await fetch(url, {signal: controller.signal});
+      clearTimeout(timeoutId);
+      const text = await res.text();
+      const json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}')+1));
+      // Use formatted value (f) when available, else raw value (v), convert to string
+      const rows = json.table.rows.map(r => r.c.map(c => {
+        if(!c) return '';
+        // gviz converts numbers to floats — use formatted string or integer
+        if(c.f !== undefined && c.f !== null) return String(c.f);
+        if(typeof c.v === 'number') return String(Math.round(c.v));
+        return c.v !== null && c.v !== undefined ? String(c.v) : '';
+      }));
+      const cols = json.table.cols.map(c => c.label || '');
+      raw = [cols, ...rows];
+    }catch(e){
+      clearTimeout(timeoutId);
+      console.warn('Vacation gviz failed:', e);
+      return;
     }
     if(!raw || raw.length < 3){ console.warn('Vacation: no data'); return; }
     
