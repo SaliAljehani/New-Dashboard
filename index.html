@@ -5280,7 +5280,7 @@ async function loadVacationData(){
       const c0 = String(row[0]||'').trim();
       
       if(c0 && c0.match(/\w+ 2026/)){
-        const monthName = c0.replace('.','').trim();
+        const monthName = c0.replace(/\.+$/,'').trim();
         i++;
         if(i >= raw.length) break;
         
@@ -5308,7 +5308,7 @@ async function loadVacationData(){
           const r = raw[i];
           const agName = String(r[1]||'').trim();
           const c0r = String(r[0]||'').trim();
-          if(c0r && c0r.match(/\w+ 2026/)){ break; }
+          if(c0r && c0r.match(/\w+ 2026/i)){ break; }
           if(!agName){ i++; continue; }
           const cells = daysList.map(d => String(r[d.col]||'').trim());
           agents.push({name: agName, cells: cells});
