@@ -4665,7 +4665,6 @@ function filterDailyWeek(wk){
 // ══════════════════════════════════════════════
 
 let VACATION_DATA = [];
-let NEW_WEEKLY_DATA = [];
 
 // ── Daily Off: parse raw 2D array from gviz ──
 function parseDailyOffData(arr2d){
