@@ -700,6 +700,13 @@ function setAgentName(val){
   loadOnlineUsers();
 }
 
+function ensureAgentNameSelected(){
+  var saved = localStorage.getItem('dashboardAgentName');
+  if(saved){ currentAgentName = saved; return; }
+  var modal = document.getElementById('nameModalOverlay');
+  if(modal) modal.style.display='flex';
+}
+
 function changeAgentName(){
   document.getElementById('onlinePanel').style.display='none';
   currentAgentName = '';
