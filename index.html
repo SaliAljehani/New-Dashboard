@@ -6440,22 +6440,31 @@ async function renderDailyOff(){
       el.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa">No data</div>';
       return;
     }
-    // Parse weeks — row with single non-empty cell = week label
+    // Parse weeks
+    // Week label row: col A has date range with year (e.g. "Jun 27 – Jul 03, 2026"), col B may have same value (merged cells)
+    // Header row: col A = "Agent", col B = "Saturday" ...
+    // Agent rows: col A = agent name, col B..H = values
     var weeks = [];
     var curWeek = null;
-    var DAY_COLS = ['Saturday','Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
+    var DAY_COLS = ['saturday','sunday','monday','tuesday','wednesday','thursday','friday'];
     for(var i=0; i<raw.length; i++){
       var row = raw[i];
       var r0 = String(row[0]||'').trim();
       var r1 = String(row[1]||'').trim();
-      // Week label: has year, second cell empty
-      if(r0 && r0.match(/\d{4}/) && !r1){
+      var r0l = r0.toLowerCase();
+      var r1l = r1.toLowerCase();
+      // Week label: r0 contains a year AND r0 is NOT "agent"
+      if(r0 && /\d{4}/.test(r0) && r0l !== 'agent'){
         curWeek = {label: r0, agents: []};
         weeks.push(curWeek);
-        i++; // skip header row
+        // next row is header — skip it
+        i++;
         continue;
       }
-      if(curWeek && r0 && !DAY_COLS.includes(r0)){
+      // Skip header rows
+      if(r0l === 'agent' || DAY_COLS.includes(r1l)) continue;
+      // Agent row
+      if(curWeek && r0 && r0l !== 'agent'){
         curWeek.agents.push({
           name: r0,
           Saturday:  String(row[1]||'').trim(),
@@ -6640,9 +6649,24 @@ async function renderVacation2026(){
     var html='<div style="background:#FDFCF8;border-radius:14px;padding:16px">';
     // Month tabs
     html+='<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:14px">';
+    var MONTH_COLORS=[
+      {bg:'#FFF0F0',border:'#F5B8B8',col:'#B03030'}, // Jan - red
+      {bg:'#FFF5EC',border:'#F5D0A9',col:'#A0522D'}, // Feb - orange
+      {bg:'#FFFBEC',border:'#F5E6A9',col:'#8B6914'}, // Mar - yellow
+      {bg:'#F0FFF4',border:'#A9D9B8',col:'#276C3E'}, // Apr - green
+      {bg:'#F0FFF9',border:'#A9D9CC',col:'#1E6B57'}, // May - teal
+      {bg:'#F0F9FF',border:'#A9CFF5',col:'#1A5A8B'}, // Jun - blue
+      {bg:'#F5F0FF',border:'#C8A9F5',col:'#5A2D9B'}, // Jul - purple
+      {bg:'#FFF0FB',border:'#F5A9E8',col:'#8B1A75'}, // Aug - pink
+      {bg:'#FFF0F5',border:'#F5A9C0',col:'#8B1A3C'}, // Sep - rose
+      {bg:'#F5F5F0',border:'#C8C8A9',col:'#5A5A2D'}, // Oct - olive
+      {bg:'#F0F4FF',border:'#A9B8F5',col:'#2D3A8B'}, // Nov - indigo
+      {bg:'#F0FEFF',border:'#A9E8F5',col:'#1A6B7A'}, // Dec - cyan
+    ];
     months.forEach(function(m,mi){
       var isAct=mi===activeMonth;
-      html+='<button onclick="showVacMonth2026('+mi+')" id="vm26_'+mi+'" style="padding:6px 14px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid '+(isAct?'#c0272d':'#D7CCC8')+';background:'+(isAct?'rgba(192,39,45,.08)':'#fff')+';color:'+(isAct?'#c0272d':'#666')+'">'+(MONTH_SHORT[m.month]||m.month)+'</button>';
+      var mc=MONTH_COLORS[mi]||MONTH_COLORS[0];
+      html+='<button onclick="showVacMonth2026('+mi+')" id="vm26_'+mi+'" style="padding:7px 16px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid '+(isAct?mc.border:'#D7CCC8')+';background:'+(isAct?mc.bg:'#fff')+';color:'+(isAct?mc.col:'#888')+'">'+( MONTH_SHORT[m.month]||m.month)+'</button>';
     });
     html+='</div>';
     // Legend
@@ -6661,12 +6685,28 @@ async function renderVacation2026(){
   }
 }
 
+var VM26_COLORS=[
+  {bg:'#FFF0F0',border:'#F5B8B8',col:'#B03030'},
+  {bg:'#FFF5EC',border:'#F5D0A9',col:'#A0522D'},
+  {bg:'#FFFBEC',border:'#F5E6A9',col:'#8B6914'},
+  {bg:'#F0FFF4',border:'#A9D9B8',col:'#276C3E'},
+  {bg:'#F0FFF9',border:'#A9D9CC',col:'#1E6B57'},
+  {bg:'#F0F9FF',border:'#A9CFF5',col:'#1A5A8B'},
+  {bg:'#F5F0FF',border:'#C8A9F5',col:'#5A2D9B'},
+  {bg:'#FFF0FB',border:'#F5A9E8',col:'#8B1A75'},
+  {bg:'#FFF0F5',border:'#F5A9C0',col:'#8B1A3C'},
+  {bg:'#F5F5F0',border:'#C8C8A9',col:'#5A5A2D'},
+  {bg:'#F0F4FF',border:'#A9B8F5',col:'#2D3A8B'},
+  {bg:'#F0FEFF',border:'#A9E8F5',col:'#1A6B7A'},
+];
 function showVacMonth2026(idx){
   document.querySelectorAll('[id^="vmt26_"]').forEach(function(el,i){ el.style.display=i===idx?'block':'none'; });
   document.querySelectorAll('[id^="vm26_"]').forEach(function(btn,i){
-    btn.style.background=i===idx?'rgba(192,39,45,.08)':'#fff';
-    btn.style.color=i===idx?'#c0272d':'#666';
-    btn.style.border=i===idx?'1.5px solid #c0272d':'1.5px solid #D7CCC8';
+    var mc=VM26_COLORS[i]||VM26_COLORS[0];
+    btn.style.background=i===idx?mc.bg:'#fff';
+    btn.style.color=i===idx?mc.col:'#888';
+    btn.style.border='1.5px solid '+(i===idx?mc.border:'#D7CCC8');
+    btn.style.fontWeight=i===idx?'700':'600';
   });
 }
 
