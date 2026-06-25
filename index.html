@@ -6433,7 +6433,22 @@ async function renderDailyOff(){
   el.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa">⏳ Loading...</div>';
   try{
     if(!DAILY_OFF_CACHE){
-      DAILY_OFF_CACHE = await fetchCSVRaw(SHEET_ID, 'Daily Off - Weekly Calls – Breaks');
+      // CSV export preserves ALL rows (gviz skips row1 as headers)
+      var csvUrl = 'https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/export?format=csv&gid=920710775';
+      var res = await fetch(csvUrl);
+      var text = await res.text();
+      var lines = text.split('\n');
+      DAILY_OFF_CACHE = lines.map(function(line){
+        var cells=[],cur='',inQ=false;
+        for(var ci=0;ci<line.length;ci++){
+          var ch=line[ci];
+          if(ch==='"'){inQ=!inQ;}
+          else if(ch===','&&!inQ){cells.push(cur.trim());cur='';}
+          else{cur+=ch;}
+        }
+        cells.push(cur.trim());
+        return cells;
+      });
     }
     var raw = DAILY_OFF_CACHE;
     if(!raw || raw.length < 2){
@@ -6563,7 +6578,24 @@ async function renderVacation2026(){
   el.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa">⏳ Loading...</div>';
   try{
     if(!VAC2026_CACHE){
-      VAC2026_CACHE = await fetchCSVRaw(SHEET_ID, 'Vacation Schedule 2026');
+      // Use CSV export which preserves ALL rows including the month header row
+      var csvUrl = 'https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/export?format=csv&gid=644438759';
+      var res = await fetch(csvUrl);
+      var text = await res.text();
+      // Parse CSV manually
+      var lines = text.split('\n');
+      VAC2026_CACHE = lines.map(function(line){
+        var cells = [];
+        var cur = '', inQ = false;
+        for(var ci=0;ci<line.length;ci++){
+          var ch=line[ci];
+          if(ch==='"'){ inQ=!inQ; }
+          else if(ch===','&&!inQ){ cells.push(cur.trim()); cur=''; }
+          else { cur+=ch; }
+        }
+        cells.push(cur.trim());
+        return cells;
+      });
     }
     var raw = VAC2026_CACHE;
     if(!raw || raw.length < 3){
@@ -6599,7 +6631,7 @@ async function renderVacation2026(){
           var aname=String(arow[1]||'').trim();
           var ac0=String(arow[0]||'').trim();
           if(MONTH_NAMES.find(function(m){return ac0.indexOf(m)>=0;})) break;
-          if(aname && aname!=='Agent Name' && aname!=='#'){
+          if(aname && aname!=='Agent Name' && aname!=='#' && aname!==''){
             var cells=days.map(function(d){return String(arow[d.col]||'').trim();});
             agents.push({name:aname,cells:cells});
           }
