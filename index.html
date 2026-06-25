@@ -343,7 +343,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .att-status-badge.sick{background:#F5F0E8;color:#705030}
 .att-status-badge.off{background:#F0EEE8;color:#787060}
 .att-status-badge.absent{background:#F5E8E8;color:#803030}
-.att-status-badge.complaints{background:#F5EAF0;color:#683050}
+.att-status-badge.complaints{background:#fce4ec;color:#880e4f}
 .att-campaign-tag{padding:4px 10px;border-radius:8px;font-size:11px;font-weight:600;background:#f0f4ff;color:#3949ab;border:1px solid #c5cae9}
 </style>
 </head>
@@ -5194,9 +5194,9 @@ function renderRoster(){
 
   el.innerHTML = '<div style="padding:4px">'
     +'<div style="text-align:center;margin-bottom:16px">'
-    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:rgba(192,39,45,.08);color:#c0272d;border:1.5px solid rgba(192,39,45,.2);margin:4px">📋 Attendance</button>'
-    +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">📅 Daily Off + Weekly Calls & Break</button>'
+    +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:rgba(192,39,45,.08);color:#c0272d;border:1.5px solid rgba(192,39,45,.2);margin:4px">📅 Daily Off + Weekly Calls & Break</button>'
     +'<button onclick="switchScheduleTab(&apos;vacation2026&apos;)" id="stab_vacation2026" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">🌴 Vacation Schedule 2026</button>'
+    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">📋 Attendance</button>'
     +'</div>'
     +'<div id="schedule_dailyoff" style="display:block"></div>'
     +'<div id="schedule_vacation2026" style="display:none"></div>'
@@ -6433,13 +6433,7 @@ async function renderDailyOff(){
   el.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa">⏳ Loading...</div>';
   try{
     if(!DAILY_OFF_CACHE){
-      var csvUrl='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/export?format=csv&gid=920710775';
-      var res=await fetch(csvUrl);var text=await res.text();
-      DAILY_OFF_CACHE=text.split('\n').map(function(line){
-        var cells=[],cur='',inQ=false;
-        for(var ci=0;ci<line.length;ci++){var ch=line[ci];if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){cells.push(cur.trim());cur='';}else{cur+=ch;}}
-        cells.push(cur.trim());return cells;
-      });
+      DAILY_OFF_CACHE = await fetchCSVRaw(SHEET_ID, 'Daily Off - Weekly Calls – Breaks');
     }
     var raw = DAILY_OFF_CACHE;
     if(!raw || raw.length < 2){
@@ -6452,23 +6446,34 @@ async function renderDailyOff(){
     // Agent rows: col A = agent name, col B..H = values
     var weeks = [];
     var curWeek = null;
-    var DAYS=['Saturday','Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
-    for(var i=0;i<raw.length;i++){
-      var row=raw[i];
-      var r0=String(row[0]||'').trim();
-      var r0l=r0.toLowerCase();
-      if(r0 && /\d{4}/.test(r0) && r0l!=='agent'){
-        curWeek={label:r0,agents:[]};
+    var DAY_COLS = ['saturday','sunday','monday','tuesday','wednesday','thursday','friday'];
+    for(var i=0; i<raw.length; i++){
+      var row = raw[i];
+      var r0 = String(row[0]||'').trim();
+      var r1 = String(row[1]||'').trim();
+      var r0l = r0.toLowerCase();
+      var r1l = r1.toLowerCase();
+      // Week label: r0 contains a year AND r0 is NOT "agent"
+      if(r0 && /\d{4}/.test(r0) && r0l !== 'agent'){
+        curWeek = {label: r0, agents: []};
         weeks.push(curWeek);
-        i++;continue;
+        // next row is header — skip it
+        i++;
+        continue;
       }
-      if(!r0||r0l==='agent') continue;
-      if(curWeek){
-        curWeek.agents.push({name:r0,
-          Saturday:String(row[1]||'').trim(),Sunday:String(row[2]||'').trim(),
-          Monday:String(row[3]||'').trim(),Tuesday:String(row[4]||'').trim(),
-          Wednesday:String(row[5]||'').trim(),Thursday:String(row[6]||'').trim(),
-          Friday:String(row[7]||'').trim()
+      // Skip header rows
+      if(r0l === 'agent' || DAY_COLS.includes(r1l)) continue;
+      // Agent row
+      if(curWeek && r0 && r0l !== 'agent'){
+        curWeek.agents.push({
+          name: r0,
+          Saturday:  String(row[1]||'').trim(),
+          Sunday:    String(row[2]||'').trim(),
+          Monday:    String(row[3]||'').trim(),
+          Tuesday:   String(row[4]||'').trim(),
+          Wednesday: String(row[5]||'').trim(),
+          Thursday:  String(row[6]||'').trim(),
+          Friday:    String(row[7]||'').trim()
         });
       }
     }
@@ -6493,22 +6498,21 @@ async function renderDailyOff(){
     }
 
     function buildTable(w){
-      var H='#F5F2EE',B='#E5DDD5';
-      var t='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">';
-      t+='<thead><tr style="background:'+H+'">';
-      t+='<th style="padding:8px 14px;text-align:center;border-bottom:2px solid '+B+';min-width:150px;font-weight:700;color:#5D4037;font-size:12px">Agent Name</th>';
-      DAYS.forEach(function(d){
-        var isFri=d==='Friday';
-        t+='<th style="padding:8px 6px;text-align:center;border-bottom:2px solid '+B+';min-width:100px;font-weight:700;color:'+(isFri?'#c0272d':'#5D4037')+';background:'+(isFri?'rgba(192,39,45,.05)':H)+';font-size:12px">'+d+'</th>';
+      var t='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;background:#FDFCF8">';
+      t+='<thead><tr style="background:#F5F0E8">';
+      t+='<th style="padding:10px 16px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:160px;font-weight:700;color:#5D4037">Agent Name</th>';
+      DAY_COLS.forEach(function(d){
+        var wknd=d==='Friday'||d==='Saturday';
+        t+='<th style="padding:8px 4px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:100px;font-weight:700;color:'+(wknd?'#8D6E63':'#5D4037')+';background:'+(wknd?'#EDE0D4':'#F5F0E8')+'">'+d+'</th>';
       });
       t+='</tr></thead><tbody>';
       w.agents.forEach(function(ag,ai){
-        var rb=ai%2===0?'#fff':'#FAF8F5';
-        t+='<tr style="background:'+rb+'">';
-        t+='<td style="padding:5px 12px;border-bottom:1px solid #EDEBE6;text-align:center"><span style="display:inline-block;background:'+H+';color:#3E2723;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap">'+ag.name+'</span></td>';
-        DAYS.forEach(function(d){
-          var isFri=d==='Friday';
-          t+='<td style="padding:3px 2px;border-bottom:1px solid #EDEBE6;text-align:center;background:'+(isFri?'rgba(192,39,45,.03)':'')+'">'+badge(ag[d])+'</td>';
+        var rowBg=ai%2===0?'#FFFFFF':'#FAF7F2';
+        t+='<tr style="background:'+rowBg+'">';
+        t+='<td style="padding:8px 14px;border-bottom:1px solid #EDE0D4;text-align:center"><span style="display:inline-block;background:#F5F0E8;color:#3E2723;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap">'+ag.name+'</span></td>';
+        DAY_COLS.forEach(function(d){
+          var wknd=d==='Friday'||d==='Saturday';
+          t+='<td style="padding:5px 3px;border-bottom:1px solid #EDE0D4;text-align:center;background:'+(wknd?'rgba(237,224,212,.2)':'')+'">'+badge(ag[d])+'</td>';
         });
         t+='</tr>';
       });
@@ -6516,9 +6520,8 @@ async function renderDailyOff(){
       return t;
     }
 
-    // Week dropdown filter
-    var html='<div style="background:#FDFCF8;border-radius:14px;padding:12px 16px">';
-    html+='<div style="display:flex;justify-content:center;margin-bottom:12px">';
+    var html='<div style="background:#FDFCF8;border-radius:14px;padding:4px 16px 12px">';
+    html+='<div style="display:flex;justify-content:center;margin-bottom:10px;margin-top:2px">';
     html+='<select onchange="showDailyOffWeek(this.value)" id="dow_select" style="'
       +'padding:9px 24px;border-radius:8px;border:2px solid rgba(192,39,45,.25);'
       +'background:#fff;color:#c0272d;font-size:12px;font-weight:700;cursor:pointer;outline:none;'
@@ -6558,13 +6561,7 @@ async function renderVacation2026(){
   el.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa">⏳ Loading...</div>';
   try{
     if(!VAC2026_CACHE){
-      var vacUrl='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/export?format=csv&gid=644438759';
-      var vacRes=await fetch(vacUrl);var vacText=await vacRes.text();
-      VAC2026_CACHE=vacText.split('\n').map(function(line){
-        var cells=[],cur='',inQ=false;
-        for(var ci=0;ci<line.length;ci++){var ch=line[ci];if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){cells.push(cur.trim());cur='';}else{cur+=ch;}}
-        cells.push(cur.trim());return cells;
-      });
+      VAC2026_CACHE = await fetchCSVRaw(SHEET_ID, 'Vacation Schedule 2026');
     }
     var raw = VAC2026_CACHE;
     if(!raw || raw.length < 3){
@@ -6618,7 +6615,7 @@ async function renderVacation2026(){
     var activeMonth=months.findIndex(function(m){return m.month===curMonthName;});
     if(activeMonth<0) activeMonth=0;
 
-    var MONTH_SHORT={January:'January',February:'February',March:'March',April:'April',May:'May',June:'June',July:'July',August:'August',September:'September',October:'October',November:'November',December:'December'};
+    var MONTH_SHORT={January:'Jan',February:'Feb',March:'Mar',April:'Apr',May:'May',June:'Jun',July:'Jul',August:'Aug',September:'Sep',October:'Oct',November:'Nov',December:'Dec'};
 
     function buildMonthTable(m){
       var t='<div style="overflow-x:auto"><table style="border-collapse:collapse;font-size:11px;background:#FDFCF8;width:100%">';
@@ -6670,7 +6667,11 @@ async function renderVacation2026(){
       html+='<button onclick="showVacMonth2026('+mi+')" id="vm26_'+mi+'" style="padding:7px 16px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid '+(isAct?mc.border:'#D7CCC8')+';background:'+(isAct?mc.bg:'#fff')+';color:'+(isAct?mc.col:'#888')+'">'+( MONTH_SHORT[m.month]||m.month)+'</button>';
     });
     html+='</div>';
-
+    // Legend
+    html+='<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px">';
+    html+='<span style="background:#FADBD8;color:#922B21;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px">Off</span>';
+    html+='<span style="background:#F5ECD7;color:#7D5A2E;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px">V — Vacation</span>';
+    html+='</div>';
     html+='<div id="vm26_tables">';
     months.forEach(function(m,mi){
       html+='<div id="vmt26_'+mi+'" style="display:'+(mi===activeMonth?'block':'none')+'">'+buildMonthTable(m)+'</div>';
