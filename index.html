@@ -22,7 +22,7 @@ body{font-family:'Inter',system-ui,sans-serif;font-size:12px;background:#FCFBF9;
 .load-bar{width:300px;height:6px;background:#f0f0f0;border-radius:3px;overflow:hidden}
 .load-fill{height:100%;background:linear-gradient(90deg,#c0272d,#e65100);border-radius:3px;transition:width .4s;width:0%}
 .err{background:#fde;color:#c0272d;padding:16px 24px;border-radius:10px;margin:20px;font-size:14px;display:flex;align-items:center;gap:10px}
-.ctrl{background:#fff;border-bottom:1px solid #e8eaed;padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
+.ctrl{background:#fff;border-bottom:1px solid #e8eaed;padding:8px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
 .ctrl label{font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
 select,input[type=date]{font-size:13px;padding:6px 10px;border-radius:8px;border:1.5px solid #ddd;background:#fafafa;color:#333;cursor:pointer}
 select:focus,input[type=date]:focus{border-color:#c0272d}
@@ -32,7 +32,7 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .rfbtn{padding:6px 14px;border-radius:8px;border:1.5px solid #c0272d;background:#fef2f2;color:#c0272d;font-size:12px;cursor:pointer;font-weight:600}
 .rfbtn:hover{background:#c0272d;color:#fff}
 .ptag{display:inline-block;background:#fef2f2;color:#c0272d;border:1px solid #fcc;border-radius:8px;padding:3px 10px;font-size:11px;font-weight:600}
-.page-nav{display:flex;gap:6px;background:#fff;padding:10px 24px;border-bottom:1px solid #e8eaed;justify-content:center}
+.page-nav{display:none}
 .pnav{padding:7px 18px;border-radius:8px;border:1.5px solid #ddd;font-size:13px;font-weight:600;cursor:pointer;background:#fff;color:#444;transition:.15s}
 .pnav.active{background:rgba(192,39,45,.08);color:#c0272d;border-color:rgba(192,39,45,.2)}
 .pnav:hover:not(.active){background:#f5f5f5;border-color:#e0e0e0;color:#c0272d}
@@ -312,6 +312,17 @@ tr:last-child td{border-bottom:none}
 .ttn{padding:5px 14px;border-radius:20px;border:1.5px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#666}
 .ttn.active{color:#fff;border-color:transparent}
 .ttn.nissan.active{background:#c0272d}.ttn.petromin.active{background:#DAA520;color:#fff}.ttn.stellantis.active{background:#1565c0}
+
+/* ── SIDEBAR NAV ── */
+#appLayout{display:flex;min-height:calc(100vh - 120px)}
+#sidebar{width:200px;flex-shrink:0;background:#fff;border-right:1px solid #EDE8E0;padding:12px 0;display:flex;flex-direction:column;gap:2px;position:sticky;top:0;height:calc(100vh - 120px);overflow-y:auto}
+#sidebar .snav{display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:12px;font-weight:600;color:#666;cursor:pointer;border-radius:0;transition:.15s;border-left:3px solid transparent;white-space:nowrap}
+#sidebar .snav:hover{background:#FAF8F5;color:#c0272d}
+#sidebar .snav.active{background:rgba(192,39,45,.07);color:#c0272d;border-left:3px solid #c0272d;font-weight:700}
+#sidebar .snav .sicon{font-size:15px;flex-shrink:0}
+#sidebarContent{flex:1;overflow:auto;padding:18px 24px}
+@media(max-width:768px){#sidebar{width:52px}#sidebar .snav span.slabel{display:none}#sidebarContent{padding:12px}}
+
 footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px solid #eee;margin-top:20px;background:#fff}
 @media(max-width:900px){.krow{grid-template-columns:repeat(3,1fr)}.r2,.comp-grid,.call-krow{grid-template-columns:1fr}}
 
@@ -416,15 +427,17 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <span class="ptag" id="ptag"></span>
   </div>
 
-  <div class="page-nav">
-    <button class="pnav" onclick="showPage(6,this)">📢 Announcements</button>
-    <button class="pnav active" onclick="showPage(3,this)">👥 Team Directory</button>
-    <button class="pnav" onclick="showPage(1,this)">📊 Team Performance</button>
-    <button class="pnav" onclick="showPage(5,this)">📅 Team Schedules</button>
-    <button class="pnav" onclick="showPage(8,this)">🏆 Employee of the Month</button>
-    <button class="pnav" onclick="showPage(4,this)">📁 Daily Reference</button>
-    <button class="pnav" onclick="showPage(2,this)">📞 Calls & WhatsApp Report</button>
-  </div>
+  <div style="display:flex">
+    <div id="sidebar">
+      <div class="snav active" onclick="showPage(3,this)" data-page="3"><span class="sicon">👥</span><span class="slabel">Team Directory</span></div>
+      <div class="snav" onclick="showPage(6,this)" data-page="6"><span class="sicon">📢</span><span class="slabel">Announcements</span></div>
+      <div class="snav" onclick="showPage(1,this)" data-page="1"><span class="sicon">📊</span><span class="slabel">Team Performance</span></div>
+      <div class="snav" onclick="showPage(5,this)" data-page="5"><span class="sicon">📅</span><span class="slabel">Team Schedules</span></div>
+      <div class="snav" onclick="showPage(8,this)" data-page="8"><span class="sicon">🏆</span><span class="slabel">Employee of the Month</span></div>
+      <div class="snav" onclick="showPage(4,this)" data-page="4"><span class="sicon">📁</span><span class="slabel">Daily Reference</span></div>
+      <div class="snav" onclick="showPage(2,this)" data-page="2"><span class="sicon">📞</span><span class="slabel">Calls & WhatsApp Report</span></div>
+    </div>
+    <div id="sidebarContent">
 
   <!-- PAGE 1 -->
   <div id="page1" class="main">
@@ -494,7 +507,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
   </div>
 
   <!-- PAGE 2: CALL DATA -->
-  <div id="page2" class="page2">
+  <div id="page2" class="page2" style="padding:0">
     <div class="team-toggle">
       <button class="ttn nissan active" onclick="toggleTeam('Nissan',this)">🔴 Nissan</button>
       <button class="ttn petromin active" onclick="toggleTeam('Petromin',this)">🟡 Petromin</button>
@@ -530,7 +543,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     </div>
   </div>
 
-<div id="page3" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
+<div id="page3" style="display:none">
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
     <input class="dir-search" type="text" placeholder="🔍 Search agent name..." oninput="filterDir(this.value)" id="dirSearch">
     <span style="font-size:12px;color:#aaa" id="dirCount"></span>
@@ -538,14 +551,14 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
   <div class="dir-grid" id="dirGrid"></div>
 </div>
 
-<div id="page4" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
+<div id="page4" style="display:none">
   <div id="refContent"><div style="text-align:center;padding:30px;color:#aaa">⏳ Loading reference data...</div></div>
 </div>
 
-<div id="page5" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px"></div>
+<div id="page5" style="display:none"></div>
 
 
-<div id="page6" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
+<div id="page6" style="display:none">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
     <div style="font-size:16px;font-weight:700;color:#1a1a2e">📢 Announcement Board</div>
     <div style="font-size:12px;color:#888">Updates from Google Sheets automatically</div>
@@ -553,7 +566,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
   <div id="announceContent"><div style="text-align:center;padding:40px;color:#aaa">Loading announcements...</div></div>
 </div>
 
-<div id="page8" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
+<div id="page8" style="display:none">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
     <div style="font-size:16px;font-weight:700;color:#1a1a2e">🏆 Employee of the Month</div>
   </div>
@@ -567,10 +580,12 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 
 <!-- page9 merged into Team Schedules -->
 
-<div id="page10" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
+<div id="page10" style="display:none">
   <div id="recallContent"><div style="text-align:center;padding:40px;color:#aaa">Loading...</div></div>
 </div>
 </div>
+    </div>
+  </div>
 <footer style="position:relative">Inbound Daily Dashboard · Petromin Group · Connected to Google Sheets · Auto-updates on refresh<span style="position:absolute;left:14px;top:50%;transform:translateY(-50%)">By: Sali Aljehani</span><span style="position:absolute;right:14px;top:50%;transform:translateY(-50%)" id="lupd_footer" style="color:#c0272d;font-weight:600">🔄 Loading...</span></footer>
 
 <script>
@@ -1567,8 +1582,8 @@ function showPage(n,btn){
   document.getElementById('page5').style.display=n===5?'block':'none';
   document.getElementById('page6').style.display=n===6?'block':'none';
   if(document.getElementById('page7')) document.getElementById('page7').style.display=n===7?'block':'none';
-  document.querySelectorAll('.pnav').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+  document.querySelectorAll('.snav').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
   // Hide filter bar on Team Directory and Daily Reference
   // On Call Data page, hide agent selector
   document.querySelector('.ctrl').style.display=(n===3||n===4||n===5||n===6||n===7||n===8)?'none':'flex';
