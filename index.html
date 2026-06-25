@@ -5195,9 +5195,11 @@ function renderRoster(){
   el.innerHTML = '<div style="padding:4px">'
     +'<div style="text-align:center;margin-bottom:16px">'
     +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:rgba(192,39,45,.08);color:#c0272d;border:1.5px solid rgba(192,39,45,.2);margin:4px">📋 Attendance</button>'
-    
+    +'<button onclick="switchScheduleTab(&apos;weeklyNew&apos;)" id="stab_weeklyNew" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;margin:4px">📅 Daily Off + Weekly Calls & Break</button>'
+    +'<button onclick="switchScheduleTab(&apos;vacation&apos;)" id="stab_vacation" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#f0f0f0;color:#555;margin:4px">🗓️ Vacation Schedule</button>'
     +'</div>'
-    
+    +'<div id="schedule_weeklyNew" style="display:none;background:#F5F2EE;border-radius:14px;padding:16px;">'+tableHTML+'</div>'
+    +'<div id="schedule_vacation" style="display:none;background:#FDFCFA;border-radius:14px;padding:8px;"><iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vRGq8k4RcP7K-rN9KkI93gmD51I3KjFVE2GYoofk85KS5PxOZVRfX8p_QEEBMxDvm-hiRfEt-dK2oZH/pubhtml?gid=644438759&single=true&widget=false&headers=false" style="width:100%;height:calc(100vh - 220px);border:none;display:block;border-radius:8px;margin-top:4px"></iframe></div>'
     +'<div id="schedule_attendance">'
     +'<div style="background:#fff;border-radius:10px;padding:10px 16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-left:4px solid #c0272d">'
     +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:7px">'
