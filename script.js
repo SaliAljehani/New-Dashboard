@@ -4759,12 +4759,20 @@ function parseVacationData(arr2d){
 // ── Load both sheets ──
 async function loadVacationData(){
   try{
-    // Daily Off — use proxy (named keys work because headers are clean)
-    const raw = await loadSheet('Daily Off Schedule & Weekly Calls & Breakk');
-    const arr = Array.isArray(raw) ? raw : (raw.rows||[]);
-    // convert named-key rows to 2D
-    const arr2d = arr.map(r => Object.values(r));
+    // Daily Off via gviz — gives us true 2D positional data
+    const gid2 = 920710775;
+    const url2 = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${gid2}`;
+    const res2 = await fetch(url2);
+    const text2 = await res2.text();
+    const json2 = JSON.parse(text2.substring(text2.indexOf('{'), text2.lastIndexOf('}')+1));
+    const arr2d = json2.table.rows.map(r => r.c.map(c => {
+      if(!c) return '';
+      if(c.f !== undefined && c.f !== null) return String(c.f);
+      if(typeof c.v === 'number') return String(Math.round(c.v));
+      return c.v !== null && c.v !== undefined ? String(c.v) : '';
+    }));
     NEW_WEEKLY_DATA = arr2d;
+    console.log('Daily Off rows:', arr2d.length, 'sample:', arr2d[0]);
   }catch(e){ console.warn('Daily Off load failed:', e); }
 
   try{
