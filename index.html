@@ -964,7 +964,9 @@ async function loadAllData(silent){
       loadRoster().catch(e=>{ console.warn('Roster failed:', e); }),
       loadAnnouncements().catch(e=>{ console.warn('Announcements failed:', e); }),
       loadEscalations().catch(e=>{ console.warn('Escalations failed:', e); }),
-      loadEOM().catch(e=>{ console.warn('EOM failed:', e); })
+      loadEOM().catch(e=>{ console.warn('EOM failed:', e); }),
+      loadSheet('Vacation Schedule 2026').then(function(r){if(r&&r.length>1){var k=Object.keys(r[0]||{});VAC2026_CACHE=r.map(function(x){return k.map(function(kk){return String(x[kk]||'').trim();});});VAC2026_CACHE.unshift(k);}}).catch(e=>console.warn('Vac2026 preload failed:',e)),
+      loadSheet('Daily Off Schedule & Weekly Calls & Breakk').then(function(r){if(r&&r.length>1){var k=Object.keys(r[0]||{});DAILY_OFF_CACHE=r.map(function(x){return k.map(function(kk){return String(x[kk]||'').trim();});});DAILY_OFF_CACHE.unshift(k);}}).catch(e=>console.warn('DailyOff preload failed:',e))
     ]);
     // Preloaded data (if this page was served from Apps Script with data embedded)
     // is meant for the very first paint only. Clear it now so the "Refresh" button
@@ -6351,7 +6353,7 @@ async function renderRef(){
     container.innerHTML='<div class="ref-page">'
 
       // LINKS BUTTON TOP RIGHT
-      +'<div class="ref-info-panel" style="margin-bottom:12px"><div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;border-bottom:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between" onclick="toggleRefSection(\'refLinksDrawer\',\'refLinksIco\')">🔗 Links & Systems<span id="refLinksIco">▼</span></div><div id="refLinksDrawer" style="display:none"><div class="ref-panel-body">'+(linkCards||'<div style="color:#aaa;padding:16px;text-align:center">No data</div>')+'</div></div></div>'
+      +'<div class="ref-info-panel" style="margin-bottom:12px;display:flex;flex-direction:row;align-items:stretch"><div style="background:linear-gradient(180deg,#1565c0,#0d47a1);color:#fff;writing-mode:vertical-rl;transform:rotate(180deg);padding:14px 8px;font-size:11px;font-weight:700;letter-spacing:.06em;cursor:pointer;display:flex;align-items:center;justify-content:center;min-width:30px;border-radius:0 0 12px 12px;flex-shrink:0" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">🔗 Links & Systems</div><div style="flex:1;display:block"><div class="ref-panel-body">'+(linkCards||'<div style="color:#aaa;padding:16px;text-align:center">No data</div>')+'</div></div></div>'
 
       // BRAND CIRCLES
       +'<div class="ref-brand-circles">'
@@ -6445,16 +6447,17 @@ async function renderDailyOff(){
   el.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa">⏳ Loading...</div>';
   try{
     if(!DAILY_OFF_CACHE){
-      var csvUrl='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/export?format=csv&gid=920710775';
-      var res=await fetch(csvUrl,{mode:'cors'});
-      if(!res.ok) throw new Error('HTTP '+res.status);
-      var text=await res.text();
-      if(!text || text.length < 50) throw new Error('Empty response');
-      DAILY_OFF_CACHE=text.split('\n').map(function(line){
-        var cells=[],cur='',inQ=false;
-        for(var ci=0;ci<line.length;ci++){var ch=line[ci];if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){cells.push(cur.trim());cur='';}else{cur+=ch;}}
-        cells.push(cur.trim());return cells;
-      });
+      // استخدام loadSheet (Apps Script Proxy) لتجنب مشاكل CORS
+      var rows = await loadSheet('Daily Off Schedule & Weekly Calls & Breakk');
+      if(!rows || rows.length < 2){
+        el.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa">No data in Daily Off sheet</div>';
+        return;
+      }
+      // تحويل array of objects إلى 2D array
+      var keys = Object.keys(rows[0]||{});
+      DAILY_OFF_CACHE = rows.map(function(r){ return keys.map(function(k){ return String(r[k]||'').trim(); }); });
+      // إضافة هيدر row في الأول
+      DAILY_OFF_CACHE.unshift(keys);
     }
     var raw = DAILY_OFF_CACHE;
     if(!raw || raw.length < 2){
@@ -6520,7 +6523,7 @@ async function renderDailyOff(){
 
     function buildTable(w){
       var t='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;background:#FDFCF8">';
-      t+='<thead><tr style="background:#F5F0E8">';
+      t+='<thead><tr style="background:#FAF8F5">';
       t+='<th style="padding:10px 16px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:160px;font-weight:700;color:#5D4037">Agent Name</th>';
       DAY_COLS.forEach(function(d){
         var wknd=d==='Friday'||d==='Saturday';
@@ -6528,7 +6531,7 @@ async function renderDailyOff(){
       });
       t+='</tr></thead><tbody>';
       w.agents.forEach(function(ag,ai){
-        var rowBg=ai%2===0?'#FFFFFF':'#FAF7F2';
+        var rowBg='#FFFFFF';
         t+='<tr style="background:'+rowBg+'">';
         t+='<td style="padding:8px 14px;border-bottom:1px solid #EDE0D4;text-align:center"><span style="display:inline-block;background:#F5F0E8;color:#3E2723;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap">'+ag.name+'</span></td>';
         DAY_COLS.forEach(function(d){
@@ -6582,13 +6585,15 @@ async function renderVacation2026(){
   el.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa">⏳ Loading...</div>';
   try{
     if(!VAC2026_CACHE){
-      var vacUrl='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/export?format=csv&gid=644438759';
-      var vacRes=await fetch(vacUrl);var vacText=await vacRes.text();
-      VAC2026_CACHE=vacText.split('\n').map(function(line){
-        var cells=[],cur='',inQ=false;
-        for(var ci=0;ci<line.length;ci++){var ch=line[ci];if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){cells.push(cur.trim());cur='';}else{cur+=ch;}}
-        cells.push(cur.trim());return cells;
-      });
+      // استخدام loadSheet (Apps Script Proxy) لتجنب مشاكل CORS
+      var vacRows = await loadSheet('Vacation Schedule 2026');
+      if(!vacRows || vacRows.length < 2){
+        el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">No data in Vacation sheet</div>';
+        return;
+      }
+      var vacKeys = Object.keys(vacRows[0]||{});
+      VAC2026_CACHE = vacRows.map(function(r){ return vacKeys.map(function(k){ return String(r[k]||'').trim(); }); });
+      VAC2026_CACHE.unshift(vacKeys);
     }
     var raw = VAC2026_CACHE;
     if(!raw || raw.length < 3){
@@ -6645,24 +6650,24 @@ async function renderVacation2026(){
     var MONTH_SHORT={January:'January',February:'February',March:'March',April:'April',May:'May',June:'June',July:'July',August:'August',September:'September',October:'October',November:'November',December:'December'};
 
     function buildMonthTable(m){
-      var t='<div style="overflow-x:auto"><table style="border-collapse:collapse;font-size:11px;background:#FDFCF8;width:100%">';
-      t+='<thead><tr style="background:#F5F0E8">';
-      t+='<th style="padding:8px 14px;text-align:center;border-bottom:2px solid #E8DDD0;border-right:2px solid #E8DDD0;min-width:150px;position:sticky;left:0;background:#F5F0E8;z-index:2;font-size:11px;color:#5D4037">Agent Name</th>';
+      var t='<div style="overflow-x:auto"><table style="border-collapse:collapse;font-size:11px;background:#fff;width:100%">';
+      t+='<thead><tr style="background:#FAF8F5">';
+      t+='<th style="padding:8px 14px;text-align:center;border-bottom:1px solid #E8DDD0;min-width:150px;position:sticky;left:0;background:#FAF8F5;z-index:2;font-size:11px;color:#5D4037">Agent Name</th>';
       m.days.forEach(function(d){
         var wknd=d.name==='Fri'||d.name==='Sat';
         t+='<th style="padding:4px 2px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:30px;font-size:9px;color:'+(wknd?'#8D6E63':'#5D4037')+';background:'+(wknd?'#EDE0D4':'#F5F0E8')+'"><div>'+d.name+'</div><div style="font-size:10px;font-weight:700">'+d.num+'</div></th>';
       });
       t+='</tr></thead><tbody>';
       m.agents.forEach(function(ag,ai){
-        var rowBg=ai%2===0?'#FFFFFF':'#FAF7F2';
+        var rowBg='#FFFFFF';
         t+='<tr style="background:'+rowBg+'">';
-        t+='<td style="padding:6px 12px;border-bottom:1px solid #EDE0D4;border-right:2px solid #E8DDD0;text-align:center;position:sticky;left:0;background:'+rowBg+';z-index:1"><span style="display:inline-block;background:#F5F0E8;color:#3E2723;padding:4px 10px;border-radius:16px;font-size:10px;font-weight:600;white-space:nowrap">'+ag.name+'</span></td>';
+        t+='<td style="padding:6px 12px;border-bottom:1px solid #F0EBE4;text-align:center;position:sticky;left:0;background:'+rowBg+';z-index:1"><span style="display:inline-block;background:#F5F0E8;color:#3E2723;padding:4px 10px;border-radius:16px;font-size:10px;font-weight:600;white-space:nowrap">'+ag.name+'</span></td>';
         ag.cells.forEach(function(v,ci){
           var wknd=m.days[ci]&&(m.days[ci].name==='Fri'||m.days[ci].name==='Sat');
           var isOff=v==='Off', isV=v==='V'||v==='v';
           var badge='';
           if(isOff||isV) badge='';
-          t+='<td style="padding:3px 1px;text-align:center;border-bottom:1px solid #EDE0D4;background:'+(wknd?'rgba(237,224,212,.2)':'')+'">'+badge+'</td>';
+          t+='<td style="padding:3px 1px;text-align:center;border-bottom:1px solid #F5F0EC;background:'+(wknd?'rgba(245,240,236,.4)':'')+'">''+badge+'</td>';
         });
         t+='</tr>';
       });
