@@ -736,6 +736,7 @@ function toggleOnlinePanel(){
   if(show) loadOnlineUsers();
 }
 
+var presenceStarted=false;
 function initPresence(){
   if(presenceStarted) return;
   presenceStarted = true;
