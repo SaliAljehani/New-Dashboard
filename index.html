@@ -42,7 +42,7 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .pnav:hover:not(.active){background:#f5f5f5;border-color:#e0e0e0;color:#c0272d}
 .main{max-width:1600px;margin:0 auto;padding:18px 24px}
 .page2{display:none;max-width:1600px;margin:0 auto;padding:18px 24px}
-.hero{background:#fff;border-radius:14px;padding:18px 22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;gap:18px;border-left:5px solid #c0272d}
+.hero{background:#fff;border-radius:14px;padding:18px 22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;gap:18px;border-left:5px solid #c0272d;transition:border-color .3s}
 .av{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#e0e0e0,#eeeeee);display:flex;align-items:center;justify-content:center;color:#c0272d;font-size:18px;font-weight:700;flex-shrink:0;border:2px solid #bdbdbd}
 .hi2{font-size:18px;font-weight:700;color:#1a1a2e}
 .hi3{font-size:12px;color:#444;margin-top:2px}
@@ -431,17 +431,17 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 
   <!-- PAGE 1 -->
   <div id="page1" class="main">
+    <div id="perfCtrl" style="background:#fff;border-bottom:1px solid #e8eaed;padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);position:sticky;top:0;z-index:50">
+      <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em">From:</label><input type="date" id="df_p1" onchange="document.getElementById('df').value=this.value;rf()">
+      <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em">To:</label><input type="date" id="dt_p1" onchange="document.getElementById('dt').value=this.value;rf()">
+      <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-left:8px">Agent:</label>
+      <select id="agSel_p1" onchange="document.getElementById('agSel').value=this.value;selAgent(this.value)" style="font-size:14px;font-weight:600;color:#c0272d;min-width:180px;padding:6px 10px;border-radius:8px;border:1.5px solid #ddd;background:#fafafa;cursor:pointer">
+        <option value="">— All Agents —</option>
+      </select>
+      <button class="rbtn" onclick="resetAll()">↺ Reset</button>
+      <button class="rfbtn" onclick="loadAllData()">🔄 Refresh</button>
+    </div>
     <div id="vAll">
-      <div id="perfCtrl" style="background:#fff;border-bottom:1px solid #e8eaed;padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);position:sticky;top:0;z-index:50">
-        <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em">From:</label><input type="date" id="df_p1" onchange="document.getElementById('df').value=this.value;rf()">
-        <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em">To:</label><input type="date" id="dt_p1" onchange="document.getElementById('dt').value=this.value;rf()">
-        <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-left:8px">Agent:</label>
-        <select id="agSel_p1" onchange="document.getElementById('agSel').value=this.value;selAgent(this.value)" style="font-size:14px;font-weight:600;color:#c0272d;min-width:180px;padding:6px 10px;border-radius:8px;border:1.5px solid #ddd;background:#fafafa;cursor:pointer">
-          <option value="">— All Agents —</option>
-        </select>
-        <button class="rbtn" onclick="resetAll()">↺ Reset</button>
-        <button class="rfbtn" onclick="loadAllData()">🔄 Refresh</button>
-      </div>
       <div class="tabs" style="justify-content:center;margin-bottom:16px">
         <button class="tab active" onclick="sv('grid',this)">🗂 Agent Cards</button>
         <button class="tab" onclick="sv('table',this)">📋 Summary Table</button>
@@ -466,7 +466,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
       <div class="hero">
         <div class="av" id="hav">?</div>
         <div style="flex:1">
-          <div class="hi2" id="hname">–</div>
+          <div class="hi2" id="hname" style="font-size:16px;font-weight:700">–</div>
           <div class="hi3" id="hmeta">–</div>
           <div style="display:flex;gap:16px;margin-top:8px;flex-wrap:wrap" id="hcontact"></div>
         </div>
@@ -1192,8 +1192,8 @@ function initUI(silent){
 
 // ── HELPERS ─────────────────────────────────────────────────────────────────
 function gf(){var ids_f=['df_p1','df'],ids_t=['dt_p1','dt'],f='',t='';for(var i=0;i<ids_f.length;i++){var el=document.getElementById(ids_f[i]);if(el&&el.value){f=el.value;break;}}for(var i=0;i<ids_t.length;i++){var el=document.getElementById(ids_t[i]);if(el&&el.value){t=el.value;break;}}return{f:f,t:t};}
-function frows(name){const{f,t}=gf();return(D[name]||[]).filter(r=>r[0]&&r[0]>=f&&r[0]<=t);}
-function fall(){const{f,t}=gf();const R={};Object.keys(D).forEach(n=>{const r=(D[n]||[]).filter(r=>r[0]&&r[0]>=f&&r[0]<=t);if(r.length)R[n]=r;});return R;}
+function frows(name){const{f,t}=gf();if(!f||!t)return(D[name]||[]);return(D[name]||[]).filter(r=>r[0]&&r[0]>=f&&r[0]<=t);}
+function fall(){const{f,t}=gf();const R={};Object.keys(D).forEach(n=>{const r=(!f||!t)?(D[n]||[]):(D[n]||[]).filter(r=>r[0]&&r[0]>=f&&r[0]<=t);if(r.length)R[n]=r;});return R;}
 function ag(rows){let I=0,T=0,W=0,DI=0,tS=0,tN=0,hS=0,hN=0;rows.forEach(r=>{I+=r[1];T+=r[2];W+=r[3];DI+=r[4];if(r[5]>0){tS+=r[5];tN++;}if(r[7]>0){hS+=r[7];hN++;}});return{days:rows.length,I,T,W,DI,avgTalk:tN?Math.round(tS/tN):0,avgAHT:hN?Math.round(hS/hN):0};}
 
 // ── RENDER ALL ───────────────────────────────────────────────────────────────
@@ -1223,15 +1223,18 @@ function renderAll(){
       const a=am[nm];
       const init=nm.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
       const c=getAvatarColor(nm);
-      return`<div class="ac${nm===CA?' sel':''}" style="background:${c.cardBg}" onclick="selAgent('${nm}')">
-        <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px">
-          <div style="width:34px;height:34px;border-radius:50%;background:${c.bg};border:1px solid ${c.border};display:flex;align-items:center;justify-content:center;color:${c.text};font-size:12px;font-weight:700;flex-shrink:0">${init}</div>
-          <div><div class="acn" style="color:${c.text}">${nm}</div><div style="font-size:10px;color:${c.text};opacity:.65">#${i+1} · ${a.days} days</div></div>
+      return`<div class="ac${nm===CA?' sel':''}" style="background:${c.cardBg};border:1.5px solid ${c.border};border-radius:12px;padding:10px 12px;cursor:pointer;transition:.2s" onclick="selAgent('${nm}')">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <div style="width:36px;height:36px;border-radius:50%;background:${c.bg};border:1.5px solid ${c.border};display:flex;align-items:center;justify-content:center;color:${c.text};font-size:12px;font-weight:700;flex-shrink:0">${init}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:600;font-size:13px;color:${c.text};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${nm}</div>
+            <div style="font-size:10px;color:${c.text};opacity:.65;margin-top:1px">#${i+1} · ${a.days} days</div>
+          </div>
         </div>
-        <div class="acs">
-          <div class="acp" style="background:${c.bg}55;color:${c.text}">In <span style="color:${c.text}">${N(a.I)}</span></div>
-          <div class="acp" style="background:${c.bg}55;color:${c.text}">Tkt <span style="color:${c.text}">${N(a.T)}</span></div>
-          <div class="acp" style="background:${c.bg}55;color:${c.text}">WA <span style="color:${c.text}">${N(a.W)}</span></div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <span style="font-size:10px;font-weight:700;background:${c.bg};color:${c.text};padding:2px 8px;border-radius:8px">In ${N(a.I)}</span>
+          <span style="font-size:10px;font-weight:700;background:${c.bg};color:${c.text};padding:2px 8px;border-radius:8px">Tkt ${N(a.T)}</span>
+          <span style="font-size:10px;font-weight:700;background:${c.bg};color:${c.text};padding:2px 8px;border-radius:8px">WA ${N(a.W)}</span>
         </div>
       </div>`;
     }).join('');
@@ -1297,7 +1300,7 @@ function renderAgent(name){
   document.getElementById('hmeta').textContent=`${a.days} working days · ${rows[0][0]} → ${rows[rows.length-1][0]}`;
   const _heroEl=document.querySelector('.hero');
   if(_heroEl) _heroEl.style.borderLeftColor=_hc.border;
-  document.getElementById('hrank').textContent=`Rank #${rank} / ${sorted.length}`;
+  const _hrankEl=document.getElementById('hrank');if(_hrankEl)_hrankEl.textContent=`Rank #${rank} / ${sorted.length}`;
   // Contact info from directory
   const agInfo = AGENTS_DIR.find(function(x){return x.name===name||x.name.trim()===name.trim();});
   const hcontact = document.getElementById('hcontact');
