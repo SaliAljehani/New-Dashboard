@@ -622,21 +622,28 @@ async function loadSheet(name, retries){
     return window.__PRELOADED_DATA__[name];
   }
   retries = retries===undefined ? 2 : retries;
-  // Fallback: direct fetch (for GitHub Pages)
   const gid = SHEET_GIDS[name] || '';
-  const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${SHEET_ID}&gid=${gid}`;
+  // استخدام gviz مباشرة - أسرع وأكثر موثوقية
+  const url = gid
+    ? `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${gid}`
+    : `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(name)}`;
   const controller = new AbortController();
-  const timeoutId = setTimeout(()=>controller.abort(), 30000);
+  const timeoutId = setTimeout(()=>controller.abort(), 20000);
   try{
     const res = await fetch(url, {signal: controller.signal});
     clearTimeout(timeoutId);
-    if(!res.ok) throw new Error('Proxy error: ' + res.status + ' for ' + name);
-    return await res.json();
+    const text = await res.text();
+    const json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}')+1));
+    const cols = json.table.cols.map(c=>c.label||'');
+    const rows = json.table.rows.map(r=>({
+      ...Object.fromEntries(cols.map((c,i)=>[c, r.c[i]?(r.c[i].f!==undefined?r.c[i].f:r.c[i].v):'']))
+    }));
+    return rows;
   }catch(err){
     clearTimeout(timeoutId);
     if(retries>0){
       console.warn('loadSheet retry for', name, '— attempts left:', retries, err.message);
-      await new Promise(r=>setTimeout(r,800));
+      await new Promise(r=>setTimeout(r,1000));
       return loadSheet(name, retries-1);
     }
     throw new Error((err.name==='AbortError'?'Timeout loading ':'Failed to load ')+name+' — '+err.message);
