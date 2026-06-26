@@ -22,7 +22,7 @@ body{background:#F8F7F4;font-family:'Inter',system-ui,sans-serif;font-size:12px;
 .load-bar{width:300px;height:6px;background:#f0f0f0;border-radius:3px;overflow:hidden}
 .load-fill{height:100%;background:linear-gradient(90deg,#c0272d,#e65100);border-radius:3px;transition:width .4s;width:0%}
 .err{background:#fde;color:#c0272d;padding:16px 24px;border-radius:10px;margin:20px;font-size:14px;display:flex;align-items:center;gap:10px}
-.ctrl{background:#fff;border-bottom:1px solid #e8eaed;padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
+.ctrl{background:#fff;border-bottom:1px solid #e8eaed;padding:10px 24px;display:flex;justify-content:center;flex-wrap:wrap;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
 .ctrl label{font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
 select,input[type=date]{font-size:13px;padding:6px 10px;border-radius:8px;border:1.5px solid #ddd;background:#fafafa;color:#333;cursor:pointer}
 select:focus,input[type=date]:focus{border-color:#c0272d}
@@ -355,7 +355,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <h1 style="margin:0;font-size:22px;font-weight:700;color:#B03030;text-align:center">Inbound Daily Dashboard · Petromin Group</h1>
   </div>
   <div style="position:relative;flex-shrink:0">
-    <span class="lupd" id="onlineBtn" onclick="toggleOnlinePanel()" title="Who's online" style="font-size:11px;cursor:pointer">👥 <span id="onlineCount">—</span> Online</span>
+    <span class="lupd" id="onlineBtn" onclick="toggleOnlinePanel()" title="Who's online" style="font-size:11px;cursor:pointer">👥 <span id="onlineCount">—</span></span>
     <div id="onlinePanel" style="display:none;position:absolute;top:100%;left:0;margin-top:8px;background:#FFFDFB;border:1px solid #eee;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.10);padding:10px 14px;min-width:190px;max-height:260px;overflow-y:auto;z-index:80;text-align:left">
       <div style="font-size:11px;font-weight:700;color:#6B3636;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #f0e8e8">👥 Online now</div>
       <div id="onlineList" style="font-size:12px;color:#555;line-height:2"></div>
@@ -529,8 +529,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
   </div>
 
 <div id="page3" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
-    <input class="dir-search" type="text" placeholder="🔍 Search agent name..." oninput="filterDir(this.value)" id="dirSearch">
+
     <span style="font-size:12px;color:#aaa" id="dirCount"></span>
   </div>
   <div class="dir-grid" id="dirGrid"></div>
