@@ -6330,17 +6330,14 @@ async function renderRef(){
     // RENDER
     container.innerHTML='<div class="ref-page">'
 
-      // LINKS BUTTON TOP RIGHT
-      +'<div style="display:flex;justify-content:flex-end;margin-bottom:6px">'
-      +'<button onclick="toggleRefSection(\'refLinksDrawer\',\'refLinksIco\')" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#1565c0;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(21,101,192,.3)">🔗 Links <span id="refLinksIco">▼</span></button>'
-      +'</div>'
+
       +'<div id="refLinksDrawer" style="display:none">'
       +'<div class="ref-info-panel"><div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;border-bottom:none">🔗 Links & Systems</div>'
       +'<div class="ref-panel-body">'+(linkCards||'<div style="color:#aaa;padding:16px;text-align:center">No data</div>')+'</div></div>'
       +'</div>'
 
       // BRAND CIRCLES
-      +'<div class="ref-brand-circles">'
+      +'<div class="ref-brand-circles">'      +'<div class="ref-brand-circle" onclick="toggleRefSection(\'refLinksDrawer\',\'refLinksIco\')" style="cursor:pointer">'      +'<div class="ref-brand-icon" style="background:#1565c0;font-size:22px">🔗</div>'      +'<div class="ref-brand-label" style="color:#1565c0">Links</div>'      +'</div>'
       +BRAND_CONFIGS.map(({key,label,icon,color,onclick})=>
         '<div class="ref-brand-circle" onclick="'+(onclick||'showRefBrandPage(\''+key+'\')')+'">'+
         '<div class="ref-brand-circle-icon" style="background:'+color+'">'+icon+'</div>'+
