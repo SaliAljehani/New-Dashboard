@@ -219,7 +219,7 @@ tr:last-child td{border-bottom:none}
 .ref-link-card{background:#f9fbff;border-radius:10px;padding:10px 14px;border:1px solid #e8eaed;display:flex;align-items:center;gap:10px;transition:.15s;margin-bottom:6px}
 .ref-link-card:hover{border-color:#1565c0;background:#fff}
 .ref-link-card-name{font-size:13px;font-weight:700;color:#1a1a2e;flex:1}
-.ref-link-open-btn{padding:5px 14px;background:#1565c0;color:#fff;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap}
+.ref-link-open-btn{padding:5px 14px;background:#1565c0;color:#fff;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap;display:inline-block}
 .ref-link-open-btn:hover{background:#0d47a1}
 .ref-link-file{font-size:11px;color:#888;background:#f0f2f7;padding:4px 10px;border-radius:8px;white-space:nowrap}
 .ref-link-pass{font-size:10px;color:#bbb;margin-top:2px}
@@ -456,7 +456,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
         </div>
         <div style="text-align:right;flex-shrink:0">
           <div class="rkbig" id="hrank">–</div>
-          <div style="font-size:11px;color:#444;margin-top:3px">Rank by Inbound</div>
+          
         </div>
       </div>
       <div class="krow" id="akpis"></div>
@@ -531,7 +531,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 <div id="page3" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
     <input class="dir-search" type="text" style="display:none" placeholder="🔍 Search agent name..." oninput="filterDir(this.value)" id="dirSearch">
-    <span style="font-size:12px;color:#aaa" id="dirCount" style="display:none"></span>
+    <span style="font-size:12px;color:#aaa" id="dirCount" style="display:none" style="display:none"></span>
   </div>
   <div class="dir-grid" id="dirGrid"></div>
 </div>
