@@ -400,8 +400,9 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 </div>
 
 <!-- ERROR STATE -->
-<div id="errDiv" style="display:none">
+<div id="errDiv" style="display:none;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px">
   <div class="err">❌ <span id="errMsg">Could not load data.</span></div>
+  <button onclick="loadAllData()" style="padding:10px 28px;background:#c0272d;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">🔄 إعادة المحاولة</button>
 </div>
 
 <!-- MAIN CONTENT (hidden until loaded) -->
@@ -957,9 +958,9 @@ async function loadAllData(silent){
     setProgress(15,'Loading dashboard data...');
     const [apRows, attRows, callRows] = await Promise.all([
       loadSheet('Agent Performance').catch(e=>{ console.warn('AP failed:',e); return []; }),
-      loadSheet('Attendance Data'),
-      loadSheet('Data Call'),
-      loadAgentDir(),
+      loadSheet('Attendance Data').catch(e=>{ console.warn('Att failed:',e); return []; }),
+      loadSheet('Data Call').catch(e=>{ console.warn('Call failed:',e); return []; }),
+      loadAgentDir().catch(e=>{ console.warn('Dir failed:',e); }),
       loadSchedule().catch(e=>{ console.warn('Schedule failed:', e); }),
       loadRoster().catch(e=>{ console.warn('Roster failed:', e); }),
       loadAnnouncements().catch(e=>{ console.warn('Announcements failed:', e); }),
@@ -1154,7 +1155,7 @@ async function loadAllData(silent){
     if(!silent){
       document.getElementById('loadingDiv').style.display='none';
       document.getElementById('errDiv').style.display='block';
-      document.getElementById('errMsg').textContent='Error: '+err.message;
+      document.getElementById('errMsg').textContent='فشل الاتصال بـ Google Sheets: '+err.message+' — تأكدي من اتصال الإنترنت ثم اضغطي Refresh';
     }
     console.error(err);
   }
