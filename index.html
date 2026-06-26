@@ -6354,7 +6354,7 @@ async function renderRef(){
     container.innerHTML='<div class="ref-page">'
 
       // LINKS BUTTON TOP RIGHT
-      +'<div class="ref-info-panel" style="margin-bottom:12px;display:flex;flex-direction:row;align-items:stretch"><div style="background:linear-gradient(180deg,#1565c0,#0d47a1);color:#fff;writing-mode:vertical-rl;transform:rotate(180deg);padding:14px 8px;font-size:11px;font-weight:700;letter-spacing:.06em;cursor:pointer;display:flex;align-items:center;justify-content:center;min-width:30px;border-radius:0 0 12px 12px;flex-shrink:0" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">🔗 Links & Systems</div><div style="flex:1;display:block"><div class="ref-panel-body">'+(linkCards||'<div style="color:#aaa;padding:16px;text-align:center">No data</div>')+'</div></div></div>'
+      +'<div class="ref-info-panel" style="margin-bottom:12px;display:flex;flex-direction:row;align-items:stretch"><div style="background:linear-gradient(180deg,#1565c0,#0d47a1);color:#fff;writing-mode:vertical-rl;transform:rotate(180deg);padding:14px 8px;font-size:11px;font-weight:700;letter-spacing:.06em;cursor:pointer;display:flex;align-items:center;justify-content:center;min-width:30px;border-radius:0 0 12px 12px;flex-shrink:0" onclick="var d=this.nextElementSibling;d.style.display=d.style.display===&quot;none&quot;?&quot;block&quot;:&quot;none&quot;">🔗 Links & Systems</div><div style="flex:1;display:block"><div class="ref-panel-body">'+(linkCards||'<div style="color:#aaa;padding:16px;text-align:center">No data</div>')+'</div></div></div>'
 
       // BRAND CIRCLES
       +'<div class="ref-brand-circles">'
