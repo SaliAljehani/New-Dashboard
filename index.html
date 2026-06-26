@@ -9,7 +9,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',system-ui,sans-serif;font-size:12px;background:#FCFBF9;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column}
+body{font-family:'Inter',system-ui,sans-serif;font-size:12px;background:#FEFEFE;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column}
 #loadingDiv,#errDiv,#mainContent{flex:1 0 auto}
 .quotes-bar{background:#fff;border-bottom:1px solid #f0e8e8;padding:9px 20px;display:flex;align-items:center;justify-content:space-around;gap:10px}
 .quotes-bar .q-item{font-size:12px;color:#c0272d;font-weight:600;text-align:center;direction:rtl}
@@ -360,7 +360,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <h1 style="margin:0;font-size:18px;text-align:center">Inbound Daily Dashboard · Petromin Group</h1>
   </div>
   <div style="position:relative;flex-shrink:0">
-    <span class="lupd" id="onlineBtn" onclick="toggleOnlinePanel()" title="Who's online" style="font-size:11px;cursor:pointer">👥 <span id="onlineCount">—</span> Online</span>
+    <span class="lupd" id="onlineBtn" onclick="toggleOnlinePanel()" title="Who's online" style="font-size:11px;cursor:pointer">👥 <span id="onlineCount">—</span></span>
     <div id="onlinePanel" style="display:none;position:absolute;top:100%;left:0;margin-top:8px;background:#FFFDFB;border:1px solid #eee;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.10);padding:10px 14px;min-width:190px;max-height:260px;overflow-y:auto;z-index:80;text-align:left">
       <div style="font-size:11px;font-weight:700;color:#6B3636;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #f0e8e8">👥 Online now</div>
       <div id="onlineList" style="font-size:12px;color:#555;line-height:2"></div>
@@ -431,7 +431,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
   <!-- PAGE 1 -->
   <div id="page1" class="main">
     <div id="vAll">
-      <div class="tabs">
+      <div class="tabs" style="justify-content:center">
         <button class="tab active" onclick="sv('grid',this)">🗂 Agent Cards</button>
         <button class="tab" onclick="sv('table',this)">📋 Summary Table</button>
       </div>
@@ -458,10 +458,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
           <div class="hi3" id="hmeta">–</div>
           <div style="display:flex;gap:16px;margin-top:8px;flex-wrap:wrap" id="hcontact"></div>
         </div>
-        <div style="text-align:right;flex-shrink:0">
-          <div class="rkbig" id="hrank">–</div>
-          <div style="font-size:11px;color:#444;margin-top:3px">Rank by Inbound</div>
-        </div>
+
       </div>
       <div class="krow" id="akpis"></div>
       <div class="tabs">
@@ -502,6 +499,15 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
       <button class="ttn petromin active" onclick="toggleTeam('Petromin',this)">🟡 Petromin</button>
       <button class="ttn stellantis active" onclick="toggleTeam('Stellantis',this)">🔵 Stellantis</button>
     </div>
+    <div style="background:#fff;border-bottom:1px solid #e8eaed;padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:12px;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+      <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em">From:</label><input type="date" id="df2" onchange="document.getElementById('df').value=this.value;rf()">
+      <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em">To:</label><input type="date" id="dt2" onchange="document.getElementById('dt').value=this.value;rf()">
+      <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-left:8px">Agent:</label>
+      <select id="agSel2" onchange="document.getElementById('agSel').value=this.value;selAgent(this.value)" style="font-size:14px;font-weight:600;color:#c0272d;min-width:180px;padding:6px 10px;border-radius:8px;border:1.5px solid #ddd;background:#fafafa;cursor:pointer">
+        <option value="">— All Agents —</option>
+      </select>
+      <button class="rbtn" onclick="resetAll()">↺ Reset</button>
+    </div>
     <div class="call-krow" id="callKpis"></div>
     <div class="comp-grid" id="compCards"></div>
     <div id="monthlyBars"></div>
@@ -534,7 +540,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 
 <div id="page3" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
-    <input class="dir-search" type="text" placeholder="🔍 Search agent name..." oninput="filterDir(this.value)" id="dirSearch">
+    
     <span style="font-size:12px;color:#aaa" id="dirCount"></span>
   </div>
   <div class="dir-grid" id="dirGrid"></div>
@@ -1573,7 +1579,7 @@ function showPage(n,btn){
   btn.classList.add('active');
   // Hide filter bar on Team Directory and Daily Reference
   // On Call Data page, hide agent selector
-  document.querySelector('.ctrl').style.display=(n===3||n===4||n===5||n===6||n===7||n===8)?'none':'flex';
+  document.querySelector('.ctrl').style.display=(n===2||n===3||n===4||n===5||n===6||n===7||n===8)?'none':'flex';
   document.getElementById('agSel').style.display=(n===2)?'none':'inline-block';
   document.querySelector('label[for="agSel"]') && (document.querySelector('.ctrl label:last-of-type').style.display=(n===2)?'none':'inline-block');
   if(n===2)renderCallPage();
@@ -1599,7 +1605,7 @@ function sat(t,btn){
   document.getElementById('aattendance').style.display=t==='attendance'?'block':'none';
   if(t==='attendance'&&CA)renderAttendance(CA);
 }
-function resetAll(){
+function resetAll(){const _df2=document.getElementById('df2');if(_df2){_df2.value=document.getElementById('df').value||'';} const _dt2=document.getElementById('dt2');if(_dt2){_dt2.value=document.getElementById('dt').value||'';}
   const all=Object.values(D).flat().map(r=>r[0]).filter(Boolean).sort();
   if(all.length){document.getElementById('df').value=all[0];document.getElementById('dt').value=all[all.length-1];document.getElementById('ptag').textContent=all[0]+' → '+all[all.length-1];}
   CA='';document.getElementById('agSel').value='';
@@ -5196,13 +5202,13 @@ function renderRoster(){
 
   el.innerHTML = '<div style="padding:4px">'
     +'<div style="text-align:center;margin-bottom:16px">'
-    +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:rgba(192,39,45,.08);color:#c0272d;border:1.5px solid rgba(192,39,45,.2);margin:4px">📅 Daily Off + Weekly Calls & Break</button>'
+    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:rgba(192,39,45,.08);color:#c0272d;border:1.5px solid rgba(192,39,45,.2);margin:4px">📋 Attendance</button>'
+    +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">📅 Daily Off + Weekly Calls & Break</button>'
     +'<button onclick="switchScheduleTab(&apos;vacation2026&apos;)" id="stab_vacation2026" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">🌴 Vacation Schedule 2026</button>'
-    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">📋 Attendance</button>'
     +'</div>'
-    +'<div id="schedule_dailyoff" style="display:block"></div>'
+    +'<div id="schedule_dailyoff" style="display:none"></div>'
     +'<div id="schedule_vacation2026" style="display:none"></div>'
-    +'<div id="schedule_attendance" style="display:none">'
+    +'<div id="schedule_attendance" style="display:block">'
     +'<div style="background:#fff;border-radius:10px;padding:10px 16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-left:4px solid #c0272d">'
     +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:7px">'
     +'<label style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">📅 Date:</label>'
@@ -5214,7 +5220,7 @@ function renderRoster(){
     +'<div id="attTableContainer"></div>'
     +'</div>'
     +'</div>';
-  renderDailyOff();
+  renderAttendanceTab();
 }
 
 function highlightScheduleAgent(name){
@@ -6144,8 +6150,7 @@ function renderEOM(){
   ];
 
   const hallOfFameHTML=topWinners.length?'<div style="background:#FAF9F7;border:1px solid #EAE6DC;border-radius:18px;padding:26px 24px;margin-bottom:28px;text-align:center">'
-    +'<div style="font-size:10px;font-weight:700;color:#9C8E6E;text-transform:uppercase;letter-spacing:.14em;margin-bottom:6px">Recognition Wall</div>'
-    +'<div style="font-size:19px;font-weight:700;color:#3A352B;margin-bottom:20px">🏆 Hall of Fame</div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px"><span style="font-size:10px;font-weight:700;color:#9C8E6E;text-transform:uppercase;letter-spacing:.14em">Recognition Wall</span><span style="color:#9C8E6E">·</span><span style="font-size:16px;font-weight:700;color:#3A352B">🏆 Hall of Fame</span></div>'
     +'<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:12px">'
     +topWinners.map(([name,count],idx)=>{
       const ranks=[
@@ -6155,7 +6160,7 @@ function renderEOM(){
         {bg:'#FAFAF9',border:'#E5E3DD',text:'#6B6860',badge:'#C9C6BC'}
       ];
       const r=ranks[idx]||ranks[3];
-      return '<div style="background:'+r.bg+';border:1px solid '+r.border+';border-radius:14px;padding:14px 18px;min-width:130px">'
+      return '<div style="background:'+r.bg+';border:1px solid '+r.border+';border-radius:10px;padding:10px 14px;min-width:100px">'
         +'<div style="width:26px;height:26px;border-radius:50%;background:'+r.badge+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin:0 auto 8px">'+(idx+1)+'</div>'
         +'<div style="font-size:13px;font-weight:600;color:'+r.text+'">'+name+'</div>'
         +'<div style="font-size:11px;color:'+r.text+';opacity:.7;font-weight:500;margin-top:3px">'+count+' wins</div>'
@@ -6172,7 +6177,7 @@ function renderEOM(){
           +CARD_STYLES.map((style,i)=>{
             const name=mo.names[i]||'';
             if(!name)return'';
-            return '<div style="background:'+style.bg+';border:1px solid '+style.border+';border-radius:14px;padding:20px 16px;text-align:center">'
+            return '<div style="background:'+style.bg+';border:1px solid '+style.border+';border-radius:10px;padding:12px 10px;text-align:center">'
               +'<div style="font-size:26px;margin-bottom:8px">'+style.icon+'</div>'
               +'<div style="font-size:10px;font-weight:700;color:'+style.accent+';opacity:.75;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">'+style.label+'</div>'
               +'<div style="font-size:15px;font-weight:600;color:'+style.accent+'">'+name+'</div>'
@@ -6335,13 +6340,8 @@ async function renderRef(){
     container.innerHTML='<div class="ref-page">'
 
       // LINKS BUTTON TOP RIGHT
-      +'<div style="display:flex;justify-content:flex-end;margin-bottom:6px">'
-      +'<button onclick="toggleRefSection(\'refLinksDrawer\',\'refLinksIco\')" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#1565c0;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px rgba(21,101,192,.3)">🔗 Links <span id="refLinksIco">▼</span></button>'
-      +'</div>'
-      +'<div id="refLinksDrawer" style="display:none">'
-      +'<div class="ref-info-panel"><div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;border-bottom:none">🔗 Links & Systems</div>'
-      +'<div class="ref-panel-body">'+(linkCards||'<div style="color:#aaa;padding:16px;text-align:center">No data</div>')+'</div></div>'
-      +'</div>'
+      +'<div class="ref-info-panel" style="margin-bottom:12px"><div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;border-bottom:none;cursor:pointer" onclick="toggleRefSection(\'refLinksDrawer\',\'refLinksIco\')">🔗 Links & Systems <span id="refLinksIco" style="float:left">▼</span></div>'
+      +'<div id="refLinksDrawer"><div class="ref-panel-body">'+(linkCards||'<div style="color:#aaa;padding:16px;text-align:center">No data</div>')+'</div></div></div>'
 
       // BRAND CIRCLES
       +'<div class="ref-brand-circles">'
