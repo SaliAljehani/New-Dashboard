@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Inbound Daily Dashboard v2 · Petromin Group</title>
+<title>Inbound Daily Dashboard · Petromin Group</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
@@ -5221,6 +5221,7 @@ function renderRoster(){
     +'</div>'
     +'</div>';
   renderAttendanceTab();
+  setAttToday();
 }
 
 function highlightScheduleAgent(name){
@@ -5600,7 +5601,7 @@ function filterNewWeek(idx){
 }
 
 function switchScheduleTab(tab){
-  var tabIds=['dailyoff','vacation2026','attendance'];
+  var tabIds=['attendance','dailyoff','vacation2026'];
   tabIds.forEach(function(t){
     var el=document.getElementById('schedule_'+t);
     if(el) el.style.display=t===tab?'block':'none';
