@@ -281,9 +281,9 @@ tr:last-child td{border-bottom:none}
 .month-title{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
 .month-totals{display:flex;gap:6px;flex-wrap:wrap}
 .mtot{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600}
-.mtot.office{background:#F4F8F5;color:#1b5e20}.mtot.remote{background:#F4F7FA;color:#0d47a1}
-.mtot.off{background:#f1efe8;color:#777}.mtot.vacation{background:#FAF8F2;color:#4a148c}
-.mtot.sick{background:#fff3e0;color:#9e5400}.mtot.absent{background:#FAF4F2;color:#b0282e}.mtot.satshift{background:#e0f7fa;color:#00696f}
+.mtot.office{background:#D8EDE0;color:#3A6048}.mtot.remote{background:#D4E4F0;color:#304A68}
+.mtot.off{background:#E4E2DC;color:#5A5850}.mtot.vacation{background:#EEE4C0;color:#6A5818}
+.mtot.sick{background:#EDD8E0;color:#6A3050}.mtot.absent{background:#ECD8D0;color:#6A3820}.mtot.satshift{background:#DED8EE;color:#4A3868}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}
 .cal-day{border-radius:8px;padding:4px 2px;text-align:center;font-size:13px;font-weight:600;min-height:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2;gap:2px}
 .cal-day.office{background:#D8EDE0;color:#3A6048}.cal-day.remote{background:#D4E4F0;color:#304A68}
@@ -325,13 +325,13 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .att-today-btn:hover{background:#c0272d;color:#fff}
 .att-summary-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 .att-pill{font-size:11px;font-weight:700;padding:4px 12px;border-radius:12px}
-.att-pill.office{background:#EAF0EA;color:#3A5C3A}
-.att-pill.remote{background:#E8EFF8;color:#2A4070}
-.att-pill.vacation{background:#F0EAF5;color:#4A3860}
-.att-pill.sick{background:#F5F0E8;color:#705030}
-.att-pill.off{background:#F0EEE8;color:#787060}
-.att-pill.absent{background:#F5E8E8;color:#803030}
-.att-pill.complaints{background:#F5EAF0;color:#683050}
+.att-pill.office{background:#D8EDE0;color:#3A6048}
+.att-pill.remote{background:#D4E4F0;color:#304A68}
+.att-pill.vacation{background:#EEE4C0;color:#6A5818}
+.att-pill.sick{background:#EDD8E0;color:#6A3050}
+.att-pill.off{background:#E4E2DC;color:#5A5850}
+.att-pill.absent{background:#ECD8D0;color:#6A3820}
+.att-pill.complaints{background:#EDD8E0;color:#6A3050}
 .att-table-wrap{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .att-table-title{padding:14px 18px;font-size:13px;font-weight:700;color:#1a1a2e;border-bottom:2px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between}
 .att-agent-table{width:100%;border-collapse:collapse;font-size:13px}
@@ -1287,10 +1287,16 @@ function renderAgent(name){
   const data=fall();
   const sorted=Object.keys(data).sort((x,y)=>ag(data[y]).I-ag(data[x]).I);
   const rank=sorted.indexOf(name)+1;
-  document.getElementById('hav').textContent=init;
+  const _hc=getAvatarColor(name);
+  const _havEl=document.getElementById('hav');
+  _havEl.textContent=init;
+  _havEl.style.background=_hc.bg;
+  _havEl.style.color=_hc.text;
+  _havEl.style.border='2px solid '+_hc.border;
   document.getElementById('hname').textContent=name;
-  var inlineEl=document.getElementById('agSelInline');if(inlineEl){inlineEl.value=name;}
   document.getElementById('hmeta').textContent=`${a.days} working days · ${rows[0][0]} → ${rows[rows.length-1][0]}`;
+  const _heroEl=document.querySelector('.hero');
+  if(_heroEl) _heroEl.style.borderLeftColor=_hc.border;
   document.getElementById('hrank').textContent=`Rank #${rank} / ${sorted.length}`;
   // Contact info from directory
   const agInfo = AGENTS_DIR.find(function(x){return x.name===name||x.name.trim()===name.trim();});
@@ -1809,28 +1815,18 @@ function renderDir(filter=''){
     : AGENTS_DIR;
   document.getElementById('dirCount').textContent = list.length + ' agents';
 
-  // لوحة ألوان هادئة جداً متناسقة مع هوية الداشبورد (أحمر بترومين + رمادي محايد)
-  const DIR_PALETTE=[
-    {bg:'#FBF7F7',av:'#F0DEDE',avText:'#9B4A4A',text:'#6B3636'},
-    {bg:'#F7F7F5',av:'#E3E1DC',avText:'#6B6862',text:'#55524C'},
-    {bg:'#F6F8F7',av:'#DCE6E0',avText:'#516B5C',text:'#41544A'},
-    {bg:'#F8F7F5',av:'#E8E2D8',avText:'#8A7456',text:'#6B5C44'},
-    {bg:'#F7F7F8',av:'#E1E2E8',avText:'#5C6178',text:'#4A4E60'},
-    {bg:'#F8F6F7',av:'#E6DEE3',avText:'#7C5C6B',text:'#634B57'}
-  ];
-
   document.getElementById('dirGrid').innerHTML =
     '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">'
-    +list.map((a,idx)=>{
+    +list.map((a)=>{
       const init = a.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-      const p = DIR_PALETTE[idx%DIR_PALETTE.length];
-      return '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:'+p.bg+';border-radius:12px;border:1px solid rgba(0,0,0,.03)">'
-        +'<div style="width:32px;height:32px;border-radius:50%;background:'+p.av+';display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:'+p.avText+';flex-shrink:0">'+init+'</div>'
+      const p = getAvatarColor(a.name);
+      return '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:'+p.cardBg+';border-radius:12px;border:1px solid '+p.border+'">'
+        +'<div style="width:32px;height:32px;border-radius:50%;background:'+p.bg+';display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:'+p.text+';flex-shrink:0;border:1.5px solid '+p.border+'">'+init+'</div>'
         +'<div style="flex:1;min-width:0">'
         +'<p style="font-weight:600;font-size:12px;margin:0;color:'+p.text+';white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+a.name+'</p>'
-        +'<p style="font-size:10px;color:'+p.avText+';margin:1px 0 0;opacity:.85">Badge '+(a.badge||'–')+'</p>'
-        +'<div style="display:flex;align-items:center;gap:4px;font-size:10px;color:'+p.avText+';margin-top:3px;opacity:.85">📱 '+(a.phone||'–')+'</div>'
-        +(a.email?'<a href="mailto:'+a.email+'" style="display:flex;align-items:center;gap:4px;font-size:10px;color:'+p.avText+';text-decoration:none;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.85">📧 '+a.email+'</a>':'')
+        +'<p style="font-size:10px;color:'+p.text+';margin:1px 0 0;opacity:.75">Badge '+(a.badge||'–')+'</p>'
+        +'<div style="display:flex;align-items:center;gap:4px;font-size:10px;color:'+p.text+';margin-top:3px;opacity:.75">📱 '+(a.phone||'–')+'</div>'
+        +(a.email?'<a href="mailto:'+a.email+'" style="display:flex;align-items:center;gap:4px;font-size:10px;color:'+p.text+';text-decoration:none;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.75">📧 '+a.email+'</a>':'')
         +'</div>'
         +'</div>';
     }).join('')
@@ -2049,7 +2045,7 @@ function refGlobalFilter(q){
 
 function switchRefTab(brand, idx, btn){
   REF_ACTIVE_TABS[brand] = idx;
-  const color = {nissan:'#c0272d', stellantis:'#1565c0', baic:'#f9a825', baicRecall:'#4a148c',petromin:'#DAA520',foton:'#546e7a',nos:'#2e7d32'}[brand] || '#c0272d';
+  const color = {nissan:'#c0272d', stellantis:'#1565c0', baic:'#f9a825', baicRecall:'#6A5818',petromin:'#DAA520',foton:'#546e7a',nos:'#2e7d32'}[brand] || '#c0272d';
   btn.parentElement.querySelectorAll('.ref-sub-tab').forEach((t,i) => {
     t.classList.toggle('active', i===idx);
     t.style.background = i===idx ? color : '';
@@ -2105,7 +2101,7 @@ const BRANCH_REGION_COLORS = {
 
 function renderNissanBranchTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#f9a825',baicRecall:'#4a148c',petromin:'#DAA520',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
+  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#f9a825',baicRecall:'#6A5818',petromin:'#DAA520',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
   const fmtNum = n => {
     const s=String(n||'').trim();
     if(!s||s==='-') return '';
@@ -4050,7 +4046,7 @@ function copyNissanAppForm(){
 
 function renderSMSTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#f9a825',baicRecall:'#4a148c',petromin:'#DAA520',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
+  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#f9a825',baicRecall:'#6A5818',petromin:'#DAA520',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
   // All data comes under 3S keys — sections separated by header rows
   // Header rows: values equal their key names (e.g. "PAC Appointment SMS EN" == key "3S Appointment SMS EN")
   var sections = {s3:[], pac:[], body:[]};
@@ -4251,7 +4247,7 @@ function showRefBrandPage(brand){
     stellantis:{label:'Stellantis',icon:'🚙',color:'#1565c0'},
     bodyshop:  {label:'Body Shop', icon:'🔧',color:'#7b0000'},
     baic:      {label:'BAIC',      icon:'🟡',color:'#f9a825'},
-    baicRecall:{label:'BAIC Recall — VIN Search',icon:'🔎',color:'#4a148c'},
+    baicRecall:{label:'BAIC Recall — VIN Search',icon:'🔎',color:'#6A5818'},
     petromin:  {label:'Petromin',  icon:'<svg viewBox="0 0 36 36" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="14" width="20" height="16" rx="3" fill="#c0272d"/><rect x="8" y="10" width="12" height="6" rx="2" fill="#1a1a2e"/><rect x="24" y="16" width="8" height="4" rx="2" fill="#1a1a2e"/><rect x="13" y="6" width="4" height="6" rx="1" fill="#c0272d"/><circle cx="10" cy="20" r="2" fill="#fff" opacity=".4"/></svg>',color:'#DAA520'},
     foton:     {label:'Foton',     icon:'🚛',color:'#546e7a'},
     nos:       {label:'National Oil', icon:'🟢',color:'#2e7d32'},
@@ -4305,7 +4301,7 @@ function showRefBrandPage(brand){
 
 function switchRefTab(brand,idx,btn){
   REF_ACTIVE_TABS[brand]=idx;
-  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#f9a825',baicRecall:'#4a148c',petromin:'#DAA520',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
+  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#f9a825',baicRecall:'#6A5818',petromin:'#DAA520',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
   const container=btn?btn.parentElement:document.querySelector('#refSubTabs_'+brand);
   if(container){
     container.querySelectorAll('.ref-sub-tab').forEach((t,i)=>{
@@ -4931,7 +4927,7 @@ async function renderRefBrand(brand,tabIdx){
 
 function renderRecallTab(arr, sheetName){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#4a148c';
+  const color='#6A5818';
 
   // Parse: first section = recall details (until empty row then "VIN")
   const detailRows=[], vinRows=[];
@@ -5999,7 +5995,7 @@ function toggleStellRecall(id){
 }
 
 function renderRecallTab(arr, sheetName, color){
-  color = color || '#4a148c';
+  color = color || '#6A5818';
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 
   const detailRows=[], vinRows=[];
@@ -6255,8 +6251,8 @@ async function renderRef(){
       {key:'bodyshop',   label:'Body Shop',        icon:'🔧', color:'#7b0000'},
       {key:'foton',      label:'Foton',            icon:'🚛', color:'#546e7a'},
       {key:'nos',        label:'National Oil', icon:'🟢', color:'#2e7d32'},
-      {key:'electromin', label:'Electromin',       icon:'⚡', color:'#1b5e20'},
-      {key:'baicRecall', label:'Recall', icon:'⚠️', color:'#4a148c', onclick:'renderRecallInRef()'},
+      {key:'electromin', label:'Electromin',       icon:'⚡', color:'#3A6048'},
+      {key:'baicRecall', label:'Recall', icon:'⚠️', color:'#6A5818', onclick:'renderRecallInRef()'},
     ];
 
     // CONTACT NUMBERS
