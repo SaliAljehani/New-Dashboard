@@ -6517,6 +6517,7 @@ async function renderDailyOff(){
     //                  → [بيانات الموظفات]
     // نمر على الـ rows ونكتشف البنية تلقائياً
 
+    console.log('Daily Off raw rows 0-3:', DAILY_OFF_CACHE.slice(0,3));
     var DAY_SHORT = {
       'sat':'Saturday','sun':'Sunday','mon':'Monday',
       'tue':'Tuesday','wed':'Wednesday','thu':'Thursday','fri':'Friday',
@@ -6703,7 +6704,7 @@ async function renderVacation2026(){
       var allCells=row.map(function(c){return String(c||'').trim();});
       // ابحث عن row فيها اسم شهر
       var foundMonth=MONTH_NAMES.find(function(mn){
-        return allCells.some(function(c){return c===mn||c.indexOf(mn+' ')===0||c.indexOf(mn+'.')===0;});
+        return allCells.some(function(c){return c.indexOf(mn)>=0;});
       });
       if(foundMonth && !months.find(function(x){return x.month===foundMonth;})){
         i++;
@@ -6739,7 +6740,7 @@ async function renderVacation2026(){
           var ac=arow.map(function(c){return String(c||'').trim();});
           // هل هذا بداية شهر جديد؟
           var isNewMonth=MONTH_NAMES.some(function(mn){
-            return ac.some(function(c){return c===mn||c.indexOf(mn+' ')===0;});
+            return ac.some(function(c){return c.indexOf(mn)>=0;});
           });
           if(isNewMonth) break;
           var aname=String(arow[agentColIdx]||'').trim();
