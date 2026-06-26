@@ -6542,19 +6542,19 @@ async function renderDailyOff(){
 
     function badge(v){
       if(!v) return '<span style="color:#ccc">—</span>';
-      var vl=v.toLowerCase();
+      var vl=v.toLowerCase().trim();
       var bg,col;
-      if(vl==='off'){bg='#FADBD8';col='#922B21';}
-      else if(vl==='live chat'){bg='#F5ECD7';col='#7D5A2E';}
-      else if(vl.includes('multi')){bg='#EAEDED';col='#5D6D7E';}
-      else{bg='#F2F3F4';col='#555';}
+      if(vl==='off'){bg='#E4E2DC';col='#5A5850';}
+      else if(vl==='live chat'||vl==='livechat'){bg='#D8EDE0';col='#3A6048';}
+      else if(vl.includes('multi')){bg='#DED8EE';col='#4A3868';}
+      else{bg='#F0EBE4';col='#6B5C44';}
       return '<span style="display:inline-block;background:'+bg+';color:'+col+';font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px">'+v+'</span>';
     }
 
     function buildTable(w){
-      var t='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;background:#FDFCF8">';
-      t+='<thead><tr style="background:#FAF8F5">';
-      t+='<th style="padding:10px 16px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:160px;font-weight:700;color:#5D4037">Agent Name</th>';
+      var t='<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;background:#fff">';
+      t+='<thead><tr style="background:#F8F6F2">';
+      t+='<th style="padding:10px 16px;text-align:left;border-bottom:2px solid #EDE0D4;min-width:180px;font-weight:700;color:#5D4037">Agent Name</th>';
       DAY_COLS.forEach(function(d){
         var wknd=d==='Friday';
         t+='<th style="padding:8px 4px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:100px;font-weight:700;color:'+(wknd?'#8D6E63':'#5D4037')+';background:'+(wknd?'#EDE0D4':'#F5F0E8')+'">'+d+'</th>';
@@ -6563,9 +6563,10 @@ async function renderDailyOff(){
       w.agents.forEach(function(ag,ai){
         var rowBg='#FFFFFF';
         t+='<tr style="background:'+rowBg+'">';
-        t+='<td style="padding:8px 14px;border-bottom:1px solid #EDE0D4;text-align:center"><span style="display:inline-block;background:#F5F0E8;color:#3E2723;padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap">'+ag.name+'</span></td>';
+        var _nc=getAvatarColor(ag.name);
+        t+='<td style="padding:8px 14px;border-bottom:1px solid #EDE0D4;text-align:left">'          +'<span style="display:inline-flex;align-items:center;gap:6px">'          +'<span style="width:26px;height:26px;border-radius:50%;background:'+_nc.bg+';color:'+_nc.text+';font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">'+ag.name.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase()+'</span>'          +'<span style="font-size:12px;font-weight:600;color:'+_nc.text+'">'+ag.name+'</span>'          +'</span></td>';
         DAY_COLS.forEach(function(d){
-          var wknd=d==='Friday'||d==='Saturday';
+          var wknd=d==='Friday';
           t+='<td style="padding:5px 3px;border-bottom:1px solid #EDE0D4;text-align:center;background:'+(wknd?'rgba(237,224,212,.2)':'')+'">'+badge(ag[d])+'</td>';
         });
         t+='</tr>';
@@ -6585,10 +6586,10 @@ async function renderDailyOff(){
     });
     html+='</select></div>';
     // Legend
-    html+='<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px">';
-    html+='<span style="background:#FADBD8;color:#922B21;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px">OFF</span>';
-    html+='<span style="background:#F5ECD7;color:#7D5A2E;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px">Live Chat</span>';
-    html+='<span style="background:#EAEDED;color:#5D6D7E;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px">Multi-Camp</span>';
+    html+='<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:14px">';
+    html+='<span style="background:#E4E2DC;color:#5A5850;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px">— OFF</span>';
+    html+='<span style="background:#D8EDE0;color:#3A6048;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px">💬 Live Chat</span>';
+    html+='<span style="background:#DED8EE;color:#4A3868;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px">📞 Multi-Camp</span>';
     html+='</div>';
     html+='<div id="dow_tables">';
     weeks.forEach(function(w,wi){
