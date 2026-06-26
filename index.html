@@ -6535,7 +6535,7 @@ async function renderDailyOff(){
       'Sat':'Saturday','Sun':'Sunday','Mon':'Monday',
       'Tue':'Tuesday','Wed':'Wednesday','Thu':'Thursday','Fri':'Friday'
     };
-    var DAY_COLS = ['Saturday','Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
+    var DAY_COLS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
     var weeks=[], curWeek=null, curDayMap={}, agentColI=0;
 
@@ -6813,7 +6813,8 @@ async function renderVacation2026(){
           var wknd=m.days[ci]&&(m.days[ci].name==='Fri'||m.days[ci].name==='Sat');
           var isOff=v==='Off', isV=v==='V'||v==='v';
           var badge='';
-          if(isOff||isV) badge='';
+          if(isV) badge='<span style="display:inline-block;background:#EEE4C0;color:#6A5818;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px">V</span>';
+          else if(isOff) badge='<span style="display:inline-block;background:#E4E2DC;color:#5A5850;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px">Off</span>';
           t+='<td style="padding:3px 1px;text-align:center;border-bottom:1px solid #F5F0EC;background:'+(wknd?'rgba(245,240,236,.4)':'')+'">'+badge+'</td>';
         });
         t+='</tr>';
