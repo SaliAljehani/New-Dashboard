@@ -966,8 +966,8 @@ async function loadAllData(silent){
       loadAnnouncements().catch(e=>{ console.warn('Announcements failed:', e); }),
       loadEscalations().catch(e=>{ console.warn('Escalations failed:', e); }),
       loadEOM().catch(e=>{ console.warn('EOM failed:', e); }),
-      loadSheet('Vacation Schedule 2026').then(function(r){if(r&&r.length>1){var k=Object.keys(r[0]||{});VAC2026_CACHE=r.map(function(x){return k.map(function(kk){return String(x[kk]||'').trim();});});VAC2026_CACHE.unshift(k);}}).catch(e=>console.warn('Vac2026 preload failed:',e)),
-      loadSheet('Daily Off Schedule & Weekly Calls & Breakk').then(function(r){if(r&&r.length>1){var k=Object.keys(r[0]||{});DAILY_OFF_CACHE=r.map(function(x){return k.map(function(kk){return String(x[kk]||'').trim();});});DAILY_OFF_CACHE.unshift(k);}}).catch(e=>console.warn('DailyOff preload failed:',e))
+      loadSheet('Vacation Schedule 2026').then(function(r){if(r&&r.length>1){var k=Object.keys(r[0]||{});VAC2026_CACHE=[k].concat(r.map(function(x){return k.map(function(kk){return String(x[kk]||'').trim();});}));}}).catch(e=>console.warn('Vac2026 preload failed:',e)),
+      loadSheet('Daily Off Schedule & Weekly Calls & Breakk').then(function(r){if(r&&r.length>1){var k=Object.keys(r[0]||{});DAILY_OFF_CACHE=[k].concat(r.map(function(x){return k.map(function(kk){return String(x[kk]||'').trim();});}));}}).catch(e=>console.warn('DailyOff preload failed:',e))
     ]);
     // Preloaded data (if this page was served from Apps Script with data embedded)
     // is meant for the very first paint only. Clear it now so the "Refresh" button
@@ -6354,9 +6354,8 @@ async function renderRef(){
     container.innerHTML='<div class="ref-page">'
 
       // LINKS BUTTON TOP RIGHT
-      +'<div class="ref-info-panel" style="margin-bottom:12px;display:flex;flex-direction:row;align-items:stretch"><div style="background:linear-gradient(180deg,#1565c0,#0d47a1);color:#fff;writing-mode:vertical-rl;transform:rotate(180deg);padding:14px 8px;font-size:11px;font-weight:700;letter-spacing:.06em;cursor:pointer;display:flex;align-items:center;justify-content:center;min-width:30px;border-radius:0 0 12px 12px;flex-shrink:0" onclick="var d=this.nextElementSibling;d.style.display=d.style.display===&quot;none&quot;?&quot;block&quot;:&quot;none&quot;">🔗 Links & Systems</div><div style="flex:1;display:block"><div class="ref-panel-body">'+(linkCards||'<div style="color:#aaa;padding:16px;text-align:center">No data</div>')+'</div></div></div>'
-
-      // BRAND CIRCLES
+      +'<div class="ref-info-panel" style="margin-bottom:12px">'+'<div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;border-bottom:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between" onclick="var d=document.getElementById(\'refLinksBd\');d.style.display=d.style.display===\'none\'?\'block\':\'none\'">🔗 Links &amp; Systems <span>▼</span></div>'+'<div id="refLinksBd" style="display:block"><div class="ref-panel-body">'+(linkCards||'<div style="color:#aaa;padding:16px;text-align:center">No data</div>')+'</div></div>'+'</div>'
+      // BRAND CIRCLES// BRAND CIRCLES
       +'<div class="ref-brand-circles">'
       +BRAND_CONFIGS.map(({key,label,icon,color,onclick})=>
         '<div class="ref-brand-circle" onclick="'+(onclick||'showRefBrandPage(\''+key+'\')')+'">'+
@@ -6448,17 +6447,13 @@ async function renderDailyOff(){
   el.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa">⏳ Loading...</div>';
   try{
     if(!DAILY_OFF_CACHE){
-      // استخدام loadSheet (Apps Script Proxy) لتجنب مشاكل CORS
       var rows = await loadSheet('Daily Off Schedule & Weekly Calls & Breakk');
       if(!rows || rows.length < 2){
         el.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa">No data in Daily Off sheet</div>';
         return;
       }
-      // تحويل array of objects إلى 2D array
       var keys = Object.keys(rows[0]||{});
-      DAILY_OFF_CACHE = rows.map(function(r){ return keys.map(function(k){ return String(r[k]||'').trim(); }); });
-      // إضافة هيدر row في الأول
-      DAILY_OFF_CACHE.unshift(keys);
+      DAILY_OFF_CACHE = [keys].concat(rows.map(function(r){ return keys.map(function(k){ return String(r[k]||'').trim(); }); }));
     }
     var raw = DAILY_OFF_CACHE;
     if(!raw || raw.length < 2){
@@ -6469,39 +6464,54 @@ async function renderDailyOff(){
     // Week label row: col A has date range with year (e.g. "Jun 27 – Jul 03, 2026"), col B may have same value (merged cells)
     // Header row: col A = "Agent", col B = "Saturday" ...
     // Agent rows: col A = agent name, col B..H = values
+    // الهيدر: raw[0] = أسماء الأعمدة
+    var headerRow = raw[0] || [];
+    // إيجاد index كل عمود
+    function colIdx(name){ return headerRow.findIndex(function(h){ return String(h||'').trim().toLowerCase()===name.toLowerCase(); }); }
+    var agentCol = colIdx('Agent Name');
+    if(agentCol < 0) agentCol = 0;
+    var SAT_I=colIdx('Saturday'), SUN_I=colIdx('Sunday'), MON_I=colIdx('Monday'),
+        TUE_I=colIdx('Tuesday'), WED_I=colIdx('Wednesday'), THU_I=colIdx('Thursday'), FRI_I=colIdx('Friday');
+    // إذا ما لقى أسماء صريحة، استخدم الـ indices الافتراضية
+    if(SAT_I<0){SAT_I=1;SUN_I=2;MON_I=3;TUE_I=4;WED_I=5;THU_I=6;FRI_I=7;}
+
+    var DAY_COLS = ['Saturday','Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
     var weeks = [];
     var curWeek = null;
-    var DAY_COLS = ['saturday','sunday','monday','tuesday','wednesday','thursday','friday'];
-    for(var i=0; i<raw.length; i++){
+    // ابحث عن week labels — أي خلية تحتوي سنة (مثل "W1: 28 Jun–4 July")
+    // وأيضاً نجمع كل الأسماء في week واحدة إذا ما في labels
+    var defaultWeek = {label: 'Schedule', agents: []};
+    weeks.push(defaultWeek);
+    curWeek = defaultWeek;
+
+    for(var i=1; i<raw.length; i++){
       var row = raw[i];
-      var r0 = String(row[0]||'').trim();
-      var r1 = String(row[1]||'').trim();
+      var r0 = String(row[agentCol]||'').trim();
       var r0l = r0.toLowerCase();
-      var r1l = r1.toLowerCase();
-      // Week label: r0 contains a year AND r0 is NOT "agent"
-      if(r0 && /\d{4}/.test(r0) && r0l !== 'agent'){
+      // تجاهل rows فارغة أو هيدر rows
+      if(!r0 || r0l === 'agent name' || r0l === 'agent' || r0l === '#') continue;
+      // Week label detection
+      var isWeekLabel = /w\d|week|\d{1,2}\s*(jun|jul|aug|sep|oct|nov|dec|jan|feb|mar|apr|may)/i.test(r0) || (/\d{4}/.test(r0) && r0.includes('–'));
+      if(isWeekLabel){
         curWeek = {label: r0, agents: []};
         weeks.push(curWeek);
-        // next row is header — skip it
-        i++;
         continue;
       }
-      // Skip header rows
-      if(r0l === 'agent' || DAY_COLS.includes(r1l)) continue;
-      // Agent row
-      if(curWeek && r0 && r0l !== 'agent'){
+      if(curWeek){
         curWeek.agents.push({
           name: r0,
-          Saturday:  String(row[1]||'').trim(),
-          Sunday:    String(row[2]||'').trim(),
-          Monday:    String(row[3]||'').trim(),
-          Tuesday:   String(row[4]||'').trim(),
-          Wednesday: String(row[5]||'').trim(),
-          Thursday:  String(row[6]||'').trim(),
-          Friday:    String(row[7]||'').trim()
+          Saturday:  SAT_I>=0?String(row[SAT_I]||'').trim():'',
+          Sunday:    SUN_I>=0?String(row[SUN_I]||'').trim():'',
+          Monday:    MON_I>=0?String(row[MON_I]||'').trim():'',
+          Tuesday:   TUE_I>=0?String(row[TUE_I]||'').trim():'',
+          Wednesday: WED_I>=0?String(row[WED_I]||'').trim():'',
+          Thursday:  THU_I>=0?String(row[THU_I]||'').trim():'',
+          Friday:    FRI_I>=0?String(row[FRI_I]||'').trim():''
         });
       }
     }
+    // إزالة الـ default week إذا فيه weeks حقيقية
+    if(weeks.length > 1) weeks.shift();
     if(!weeks.length){
       el.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa">Could not parse schedule data</div>';
       return;
@@ -6527,7 +6537,7 @@ async function renderDailyOff(){
       t+='<thead><tr style="background:#FAF8F5">';
       t+='<th style="padding:10px 16px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:160px;font-weight:700;color:#5D4037">Agent Name</th>';
       DAY_COLS.forEach(function(d){
-        var wknd=d==='Friday'||d==='Saturday';
+        var wknd=d==='Friday';
         t+='<th style="padding:8px 4px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:100px;font-weight:700;color:'+(wknd?'#8D6E63':'#5D4037')+';background:'+(wknd?'#EDE0D4':'#F5F0E8')+'">'+d+'</th>';
       });
       t+='</tr></thead><tbody>';
@@ -6586,15 +6596,13 @@ async function renderVacation2026(){
   el.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa">⏳ Loading...</div>';
   try{
     if(!VAC2026_CACHE){
-      // استخدام loadSheet (Apps Script Proxy) لتجنب مشاكل CORS
       var vacRows = await loadSheet('Vacation Schedule 2026');
       if(!vacRows || vacRows.length < 2){
         el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">No data in Vacation sheet</div>';
         return;
       }
       var vacKeys = Object.keys(vacRows[0]||{});
-      VAC2026_CACHE = vacRows.map(function(r){ return vacKeys.map(function(k){ return String(r[k]||'').trim(); }); });
-      VAC2026_CACHE.unshift(vacKeys);
+      VAC2026_CACHE = [vacKeys].concat(vacRows.map(function(r){ return vacKeys.map(function(k){ return String(r[k]||'').trim(); }); }));
     }
     var raw = VAC2026_CACHE;
     if(!raw || raw.length < 3){
