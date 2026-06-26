@@ -626,7 +626,7 @@ async function loadSheet(name, retries){
   const gid = SHEET_GIDS[name] || '';
   const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${SHEET_ID}&gid=${gid}`;
   const controller = new AbortController();
-  const timeoutId = setTimeout(()=>controller.abort(), 15000);
+  const timeoutId = setTimeout(()=>controller.abort(), 30000);
   try{
     const res = await fetch(url, {signal: controller.signal});
     clearTimeout(timeoutId);
@@ -963,9 +963,7 @@ async function loadAllData(silent){
       loadRoster().catch(e=>{ console.warn('Roster failed:', e); }),
       loadAnnouncements().catch(e=>{ console.warn('Announcements failed:', e); }),
       loadEscalations().catch(e=>{ console.warn('Escalations failed:', e); }),
-      loadEOM().catch(e=>{ console.warn('EOM failed:', e); }),
-      fetchCSVRawByGid(SHEET_ID,'644438759').then(function(r){if(r&&r.length>1){VAC2026_CACHE=r.map(function(row){return row.map(function(c){return String(c||'').trim();});});}}).catch(e=>console.warn('Vac2026 preload failed:',e)),
-      fetchCSVRawByGid(SHEET_ID,'920710775').then(function(r){if(r&&r.length>1){DAILY_OFF_CACHE=r.map(function(row){return row.map(function(c){return String(c||'').trim();});});}}).catch(e=>console.warn('DailyOff preload failed:',e))
+      loadEOM().catch(e=>{ console.warn('EOM failed:', e); })
     ]);
     // Preloaded data (if this page was served from Apps Script with data embedded)
     // is meant for the very first paint only. Clear it now so the "Refresh" button
@@ -1673,7 +1671,7 @@ async function fetchCSVRawByGid(sheetId, gid, retries){
   retries = retries===undefined ? 2 : retries;
   const url = 'https://docs.google.com/spreadsheets/d/'+sheetId+'/gviz/tq?tqx=out:json&gid='+gid;
   const controller = new AbortController();
-  const timeoutId = setTimeout(()=>controller.abort(), 15000);
+  const timeoutId = setTimeout(()=>controller.abort(), 30000);
   try{
     const res = await fetch(url, {signal: controller.signal});
     clearTimeout(timeoutId);
@@ -1696,7 +1694,7 @@ async function fetchCSVRaw(sheetId, sheetName, retries){
   retries = retries===undefined ? 2 : retries;
   const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=`+encodeURIComponent(sheetName);
   const controller = new AbortController();
-  const timeoutId = setTimeout(()=>controller.abort(), 15000);
+  const timeoutId = setTimeout(()=>controller.abort(), 30000);
   try{
     const res = await fetch(url, {signal: controller.signal});
     clearTimeout(timeoutId);
@@ -1936,7 +1934,7 @@ async function fetchSheet(spreadsheetId, sheetName, retries){
   retries = retries===undefined ? 2 : retries;
   const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${spreadsheetId}&sheetName=${encodeURIComponent(sheetName)}`;
   const controller = new AbortController();
-  const timeoutId = setTimeout(()=>controller.abort(), 15000);
+  const timeoutId = setTimeout(()=>controller.abort(), 30000);
   try{
     const res = await fetch(url, {signal: controller.signal});
     clearTimeout(timeoutId);
