@@ -6401,7 +6401,7 @@ async function renderRef(){
     container.innerHTML='<div class="ref-page">'
 
       // LINKS BUTTON TOP RIGHT
-      +(linkCards?('<div class="ref-info-panel" style="margin-bottom:12px"><div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;border-bottom:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between" onclick="var d=this.nextElementSibling;d.style.display=d.style.display===\'none\'?\'block\':\'none\'">🔗 Links & Systems <span>▼</span></div><div style="display:block"><div class="ref-panel-body">'+linkCards+'</div></div></div>'):'')
+      +(linkCards?('<div style="margin-bottom:12px;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)"><div style="background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;padding:8px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:700" onclick="var d=this.nextElementSibling;d.style.display=d.style.display===\'none\'?\'block\':\'none\'">🔗 Links & Systems <span>▼</span></div><div style="display:block"><div class="ref-panel-body">'+linkCards+'</div></div></div>'):'')
       // BRAND CIRCLES// BRAND CIRCLES
       +'<div class="ref-brand-circles">'
       +BRAND_CONFIGS.map(({key,label,icon,color,onclick})=>
