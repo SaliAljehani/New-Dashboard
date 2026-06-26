@@ -6543,57 +6543,56 @@ async function renderDailyOff(){
       // تجاهل الـ rows الفارغة كلياً
       if(cells.every(function(c){return !c;})) continue;
 
-      var c0 = cells[0];
-      var c0l = c0.toLowerCase();
+      // البيانات تبدأ من منتصف الـ row (أعمدة فارغة في البداية)
+      // نبحث في كل الخلايا عن Week label أو Agent Name أو اسم موظفة
 
-      // هل هذا هيدر؟ يحتوي Agent أو Agent Name في أول خلية
-      var isHeader = /^agent/i.test(c0);
-      if(isHeader){
-        agentColI = 0;
-        // نبني dayMap من بقية الأعمدة
-        curDayMap = {};
-        cells.forEach(function(h, ci){
-          if(ci===0) return;
-          // نأخذ أول 3 حروف من الاسم لمطابقة اليوم
-          var hl = h.toLowerCase().replace(/[^a-z]/g,'').slice(0,3);
-          var full = DAY_SHORT[hl] || DAY_SHORT[h.toLowerCase()];
-          if(full) curDayMap[full] = ci;
+      // هل في Week label في أي خلية؟
+      var weekIdx = cells.findIndex(function(c){
+        return /week/i.test(c) || /^w\d/i.test(c) ||
+          /\d{1,2}\s*(jun|jul|aug|sep|oct|nov|dec|jan|feb|mar|apr|may)/i.test(c);
+      });
+      if(weekIdx >= 0){
+        var wLabel = cells[weekIdx];
+        // هل هذا السطر يحتوي هيدر الأيام أيضاً؟
+        var hasDays = cells.some(function(c){
+          var cl=c.toLowerCase().replace(/[^a-z]/g,'').slice(0,3);
+          return !!DAY_SHORT[cl];
         });
-        // لو ما في week حالية، ننشئ واحدة
-        if(!curWeek){curWeek={label:'Schedule',agents:[]};weeks.push(curWeek);}
+        if(hasDays){
+          // هذا هيدر — نبني dayMap
+          agentColI = weekIdx;
+          curDayMap = {};
+          cells.forEach(function(h,ci){
+            if(ci<=weekIdx) return;
+            var hl=h.toLowerCase().replace(/[^a-z]/g,'').slice(0,3);
+            var full=DAY_SHORT[hl]||DAY_SHORT[h.toLowerCase()];
+            if(full) curDayMap[full]=ci;
+          });
+          if(!curWeek){curWeek={label:wLabel,agents:[]};weeks.push(curWeek);}
+          else{curWeek={label:wLabel,agents:[]};weeks.push(curWeek);}
+        } else {
+          // Week label فقط
+          curWeek={label:wLabel,agents:[]};
+          weeks.push(curWeek);
+          curDayMap={};
+        }
         continue;
       }
 
-      // هل هذا Week label؟ — يحتوي على "Week" أو تاريخ أو "July/June/..."
-      var isWeekLabel = /week/i.test(c0) ||
-        /\d{1,2}\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i.test(c0) ||
-        /^w\d/i.test(c0) ||
-        (c0.includes('-') && /[a-z]/i.test(c0) && c0.length > 5);
+      // هل هذا هيدر تواريخ (أرقام مثل 27 Jun, 28 Jun)?
+      var isDateRow = cells.filter(function(c){return /^\d{1,2}\s+[a-z]/i.test(c.trim());}).length > 2;
+      if(isDateRow) continue;
 
-      if(isWeekLabel){
-        curWeek = {label: c0, agents: [], dayDates: {}};
-        weeks.push(curWeek);
-        curDayMap = {};
-        continue;
-      }
-
-      // بيانات موظفة
-      if(!c0 || c0l === '#' || c0l === 'agent name') continue;
+      // بيانات موظفة — نجد الاسم في نفس موضع agentColI
+      var agentName = cells[agentColI]||'';
+      if(!agentName || agentName==='' || /^agent/i.test(agentName) || agentName==='#') continue;
       if(curWeek && Object.keys(curDayMap).length > 0){
-        var agent = {name: c0};
+        var agent = {name: agentName};
         DAY_COLS.forEach(function(d){
           var idx = curDayMap[d];
           agent[d] = (idx !== undefined && idx >= 0) ? (cells[idx]||'') : '';
         });
-        curWeek.agents.push(agent);
-      } else if(curWeek){
-        // ما في dayMap بعد — نحاول نضيف بترتيب افتراضي
-        // Sat=1, Sun=2, Mon=3, Tue=4, Wed=5, Thu=6, Fri=7
-        var agent = {name: c0,
-          Saturday:cells[1]||'', Sunday:cells[2]||'', Monday:cells[3]||'',
-          Tuesday:cells[4]||'', Wednesday:cells[5]||'', Thursday:cells[6]||'', Friday:cells[7]||''
-        };
-        curWeek.agents.push(agent);
+        if(agentName) curWeek.agents.push(agent);
       }
     }
     if(!weeks.length){weeks=[{label:'No data',agents:[]}];}
