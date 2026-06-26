@@ -6805,7 +6805,9 @@ async function renderVacation2026(){
     var activeMonth=months.findIndex(function(m){return m.month===curMonthName;});
     if(activeMonth<0) activeMonth=months.length-1;
 
-    var MONTH_SHORT={January:'January',February:'February',March:'March',April:'April',May:'May',June:'June',July:'July',August:'August',September:'September',October:'October',November:'November',December:'December'};
+    var MONTH_SHORT={January:'Jan',February:'Feb',March:'Mar',April:'Apr',May:'May',June:'Jun',July:'Jul',August:'Aug',September:'Sep',October:'Oct',November:'Nov',December:'Dec'};
+    var VM_COLORS=['#FBF7F7','#F7F7F5','#F6F8F7','#F8F7F5','#F7F7F8','#F8F6F7','#FBF7F7','#F7F8F6','#F8F6F8','#F6F7F8','#F8F8F6','#F7F6F8'];
+    var VM_BORDERS=['#E3C5C5','#D2CFC7','#C5D4CB','#D9CDBC','#CBCDD9','#D6C8D0','#E3C5C5','#C5D0CB','#D0C5D4','#C5CBD4','#D0D4C5','#CBC5D4'];
 
     function buildMonthTable(m){
       var t='<div style="overflow-x:auto"><table style="border-collapse:collapse;font-size:11px;background:#fff;width:100%">';
@@ -6819,13 +6821,15 @@ async function renderVacation2026(){
       m.agents.forEach(function(ag,ai){
         var rowBg='#FFFFFF';
         t+='<tr style="background:'+rowBg+'">';
-        t+='<td style="padding:6px 12px;border-bottom:1px solid #F0EBE4;text-align:center;position:sticky;left:0;background:'+rowBg+';z-index:1"><span style="display:inline-block;background:#F5F0E8;color:#3E2723;padding:4px 10px;border-radius:16px;font-size:10px;font-weight:600;white-space:nowrap">'+ag.name+'</span></td>';
+        var _vc=getAvatarColor(ag.name);
+        var _vi=ag.name.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase();
+        t+='<td style="padding:6px 12px;border-bottom:1px solid #F0EBE4;text-align:left;position:sticky;left:0;background:'+rowBg+';z-index:1">'          +'<span style="display:inline-flex;align-items:center;gap:6px">'          +'<span style="width:24px;height:24px;border-radius:50%;background:'+_vc.bg+';color:'+_vc.text+';font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">'+_vi+'</span>'          +'<span style="font-size:11px;font-weight:600;color:'+_vc.text+'">'+ag.name+'</span>'          +'</span></td>';
         ag.cells.forEach(function(v,ci){
           var wknd=m.days[ci]&&(m.days[ci].name==='Fri'||m.days[ci].name==='Sat');
           var isOff=v==='Off', isV=v==='V'||v==='v';
           var badge='';
-          if(isV) badge='<span style="display:inline-block;background:#EEE4C0;color:#6A5818;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px">V</span>';
-          else if(isOff) badge='<span style="display:inline-block;background:#E4E2DC;color:#5A5850;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px">Off</span>';
+          if(isV) badge='<span style="display:inline-block;background:#EEE4C0;color:#6A5818;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px">🌴</span>';
+          else if(isOff) badge='<span style="display:inline-block;background:#E4E2DC;color:#5A5850;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px">—</span>';
           t+='<td style="padding:3px 1px;text-align:center;border-bottom:1px solid #F5F0EC;background:'+(wknd?'rgba(245,240,236,.4)':'')+'">'+badge+'</td>';
         });
         t+='</tr>';
@@ -6887,12 +6891,10 @@ var VM26_COLORS=[
 function showVacMonth2026(idx){
   document.querySelectorAll('[id^="vmt26_"]').forEach(function(el,i){ el.style.display=i===idx?'block':'none'; });
   document.querySelectorAll('[id^="vm26_"]').forEach(function(btn,i){
-    var mc=VM26_COLORS[i]||VM26_COLORS[0];
-    btn.style.background=mc.bg;
-    btn.style.color=mc.col;
-    btn.style.border='2px solid '+mc.border;
-    btn.style.opacity=i===idx?'1':'0.55';
-    btn.style.fontWeight='700';
+    var isAct=i===idx;
+    btn.style.background=isAct?'#c0272d':'#fff';
+    btn.style.color=isAct?'#fff':'#555';
+    btn.style.borderColor=isAct?'#c0272d':'#ddd';
   });
 }
 
