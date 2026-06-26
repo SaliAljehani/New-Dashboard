@@ -964,8 +964,8 @@ async function loadAllData(silent){
       loadAnnouncements().catch(e=>{ console.warn('Announcements failed:', e); }),
       loadEscalations().catch(e=>{ console.warn('Escalations failed:', e); }),
       loadEOM().catch(e=>{ console.warn('EOM failed:', e); }),
-      fetchCSVRaw(SHEET_ID,'Vacation Schedule 2026').then(function(r){if(r&&r.length>1){VAC2026_CACHE=r.map(function(row){return row.map(function(c){return String(c||'').trim();});});}}).catch(e=>console.warn('Vac2026 preload failed:',e)),
-      fetchCSVRaw(SHEET_ID,'Daily Off - Weekly Calls - Breaks').then(function(r){if(r&&r.length>1){DAILY_OFF_CACHE=r.map(function(row){return row.map(function(c){return String(c||'').trim();});});}}).catch(e=>console.warn('DailyOff preload failed:',e))
+      fetchCSVRawByGid(SHEET_ID,'644438759').then(function(r){if(r&&r.length>1){VAC2026_CACHE=r.map(function(row){return row.map(function(c){return String(c||'').trim();});});}}).catch(e=>console.warn('Vac2026 preload failed:',e)),
+      fetchCSVRawByGid(SHEET_ID,'920710775').then(function(r){if(r&&r.length>1){DAILY_OFF_CACHE=r.map(function(row){return row.map(function(c){return String(c||'').trim();});});}}).catch(e=>console.warn('DailyOff preload failed:',e))
     ]);
     // Preloaded data (if this page was served from Apps Script with data embedded)
     // is meant for the very first paint only. Clear it now so the "Refresh" button
@@ -1668,6 +1668,26 @@ let NEW_WEEKLY_DATA = [];
 let ANNOUNCEMENTS = [];
 let ESCALATIONS = [];
 let EOM_DATA = [];
+
+async function fetchCSVRawByGid(sheetId, gid, retries){
+  retries = retries===undefined ? 2 : retries;
+  const url = 'https://docs.google.com/spreadsheets/d/'+sheetId+'/gviz/tq?tqx=out:json&gid='+gid;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(()=>controller.abort(), 15000);
+  try{
+    const res = await fetch(url, {signal: controller.signal});
+    clearTimeout(timeoutId);
+    const text = await res.text();
+    const json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}')+1));
+    const cols = json.table.cols.map(c=>c.label||'');
+    const rows = json.table.rows.map(r=>r.c.map(c=>c?(c.f!==undefined?c.f:c.v):''));
+    return [cols, ...rows];
+  }catch(err){
+    clearTimeout(timeoutId);
+    if(retries>0){await new Promise(r=>setTimeout(r,800));return fetchCSVRawByGid(sheetId,gid,retries-1);}
+    throw new Error('Failed GID '+gid+': '+err.message);
+  }
+}
 
 async function fetchCSVRaw(sheetId, sheetName, retries){
   if(window.__PRELOADED_RAW__ && window.__PRELOADED_RAW__[sheetName]){
@@ -2384,7 +2404,7 @@ function renderTristarTab(arr){
     +'<div class="ref-cards-grid">'+noWarrantyRows.map(r=>makeCard(r,'#e65100')).join('')+'</div></div>'
     :'';
 
-  return '<div>'+warrantyHTML+noWarrantyHTML+'</div>';
+  return warrantyHTML&&noWarrantyHTML?'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">'+warrantyHTML+noWarrantyHTML+'</div>':'<div>'+warrantyHTML+noWarrantyHTML+'</div>';
 }
 function renderApptScriptSection(arr){
   if(!arr||!arr.length) return '';
@@ -2638,7 +2658,7 @@ function renderStellantisPMSTab(arr, sheetName){
   const color='#1565c0';
   const keys=Object.keys(arr[0]||{});
   const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
-  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:#f0f6fc;color:#1565c0;padding:3px 9px;border-radius:5px;font-size:10px;font-weight:800;text-decoration:none;margin:2px;box-shadow:inset 0 0 0 1px #1565c020">'+s+'</a>';}).filter(Boolean).join('');
+  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:#f0f6fc;color:#1565c0;padding:3px 9px;border-radius:5px;font-size:10px;font-weight:800;text-decoration:none;margin:2px;box-shadow:inset 0 0 0 1px #1565c020">'+s+'</a>';}).filter(Boolean).join('');;
 
   const VALID_REGIONS=new Set(['Western','Central','Eastern','Southern','Northern','West','East','South','North']);
   const branchRows=arr.filter(r=>{const reg=String(r[keys[0]]||'').trim();return reg&&VALID_REGIONS.has(reg);});
@@ -5234,7 +5254,7 @@ function renderRoster(){
 
   el.innerHTML = '<div style="padding:4px">'
     +'<div style="text-align:center;margin-bottom:16px">'
-    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:rgba(192,39,45,.08);color:#c0272d;border:1.5px solid rgba(192,39,45,.2);margin:4px">📋 Attendance</button>'    +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">📅 Daily Off + Weekly Calls</button>'    +'<button onclick="switchScheduleTab(&apos;vacation2026&apos;)" id="stab_vacation2026" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">🌴 Vacation 2026</button>'
+    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:rgba(192,39,45,.08);color:#c0272d;border:1.5px solid rgba(192,39,45,.2);margin:4px">📋 Attendance</button>'    +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">📅 Daily Off + Weekly Calls & Break</button>'    +'<button onclick="switchScheduleTab(&apos;vacation2026&apos;)" id="stab_vacation2026" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">🌴 Vacation 2026</button>'
     +'</div>'
     
     +'<div id="schedule_dailyoff" style="display:none"></div>'    +'<div id="schedule_vacation2026" style="display:none"></div>'    +'<div id="schedule_attendance" style="display:block">'
@@ -6301,8 +6321,9 @@ async function renderRef(){
       const urlKey  = keys.find(k=>k.toLowerCase().includes('link')||k.toLowerCase().includes('url'))||'';
       const passKey = keys.find(k=>k.toLowerCase().includes('pass')||k.toLowerCase().includes('password'))||'';
       const v=Object.values(r).map(x=>String(x||'').trim());
-      const name = nameKey?String(r[nameKey]||'').trim() : (v[1]||v[0]||'');
-      const url  = urlKey ?String(r[urlKey]||'').trim()  : (v[2]||'');
+      // تجاهل أول عمود لو كان رقماً فقط
+      const name = nameKey?String(r[nameKey]||'').trim() : (v.find(x=>x&&!/^\d+$/.test(x)&&!x.startsWith('http'))||'');
+      const url  = urlKey ?String(r[urlKey]||'').trim()  : (v.find(x=>x&&x.startsWith('http'))||'');
       const pass = passKey?String(r[passKey]||'').trim() : (v[3]||'');
       if(!name)return'';
       const isUrl=url.startsWith('http');
@@ -6371,7 +6392,7 @@ async function renderRef(){
     container.innerHTML='<div class="ref-page">'
 
       // LINKS BUTTON TOP RIGHT
-      +'<div class="ref-info-panel" style="margin-bottom:12px">'+'<div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;border-bottom:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between" onclick="var d=document.getElementById(\'refLinksBd\');d.style.display=d.style.display===\'none\'?\'block\':\'none\'">🔗 Links &amp; Systems <span>▼</span></div>'+'<div id="refLinksBd" style="display:block"><div class="ref-panel-body">'+(linkCards||'<div style="color:#aaa;padding:16px;text-align:center">No data</div>')+'</div></div>'+'</div>'
+      +(linkCards?('<div class="ref-info-panel" style="margin-bottom:12px"><div class="ref-panel-header" style="background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;border-bottom:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between" onclick="var d=this.nextElementSibling;d.style.display=d.style.display===\'none\'?\'block\':\'none\'">🔗 Links & Systems <span>▼</span></div><div style="display:block"><div class="ref-panel-body">'+linkCards+'</div></div></div>'):'')
       // BRAND CIRCLES// BRAND CIRCLES
       +'<div class="ref-brand-circles">'
       +BRAND_CONFIGS.map(({key,label,icon,color,onclick})=>
@@ -6465,15 +6486,21 @@ async function renderDailyOff(){
   try{
     if(!DAILY_OFF_CACHE){
       try{
-        var raw2d = await fetchCSVRaw(SHEET_ID, 'Daily Off - Weekly Calls - Breaks');
+        var raw2d = await fetchCSVRawByGid(SHEET_ID, '920710775');
         if(!raw2d||raw2d.length<2) throw new Error('empty');
         DAILY_OFF_CACHE = raw2d.map(function(row){return row.map(function(c){return String(c||'').trim();});});
       }catch(e){
-        console.warn('Daily Off fetchCSVRaw failed, trying loadSheet:', e);
-        var rows = await loadSheet('Daily Off Schedule & Weekly Calls & Breakk');
-        if(!rows||rows.length<2){el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">No data</div>';return;}
-        var keys=Object.keys(rows[0]||{});
-        DAILY_OFF_CACHE=[keys].concat(rows.map(function(r){return keys.map(function(k){return String(r[k]||'').trim();});}));
+        console.warn('Daily Off GID failed, trying proxy:', e);
+        try{
+          var proxyRows = await loadSheet('Daily Off - Weekly Calls - Breaks');
+          if(!proxyRows||proxyRows.length<2) throw new Error('proxy empty');
+          var pk=Object.keys(proxyRows[0]||{});
+          DAILY_OFF_CACHE=[pk].concat(proxyRows.map(function(r){return pk.map(function(k){return String(r[k]||'').trim();});}));
+        }catch(e2){
+          console.warn('Daily Off proxy also failed:', e2);
+          el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">⚠️ No data — تأكدي إن الشيت مشارك "Anyone with the link can view"</div>';
+          return;
+        }
       }
     }
     var raw = DAILY_OFF_CACHE;
@@ -6646,15 +6673,20 @@ async function renderVacation2026(){
   try{
     if(!VAC2026_CACHE){
       try{
-        var vacRaw2d = await fetchCSVRaw(SHEET_ID, 'Vacation Schedule 2026');
+        var vacRaw2d = await fetchCSVRawByGid(SHEET_ID, '644438759');
         if(!vacRaw2d||vacRaw2d.length<2) throw new Error('empty');
         VAC2026_CACHE = vacRaw2d.map(function(row){return row.map(function(c){return String(c||'').trim();});});
       }catch(e){
-        console.warn('Vacation fetchCSVRaw failed, trying loadSheet:', e);
-        var vacRows = await loadSheet('Vacation Schedule 2026');
-        if(!vacRows||vacRows.length<2){el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">No data</div>';return;}
-        var vacKeys=Object.keys(vacRows[0]||{});
-        VAC2026_CACHE=[vacKeys].concat(vacRows.map(function(r){return vacKeys.map(function(k){return String(r[k]||'').trim();});}));
+        console.warn('Vacation GID failed, trying proxy:', e);
+        try{
+          var vacProxyRows = await loadSheet('Vacation Schedule 2026');
+          if(!vacProxyRows||vacProxyRows.length<2) throw new Error('proxy empty');
+          var vpk=Object.keys(vacProxyRows[0]||{});
+          VAC2026_CACHE=[vpk].concat(vacProxyRows.map(function(r){return vpk.map(function(k){return String(r[k]||'').trim();});}));
+        }catch(e2){
+          el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">⚠️ No data — تأكدي إن الشيت مشارك "Anyone with the link can view"</div>';
+          return;
+        }
       }
     }
     var raw = VAC2026_CACHE;
@@ -6662,6 +6694,7 @@ async function renderVacation2026(){
       el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">No data</div>';
       return;
     }
+    console.log('VAC raw sample rows 0-3:', VAC2026_CACHE.slice(0,3).map(function(r){return r.slice(0,5);}));
     var MONTH_NAMES=['January','February','March','April','May','June','July','August','September','October','November','December'];
     var months=[];
     var i=0;
