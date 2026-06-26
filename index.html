@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
 <title>Inbound Daily Dashboard · Petromin Group</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
@@ -621,32 +624,33 @@ async function loadSheet(name, retries){
   if(window.__PRELOADED_DATA__ && window.__PRELOADED_DATA__[name]){
     return window.__PRELOADED_DATA__[name];
   }
-  retries = retries===undefined ? 2 : retries;
+  retries = retries===undefined ? 1 : retries;
   const gid = SHEET_GIDS[name] || '';
-  // استخدام gviz مباشرة - أسرع وأكثر موثوقية
-  const url = gid
-    ? `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${gid}`
-    : `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(name)}`;
+  const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${SHEET_ID}&gid=${gid}`;
   const controller = new AbortController();
-  const timeoutId = setTimeout(()=>controller.abort(), 20000);
+  const timeoutId = setTimeout(()=>controller.abort(), 45000);
   try{
     const res = await fetch(url, {signal: controller.signal});
     clearTimeout(timeoutId);
-    const text = await res.text();
-    const json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}')+1));
-    const cols = json.table.cols.map(c=>c.label||'');
-    const rows = json.table.rows.map(r=>({
-      ...Object.fromEntries(cols.map((c,i)=>[c, r.c[i]?(r.c[i].f!==undefined?r.c[i].f:r.c[i].v):'']))
-    }));
-    return rows;
+    if(!res.ok) throw new Error('Proxy error: ' + res.status);
+    return await res.json();
   }catch(err){
     clearTimeout(timeoutId);
     if(retries>0){
       console.warn('loadSheet retry for', name, '— attempts left:', retries, err.message);
-      await new Promise(r=>setTimeout(r,1000));
+      await new Promise(r=>setTimeout(r,2000));
       return loadSheet(name, retries-1);
     }
-    throw new Error((err.name==='AbortError'?'Timeout loading ':'Failed to load ')+name+' — '+err.message);
+    // Fallback: gviz
+    console.warn('Proxy failed, trying gviz for', name);
+    const gurl = gid
+      ? `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${gid}`
+      : `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(name)}`;
+    const res2 = await fetch(gurl);
+    const text = await res2.text();
+    const json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}')+1));
+    const cols = json.table.cols.map(c=>c.label||'');
+    return json.table.rows.map(r=>Object.fromEntries(cols.map((c,i)=>[c, r.c[i]?(r.c[i].f!==undefined?r.c[i].f:r.c[i].v):''])));
   }
 }
 
