@@ -964,8 +964,8 @@ async function loadAllData(silent){
       loadAnnouncements().catch(e=>{ console.warn('Announcements failed:', e); }),
       loadEscalations().catch(e=>{ console.warn('Escalations failed:', e); }),
       loadEOM().catch(e=>{ console.warn('EOM failed:', e); }),
-      loadSheet('Vacation Schedule 2026').then(function(r){if(r&&r.length>1){var k=Object.keys(r[0]||{});VAC2026_CACHE=[k].concat(r.map(function(x){return k.map(function(kk){return String(x[kk]||'').trim();});}));}}).catch(e=>console.warn('Vac2026 preload failed:',e)),
-      loadSheet('Daily Off Schedule & Weekly Calls & Breakk').then(function(r){if(r&&r.length>1){var k=Object.keys(r[0]||{});DAILY_OFF_CACHE=[k].concat(r.map(function(x){return k.map(function(kk){return String(x[kk]||'').trim();});}));}}).catch(e=>console.warn('DailyOff preload failed:',e))
+      fetchCSVRaw(SHEET_ID,'Vacation Schedule 2026').then(function(r){if(r&&r.length>1){VAC2026_CACHE=r.map(function(row){return row.map(function(c){return String(c||'').trim();});});}}).catch(e=>console.warn('Vac2026 preload failed:',e)),
+      fetchCSVRaw(SHEET_ID,'Daily Off - Weekly Calls - Breaks').then(function(r){if(r&&r.length>1){DAILY_OFF_CACHE=r.map(function(row){return row.map(function(c){return String(c||'').trim();});});}}).catch(e=>console.warn('DailyOff preload failed:',e))
     ]);
     // Preloaded data (if this page was served from Apps Script with data embedded)
     // is meant for the very first paint only. Clear it now so the "Refresh" button
@@ -5234,13 +5234,10 @@ function renderRoster(){
 
   el.innerHTML = '<div style="padding:4px">'
     +'<div style="text-align:center;margin-bottom:16px">'
-    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:rgba(192,39,45,.08);color:#c0272d;border:1.5px solid rgba(192,39,45,.2);margin:4px">📋 Attendance</button>'
-    +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">📅 Daily Off + Weekly Calls & Break</button>'
-    +'<button onclick="switchScheduleTab(&apos;vacation2026&apos;)" id="stab_vacation2026" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">🌴 Vacation Schedule 2026</button>'
+    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:rgba(192,39,45,.08);color:#c0272d;border:1.5px solid rgba(192,39,45,.2);margin:4px">📋 Attendance</button>'    +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">📅 Daily Off + Weekly Calls</button>'    +'<button onclick="switchScheduleTab(&apos;vacation2026&apos;)" id="stab_vacation2026" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">🌴 Vacation 2026</button>'
     +'</div>'
-    +'<div id="schedule_dailyoff" style="display:none"></div>'
-    +'<div id="schedule_vacation2026" style="display:none"></div>'
-    +'<div id="schedule_attendance" style="display:block">'
+    
+    +'<div id="schedule_dailyoff" style="display:none"></div>'    +'<div id="schedule_vacation2026" style="display:none"></div>'    +'<div id="schedule_attendance" style="display:block">'
     +'<div style="background:#fff;border-radius:10px;padding:10px 16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-left:4px solid #c0272d">'
     +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:7px">'
     +'<label style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">📅 Date:</label>'
@@ -5633,6 +5630,8 @@ function filterNewWeek(idx){
 }
 
 function switchScheduleTab(tab){
+  if(tab==='dailyoff') renderDailyOff();
+  if(tab==='vacation2026') renderVacation2026();
   var tabIds=['attendance','dailyoff','vacation2026'];
   tabIds.forEach(function(t){
     var el=document.getElementById('schedule_'+t);
@@ -5645,8 +5644,7 @@ function switchScheduleTab(tab){
     }
   });
   if(tab==='attendance') setAttToday();
-  if(tab==='dailyoff') renderDailyOff();
-  if(tab==='vacation2026') renderVacation2026();
+
 }
 
 function renderAnnouncements(){
@@ -6466,13 +6464,17 @@ async function renderDailyOff(){
   el.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa">⏳ Loading...</div>';
   try{
     if(!DAILY_OFF_CACHE){
-      var rows = await loadSheet('Daily Off Schedule & Weekly Calls & Breakk');
-      if(!rows || rows.length < 2){
-        el.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa">No data in Daily Off sheet</div>';
-        return;
+      try{
+        var raw2d = await fetchCSVRaw(SHEET_ID, 'Daily Off - Weekly Calls - Breaks');
+        if(!raw2d||raw2d.length<2) throw new Error('empty');
+        DAILY_OFF_CACHE = raw2d.map(function(row){return row.map(function(c){return String(c||'').trim();});});
+      }catch(e){
+        console.warn('Daily Off fetchCSVRaw failed, trying loadSheet:', e);
+        var rows = await loadSheet('Daily Off Schedule & Weekly Calls & Breakk');
+        if(!rows||rows.length<2){el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">No data</div>';return;}
+        var keys=Object.keys(rows[0]||{});
+        DAILY_OFF_CACHE=[keys].concat(rows.map(function(r){return keys.map(function(k){return String(r[k]||'').trim();});}));
       }
-      var keys = Object.keys(rows[0]||{});
-      DAILY_OFF_CACHE = [keys].concat(rows.map(function(r){ return keys.map(function(k){ return String(r[k]||'').trim(); }); }));
     }
     var raw = DAILY_OFF_CACHE;
     if(!raw || raw.length < 2){
@@ -6643,13 +6645,17 @@ async function renderVacation2026(){
   el.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa">⏳ Loading...</div>';
   try{
     if(!VAC2026_CACHE){
-      var vacRows = await loadSheet('Vacation Schedule 2026');
-      if(!vacRows || vacRows.length < 2){
-        el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">No data in Vacation sheet</div>';
-        return;
+      try{
+        var vacRaw2d = await fetchCSVRaw(SHEET_ID, 'Vacation Schedule 2026');
+        if(!vacRaw2d||vacRaw2d.length<2) throw new Error('empty');
+        VAC2026_CACHE = vacRaw2d.map(function(row){return row.map(function(c){return String(c||'').trim();});});
+      }catch(e){
+        console.warn('Vacation fetchCSVRaw failed, trying loadSheet:', e);
+        var vacRows = await loadSheet('Vacation Schedule 2026');
+        if(!vacRows||vacRows.length<2){el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">No data</div>';return;}
+        var vacKeys=Object.keys(vacRows[0]||{});
+        VAC2026_CACHE=[vacKeys].concat(vacRows.map(function(r){return vacKeys.map(function(k){return String(r[k]||'').trim();});}));
       }
-      var vacKeys = Object.keys(vacRows[0]||{});
-      VAC2026_CACHE = [vacKeys].concat(vacRows.map(function(r){ return vacKeys.map(function(k){ return String(r[k]||'').trim(); }); }));
     }
     var raw = VAC2026_CACHE;
     if(!raw || raw.length < 3){
@@ -6662,36 +6668,55 @@ async function renderVacation2026(){
     while(i<raw.length){
       var row=raw[i];
       var allCells=row.map(function(c){return String(c||'').trim();});
-      var foundMonth=MONTH_NAMES.find(function(m){return allCells.some(function(c){return c.indexOf(m)>=0;});});
+      // ابحث عن row فيها اسم شهر
+      var foundMonth=MONTH_NAMES.find(function(mn){
+        return allCells.some(function(c){return c===mn||c.indexOf(mn+' ')===0||c.indexOf(mn+'.')===0;});
+      });
       if(foundMonth && !months.find(function(x){return x.month===foundMonth;})){
         i++;
-        // header row: # | Agent Name | Sun | Mon ...
-        if(i>=raw.length) break;
-        var hrow=raw[i]; i++;
-        // day numbers row
-        if(i>=raw.length) break;
-        var nrow=raw[i]; i++;
-        // collect day headers and numbers
-        var days=[];
-        for(var j=2;j<hrow.length;j++){
-          var dname=String(hrow[j]||'').trim();
-          var dnum=String(nrow[j]||'').trim();
-          if(dname) days.push({name:dname,num:dnum,col:j});
+        // بحث عن هيدر row (يحتوي Agent أو #)
+        var hrow=null, nrow=null;
+        while(i<raw.length){
+          var tr=raw[i].map(function(c){return String(c||'').trim();});
+          var hasAgent=tr.some(function(c){return /^agent/i.test(c)||c==='#';});
+          if(hasAgent){hrow=raw[i];i++;break;}
+          i++;
         }
+        if(!hrow){continue;}
+        // row التواريخ (أرقام)
+        if(i<raw.length){
+          var tr2=raw[i].map(function(c){return String(c||'').trim();});
+          var hasNums=tr2.filter(function(c){return /^\d+$/.test(c);}).length>3;
+          if(hasNums){nrow=raw[i];i++;}
+        }
+        // أعمدة الأيام
+        var agentColIdx=0;
+        hrow.forEach(function(h,ci){if(/^agent/i.test(String(h||'').trim()))agentColIdx=ci;});
+        var days=[];
+        hrow.forEach(function(h,ci){
+          if(ci<=agentColIdx) return;
+          var dname=String(h||'').trim();
+          var dnum=nrow?String(nrow[ci]||'').trim():'';
+          if(dname&&dname!=='#') days.push({name:dname,num:dnum,col:ci});
+        });
         // agent rows
         var agents=[];
         while(i<raw.length){
           var arow=raw[i];
-          var aname=String(arow[1]||'').trim();
-          var ac0=String(arow[0]||'').trim();
-          if(MONTH_NAMES.find(function(m){return ac0.indexOf(m)>=0;})) break;
-          if(aname && aname!=='Agent Name' && aname!=='#'){
+          var ac=arow.map(function(c){return String(c||'').trim();});
+          // هل هذا بداية شهر جديد؟
+          var isNewMonth=MONTH_NAMES.some(function(mn){
+            return ac.some(function(c){return c===mn||c.indexOf(mn+' ')===0;});
+          });
+          if(isNewMonth) break;
+          var aname=String(arow[agentColIdx]||'').trim();
+          if(aname && !/^agent/i.test(aname) && aname!=='#' && !/^\d+$/.test(aname)){
             var cells=days.map(function(d){return String(arow[d.col]||'').trim();});
             agents.push({name:aname,cells:cells});
           }
           i++;
         }
-        if(agents.length) months.push({month:foundMonth,days:days,agents:agents});
+        if(agents.length>0) months.push({month:foundMonth,days:days,agents:agents});
       } else { i++; }
     }
     if(!months.length){
@@ -6701,7 +6726,7 @@ async function renderVacation2026(){
     var today=new Date();
     var curMonthName=today.toLocaleString('en-US',{month:'long'});
     var activeMonth=months.findIndex(function(m){return m.month===curMonthName;});
-    if(activeMonth<0) activeMonth=0;
+    if(activeMonth<0) activeMonth=months.length-1;
 
     var MONTH_SHORT={January:'January',February:'February',March:'March',April:'April',May:'May',June:'June',July:'July',August:'August',September:'September',October:'October',November:'November',December:'December'};
 
