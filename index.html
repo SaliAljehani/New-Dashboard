@@ -442,11 +442,8 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
       <button class="rfbtn" onclick="loadAllData()">🔄 Refresh</button>
     </div>
     <div id="vAll">
-      <div class="tabs" style="justify-content:center;margin-bottom:16px">
-        <button class="tab active" onclick="sv('grid',this)">🗂 Agent Cards</button>
-        <button class="tab" onclick="sv('table',this)">📋 Summary Table</button>
-      </div>
-      <div id="agrid" class="agrid"></div>
+
+      <div id="agrid" class="agrid" style="display:grid"></div>
       <div id="atable" class="card" style="display:none">
         <div class="ctit">All Agents – Period Summary</div>
         <div class="tw"><table><thead><tr>
@@ -1223,12 +1220,14 @@ function renderAll(){
       const a=am[nm];
       const init=nm.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
       const c=getAvatarColor(nm);
-      return`<div class="ac${nm===CA?' sel':''}" style="background:${c.cardBg};border:1.5px solid ${c.border};border-radius:12px;padding:10px 12px;cursor:pointer;transition:.2s" onclick="selAgent('${nm}')">
+      return`<div style="background:${c.cardBg};border:1.5px solid ${c.border};border-radius:12px;padding:10px 12px;cursor:pointer;transition:.2s" onclick="selAgent('${nm}')"
+        onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,.08)'"
+        onmouseout="this.style.transform='';this.style.boxShadow=''">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
           <div style="width:36px;height:36px;border-radius:50%;background:${c.bg};border:1.5px solid ${c.border};display:flex;align-items:center;justify-content:center;color:${c.text};font-size:12px;font-weight:700;flex-shrink:0">${init}</div>
           <div style="flex:1;min-width:0">
             <div style="font-weight:600;font-size:13px;color:${c.text};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${nm}</div>
-            <div style="font-size:10px;color:${c.text};opacity:.65;margin-top:1px">#${i+1} · ${a.days} days</div>
+            <div style="font-size:10px;color:${c.text};opacity:.6;margin-top:1px">#${i+1} · ${a.days} days</div>
           </div>
         </div>
         <div style="display:flex;gap:5px;flex-wrap:wrap">
