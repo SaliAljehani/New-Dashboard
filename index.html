@@ -6180,10 +6180,10 @@ function renderEOM(){
   }).join('');
 
   el.innerHTML='<div style="padding:4px;max-width:900px;margin:0 auto">'
-    +'<div style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap">'\
-    +(hallOfFameHTML?'<div style="flex:1;min-width:260px">'+hallOfFameHTML+'</div>':'')\
-    +'<div style="flex:2;min-width:300px">'+monthsHTML+'</div>'\
-    +'</div>'\
+    +'<div style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap">'
+    +(hallOfFameHTML?'<div style="flex:1;min-width:260px">'+hallOfFameHTML+'</div>':'')
+    +'<div style="flex:2;min-width:300px">'+monthsHTML+'</div>'
+    +'</div>'
     +'</div>';
 }
 
