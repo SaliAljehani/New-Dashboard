@@ -1773,7 +1773,7 @@ async function loadSchedule(){
   // (9=Week, 10=Agent Name, 11=Break Time) avoids that collision entirely.
   let weeklyRows = [];
   try{
-    const arr2d = await fetchCSVRaw(SHEET_ID, 'Daily Off Schedule & Weekly Calls & Break');
+    const arr2d = await fetchCSVRawByGid(SHEET_ID, '920710775');
     if(arr2d && arr2d.length > 1){
       const dataRows = arr2d.slice(1);
       let wSection = 'call';
@@ -1794,7 +1794,7 @@ async function loadSchedule(){
 
   // New combined sheet: Daily Off Schedule & Weekly Calls & Breakk (gid 920710775)
   try{
-    const newArr2d = await fetchCSVRaw(SHEET_ID, 'Daily Off Schedule & Weekly Calls & Breakk');
+    const newArr2d = await fetchCSVRawByGid(SHEET_ID, '920710775');
     await loadVacationData();
     if(newArr2d && newArr2d.length > 1){
       NEW_WEEKLY_DATA = newArr2d;
