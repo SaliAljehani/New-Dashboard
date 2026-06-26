@@ -48,12 +48,12 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .hi3{font-size:12px;color:#444;margin-top:2px}
 .rkbig{background:linear-gradient(135deg,#c0272d,#7b0000);color:#fff;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600}
 .krow{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px}
-.kc{background:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-top:3px solid #eee;text-align:center}
+.kc{background:#fff;border-radius:8px;padding:8px 10px;box-shadow:0 1px 3px rgba(0,0,0,.05);border-top:2px solid #eee;text-align:center}
 .kc.c1{border-top-color:#E3C5C5;background:#FBF7F7}.kc.c2{border-top-color:#D2CFC7;background:#F7F7F5}.kc.c3{border-top-color:#C5D4CB;background:#F6F8F7}
 .kc.c4{border-top-color:#D9CDBC;background:#F8F7F5}.kc.c5{border-top-color:#CBCDD9;background:#F7F7F8}.kc.c6{border-top-color:#D6C8D0;background:#F8F6F7}
-.klbl{font-size:10px;color:#444;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;text-align:center}
-.kval{font-size:20px;font-weight:700;color:#1a1a2e;text-align:center}
-.ksub{font-size:11px;color:#555;margin-top:2px}
+.klbl{font-size:9px;color:#666;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;text-align:center}
+.kval{font-size:16px;font-weight:700;color:#1a1a2e;text-align:center}
+.ksub{font-size:10px;color:#777;margin-top:1px}
 .r2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
 .card{background:#fff;border-radius:10px;padding:14px 18px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .ctit{font-size:10px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
@@ -286,10 +286,10 @@ tr:last-child td{border-bottom:none}
 .mtot.sick{background:#EDD8E0;color:#6A3050}.mtot.absent{background:#ECD8D0;color:#6A3820}.mtot.satshift{background:#DED8EE;color:#4A3868}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}
 .cal-day{border-radius:8px;padding:4px 2px;text-align:center;font-size:13px;font-weight:600;min-height:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2;gap:2px}
-.cal-day.office{background:#D8EDE0;color:#3A6048}.cal-day.remote{background:#D4E4F0;color:#304A68}
-.cal-day.off{background:#E4E2DC;color:#5A5850}.cal-day.vacation{background:#EEE4C0;color:#6A5818}
-.cal-day.sick{background:#EDD8E0;color:#6A3050}.cal-day.absent{background:#ECD8D0;color:#6A3820}.cal-day.satshift{background:#DED8EE;color:#4A3868;font-weight:700}
-.cal-day.el{background:#DED8EE;color:#4A3868}.cal-day.empty{background:transparent}
+.cal-day.office{background:#E8F3EC;color:#3A6048}.cal-day.remote{background:#E6EFF8;color:#304A68}
+.cal-day.off{background:#EEECE8;color:#7A7870}.cal-day.vacation{background:#F2EDD4;color:#6A5818}
+.cal-day.sick{background:#F2E4EA;color:#6A3050}.cal-day.absent{background:#F0E6E0;color:#6A3820}.cal-day.satshift{background:#EAE6F4;color:#4A3868;font-weight:700}
+.cal-day.el{background:#EAE6F4;color:#4A3868}.cal-day.empty{background:transparent}
 .cal-day.wd{font-size:13px;color:#444;background:transparent;font-weight:700}
 .ms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:14px}
 .ms-card{background:#fff;border-radius:8px;padding:10px 12px;box-shadow:0 1px 3px rgba(0,0,0,.06);border-left:3px solid #eee;text-align:center}
@@ -1433,36 +1433,44 @@ function renderAttendance(name){
     <span class="mtot absent">❌ Absent</span>
     <span class="mtot satshift">📅 Saturday Shift</span>
   </div>`;
-  Object.keys(byM).sort().forEach(m=>{
+  const _nowM=new Date().toISOString().slice(0,7);
+  Object.keys(byM).sort().reverse().forEach(m=>{
     const days=byM[m];
     const mT={};Object.values(days).forEach(s=>{mT[s]=(mT[s]||0)+1;});
     const yr=parseInt(m.split('-')[0]),mo=parseInt(m.split('-')[1]);
     const first=new Date(yr,mo-1,1).getDay();
     const dim=new Date(yr,mo,0).getDate();
-    html+=`<div class="month-block">
-      <div class="month-title">
+    const isOpen=m===_nowM;
+    const mid='cal_'+m.replace('-','_');
+    html+=`<div class="month-block" style="margin-bottom:10px">
+      <div class="month-title" style="cursor:pointer;user-select:none" onclick="var c=document.getElementById('${mid}');c.style.display=c.style.display==='none'?'block':'none';this.querySelector('.arr').textContent=c.style.display==='none'?'▶':'▼">
         <span>${mnm(m)}</span>
-        <div class="month-totals">
-          ${mT.Office?`<span class="mtot office">🏢 ${mT.Office}</span>`:''}
-          ${mT.Remote?`<span class="mtot remote">🏠 ${mT.Remote}</span>`:''}
-          ${mT.Vacation?`<span class="mtot vacation">🌴 ${mT.Vacation}</span>`:''}
-          ${mT.Sick?`<span class="mtot sick">🤒 ${mT.Sick}</span>`:''}
-          ${mT.Absent?`<span class="mtot absent">❌ ${mT.Absent}</span>`:''}
-          ${mT.Off?`<span class="mtot off">– ${mT.Off}</span>`:''}
-          ${mT['Saturday Shift']?`<span class="mtot satshift">📅 ${mT['Saturday Shift']}</span>`:''}
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="month-totals">
+            ${mT.Office?`<span class="mtot office">🏢 ${mT.Office}</span>`:''}
+            ${mT.Remote?`<span class="mtot remote">🏠 ${mT.Remote}</span>`:''}
+            ${mT.Vacation?`<span class="mtot vacation">🌴 ${mT.Vacation}</span>`:''}
+            ${mT.Sick?`<span class="mtot sick">🤒 ${mT.Sick}</span>`:''}
+            ${mT.Absent?`<span class="mtot absent">❌ ${mT.Absent}</span>`:''}
+            ${mT.Off?`<span class="mtot off">– ${mT.Off}</span>`:''}
+            ${mT['Saturday Shift']?`<span class="mtot satshift">📅 ${mT['Saturday Shift']}</span>`:''}
+          </div>
+          <span class="arr" style="font-size:11px;color:#999">${isOpen?'▼':'▶'}</span>
         </div>
       </div>
-      <div class="cal-grid">
-        <div class="cal-day wd">Sunday</div><div class="cal-day wd">Monday</div><div class="cal-day wd">Tuesday</div>
-        <div class="cal-day wd">Wednesday</div><div class="cal-day wd">Thursday</div><div class="cal-day wd">Friday</div><div class="cal-day wd">Saturday</div>
-        ${Array(first).fill('<div class="cal-day empty"></div>').join('')}
-        ${Array.from({length:dim},(_,i)=>{
-          const d=i+1,ds=m+'-'+String(d).padStart(2,'0');
-          const st=days[ds];
-          if(!st)return`<div class="cal-day off"><div>${d}</div></div>`;
-          const showIcon=st!=='Office'&&st!=='Off';
-          return`<div class="cal-day ${scls(st)}" title="${ds}: ${st}"><div>${d}</div>${showIcon?'<div style="font-size:9px">'+slbl(st)+'</div>':''}</div>`;
-        }).join('')}
+      <div id="${mid}" style="display:${isOpen?'block':'none'}">
+        <div class="cal-grid">
+          <div class="cal-day wd">Sunday</div><div class="cal-day wd">Monday</div><div class="cal-day wd">Tuesday</div>
+          <div class="cal-day wd">Wednesday</div><div class="cal-day wd">Thursday</div><div class="cal-day wd">Friday</div><div class="cal-day wd">Saturday</div>
+          ${Array(first).fill('<div class="cal-day empty"></div>').join('')}
+          ${Array.from({length:dim},(_,i)=>{
+            const d=i+1,ds=m+'-'+String(d).padStart(2,'0');
+            const st=days[ds];
+            if(!st)return`<div class="cal-day off"><div>${d}</div></div>`;
+            const showIcon=st!=='Office'&&st!=='Off';
+            return`<div class="cal-day ${scls(st)}" title="${ds}: ${st}"><div>${d}</div>${showIcon?'<div style="font-size:9px">'+slbl(st)+'</div>':''}</div>`;
+          }).join('')}
+        </div>
       </div>
     </div>`;
   });
