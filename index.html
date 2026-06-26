@@ -432,7 +432,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
   <!-- PAGE 1 -->
   <div id="page1" class="main">
     <div id="vAll">
-      <div id="perfCtrl" style="background:#fff;border-bottom:1px solid #e8eaed;padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+      <div id="perfCtrl" style="background:#fff;border-bottom:1px solid #e8eaed;padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);position:sticky;top:0;z-index:50">
         <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em">From:</label><input type="date" id="df_p1" onchange="document.getElementById('df').value=this.value;rf()">
         <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em">To:</label><input type="date" id="dt_p1" onchange="document.getElementById('dt').value=this.value;rf()">
         <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-left:8px">Agent:</label>
@@ -462,12 +462,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     </div>
 
     <div id="vAgent" style="display:none">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
-        <button onclick="selAgent('')" style="display:flex;align-items:center;gap:6px;padding:7px 16px;background:#fff;border:1.5px solid #ddd;border-radius:8px;font-size:13px;font-weight:600;color:#444;cursor:pointer;transition:.15s" onmouseover="this.style.borderColor='#c0272d';this.style.color='#c0272d'" onmouseout="this.style.borderColor='#ddd';this.style.color='#444'">← Back to All Agents</button>
-        <select id="agSelInline" onchange="document.getElementById('agSel').value=this.value;selAgent(this.value)" style="font-size:13px;font-weight:600;color:#c0272d;padding:7px 12px;border-radius:8px;border:1.5px solid rgba(192,39,45,.25);background:#fef9f9;cursor:pointer;flex:1;min-width:180px;max-width:280px">
-          <option value="">— Switch Agent —</option>
-        </select>
-      </div>
+
       <div class="hero">
         <div class="av" id="hav">?</div>
         <div style="flex:1">
@@ -1173,6 +1168,8 @@ function initUI(silent){
   if(allD.length){
     document.getElementById('df').value=allD[0];
     document.getElementById('dt').value=allD[allD.length-1];
+    var _dfp1=document.getElementById('df_p1');if(_dfp1)_dfp1.value=allD[0];
+    var _dtp1=document.getElementById('dt_p1');if(_dtp1)_dtp1.value=allD[allD.length-1];
     document.getElementById('ptag').textContent=allD[0]+' → '+allD[allD.length-1];
   }
   // Agent select
@@ -1182,7 +1179,7 @@ function initUI(silent){
   Object.keys(D).sort().forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;s.appendChild(o);});
   if(prevAgent) s.value=prevAgent;
   // مزامنة كل قوائم الأعمدة
-  ['agSel2','agSel_p1','agSelInline'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML=s.innerHTML;});
+  ['agSel2','agSel_p1'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML=s.innerHTML;});
   if(!silent){
     // Show Team Directory first — only on initial load, not on silent background refresh
     [1,2,4,5].forEach(i=>{const el=document.getElementById('page'+i);if(el)el.style.display='none';});
@@ -1194,7 +1191,7 @@ function initUI(silent){
 }
 
 // ── HELPERS ─────────────────────────────────────────────────────────────────
-function gf(){return{f:document.getElementById('df').value,t:document.getElementById('dt').value};}
+function gf(){var ids_f=['df_p1','df'],ids_t=['dt_p1','dt'],f='',t='';for(var i=0;i<ids_f.length;i++){var el=document.getElementById(ids_f[i]);if(el&&el.value){f=el.value;break;}}for(var i=0;i<ids_t.length;i++){var el=document.getElementById(ids_t[i]);if(el&&el.value){t=el.value;break;}}return{f:f,t:t};}
 function frows(name){const{f,t}=gf();return(D[name]||[]).filter(r=>r[0]&&r[0]>=f&&r[0]<=t);}
 function fall(){const{f,t}=gf();const R={};Object.keys(D).forEach(n=>{const r=(D[n]||[]).filter(r=>r[0]&&r[0]>=f&&r[0]<=t);if(r.length)R[n]=r;});return R;}
 function ag(rows){let I=0,T=0,W=0,DI=0,tS=0,tN=0,hS=0,hN=0;rows.forEach(r=>{I+=r[1];T+=r[2];W+=r[3];DI+=r[4];if(r[5]>0){tS+=r[5];tN++;}if(r[7]>0){hS+=r[7];hN++;}});return{days:rows.length,I,T,W,DI,avgTalk:tN?Math.round(tS/tN):0,avgAHT:hN?Math.round(hS/hN):0};}
@@ -1616,6 +1613,7 @@ function showPage(n,btn){
   if(n===8)renderEOM();
 }
 function selAgent(name){
+  var sp1=document.getElementById('agSel_p1');if(sp1)sp1.value=name||'';
   CA=name;document.getElementById('agSel').value=name;
   if(name){document.getElementById('vAll').style.display='none';document.getElementById('vAgent').style.display='block';renderAgent(name);}
   else{document.getElementById('vAll').style.display='block';document.getElementById('vAgent').style.display='none';renderAll();}
@@ -1627,15 +1625,20 @@ function sat(t,btn){
   document.getElementById('aattendance').style.display=t==='attendance'?'block':'none';
   if(t==='attendance'&&CA)renderAttendance(CA);
 }
-function resetAll(){const _df2=document.getElementById('df2');if(_df2){_df2.value=document.getElementById('df').value||'';} const _dt2=document.getElementById('dt2');if(_dt2){_dt2.value=document.getElementById('dt').value||'';}
+function resetAll(){['df','dt','df_p1','dt_p1','df2','dt2'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   const all=Object.values(D).flat().map(r=>r[0]).filter(Boolean).sort();
-  if(all.length){document.getElementById('df').value=all[0];document.getElementById('dt').value=all[all.length-1];document.getElementById('ptag').textContent=all[0]+' → '+all[all.length-1];}
+  if(all.length){document.getElementById('df').value=all[0];document.getElementById('dt').value=all[all.length-1];document.getElementById('ptag').textContent=all[0]+' → '+all[all.length-1];var _dp1=document.getElementById('df_p1');if(_dp1)_dp1.value=all[0];var _tp1=document.getElementById('dt_p1');if(_tp1)_tp1.value=all[all.length-1];}
   CA='';document.getElementById('agSel').value='';
   document.getElementById('vAll').style.display='block';document.getElementById('vAgent').style.display='none';
   renderAll();
 }
 function rf(){
-  const f=document.getElementById('df').value,t=document.getElementById('dt').value;
+  const _dfEl=document.getElementById('df_p1')||document.getElementById('df');
+  const _dtEl=document.getElementById('dt_p1')||document.getElementById('dt');
+  const f=(_dfEl&&_dfEl.value)||'',t=(_dtEl&&_dtEl.value)||'';
+  // مزامنة مع df/dt الأصليين
+  if(f&&document.getElementById('df'))document.getElementById('df').value=f;
+  if(t&&document.getElementById('dt'))document.getElementById('dt').value=t;
   document.getElementById('ptag').textContent=f+' → '+t;
   if(CA)renderAgent(CA);else renderAll();
 }
