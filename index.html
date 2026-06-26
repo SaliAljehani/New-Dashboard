@@ -53,7 +53,7 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .r2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
 .card{background:#fff;border-radius:10px;padding:14px 18px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .ctit{font-size:10px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
-.tabs{display:flex;gap:5px;margin-bottom:14px}
+.tabs{display:flex;gap:5px;margin-bottom:14px;justify-content:center}
 .tab{padding:6px 14px;border-radius:8px;border:1.5px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#666}
 .tab.active{background:rgba(192,39,45,.08);color:#c0272d;border-color:rgba(192,39,45,.2);font-weight:700}
 .tab:hover:not(.active){background:#e0e0e0;border-color:#bdbdbd;color:#555}
@@ -1262,7 +1262,7 @@ function renderAgent(name){
   document.getElementById('hav').textContent=init;
   document.getElementById('hname').textContent=name;
   document.getElementById('hmeta').textContent=`${a.days} working days · ${rows[0][0]} → ${rows[rows.length-1][0]}`;
-  document.getElementById('hrank').textContent=`Rank #${rank} / ${sorted.length}`;
+  document.getElementById('hrank').style.display='none';
   // Contact info from directory
   const agInfo = AGENTS_DIR.find(function(x){return x.name===name||x.name.trim()===name.trim();});
   const hcontact = document.getElementById('hcontact');
