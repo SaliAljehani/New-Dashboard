@@ -6565,10 +6565,10 @@ async function renderDailyOff(){
           agentColI = weekIdx;
           curDayMap = {};
           cells.forEach(function(h,ci){
-            if(ci<=weekIdx) return;
-            var hl=h.toLowerCase().replace(/[^a-z]/g,'').slice(0,3);
-            var full=DAY_SHORT[hl]||DAY_SHORT[h.toLowerCase()];
-            if(full) curDayMap[full]=ci;
+            if(ci<=agentColI) return; // تخطى العمود قبل الاسم
+            var hl=h.trim().toLowerCase().replace(/[^a-z]/g,'').slice(0,3);
+            var full=DAY_SHORT[hl]||DAY_SHORT[h.trim().toLowerCase()]||DAY_SHORT[h.trim()];
+            if(full && !curDayMap[full]) curDayMap[full]=ci;
           });
           if(!curWeek||curWeek.label!==wLabel){curWeek={label:wLabel,agents:[]};weeks.push(curWeek);}
         } else {
@@ -6586,14 +6586,30 @@ async function renderDailyOff(){
 
       // بيانات موظفة — نجد الاسم في نفس موضع agentColI
       var agentName = cells[agentColI]||'';
-      if(!agentName || agentName==='' || /^agent/i.test(agentName) || agentName==='#') continue;
+      // لو agentColI يحتوي Week label، الاسم الحقيقي في cells[agentColI+1] أو نفس الـ index
+      if(/week/i.test(agentName)||/^w\d/i.test(agentName)) continue;
+      if(!agentName || /^agent.*name/i.test(agentName) || agentName==='#') continue;
       if(curWeek && Object.keys(curDayMap).length > 0){
         var agent = {name: agentName};
         DAY_COLS.forEach(function(d){
           var idx = curDayMap[d];
           agent[d] = (idx !== undefined && idx >= 0) ? (cells[idx]||'') : '';
         });
-        if(agentName) curWeek.agents.push(agent);
+        curWeek.agents.push(agent);
+      } else if(curWeek){
+        // نحاول نجد الاسم في أي خلية غير فارغة وغير يوم وغير رقم
+        var possibleName = cells.find(function(c,ci){
+          return c && ci>0 && !/^\d/.test(c) && !DAY_SHORT[c.toLowerCase().replace(/[^a-z]/g,'').slice(0,3)];
+        });
+        if(possibleName){
+          var agent2 = {name: possibleName,
+            Saturday:cells[agentColI+1]||'', Sunday:cells[agentColI+2]||'',
+            Monday:cells[agentColI+3]||'', Tuesday:cells[agentColI+4]||'',
+            Wednesday:cells[agentColI+5]||'', Thursday:cells[agentColI+6]||'',
+            Friday:cells[agentColI+7]||''
+          };
+          curWeek.agents.push(agent2);
+        }
       }
     }
     if(!weeks.length){weeks=[{label:'No data',agents:[]}];}
@@ -6716,14 +6732,21 @@ async function renderVacation2026(){
         return allCells.some(function(c){return c.indexOf(mn)>=0;});
       });
       if(foundMonth && !months.find(function(x){return x.month===foundMonth;})){
-        i++;
-        // بحث عن هيدر row (يحتوي Agent أو #)
+        // هل الهيدر في نفس الـ row؟
+        var hasAgentSameRow = allCells.some(function(c){return /^agent/i.test(c)||c==='#'||c==='Agent Name';});
         var hrow=null, nrow=null;
-        while(i<raw.length){
-          var tr=raw[i].map(function(c){return String(c||'').trim();});
-          var hasAgent=tr.some(function(c){return /^agent/i.test(c)||c==='#';});
-          if(hasAgent){hrow=raw[i];i++;break;}
+        if(hasAgentSameRow){
+          // الشهر والهيدر في نفس row
+          hrow=raw[i]; i++;
+        } else {
           i++;
+          // بحث عن هيدر row في الـ rows التالية
+          while(i<raw.length){
+            var tr=raw[i].map(function(c){return String(c||'').trim();});
+            var hasAgent=tr.some(function(c){return /^agent/i.test(c)||c==='#'||c==='Agent Name';});
+            if(hasAgent){hrow=raw[i];i++;break;}
+            i++;
+          }
         }
         if(!hrow){continue;}
         // row التواريخ (أرقام)
