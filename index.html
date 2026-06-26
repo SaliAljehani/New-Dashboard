@@ -6483,54 +6483,81 @@ async function renderDailyOff(){
     // Week label row: col A has date range with year (e.g. "Jun 27 – Jul 03, 2026"), col B may have same value (merged cells)
     // Header row: col A = "Agent", col B = "Saturday" ...
     // Agent rows: col A = agent name, col B..H = values
-    // الهيدر: raw[0] = أسماء الأعمدة
-    var headerRow = raw[0] || [];
-    // إيجاد index كل عمود
-    function colIdx(name){ return headerRow.findIndex(function(h){ return String(h||'').trim().toLowerCase()===name.toLowerCase(); }); }
-    var agentCol = colIdx('Agent Name');
-    if(agentCol < 0) agentCol = 0;
-    var SAT_I=colIdx('Saturday'), SUN_I=colIdx('Sunday'), MON_I=colIdx('Monday'),
-        TUE_I=colIdx('Tuesday'), WED_I=colIdx('Wednesday'), THU_I=colIdx('Thursday'), FRI_I=colIdx('Friday');
-    // إذا ما لقى أسماء صريحة، استخدم الـ indices الافتراضية
-    if(SAT_I<0){SAT_I=1;SUN_I=2;MON_I=3;TUE_I=4;WED_I=5;THU_I=6;FRI_I=7;}
+    // هيكل الشيت:
+    // [Week Label row] → [هيدر: Agent Name | Sat date | Sun date | ...]
+    //                  → [بيانات الموظفات]
+    // نمر على الـ rows ونكتشف البنية تلقائياً
 
+    var DAY_SHORT = {
+      'sat':'Saturday','sun':'Sunday','mon':'Monday',
+      'tue':'Tuesday','wed':'Wednesday','thu':'Thursday','fri':'Friday',
+      'saturday':'Saturday','sunday':'Sunday','monday':'Monday',
+      'tuesday':'Tuesday','wednesday':'Wednesday','thursday':'Thursday','friday':'Friday'
+    };
     var DAY_COLS = ['Saturday','Sunday','Monday','Tuesday','Wednesday','Thursday','Friday'];
-    var weeks = [];
-    var curWeek = null;
-    // ابحث عن week labels — أي خلية تحتوي سنة (مثل "W1: 28 Jun–4 July")
-    // وأيضاً نجمع كل الأسماء في week واحدة إذا ما في labels
-    var defaultWeek = {label: 'Schedule', agents: []};
-    weeks.push(defaultWeek);
-    curWeek = defaultWeek;
 
-    for(var i=1; i<raw.length; i++){
+    var weeks=[], curWeek=null, curDayMap={}, agentColI=0;
+
+    for(var i=0; i<raw.length; i++){
       var row = raw[i];
-      var r0 = String(row[agentCol]||'').trim();
-      var r0l = r0.toLowerCase();
-      // تجاهل rows فارغة أو هيدر rows
-      if(!r0 || r0l === 'agent name' || r0l === 'agent' || r0l === '#') continue;
-      // Week label detection
-      var isWeekLabel = /w\d|week|\d{1,2}\s*(jun|jul|aug|sep|oct|nov|dec|jan|feb|mar|apr|may)/i.test(r0) || (/\d{4}/.test(r0) && r0.includes('–'));
-      if(isWeekLabel){
-        curWeek = {label: r0, agents: []};
-        weeks.push(curWeek);
+      var cells = row.map(function(c){return String(c||'').trim();});
+      // تجاهل الـ rows الفارغة كلياً
+      if(cells.every(function(c){return !c;})) continue;
+
+      var c0 = cells[0];
+      var c0l = c0.toLowerCase();
+
+      // هل هذا هيدر؟ يحتوي Agent أو Agent Name في أول خلية
+      var isHeader = /^agent/i.test(c0);
+      if(isHeader){
+        agentColI = 0;
+        // نبني dayMap من بقية الأعمدة
+        curDayMap = {};
+        cells.forEach(function(h, ci){
+          if(ci===0) return;
+          // نأخذ أول 3 حروف من الاسم لمطابقة اليوم
+          var hl = h.toLowerCase().replace(/[^a-z]/g,'').slice(0,3);
+          var full = DAY_SHORT[hl] || DAY_SHORT[h.toLowerCase()];
+          if(full) curDayMap[full] = ci;
+        });
+        // لو ما في week حالية، ننشئ واحدة
+        if(!curWeek){curWeek={label:'Schedule',agents:[]};weeks.push(curWeek);}
         continue;
       }
-      if(curWeek){
-        curWeek.agents.push({
-          name: r0,
-          Saturday:  SAT_I>=0?String(row[SAT_I]||'').trim():'',
-          Sunday:    SUN_I>=0?String(row[SUN_I]||'').trim():'',
-          Monday:    MON_I>=0?String(row[MON_I]||'').trim():'',
-          Tuesday:   TUE_I>=0?String(row[TUE_I]||'').trim():'',
-          Wednesday: WED_I>=0?String(row[WED_I]||'').trim():'',
-          Thursday:  THU_I>=0?String(row[THU_I]||'').trim():'',
-          Friday:    FRI_I>=0?String(row[FRI_I]||'').trim():''
+
+      // هل هذا Week label؟ — يحتوي على "Week" أو تاريخ أو "July/June/..."
+      var isWeekLabel = /week/i.test(c0) ||
+        /\d{1,2}\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/i.test(c0) ||
+        /^w\d/i.test(c0) ||
+        (c0.includes('-') && /[a-z]/i.test(c0) && c0.length > 5);
+
+      if(isWeekLabel){
+        curWeek = {label: c0, agents: [], dayDates: {}};
+        weeks.push(curWeek);
+        curDayMap = {};
+        continue;
+      }
+
+      // بيانات موظفة
+      if(!c0 || c0l === '#' || c0l === 'agent name') continue;
+      if(curWeek && Object.keys(curDayMap).length > 0){
+        var agent = {name: c0};
+        DAY_COLS.forEach(function(d){
+          var idx = curDayMap[d];
+          agent[d] = (idx !== undefined && idx >= 0) ? (cells[idx]||'') : '';
         });
+        curWeek.agents.push(agent);
+      } else if(curWeek){
+        // ما في dayMap بعد — نحاول نضيف بترتيب افتراضي
+        // Sat=1, Sun=2, Mon=3, Tue=4, Wed=5, Thu=6, Fri=7
+        var agent = {name: c0,
+          Saturday:cells[1]||'', Sunday:cells[2]||'', Monday:cells[3]||'',
+          Tuesday:cells[4]||'', Wednesday:cells[5]||'', Thursday:cells[6]||'', Friday:cells[7]||''
+        };
+        curWeek.agents.push(agent);
       }
     }
-    // إزالة الـ default week إذا فيه weeks حقيقية
-    if(weeks.length > 1) weeks.shift();
+    if(!weeks.length){weeks=[{label:'No data',agents:[]}];}
     if(!weeks.length){
       el.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa">Could not parse schedule data</div>';
       return;
@@ -6544,9 +6571,9 @@ async function renderDailyOff(){
       if(!v) return '<span style="color:#ccc">—</span>';
       var vl=v.toLowerCase().trim();
       var bg,col;
-      if(vl==='off'){bg='#E4E2DC';col='#5A5850';}
-      else if(vl==='live chat'||vl==='livechat'){bg='#D8EDE0';col='#3A6048';}
-      else if(vl.includes('multi')){bg='#DED8EE';col='#4A3868';}
+      if(vl==='off'){bg='#FFCDD2';col='#B71C1C';}
+      else if(vl==='live chat'||vl==='livechat'){bg='#D8EDE0';col='#2E6644';}
+      else if(vl.includes('multi')){bg='#F5ECD7';col='#7D6030';}
       else{bg='#F0EBE4';col='#6B5C44';}
       return '<span style="display:inline-block;background:'+bg+';color:'+col+';font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px">'+v+'</span>';
     }
@@ -6587,9 +6614,9 @@ async function renderDailyOff(){
     html+='</select></div>';
     // Legend
     html+='<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:14px">';
-    html+='<span style="background:#E4E2DC;color:#5A5850;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px">— OFF</span>';
-    html+='<span style="background:#D8EDE0;color:#3A6048;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px">💬 Live Chat</span>';
-    html+='<span style="background:#DED8EE;color:#4A3868;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px">📞 Multi-Camp</span>';
+    html+='<span style="background:#FFCDD2;color:#B71C1C;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px">— OFF</span>';
+    html+='<span style="background:#D8EDE0;color:#2E6644;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px">💬 Live Chat</span>';
+    html+='<span style="background:#F5ECD7;color:#7D6030;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px">📞 Multi-Camp</span>';
     html+='</div>';
     html+='<div id="dow_tables">';
     weeks.forEach(function(w,wi){
