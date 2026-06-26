@@ -462,6 +462,12 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     </div>
 
     <div id="vAgent" style="display:none">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+        <button onclick="selAgent('')" style="display:flex;align-items:center;gap:6px;padding:7px 16px;background:#fff;border:1.5px solid #ddd;border-radius:8px;font-size:13px;font-weight:600;color:#444;cursor:pointer;transition:.15s" onmouseover="this.style.borderColor='#c0272d';this.style.color='#c0272d'" onmouseout="this.style.borderColor='#ddd';this.style.color='#444'">← Back to All Agents</button>
+        <select id="agSelInline" onchange="document.getElementById('agSel').value=this.value;selAgent(this.value)" style="font-size:13px;font-weight:600;color:#c0272d;padding:7px 12px;border-radius:8px;border:1.5px solid rgba(192,39,45,.25);background:#fef9f9;cursor:pointer;flex:1;min-width:180px;max-width:280px">
+          <option value="">— Switch Agent —</option>
+        </select>
+      </div>
       <div class="hero">
         <div class="av" id="hav">?</div>
         <div style="flex:1">
@@ -1175,6 +1181,8 @@ function initUI(silent){
   s.innerHTML='<option value="">— All Agents —</option>';
   Object.keys(D).sort().forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;s.appendChild(o);});
   if(prevAgent) s.value=prevAgent;
+  // مزامنة كل قوائم الأعمدة
+  ['agSel2','agSel_p1','agSelInline'].forEach(function(id){var el=document.getElementById(id);if(el)el.innerHTML=s.innerHTML;});
   if(!silent){
     // Show Team Directory first — only on initial load, not on silent background refresh
     [1,2,4,5].forEach(i=>{const el=document.getElementById('page'+i);if(el)el.style.display='none';});
@@ -1284,6 +1292,7 @@ function renderAgent(name){
   const rank=sorted.indexOf(name)+1;
   document.getElementById('hav').textContent=init;
   document.getElementById('hname').textContent=name;
+  var inlineEl=document.getElementById('agSelInline');if(inlineEl){inlineEl.value=name;}
   document.getElementById('hmeta').textContent=`${a.days} working days · ${rows[0][0]} → ${rows[rows.length-1][0]}`;
   document.getElementById('hrank').textContent=`Rank #${rank} / ${sorted.length}`;
   // Contact info from directory
