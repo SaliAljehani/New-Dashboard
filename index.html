@@ -6526,7 +6526,7 @@ async function renderDailyOff(){
     //                  → [بيانات الموظفات]
     // نمر على الـ rows ونكتشف البنية تلقائياً
 
-    console.log('Daily Off raw rows 0-3:', DAILY_OFF_CACHE.slice(0,3));
+    console.log('Daily Off TOTAL rows:', DAILY_OFF_CACHE.length, 'cols:', DAILY_OFF_CACHE[0]&&DAILY_OFF_CACHE[0].length);
     var DAY_SHORT = {
       'sat':'Saturday','sun':'Sunday','mon':'Monday',
       'tue':'Tuesday','wed':'Wednesday','thu':'Thursday','fri':'Friday',
