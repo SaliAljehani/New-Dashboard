@@ -6582,7 +6582,17 @@ async function renderDailyOff(){
 
       // هل هذا هيدر تواريخ (أرقام مثل 27 Jun, 28 Jun)?
       var isDateRow = cells.filter(function(c){return /^\d{1,2}\s+[a-z]/i.test(c.trim());}).length > 2;
-      if(isDateRow) continue;
+      if(isDateRow){
+        // نخزن التواريخ مع كل يوم
+        if(curWeek){
+          curWeek.dates = {};
+          DAY_COLS.forEach(function(d){
+            var idx = curDayMap[d];
+            if(idx !== undefined) curWeek.dates[d] = cells[idx]||'';
+          });
+        }
+        continue;
+      }
 
       // بيانات موظفة — نجد الاسم في نفس موضع agentColI
       var agentName = cells[agentColI]||'';
@@ -6639,7 +6649,8 @@ async function renderDailyOff(){
       t+='<th style="padding:10px 16px;text-align:left;border-bottom:2px solid #EDE0D4;min-width:180px;font-weight:700;color:#5D4037">Agent Name</th>';
       DAY_COLS.forEach(function(d){
         var wknd=d==='Friday';
-        t+='<th style="padding:8px 4px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:100px;font-weight:700;color:'+(wknd?'#8D6E63':'#5D4037')+';background:'+(wknd?'#EDE0D4':'#F5F0E8')+'">'+d+'</th>';
+        var dateStr=w.dates&&w.dates[d]?'<div style="font-size:9px;font-weight:400;opacity:.7;margin-top:1px">'+w.dates[d]+'</div>':'';
+        t+='<th style="padding:6px 4px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:100px;font-weight:700;color:'+(wknd?'#8D6E63':'#5D4037')+';background:'+(wknd?'#EDE0D4':'#F5F0E8')+'">'+d+dateStr+'</th>';
       });
       t+='</tr></thead><tbody>';
       w.agents.forEach(function(ag,ai){
