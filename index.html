@@ -11,7 +11,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter',system-ui,sans-serif;font-size:12px;background:#FCFBF9;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column}
 #loadingDiv,#errDiv,#mainContent{flex:1 0 auto}
-.header{background:linear-gradient(135deg,#FEFCF8,#FDF9F2);padding:10px 20px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.06);position:relative}
+.header{background:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.06);position:relative}
 .header h1{color:#7b0000;font-size:16px;font-weight:700}
 .lupd{font-size:12px;color:#c0272d;background:rgba(192,39,45,.08);padding:4px 12px;border-radius:20px;cursor:pointer;border:1px solid rgba(192,39,45,.2)}
 .lupd:hover{background:rgba(192,39,45,.15)}
@@ -413,9 +413,6 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <span class="ptag" id="ptag"></span>
   </div>
 
-  <div style="height:1px;background:linear-gradient(to right,transparent,#c0272d,transparent)"></div>
-  <div id="motivationText" style="display:flex;width:100%;background:#fff;padding:6px 0;transition:opacity .6s;min-height:30px"></div>
-  <div style="height:1px;background:linear-gradient(to right,transparent,#c0272d,transparent)"></div>
   <div class="page-nav">
     <button class="pnav" onclick="showPage(6,this)">📢 Announcements</button>
     <button class="pnav active" onclick="showPage(3,this)">👥 Team Directory</button>
@@ -425,6 +422,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <button class="pnav" onclick="showPage(4,this)">📁 Daily Reference</button>
     <button class="pnav" onclick="showPage(2,this)">📞 Calls & WhatsApp Report</button>
   </div>
+  <div id="motivationText" style="display:flex;width:100%;background:#fff;padding:6px 0;border-bottom:1px solid #EDE8E0;transition:opacity .6s;min-height:30px"></div>
 
   <!-- PAGE 1 -->
   <div id="page1" class="main">
