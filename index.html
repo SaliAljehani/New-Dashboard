@@ -369,6 +369,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     </div>
   </div>
   <span class="lupd" id="lupd" onclick="loadAllData()" title="Click to refresh" style="flex-shrink:0;font-size:11px">🔄 Refresh</span>
+  </div>
 </div>
 
 <div id="nameModalOverlay" style="display:none;position:fixed;inset:0;background:rgba(40,30,30,.35);z-index:200;align-items:center;justify-content:center">
@@ -391,6 +392,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
       <div onclick="backToAgentList()" style="margin-top:14px;font-size:11px;color:#999;text-decoration:underline;cursor:pointer">← Back to name list</div>
     </div>
     </div>
+  </div>
 </div>
 
 <!-- LOADING STATE -->
@@ -657,10 +659,8 @@ function showMotivation(){
   function show(g){
     el.style.opacity='0';
     setTimeout(function(){
-      el.style.display='flex';
-      el.style.width='100%';
       el.innerHTML=g.map(function(q,qi){
-        return '<span style="flex:1;text-align:center;padding:0 12px;'+(qi<2?'border-right:1px solid #D8D0C8':'')+'">' + q + '</span>';
+        return '<span style="flex:1;text-align:center;padding:0 12px;direction:rtl;'+(qi<2?'border-right:1px solid #D8D0C8':'')+'">' + q + '</span>';
       }).join('');
       el.style.opacity='1';
     },400);
@@ -668,8 +668,7 @@ function showMotivation(){
   var idx=0;
   show(groups[idx]);
   setInterval(function(){idx=(idx+1)%groups.length;show(groups[idx]);},120000);
-}
-// ===== PRESENCE / "WHO'S ONLINE" (named, one-time selection) =====
+}// ===== PRESENCE / "WHO'S ONLINE" (named, one-time selection) =====
 let presenceStarted = false;
 const ONLINE_THRESHOLD_MS = 180000; // consider a viewer "online" if seen in the last 3 min
 let currentAgentName = localStorage.getItem('dashboardAgentName') || '';
@@ -6183,6 +6182,7 @@ function renderEOM(){
     +(hallOfFameHTML?'<div style="flex:1;min-width:260px">'+hallOfFameHTML+'</div>':'')
     +'<div style="flex:2;min-width:300px">'+monthsHTML+'</div>'
     +'</div>'
+    +'</div>'
     +'</div>';
 }
 
@@ -6337,7 +6337,7 @@ async function renderRef(){
       +'</div>'
 
       // BRAND CIRCLES
-      +'<div class="ref-brand-circles">'      +'<div class="ref-brand-circle" onclick="toggleRefSection(\'refLinksDrawer\',\'refLinksIco\')" style="cursor:pointer">'      +'<div class="ref-brand-icon" style="background:#1565c0;font-size:22px">🔗</div>'      +'<div class="ref-brand-label" style="color:#1565c0">Links</div>'      +'</div>'      +'<div class="ref-brand-circle" onclick="toggleRefSection(\'refLinksDrawer\',\'refLinksIco\')" style="cursor:pointer">'      +'<div class="ref-brand-icon" style="background:#1565c0;font-size:22px">🔗</div>'      +'<div class="ref-brand-label" style="color:#1565c0">Links</div>'      +'</div>'
+      +'<div class="ref-brand-circles">'      +'<div class="ref-brand-circle" onclick="toggleRefSection(\'refLinksDrawer\',\'refLinksIco\')" style="cursor:pointer">'      +'<div class="ref-brand-icon" style="background:#1565c0;font-size:22px">🔗</div>'      +'<div class="ref-brand-label" style="color:#1565c0">Links</div>'      +'</div>'      +'<div class="ref-brand-circle" onclick="toggleRefSection(\'refLinksDrawer\',\'refLinksIco\')" style="cursor:pointer">'      +'<div class="ref-brand-icon" style="background:#1565c0;font-size:22px">🔗</div>'      +'<div class="ref-brand-label" style="color:#1565c0">Links</div>'      +'</div>'      +'<div class="ref-brand-circle" onclick="toggleRefSection(\'refLinksDrawer\',\'refLinksIco\')" style="cursor:pointer">'      +'<div class="ref-brand-icon" style="background:#1565c0;font-size:22px">🔗</div>'      +'<div class="ref-brand-label" style="color:#1565c0">Links</div>'      +'</div>'
       +BRAND_CONFIGS.map(({key,label,icon,color,onclick})=>
         '<div class="ref-brand-circle" onclick="'+(onclick||'showRefBrandPage(\''+key+'\')')+'">'+
         '<div class="ref-brand-circle-icon" style="background:'+color+'">'+icon+'</div>'+
