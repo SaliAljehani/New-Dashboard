@@ -370,6 +370,19 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
       <div onclick="changeAgentName()" style="margin-top:8px;padding-top:6px;border-top:1px solid #f0e8e8;font-size:10px;color:#999;cursor:pointer;text-decoration:underline">Change my name</div>
     </div>
   </div>
+  <div style="position:relative;flex-shrink:0">
+    <span class="lupd" id="notifBtn" onclick="toggleNotifPanel()" title="Announcements" style="font-size:11px;cursor:pointer;position:relative;padding:4px 10px">
+      🔔
+      <span id="notifBadge" style="display:none;position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;background:#FFD700;border-radius:8px;font-size:9px;font-weight:700;color:#7a5f00;text-align:center;line-height:16px;border:1.5px solid #c0272d;padding:0 3px;box-sizing:border-box"></span>
+    </span>
+    <div id="notifPanel" style="display:none;position:absolute;top:calc(100% + 8px);right:0;background:#FFFDFB;border:1px solid #eee;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.13);width:300px;max-height:380px;overflow-y:auto;z-index:200;text-align:left">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #f0e8e8;position:sticky;top:0;background:#FFFDFB;z-index:1">
+        <span style="font-size:12px;font-weight:700;color:#6B3636">📢 Announcements</span>
+        <span onclick="markAllNotifRead()" style="font-size:10px;color:#c0272d;cursor:pointer;text-decoration:underline">Mark all read</span>
+      </div>
+      <div id="notifList" style="font-size:12px;color:#555"></div>
+    </div>
+  </div>
   <span class="lupd" id="lupd" onclick="loadAllData()" title="Click to refresh" style="flex-shrink:0;font-size:11px">🔄 Refresh</span>
 </div>
 
@@ -1189,6 +1202,7 @@ function initUI(silent){
   }
   renderDir();
   renderAll();
+  updateNotifBadge();
 }
 
 // ── HELPERS ─────────────────────────────────────────────────────────────────
@@ -6966,6 +6980,87 @@ function showVacMonth2026(idx,monthName){
   });
   var _selEl=document.getElementById('vac_selected_month');
   if(_selEl) _selEl.textContent=(monthName||'')+' 2026';
+}
+
+// ── NOTIFICATION BELL ────────────────────────────────────────────────────────
+let NOTIF_READ_IDS = JSON.parse(localStorage.getItem('notif_read') || '[]');
+
+function updateNotifBadge(){
+  const items = ANNOUNCEMENTS.filter(r => Object.values(r).some(v => v && String(v).trim()));
+  const unread = items.filter((_,i) => !NOTIF_READ_IDS.includes(i));
+  const badge = document.getElementById('notifBadge');
+  if(!badge) return;
+  if(unread.length > 0){
+    badge.textContent = unread.length > 9 ? '9+' : unread.length;
+    badge.style.display = 'block';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function toggleNotifPanel(){
+  const panel = document.getElementById('notifPanel');
+  if(!panel) return;
+  const isOpen = panel.style.display !== 'none';
+  if(isOpen){ panel.style.display = 'none'; return; }
+  renderNotifPanel();
+  panel.style.display = 'block';
+  document.addEventListener('click', closeNotifOnOutside, { once: true });
+}
+
+function closeNotifOnOutside(e){
+  const panel = document.getElementById('notifPanel');
+  const btn = document.getElementById('notifBtn');
+  if(panel && !panel.contains(e.target) && !btn.contains(e.target)){
+    panel.style.display = 'none';
+  }
+}
+
+function renderNotifPanel(){
+  const list = document.getElementById('notifList');
+  if(!list) return;
+  const items = ANNOUNCEMENTS.filter(r => Object.values(r).some(v => v && String(v).trim())).map((r, i) => {
+    const keys = Object.keys(r);
+    return { i, tag: String(r[keys[0]]||'').trim(), text: String(r[keys[1]]||'').trim() };
+  });
+
+  if(!items.length){
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:#aaa;font-size:12px">📭 No announcements</div>';
+    return;
+  }
+
+  const PRIORITY_COLORS = { 'high':'#c0272d', 'urgent':'#c0272d', 'medium':'#DAA520', 'low':'#2e7d32' };
+
+  list.innerHTML = items.map(it => {
+    const isRead = NOTIF_READ_IDS.includes(it.i);
+    const tagLow = (it.tag||'').toLowerCase();
+    const tagColor = PRIORITY_COLORS[tagLow] || '#c0272d';
+    const isRTL = /[\u0600-\u06FF]/.test((it.text||'').substring(0,15));
+    return '<div onclick="markNotifRead('+it.i+')" style="padding:10px 14px;border-bottom:1px solid #f0e8e8;cursor:pointer;background:'+(isRead?'#fff':'#fef9f9')+';transition:.15s" onmouseover="this.style.background=\'#f5f5f5\'" onmouseout="this.style.background=\''+(isRead?'#fff':'#fef9f9')+'\'">'
+      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">'
+      +(isRead ? '' : '<span style="width:7px;height:7px;border-radius:50%;background:#c0272d;flex-shrink:0"></span>')
+      +(it.tag ? '<span style="font-size:10px;font-weight:700;background:'+tagColor+'18;color:'+tagColor+';padding:1px 8px;border-radius:8px">'+it.tag+'</span>' : '')
+      +'</div>'
+      +'<div style="font-size:12px;color:#333;line-height:1.6;direction:'+(isRTL?'rtl':'ltr')+'">'+it.text+'</div>'
+      +'</div>';
+  }).join('') + '<div onclick="document.getElementById(\'notifPanel\').style.display=\'none\';var ab=document.querySelector(\'.pnav\');document.querySelectorAll(\'.pnav\').forEach(b=>{if(b.textContent.includes(\'Announcements\')){ab=b;}});showPage(6,ab);" style="padding:10px;text-align:center;font-size:11px;color:#c0272d;cursor:pointer;font-weight:700;border-top:1px solid #f0e8e8">View all announcements →</div>';
+}
+
+function markNotifRead(idx){
+  if(!NOTIF_READ_IDS.includes(idx)){
+    NOTIF_READ_IDS.push(idx);
+    try{ localStorage.setItem('notif_read', JSON.stringify(NOTIF_READ_IDS)); }catch(e){}
+    updateNotifBadge();
+    renderNotifPanel();
+  }
+}
+
+function markAllNotifRead(){
+  const items = ANNOUNCEMENTS.filter(r => Object.values(r).some(v => v && String(v).trim()));
+  NOTIF_READ_IDS = items.map((_,i) => i);
+  try{ localStorage.setItem('notif_read', JSON.stringify(NOTIF_READ_IDS)); }catch(e){}
+  updateNotifBadge();
+  renderNotifPanel();
 }
 
 // Auto-start on page load
