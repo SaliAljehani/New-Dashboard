@@ -318,7 +318,7 @@ tr:last-child td{border-bottom:none}
 .team-toggle{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;justify-content:center}
 .ttn{padding:5px 14px;border-radius:20px;border:1.5px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#666}
 .ttn.active{color:#fff;border-color:transparent}
-.ttn.nissan.active{background:#A85060}.ttn.petromin.active{background:#B8902A;color:#fff}.ttn.stellantis.active{background:#3A6898}
+.ttn.nissan.active{background:#c0272d}.ttn.petromin.active{background:#DAA520;color:#fff}.ttn.stellantis.active{background:#1565c0}
 footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px solid #eee;margin-top:20px;background:#fff}
 @media(max-width:900px){.krow{grid-template-columns:repeat(3,1fr)}.r2,.comp-grid,.call-krow{grid-template-columns:1fr}}
 
@@ -2067,12 +2067,12 @@ function refGlobalFilter(q){
 
 function switchRefTab(brand, idx, btn){
   REF_ACTIVE_TABS[brand] = idx;
-  const color = {nissan:'#A85060', stellantis:'#3A6898', baic:'#C8921A', baicRecall:'#7A6830',petromin:'#B8902A',foton:'#607880',nos:'#3A6840',bodyshop:'#6A3838',electromin:'#4A6858',nos:'#3A6840'}[brand] || '#A85060';
+  const color = {nissan:'#c0272d', stellantis:'#1565c0', baic:'#f9a825', baicRecall:'#6A5818',petromin:'#DAA520',foton:'#546e7a',nos:'#2e7d32'}[brand] || '#c0272d';
   btn.parentElement.querySelectorAll('.ref-sub-tab').forEach((t,i) => {
     t.classList.toggle('active', i===idx);
-    t.style.background = i===idx ? (color+'22') : '';
-    t.style.color = i===idx ? color : '';
-    t.style.borderColor = i===idx ? (color+'88') : '';
+    t.style.background = i===idx ? color : '';
+    t.style.color = i===idx ? '#fff' : '';
+    t.style.borderColor = i===idx ? color : '';
   });
   renderRefBrand(brand, idx);
 }
@@ -2123,7 +2123,7 @@ const BRANCH_REGION_COLORS = {
 
 function renderNissanBranchTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color={nissan:'#A85060',stellantis:'#3A6898',baic:'#C8921A',baicRecall:'#7A6830',petromin:'#B8902A',foton:'#607880',nos:'#3A6840',bodyshop:'#6A3838',electromin:'#4A6858'}[brand]||'#A85060';
+  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#f9a825',baicRecall:'#6A5818',petromin:'#DAA520',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
   const fmtNum = n => {
     const s=String(n||'').trim();
     if(!s||s==='-') return '';
@@ -2343,7 +2343,7 @@ function toggleRegion(id){
 
 function renderTristarTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#3A6898';
+  const color='#1565c0';
   const keys=Object.keys(arr[0]||{});
   // Columns: Name, Region, Warranty, Name(Arabic), District, Hours, Manager, Email, Phone, CC, GPS
   const nameKey=keys[0], regionKey=keys[1], warrantyKey=keys[2], arNameKey=keys[3];
@@ -2399,7 +2399,7 @@ function renderTristarTab(arr){
 }
 function renderApptScriptSection(arr){
   if(!arr||!arr.length) return '';
-  const color='#3A6898';
+  const color='#1565c0';
   const keys=arr.length?Object.keys(arr[0]):[];
 
   const apptRows=[], queueRows=[];
@@ -2458,7 +2458,7 @@ function renderApptScriptSection(arr){
 
 function renderStellantisAppointmentTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#3A6898';
+  const color='#1565c0';
   const keys=arr.length?Object.keys(arr[0]):[];
   const svcKey=keys[0]; // "Appointment Script" column = Service values
   // Other columns have empty string keys, use Object.values instead
@@ -2511,7 +2511,7 @@ function renderStellantisAppointmentTab(arr){
 }
 function renderSalesTeamTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#3A6898';
+  const color='#1565c0';
   const keys=Object.keys(arr[0]||{});
   const REGION_COLORS={WEST:'#c0272d',Western:'#c0272d',CENTRAL:'#1565c0',Central:'#1565c0',EAST:'#2e7d32',Eastern:'#2e7d32',SOUTH:'#6a1b9a',Southern:'#6a1b9a',NORTH:'#e65100',Northern:'#e65100'};
 
@@ -2561,7 +2561,7 @@ function renderSalesTeamTab(arr){
 }
 function renderStellantisSparePartsTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#3A6898';
+  const color='#1565c0';
   const keys=Object.keys(arr[0]||{});
   // Detect columns flexibly
   const fc=(...kws)=>keys.find(c=>kws.some(k=>c.toLowerCase().includes(k.toLowerCase())))||'';
@@ -2646,7 +2646,7 @@ function renderStellantisSparePartsTab(arr){
 
 function renderStellantisPMSTab(arr, sheetName){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#3A6898';
+  const color='#1565c0';
   const keys=Object.keys(arr[0]||{});
   const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
   const fmtE=(v,bg,tc)=>{bg=bg||'#f0f6fc';tc=tc||'#1565c0';return String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+bg+';color:'+tc+';padding:3px 9px;border-radius:5px;font-size:10px;font-weight:800;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');}
@@ -2727,7 +2727,7 @@ function renderStellantisPMSTab(arr, sheetName){
 
 function renderStellantisPACTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#3A6898';
+  const color='#1565c0';
   const keys=Object.keys(arr[0]||{});
   const cityKey=keys[0], branchKey=keys[1], hoursKey=keys[2];
   const mgrKey=keys[3], mobileKey=keys[4], emailKey=keys[5], gpsKey=keys[6];
@@ -4069,7 +4069,7 @@ function copyNissanAppForm(){
 
 function renderSMSTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color={nissan:'#A85060',stellantis:'#3A6898',baic:'#C8921A',baicRecall:'#7A6830',petromin:'#B8902A',foton:'#607880',nos:'#3A6840',bodyshop:'#6A3838',electromin:'#4A6858'}[brand]||'#A85060';
+  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#f9a825',baicRecall:'#6A5818',petromin:'#DAA520',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
   // All data comes under 3S keys — sections separated by header rows
   // Header rows: values equal their key names (e.g. "PAC Appointment SMS EN" == key "3S Appointment SMS EN")
   var sections = {s3:[], pac:[], body:[]};
@@ -4167,7 +4167,7 @@ function copySMS(id){
 
 function renderApptSMSTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#3A6898';
+  const color='#1565c0';
 
   function mkCopyBtn(id){
     return '<button onclick="copySMS(&apos;'+id+'&apos;)" style="padding:3px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer;margin-top:4px">&#128203; Copy</button>'
@@ -4324,7 +4324,7 @@ function showRefBrandPage(brand){
 
 function switchRefTab(brand,idx,btn){
   REF_ACTIVE_TABS[brand]=idx;
-  const color={nissan:'#A85060',stellantis:'#3A6898',baic:'#C8921A',baicRecall:'#7A6830',petromin:'#B8902A',foton:'#607880',nos:'#3A6840',bodyshop:'#6A3838',electromin:'#4A6858'}[brand]||'#A85060';
+  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#f9a825',baicRecall:'#6A5818',petromin:'#DAA520',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
   const container=btn?btn.parentElement:document.querySelector('#refSubTabs_'+brand);
   if(container){
     container.querySelectorAll('.ref-sub-tab').forEach((t,i)=>{
@@ -4400,7 +4400,7 @@ function switchInstrTab(brand, tab, color){
     const isActive=t===tab;
     if(btn){
       btn.classList.toggle('active',isActive);
-      btn.style.background=isActive?(color+'14'):'';
+      btn.style.background=isActive?(color+'18'):'';
       btn.style.color=isActive?color:'';
       btn.style.borderColor=isActive?color:'';
     }
@@ -5935,9 +5935,9 @@ async function selectRecallTab(brand, idx, btn){
   if(container){
     container.querySelectorAll('.ref-sub-tab').forEach((t,i)=>{
       t.classList.toggle('active', i===idx);
-      t.style.background = i===idx ? (color+'22') : '';
-      t.style.color = i===idx ? color : '';
-      t.style.borderColor = i===idx ? (color+'88') : '';
+      t.style.background = i===idx ? color : '';
+      t.style.color = i===idx ? '#fff' : '';
+      t.style.borderColor = i===idx ? color : '';
     });
   }
   await loadRecallTab(brand, REF_SHEETS[cfg.key].tabs[idx], color);
@@ -6285,14 +6285,14 @@ async function renderRef(){
     const emailData = linksData;
 
     const BRAND_CONFIGS=[
-      {key:'petromin',   label:'Petromin',         icon:'<svg viewBox="0 0 36 36" width="26" height="26" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="14" width="20" height="16" rx="3" fill="#c0272d"/><rect x="8" y="10" width="12" height="6" rx="2" fill="#1a1a2e"/><rect x="24" y="16" width="8" height="4" rx="2" fill="#1a1a2e"/><rect x="13" y="6" width="4" height="6" rx="1" fill="#c0272d"/><circle cx="10" cy="20" r="2" fill="#fff" opacity=".4"/></svg>', color:'#B8942A'},
-      {key:'baic',       label:'BAIC',             icon:'🟡', color:'#C8881A'},
-      {key:'nissan',     label:'Nissan',           icon:'🚗', color:'#A02030'},
-      {key:'stellantis', label:'Stellantis',       icon:'🚙', color:'#1A508A'},
+      {key:'petromin',   label:'Petromin',         icon:'<svg viewBox="0 0 36 36" width="26" height="26" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="14" width="20" height="16" rx="3" fill="#c0272d"/><rect x="8" y="10" width="12" height="6" rx="2" fill="#1a1a2e"/><rect x="24" y="16" width="8" height="4" rx="2" fill="#1a1a2e"/><rect x="13" y="6" width="4" height="6" rx="1" fill="#c0272d"/><circle cx="10" cy="20" r="2" fill="#fff" opacity=".4"/></svg>', color:'#DAA520'},
+      {key:'baic',       label:'BAIC',             icon:'🟡', color:'#f9a825'},
+      {key:'nissan',     label:'Nissan',           icon:'🚗', color:'#c0272d'},
+      {key:'stellantis', label:'Stellantis',       icon:'🚙', color:'#1565c0'},
       {key:'bodyshop',   label:'Body Shop',        icon:'🔧', color:'#6A3030'},
       {key:'foton',      label:'Foton',            icon:'🚛', color:'#546e7a'},
-      {key:'nos',        label:'National Oil', icon:'🟢', color:'#2A6A30'},
-      {key:'electromin', label:'Electromin',       icon:'⚡', color:'#3A5848'},
+      {key:'nos',        label:'National Oil', icon:'🟢', color:'#2e7d32'},
+      {key:'electromin', label:'Electromin',       icon:'⚡', color:'#3A6048'},
       {key:'baicRecall', label:'Recall', icon:'⚠️', color:'#6A5818', onclick:'renderRecallInRef()'},
     ];
 
