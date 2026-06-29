@@ -3089,16 +3089,17 @@ function renderBaicLocationTab(arr, brand){
   let current='appt';
   arr.forEach(r=>{
     const v0=gv(r,k0);
+    // Skip header rows
     if(!v0) return;
-    if(v0==='BAIC Location'||v0==='Appointment & Location SMS') return;
+    if(v0==='City'||v0==='BAIC Location'||v0==='Appointment & Location SMS') return;
     if(v0==='Service Location'||v0==='Service Location SMS'){current='service';return;}
     if(v0==='Recall Location'||v0==='Reacall Location'||v0==='Recall Location SMS'){current='recall';return;}
     sections[current].push(r);
   });
-  function mkCard(branch, apptAR, apptEN, locAR, locEN, prefix, c){
+  function mkCard(city, apptAR, apptEN, locAR, locEN, prefix, c){
     if(!apptAR&&!apptEN&&!locAR&&!locEN) return '';
     return '<div class="ref-card" style="padding:0;overflow:hidden;text-align:left">'
-      +(branch?'<div style="background:'+c+'18;border-bottom:2px solid '+c+'22;padding:8px 14px;border-radius:10px 10px 0 0;text-align:center"><div style="font-size:13px;font-weight:700;color:'+c+'">'+branch+'</div></div>':'')
+      +(city?'<div style="background:'+c+'18;border-bottom:2px solid '+c+'22;padding:8px 14px;border-radius:10px 10px 0 0;text-align:center"><div style="font-size:13px;font-weight:700;color:'+c+'">'+city+'</div></div>':'')
       +'<div style="padding:10px 14px">'
       +((apptAR||apptEN)?'<div style="font-size:10px;font-weight:700;color:#555;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">📅 Appointment SMS</div>':'')
       +mkSmsBox(prefix+'_appt_ar','AR',apptAR,c)
@@ -3109,17 +3110,12 @@ function renderBaicLocationTab(arr, brand){
       +'</div></div>';
   }
   function mkCards(rows, prefix, c){
-    if(hasBranch){
-      return rows.map((r,i)=>mkCard(gv(r,k2),gv(r,k1),gv(r,k0),gv(r,k4),gv(r,k3),prefix+i,c)).join('');
-    }
-    // 2-col sheet: pair rows (AR+EN per branch)
     return rows.map((r,i)=>{
-      const ar=gv(r,k0), en=gv(r,k1);
-      if(!ar&&!en) return '';
-      return '<div class="ref-card" style="padding:10px 14px">'
-        +mkSmsBox(prefix+'_ar_'+i,'AR',ar,c)
-        +mkSmsBox(prefix+'_en_'+i,'EN',en,c)
-        +'</div>';
+      const city=gv(r,k0);
+      const apptAR=gv(r,k1), apptEN=gv(r,k2);
+      const locAR=gv(r,k3), locEN=gv(r,k4);
+      if(!apptAR&&!apptEN&&!locAR&&!locEN) return '';
+      return mkCard(city, apptAR, apptEN, locAR, locEN, prefix+i, c);
     }).join('');
   }
   function sec(id,title,c,cards){
