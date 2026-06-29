@@ -5761,6 +5761,160 @@ function closeRecallInRef(){
   renderRef();
 }
 
+// ── OUTBOUND RECALL ────────────────────────────────────────────────────────
+const OUTBOUND_RECALL_BRANDS = {
+  'Nissan Search':    {key:'recallNissan',    color:'#c0272d', icon:'🔍'},
+  'Stellantis Search':{key:'recallStellantis',color:'#1565c0', icon:'🔍'},
+  'BAIC Search':      {key:'recallBAIC',      color:'#DAA520', icon:'🔍'},
+  'Remote Areas':     {key:'recallRemote',    color:'#2e7d32', icon:'🌍', link:'https://docs.google.com/spreadsheets/d/1qOIoWAGNl3-0cha12rjNksUsEapffeZ20Ioz7vm7Rbk/edit'},
+  'Outbound Recall':  {key:'outboundSheet',   color:'#546e7a', icon:'📞', link:'https://docs.google.com/spreadsheets/d/1sgWulUi7UFe_J3t_U8pAzjwGBjr4_hAXBvej-KCINbs/edit'}
+};
+let OUTBOUND_ACTIVE_BRAND = 'Nissan Search';
+let OUTBOUND_ACTIVE_TAB   = 0;
+let OUTBOUND_BRAND_DATA   = {};
+
+function renderOutboundRecallInRef(){
+  const refContent = document.getElementById('refContent');
+  if(!refContent) return;
+  OUTBOUND_ACTIVE_BRAND = 'Nissan Search';
+  OUTBOUND_ACTIVE_TAB   = 0;
+  refContent.innerHTML =
+    '<div style="margin-bottom:12px;text-align:left"><button onclick="renderRef()" style="background:#f5f5f5;border:1.5px solid #ddd;padding:8px 22px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;color:#555">← Back to References</button></div>'
+    +'<div id="outboundRecallContent"></div>';
+  renderOutboundRecallPage();
+}
+
+function renderOutboundRecallPage(){
+  const el = document.getElementById('outboundRecallContent');
+  if(!el) return;
+
+  const circlesHTML = '<div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:16px">'
+    +Object.entries(OUTBOUND_RECALL_BRANDS).map(([name,cfg])=>
+      '<div onclick="selectOutboundRecallBrand(\''+name+'\')" id="obcircle_'+name.replace(/[\s\/]/g,'_')+'" style="display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer">'
+      +'<div id="obcirc_inner_'+name.replace(/[\s\/]/g,'_')+'" style="width:34px;height:34px;border-radius:50%;background:'+cfg.color+';display:flex;align-items:center;justify-content:center;font-size:16px;'
+        +(name===OUTBOUND_ACTIVE_BRAND?'box-shadow:0 0 0 3px #fff, 0 0 0 5px '+cfg.color+';':'box-shadow:0 2px 6px rgba(0,0,0,.15);')
+        +'transition:.2s">'+cfg.icon+'</div>'
+      +'<div style="font-size:10px;font-weight:700;color:'+cfg.color+';text-align:center;max-width:70px;word-break:break-word;line-height:1.3">'+name+'</div>'
+      +'</div>'
+    ).join('')+'</div>';
+
+  el.innerHTML =
+    '<div style="background:linear-gradient(135deg,#2e7d32,#1b5e20);border-radius:12px 12px 0 0;padding:10px 16px;display:flex;align-items:center;justify-content:center;position:relative">'
+    +'<span style="font-size:14px;font-weight:800;color:#fff">📞 Outbound Recall</span>'
+    +'<a href="https://recalls.sa/" target="_blank" style="position:absolute;right:12px;display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:14px;font-size:10px;font-weight:700;text-decoration:none">🏛️ وزارة التجارة</a>'
+    +'</div>'
+    +'<div style="background:#fff;border-radius:0 0 12px 12px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:16px">'
+    + circlesHTML
+    +'<div id="outboundBrandContent"></div>'
+    +'</div>';
+
+  loadOutboundRecallBrand(OUTBOUND_ACTIVE_BRAND);
+}
+
+function selectOutboundRecallBrand(name){
+  OUTBOUND_ACTIVE_BRAND = name;
+  OUTBOUND_ACTIVE_TAB   = 0;
+  Object.entries(OUTBOUND_RECALL_BRANDS).forEach(([n,cfg])=>{
+    const inner = document.getElementById('obcirc_inner_'+n.replace(/[\s\/]/g,'_'));
+    if(!inner) return;
+    inner.style.boxShadow = n===name
+      ? '0 0 0 3px #fff, 0 0 0 5px '+cfg.color
+      : '0 2px 8px rgba(0,0,0,.15)';
+  });
+  loadOutboundRecallBrand(name);
+}
+
+async function loadOutboundSearchData(brandFilter){
+  const statusEl = document.getElementById('outboundSearchStatus');
+  const tabName  = RECALL_SHEET_TABS[brandFilter] || brandFilter;
+  if(OUTBOUND_BRAND_DATA[brandFilter]){
+    RECALL_SEARCH_DATA = OUTBOUND_BRAND_DATA[brandFilter];
+    if(statusEl) statusEl.innerHTML = '✅ '+RECALL_SEARCH_DATA.length.toLocaleString()+' سجل '+brandFilter+' جاهز للبحث';
+    return;
+  }
+  try{
+    if(statusEl) statusEl.innerHTML = '⏳ تحميل بيانات '+brandFilter+'...';
+    const arr  = await fetchCSVRaw(RECALL_SEARCH_SHEET_ID, tabName);
+    const data = arr.slice(1).map(r=>({
+      code:  String(r[0]||'').trim(),
+      vin:   String(r[1]||'').trim().toUpperCase(),
+      brand: String(r[2]||'').trim()||brandFilter,
+      model: String(r[3]||'').trim(),
+      year:  String(r[4]||'').trim(),
+      desc:  String(r[5]||'').trim()
+    })).filter(r=>r.vin);
+    OUTBOUND_BRAND_DATA[brandFilter] = data;
+    RECALL_SEARCH_DATA = data;
+    if(statusEl) statusEl.innerHTML = '✅ '+data.length.toLocaleString()+' سجل '+brandFilter+' جاهز للبحث';
+  }catch(e){
+    RECALL_SEARCH_DATA = [];
+    if(statusEl) statusEl.innerHTML = '⚠️ فشل تحميل بيانات '+brandFilter+': '+e.message;
+  }
+}
+
+function searchOutboundByVIN(brandFilter){
+  const input     = document.getElementById('outboundVinInput');
+  const resultsEl = document.getElementById('outboundSearchResults');
+  if(!input||!resultsEl) return;
+  const q = input.value.trim().toUpperCase();
+  if(!q){ resultsEl.innerHTML=''; return; }
+  if(!RECALL_SEARCH_DATA){ resultsEl.innerHTML='<div style="text-align:center;padding:20px;color:#aaa">⏳ البيانات لا تزال تُحمّل...</div>'; return; }
+
+  let matches = RECALL_SEARCH_DATA.filter(r=>r.vin.includes(q));
+  if(brandFilter) matches = matches.filter(r=>r.brand.toLowerCase().includes(brandFilter.toLowerCase()));
+
+  if(!matches.length){
+    resultsEl.innerHTML = q.length<3 ? '' : '<div style="text-align:center;padding:24px;color:#aaa">❌ لا توجد نتائج لرقم الهيكل المُدخل</div>';
+    return;
+  }
+
+  const BRAND_COLORS2 = {dodge:'#1565c0',jeep:'#2e7d32',ram:'#7b4f00',chrysler:'#6a1b9a',fiat:'#e65100',nissan:'#c0272d',baic:'#f9a825'};
+  function bc2(b){const k=(b||'').toLowerCase();for(const[key,col]of Object.entries(BRAND_COLORS2)){if(k.includes(key))return col;}return '#2e7d32';}
+
+  resultsEl.innerHTML = '<div style="font-size:12px;color:#888;text-align:center;margin-bottom:10px">'+matches.length+' نتيجة</div>'
+    + matches.map(r=>{
+      const col = bc2(r.brand);
+      return '<div style="background:#fff;border-radius:10px;margin-bottom:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);border-left:4px solid '+col+'">'
+        +'<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:'+col+'0d">'
+        +'<div style="min-width:44px;height:36px;border-radius:8px;background:'+col+';display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0">'+r.code+'</div>'
+        +'<div style="flex:1">'
+        +'<div style="font-size:13px;font-weight:700;color:#1a1a2e">'+r.brand+' · '+r.model+'</div>'
+        +'<div style="font-size:11px;color:#999;margin-top:2px;font-family:monospace">'+r.vin+' &nbsp;·&nbsp; '+r.year+'</div>'
+        +'</div>'
+        +'</div>'
+        +(r.desc?'<div style="padding:14px 16px;direction:rtl;text-align:right;font-size:12px;color:#444;line-height:1.9;white-space:pre-wrap;border-top:1px solid #f0f0f0">'+r.desc+'</div>':'')
+        +'</div>';
+    }).join('');
+}
+
+async function loadOutboundRecallBrand(name){
+  const cont = document.getElementById('outboundBrandContent');
+  if(!cont) return;
+  const cfg   = OUTBOUND_RECALL_BRANDS[name];
+  const color = cfg.color;
+
+  if(cfg.link){
+    cont.innerHTML='<div style="text-align:center;padding:40px">'
+      +'<div style="font-size:36px;margin-bottom:12px">🌍</div>'
+      +'<div style="font-size:14px;color:#555;margin-bottom:20px">سجّلي بيانات المناطق النائية مباشرة في Google Sheets</div>'
+      +'<a href="'+cfg.link+'" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:'+color+';color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.15)">📝 Open Sheet</a>'
+      +'</div>';
+    return;
+  }
+
+  if(name==='Nissan Search'||name==='Stellantis Search'||name==='BAIC Search'){
+    const brandFilter = name.replace(' Search','');
+    cont.innerHTML =
+      '<div style="padding:20px 16px">'
+      +'<div style="max-width:500px;margin:0 auto 16px;position:relative">'
+      +'<input id="outboundVinInput" type="text" placeholder="🔍 ابحث برقم الهيكل (VIN)..." oninput="searchOutboundByVIN(\''+brandFilter+'\')" style="width:100%;padding:12px 18px;border-radius:24px;border:2px solid '+color+'44;font-size:14px;outline:none;direction:ltr;text-align:center;font-family:monospace;text-transform:uppercase" maxlength="17">'
+      +'</div>'
+      +'<div id="outboundSearchStatus" style="text-align:center;font-size:12px;color:#999;margin-bottom:12px">⏳ تحميل بيانات الاستدعاء...</div>'
+      +'<div id="outboundSearchResults"></div>'
+      +'</div>';
+    await loadOutboundSearchData(brandFilter);
+  }
+}
 
 const RECALL_BRANDS = {
   'Nissan Search': {key:'recallNissan',    color:'#c0272d', icon:'🔍'},
@@ -6308,6 +6462,7 @@ async function renderRef(){
       {key:'nos',        label:'National Oil', icon:'🟢', color:'#2e7d32'},
       {key:'electromin', label:'Electromin',       icon:'⚡', color:'#3A6048'},
       {key:'baicRecall', label:'Recall', icon:'⚠️', color:'#6A5818', onclick:'renderRecallInRef()'},
+      {key:'outboundRecall', label:'Outbound Recall', icon:'📞', color:'#2e7d32', onclick:'renderOutboundRecallInRef()'},
     ];
 
     // CONTACT NUMBERS
@@ -6420,7 +6575,7 @@ async function renderRef(){
 
       // BRAND CIRCLES — Order: Petromin, BAIC, Nissan, Stellantis, Body Shop, Foton, National Oil, Electromin, Recall, Links
       +'<div class="ref-brand-circles" style="justify-content:center">'
-      +['petromin','baic','nissan','stellantis','bodyshop','foton','nos','electromin','baicRecall'].map(k=>{const c=BRAND_CONFIGS.find(b=>b.key===k);if(!c)return'';return'<div class="ref-brand-circle" onclick="'+(c.onclick||'showRefBrandPage(\''+c.key+'\')')+'"><div class="ref-brand-circle-icon" style="background:'+c.color+'">'+c.icon+'</div><div class="ref-brand-circle-label" style="color:'+c.color+'">'+c.label+'</div></div>';}).join('')
+      +['petromin','baic','nissan','stellantis','bodyshop','foton','nos','electromin','baicRecall','outboundRecall'].map(k=>{const c=BRAND_CONFIGS.find(b=>b.key===k);if(!c)return'';return'<div class="ref-brand-circle" onclick="'+(c.onclick||'showRefBrandPage(\''+c.key+'\')')+'"><div class="ref-brand-circle-icon" style="background:'+c.color+'">'+c.icon+'</div><div class="ref-brand-circle-label" style="color:'+c.color+'">'+c.label+'</div></div>';}).join('')
       +(linkCards?'<div class="ref-brand-circle" onclick="var p=document.getElementById(\'refLinksPanel\');p.style.display=p.style.display===\'none\'?\'block\':\'none\'">'
         +'<div class="ref-brand-circle-icon" style="background:#1565c0">🔗</div>'
         +'<div class="ref-brand-circle-label" style="color:#1565c0">Links</div>'
