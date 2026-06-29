@@ -1895,7 +1895,7 @@ const REF_SHEETS = {
   },
   baic: {
     id: '1FQaNEkC-gKFIJLT5hBE9qzBL7pXf_m5Aot35h622hR4',
-    tabs: ['Instruction','Service','BAIC Location']
+    tabs: ['Instruction','Service','Appointment & Location SMS']
   },
   petromin: {
     id: '11M28wIA4Ee84ohrIqzXtobK7X-QsrruoL4MwjoGz-6k',
@@ -3067,12 +3067,13 @@ function renderBaicLocationTab(arr){
   const keys=Object.keys(arr[0]||{});
   const arKey=keys[0], enKey=keys[1];
 
-  const sections={service:[],recall:[]};
-  let current='service';
+  const sections={appt:[],service:[],recall:[]};
+  let current='appt';
   arr.forEach(r=>{
     const ar=String(r[arKey]||'').trim();
-    if(ar==='BAIC Location') return;
-    if(ar==='Reacall Location'||ar==='Recall Location'){ current='recall'; return; }
+    if(ar==='Appointment & Location SMS'||ar==='BAIC Location') return;
+    if(ar==='Service Location'||ar==='Service Location SMS'){ current='service'; return; }
+    if(ar==='Reacall Location'||ar==='Recall Location'||ar==='Recall Location SMS'){ current='recall'; return; }
     if(!ar) return;
     sections[current].push(r);
   });
@@ -3100,11 +3101,70 @@ function renderBaicLocationTab(arr){
       +'</div>';
   }).filter(Boolean).join('')+'</div>';
 
+  // Fetch Appointment SMS from separate sheet
+  let apptHTML='';
+  if(sections.appt.length){
+    apptHTML='<div style="font-size:13px;font-weight:700;color:'+color+';margin:6px 0 10px;text-align:center">📅 Appointment SMS</div>'
+      +mkSection(sections.appt,'baicAppt');
+  } else {
+    // Load from the new Nissan Appointment sheet
+    apptHTML='<div id="baicApptSection"><div style="text-align:center;padding:16px;color:#aaa;font-size:12px">⏳ Loading Appointment SMS...</div></div>';
+    setTimeout(()=>loadBAICApptSMS(),100);
+  }
+
   return '<div>'
-    +'<div style="font-size:13px;font-weight:700;color:'+color+';margin:6px 0 10px;text-align:center">📍 Service Location SMS</div>'
+    +apptHTML
+    +'<div style="font-size:13px;font-weight:700;color:'+color+';margin:18px 0 10px;text-align:center">📍 Service Location SMS</div>'
     +mkSection(sections.service,'baicLoc')
     +(sections.recall.length?'<div style="font-size:13px;font-weight:700;color:'+color+';margin:18px 0 10px;text-align:center">📍 Recall Location SMS</div>'+mkSection(sections.recall,'baicRecallLoc'):'')
     +'</div>';
+}
+
+async function loadBAICApptSMS(){
+  const APPT_SHEET_ID='1FQaNEkC-gKFIJLT5hBE9qzBL7pXf_m5Aot35h622hR4';
+  const GID='260555768';
+  const color='#f9a825';
+  try{
+    const url=`https://docs.google.com/spreadsheets/d/${APPT_SHEET_ID}/gviz/tq?tqx=out:json&gid=${GID}`;
+    const res=await fetch(url);
+    const text=await res.text();
+    const json=JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
+    const cols=json.table.cols.map(c=>c.label);
+    const rows=json.table.rows.map(r=>({
+      [cols[0]]:r.c[0]?.v||'',
+      [cols[1]]:r.c[1]?.v||''
+    }));
+    const arKey=cols[0], enKey=cols[1];
+    const mkBox=(text,id,label)=>{
+      if(!text) return '';
+      const safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const isAR=/[\u0600-\u06FF]/.test(text.substring(0,10));
+      return '<div style="background:#fff;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
+        +'<span style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase">'+label+'</span>'
+        +'<button onclick="copySMS(\''+id+'\')" style="padding:3px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer">📋 Copy</button>'
+        +'</div>'
+        +'<div id="sms_'+id+'" style="font-size:11px;color:#444;line-height:1.6;white-space:pre-wrap;direction:'+(isAR?'rtl':'ltr')+';text-align:'+(isAR?'right':'left')+'">'+safe+'</div>'
+        +'</div>';
+    };
+    const cards=rows.filter(r=>{
+      const ar=String(r[arKey]||'').trim();
+      const en=String(r[enKey]||'').trim();
+      return ar||en;
+    }).map((r,i)=>{
+      const ar=String(r[arKey]||'').trim();
+      const en=String(r[enKey]||'').trim();
+      return '<div class="ref-card" style="padding:10px 14px">'
+        +mkBox(en,'baicApptNew_en_'+i,'EN')
+        +mkBox(ar,'baicApptNew_ar_'+i,'AR')
+        +'</div>';
+    }).join('');
+    const sec=document.getElementById('baicApptSection');
+    if(sec) sec.innerHTML='<div style="font-size:13px;font-weight:700;color:'+color+';margin:6px 0 10px;text-align:center">📅 Appointment SMS</div><div class="ref-cards-grid">'+cards+'</div>';
+  }catch(e){
+    const sec=document.getElementById('baicApptSection');
+    if(sec) sec.innerHTML='<div style="color:#aaa;font-size:12px;text-align:center;padding:16px">⚠️ Could not load Appointment SMS</div>';
+  }
 }
 
 function renderPetrominInstructionTab(arr){
@@ -4864,7 +4924,7 @@ async function renderRefBrand(brand,tabIdx){
       container.innerHTML=renderBaicServiceTab(arr,apptArr);
       return;
     }
-    if(brand==='baic' && sheetName.trim()==='BAIC Location'){
+    if(brand==='baic' && (sheetName.trim()==='BAIC Location'||sheetName.trim()==='Appointment & Location SMS')){
       container.innerHTML=renderBaicLocationTab(arr);
       return;
     }
