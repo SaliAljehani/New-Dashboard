@@ -1895,7 +1895,7 @@ const REF_SHEETS = {
   },
   baic: {
     id: '1FQaNEkC-gKFIJLT5hBE9qzBL7pXf_m5Aot35h622hR4',
-    tabs: ['Instruction','Service','Appointment & Location SMS']
+    tabs: ['Instruction','Service','BAIC Location']
   },
   petromin: {
     id: '11M28wIA4Ee84ohrIqzXtobK7X-QsrruoL4MwjoGz-6k',
@@ -4384,7 +4384,7 @@ function showRefBrandPage(brand){
     +'<div id="petrominWarrantyDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px"></div>'
     +'<div class="ref-sub-tabs" id="refSubTabs_'+brand+'" style="justify-content:center">'
     +tabs.map((t,i)=>{
-      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','PMS':'Service','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📱 SMS Appointment'};
+      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','PMS':'Service','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📱 SMS Appointment','BAIC Location':'📅 Appointment & Location SMS'};
       const label=TAB_LABELS[t]||t;
       return '<button class="ref-sub-tab'+(i===0?' active':'')+'" '
         +'style="'+(i===0?'background:'+meta.color+';color:#fff;border-color:'+meta.color:'')+'" '
