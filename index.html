@@ -3061,111 +3061,87 @@ function renderBaicServiceTab(arr, apptArr){
   return '<div>'+emailHtml+regHTML+'</div>';
 }
 
-function renderBaicLocationTab(arr){
+function renderBaicLocationTab(arr, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#f9a825';
   const keys=Object.keys(arr[0]||{});
-  const arKey=keys[0], enKey=keys[1];
-
-  const sections={appt:[],service:[],recall:[]};
-  let current='appt';
-  arr.forEach(r=>{
-    const ar=String(r[arKey]||'').trim();
-    if(ar==='Appointment & Location SMS'||ar==='BAIC Location') return;
-    if(ar==='Service Location'||ar==='Service Location SMS'){ current='service'; return; }
-    if(ar==='Reacall Location'||ar==='Recall Location'||ar==='Recall Location SMS'){ current='recall'; return; }
-    if(!ar) return;
-    sections[current].push(r);
-  });
-
-  const mkBox=(text,id,label)=>{
+  const k0=keys[0]||'', k1=keys[1]||'', k2=keys[2]||'', k3=keys[3]||'', k4=keys[4]||'';
+  function gv(r,k){const v=r[k];return v?String(v).trim():'';}
+  function mkCopyBtn(id){
+    return '<button onclick="copySMS(\''+id+'\')" style="padding:3px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer">📋 Copy</button>'
+      +'<span id="cp_'+id+'" style="font-size:10px;color:#2e7d32;display:none;margin-left:4px">✓</span>';
+  }
+  function mkSmsBox(id,label,text,c){
     if(!text) return '';
     const safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    const isAR=/[\u0600-\u06FF]/.test(text.substring(0,10));
+    const isAR=/[\u0600-\u06FF]/.test(text.substring(0,30));
     return '<div style="background:#fff;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
       +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
-      +'<span style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase">'+label+'</span>'
-      +'<button onclick="copySMS(\''+id+'\')" style="padding:3px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer">📋 Copy</button>'
+      +'<span style="font-size:10px;font-weight:700;color:'+c+';text-transform:uppercase">'+label+'</span>'
+      +mkCopyBtn(id)
       +'</div>'
       +'<div id="sms_'+id+'" style="font-size:11px;color:#444;line-height:1.6;white-space:pre-wrap;direction:'+(isAR?'rtl':'ltr')+';text-align:'+(isAR?'right':'left')+'">'+safe+'</div>'
       +'</div>';
-  };
-
-  const mkSection=(rows,prefix)=>'<div class="ref-cards-grid">'+rows.map((r,i)=>{
-    const ar=String(r[arKey]||'').trim();
-    const en=String(r[enKey]||'').trim();
-    if(!ar&&!en) return '';
-    return '<div class="ref-card" style="padding:10px 14px">'
-      +mkBox(en,prefix+'_en_'+i,'EN')
-      +mkBox(ar,prefix+'_ar_'+i,'AR')
-      +'</div>';
-  }).filter(Boolean).join('')+'</div>';
-
-  // Fetch Appointment SMS from separate sheet
-  let apptHTML='';
-  if(sections.appt.length){
-    apptHTML='<div style="font-size:13px;font-weight:700;color:'+color+';margin:6px 0 10px;text-align:center">📅 Appointment SMS</div>'
-      +mkSection(sections.appt,'baicAppt');
-  } else {
-    // Load from the new Nissan Appointment sheet
-    apptHTML='<div id="baicApptSection"><div style="text-align:center;padding:16px;color:#aaa;font-size:12px">⏳ Loading Appointment SMS...</div></div>';
-    setTimeout(()=>loadBAICApptSMS(),100);
   }
-
+  // Detect if sheet has branch column (5 cols) or just AR+EN (2 cols)
+  const hasBranch = keys.length >= 3;
+  const sections={appt:[],service:[],recall:[]};
+  let current='appt';
+  arr.forEach(r=>{
+    const v0=gv(r,k0);
+    if(!v0) return;
+    if(v0==='BAIC Location'||v0==='Appointment & Location SMS') return;
+    if(v0==='Service Location'||v0==='Service Location SMS'){current='service';return;}
+    if(v0==='Recall Location'||v0==='Reacall Location'||v0==='Recall Location SMS'){current='recall';return;}
+    sections[current].push(r);
+  });
+  function mkCard(branch, apptAR, apptEN, locAR, locEN, prefix, c){
+    if(!apptAR&&!apptEN&&!locAR&&!locEN) return '';
+    return '<div class="ref-card" style="padding:0;overflow:hidden;text-align:left">'
+      +(branch?'<div style="background:'+c+'18;border-bottom:2px solid '+c+'22;padding:8px 14px;border-radius:10px 10px 0 0;text-align:center"><div style="font-size:13px;font-weight:700;color:'+c+'">'+branch+'</div></div>':'')
+      +'<div style="padding:10px 14px">'
+      +((apptAR||apptEN)?'<div style="font-size:10px;font-weight:700;color:#555;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">📅 Appointment SMS</div>':'')
+      +mkSmsBox(prefix+'_appt_ar','AR',apptAR,c)
+      +mkSmsBox(prefix+'_appt_en','EN',apptEN,c)
+      +((locAR||locEN)?'<div style="font-size:10px;font-weight:700;color:#555;margin:10px 0 6px;text-transform:uppercase;letter-spacing:.05em">📍 Location SMS</div>':'')
+      +mkSmsBox(prefix+'_loc_ar','AR',locAR,c)
+      +mkSmsBox(prefix+'_loc_en','EN',locEN,c)
+      +'</div></div>';
+  }
+  function mkCards(rows, prefix, c){
+    if(hasBranch){
+      return rows.map((r,i)=>mkCard(gv(r,k2),gv(r,k1),gv(r,k0),gv(r,k4),gv(r,k3),prefix+i,c)).join('');
+    }
+    // 2-col sheet: pair rows (AR+EN per branch)
+    return rows.map((r,i)=>{
+      const ar=gv(r,k0), en=gv(r,k1);
+      if(!ar&&!en) return '';
+      return '<div class="ref-card" style="padding:10px 14px">'
+        +mkSmsBox(prefix+'_ar_'+i,'AR',ar,c)
+        +mkSmsBox(prefix+'_en_'+i,'EN',en,c)
+        +'</div>';
+    }).join('');
+  }
+  function sec(id,title,c,cards){
+    if(!cards) return '';
+    return '<div style="margin-bottom:16px">'
+      +'<div onclick="toggleRegion(\''+id+'\')" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:'+c+'12;border-radius:8px;border-left:4px solid '+c+';cursor:pointer;margin-bottom:10px">'
+      +'<span style="font-size:13px;font-weight:700;color:'+c+'">'+title+'</span>'
+      +'<span id="ico_'+id+'" style="color:'+c+'">▼</span>'
+      +'</div>'
+      +'<div id="'+id+'"><div class="ref-cards-grid">'+cards+'</div></div>'
+      +'</div>';
+  }
+  const apptCards=mkCards(sections.appt,'baicAppt',color);
+  const serviceCards=mkCards(sections.service,'baicSvc',color);
+  const recallCards=mkCards(sections.recall,'baicRcl',color);
   return '<div>'
-    +apptHTML
-    +'<div style="font-size:13px;font-weight:700;color:'+color+';margin:18px 0 10px;text-align:center">📍 Service Location SMS</div>'
-    +mkSection(sections.service,'baicLoc')
-    +(sections.recall.length?'<div style="font-size:13px;font-weight:700;color:'+color+';margin:18px 0 10px;text-align:center">📍 Recall Location SMS</div>'+mkSection(sections.recall,'baicRecallLoc'):'')
+    +(apptCards?sec('baicApptSec','📅 Appointment & Location SMS',color,apptCards):'')
+    +(serviceCards?sec('baicSvcSec','📍 Service Location SMS',color,serviceCards):'')
+    +(recallCards?sec('baicRclSec','📍 Recall Location SMS',color,recallCards):'')
     +'</div>';
 }
 
-async function loadBAICApptSMS(){
-  const APPT_SHEET_ID='1FQaNEkC-gKFIJLT5hBE9qzBL7pXf_m5Aot35h622hR4';
-  const GID='260555768';
-  const color='#f9a825';
-  try{
-    const url=`https://docs.google.com/spreadsheets/d/${APPT_SHEET_ID}/gviz/tq?tqx=out:json&gid=${GID}`;
-    const res=await fetch(url);
-    const text=await res.text();
-    const json=JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
-    const cols=json.table.cols.map(c=>c.label);
-    const rows=json.table.rows.map(r=>({
-      [cols[0]]:r.c[0]?.v||'',
-      [cols[1]]:r.c[1]?.v||''
-    }));
-    const arKey=cols[0], enKey=cols[1];
-    const mkBox=(text,id,label)=>{
-      if(!text) return '';
-      const safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
-      const isAR=/[\u0600-\u06FF]/.test(text.substring(0,10));
-      return '<div style="background:#fff;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
-        +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
-        +'<span style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase">'+label+'</span>'
-        +'<button onclick="copySMS(\''+id+'\')" style="padding:3px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer">📋 Copy</button>'
-        +'</div>'
-        +'<div id="sms_'+id+'" style="font-size:11px;color:#444;line-height:1.6;white-space:pre-wrap;direction:'+(isAR?'rtl':'ltr')+';text-align:'+(isAR?'right':'left')+'">'+safe+'</div>'
-        +'</div>';
-    };
-    const cards=rows.filter(r=>{
-      const ar=String(r[arKey]||'').trim();
-      const en=String(r[enKey]||'').trim();
-      return ar||en;
-    }).map((r,i)=>{
-      const ar=String(r[arKey]||'').trim();
-      const en=String(r[enKey]||'').trim();
-      return '<div class="ref-card" style="padding:10px 14px">'
-        +mkBox(en,'baicApptNew_en_'+i,'EN')
-        +mkBox(ar,'baicApptNew_ar_'+i,'AR')
-        +'</div>';
-    }).join('');
-    const sec=document.getElementById('baicApptSection');
-    if(sec) sec.innerHTML='<div style="font-size:13px;font-weight:700;color:'+color+';margin:6px 0 10px;text-align:center">📅 Appointment SMS</div><div class="ref-cards-grid">'+cards+'</div>';
-  }catch(e){
-    const sec=document.getElementById('baicApptSection');
-    if(sec) sec.innerHTML='<div style="color:#aaa;font-size:12px;text-align:center;padding:16px">⚠️ Could not load Appointment SMS</div>';
-  }
-}
 
 function renderPetrominInstructionTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
@@ -4925,7 +4901,7 @@ async function renderRefBrand(brand,tabIdx){
       return;
     }
     if(brand==='baic' && (sheetName.trim()==='BAIC Location'||sheetName.trim()==='Appointment & Location SMS')){
-      container.innerHTML=renderBaicLocationTab(arr);
+      container.innerHTML=renderBaicLocationTab(arr, brand);
       return;
     }
     if(brand==='petromin' && sheetName.trim()==='Eco Wash'){
