@@ -1698,6 +1698,8 @@ async function fetchCSVRaw(sheetId, sheetName, retries){
   if(window.__PRELOADED_RAW__ && window.__PRELOADED_RAW__[sheetName]){
     return window.__PRELOADED_RAW__[sheetName];
   }
+  const cacheKey = sheetId+'__RAW__'+sheetName;
+  if(REF_CACHE[cacheKey]) return REF_CACHE[cacheKey];
   retries = retries===undefined ? 2 : retries;
   const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=`+encodeURIComponent(sheetName);
   const controller = new AbortController();
@@ -1710,7 +1712,9 @@ async function fetchCSVRaw(sheetId, sheetName, retries){
     const cols = json.table.cols.map(c=>c.label||'');
     const rows = json.table.rows.map(r=>r.c.map(c=>c?(c.f!==undefined?c.f:c.v):''));
     console.log('fetchCSVRaw(json)', sheetName, 'cols:', cols, 'rows:', rows.length, 'sample:', rows[0]);
-    return [cols, ...rows];
+    const result=[cols, ...rows];
+    REF_CACHE[cacheKey]=result;
+    return result;
   }catch(err){
     clearTimeout(timeoutId);
     if(retries>0){
