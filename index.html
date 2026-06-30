@@ -4775,6 +4775,7 @@ async function renderRefBrand(brand,tabIdx){
   const sheetName=cfg.tabs[tabIdx];
   const container=document.getElementById('refTab_'+brand);
   if(!container)return;
+  const __reqId=(container.dataset.reqId=Date.now()+'_'+Math.random());
   if(brand==='petromin'){
     const t0=sheetName.trim();
     if(t0==='Petromin Website'){
@@ -4880,6 +4881,7 @@ async function renderRefBrand(brand,tabIdx){
           arr=await fetchCSVRaw(cfg.id, fetchTabName);
         }
       }
+      if(container.dataset.reqId!==__reqId) return;
       if(t==='Instruction') container.innerHTML=renderFotonInstructionTab(arr);
       else if(t==='Showrooms') container.innerHTML=renderFotonShowroomTab(arr);
       else if(t==='PMS') container.innerHTML=renderFotonPMSTab(arr);
