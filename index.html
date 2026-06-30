@@ -3757,18 +3757,30 @@ function renderPetrominPACTab(arr){
       regions[v0].push(vals);
       return;
     }
+    // Email routing rows: label in col C (idx2) / col F (idx5), e.g. "PAC Request", "Petromin Express Complaint"
+    // To/CC values follow at idx3/idx4 (for the C label) and idx6/idx7 (for the F label)
+    const leftLabel=vals[2]||'', rightLabel=vals[5]||'';
+    let matchedEmailRow=false;
+    if(/(Request|Complaint)\s*$/i.test(leftLabel)){
+      const cat = /express/i.test(leftLabel) ? 'Express' : 'PAC';
+      const type = /request\s*$/i.test(leftLabel) ? 'Request' : 'Complaint';
+      if(!emRows[cat]) emRows[cat]={};
+      emRows[cat][type]={to:vals[3]||'',cc:vals[4]||''};
+      matchedEmailRow=true;
+    }
+    if(/(Request|Complaint)\s*$/i.test(rightLabel)){
+      const cat = /express/i.test(rightLabel) ? 'Express' : 'PAC';
+      const type = /request\s*$/i.test(rightLabel) ? 'Request' : 'Complaint';
+      if(!emRows[cat]) emRows[cat]={};
+      emRows[cat][type]={to:vals[6]||'',cc:vals[7]||''};
+      matchedEmailRow=true;
+    }
+    if(matchedEmailRow) return;
+
     // RM mapping rows: col0/1 empty, col2=branch code, col3=RM, col4=RM email, col5=RM mobile
-    if(!v0 && vals[2] && vals[2]!=='Request' && vals[2]!=='Complaint' && vals[3] && vals[4] && vals[4].includes('@')){
+    if(!v0 && vals[2] && vals[3] && vals[4] && vals[4].includes('@')){
       rmByBranch[vals[2]] = {name:vals[3], email:vals[4], mobile:fmtNum(vals[5])};
       return;
-    }
-    // Email routing rows: col2=Request/Complaint, scan remaining cols for TO/CC content
-    // Category comes from col0: empty (or "PAC") => PAC, contains "Express" => Petromin Express
-    if(vals[2]==='Request'||vals[2]==='Complaint'){
-      const cat = /express/i.test(v0) ? 'Express' : 'PAC';
-      const rest=vals.slice(4).map(s=>String(s||'').trim()).filter(Boolean);
-      if(!emRows[cat]) emRows[cat]={};
-      emRows[cat][vals[2]]={to:rest[0]||'',cc:rest[1]||''};
     }
   });
 
