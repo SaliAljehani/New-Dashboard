@@ -3763,24 +3763,36 @@ function renderPetrominPACTab(arr){
       return;
     }
     // Email routing rows: col2=Request/Complaint, scan remaining cols for TO/CC content
-    if(!v0 && (vals[2]==='Request'||vals[2]==='Complaint')){
+    // Category comes from col0: empty (or "PAC") => PAC, contains "Express" => Petromin Express
+    if(vals[2]==='Request'||vals[2]==='Complaint'){
+      const cat = /express/i.test(v0) ? 'Express' : 'PAC';
       const rest=vals.slice(4).map(s=>String(s||'').trim()).filter(Boolean);
-      emRows[vals[2]]={to:rest[0]||'',cc:rest[1]||''};
+      if(!emRows[cat]) emRows[cat]={};
+      emRows[cat][vals[2]]={to:rest[0]||'',cc:rest[1]||''};
     }
   });
 
-  // Email cards
+  // Email cards (4 boxes: PAC Request, PAC Complaint, Express Request, Express Complaint)
+  const fmtTo=v=>{
+    const s=String(v||'').trim();
+    const m=s.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/);
+    if(!m) return s?'<span style="font-size:11px;font-weight:700;color:#444">'+s+'</span>':'';
+    const email=m[1].replace(/,$/,'').replace(/,(?=[a-zA-Z]{2,4}$)/,'.');
+    const prefix=s.slice(0,m.index).trim();
+    return (prefix?'<span style="font-size:11px;font-weight:700;color:#444">'+prefix+' </span>':'')
+      +'<a href="mailto:'+email+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+email+'</a>';
+  };
+  const emCard=(label,data)=>'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+    +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 '+label+'</div>'
+    +(data?.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fmtTo(data.to)+'</div>':'')
+    +(data?.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(data.cc)+'</div>':'')
+    +'</div>';
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
-    +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
-    +(emRows.Request?.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;font-weight:700;color:#444">'+emRows.Request.to.replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/g,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px '+color+'20">'+m+'</a>')+'</span></div>':'')
-    +(emRows.Request?.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emRows.Request.cc)+'</div>':'')
-    +'</div>'
-    +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
-    +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
-    +(emRows.Complaint?.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;font-weight:700;color:#444">'+emRows.Complaint.to.replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/g,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px '+color+'20">'+m+'</a>')+'</span></div>':'')
-    +(emRows.Complaint?.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emRows.Complaint.cc)+'</div>':'')
-    +'</div></div>';
+    +emCard('PAC Request', emRows.PAC?.Request)
+    +emCard('PAC Complaint', emRows.PAC?.Complaint)
+    +emCard('Petromin Express Request', emRows.Express?.Request)
+    +emCard('Petromin Express Complaint', emRows.Express?.Complaint)
+    +'</div>';
 
   // Unique Area Managers (RM) summary
   const amMap={};
