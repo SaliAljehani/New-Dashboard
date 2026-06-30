@@ -1903,7 +1903,7 @@ const REF_SHEETS = {
   },
   foton: {
     id: '1PBhYlWtWqGZFZi_wgjDTlUaoN6O0QeS4P1CHcd40H4Y',
-    tabs: ['Instruction','Showroom','PMS','Spare Parts','SMS Location']
+    tabs: ['Instruction','Showrooms','PMS','Spare Parts','Location SMS']
   },
   nos: {
     id: '1gKtlJ2VNz8ddL5yOuIgGCgAGGkqeizzZ_r9NZ1FNaj0',
@@ -3599,13 +3599,13 @@ function renderFotonInstructionTab(arr){
 
   const warrantyHTML=warranty.length?mkCollapsibleOpen('🛡️ Warranty',
     '<div style="overflow-x:auto;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:13px">'
-    +'<thead><tr style="background:'+color+'15"><th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:left">Type of car</th><th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">Coverage</th></tr></thead><tbody>'
-    +warranty.map((w,i)=>'<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'"><td style="padding:9px 16px;font-weight:600">'+w.type+'</td><td style="padding:9px 16px;text-align:center">'+w.content+'</td></tr>').join('')
+    +'<thead><tr style="background:'+color+'15"><th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">Type of car</th><th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">Coverage</th></tr></thead><tbody>'
+    +warranty.map((w,i)=>'<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'"><td style="padding:9px 16px;font-weight:600;text-align:center">'+w.type+'</td><td style="padding:9px 16px;text-align:center">'+w.content+'</td></tr>').join('')
     +'</tbody></table></div>'
     ,'fotonInstrWarranty',color):'';
 
-  const deptHTML=deptRows.length?'<div class="ref-cards-grid">'+deptRows.map(d=>{
-    return '<div class="ref-card" style="padding:12px 14px;text-align:center">'
+  const deptHTML=deptRows.length?'<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:14px">'+deptRows.map(d=>{
+    return '<div class="ref-card" style="padding:12px 14px;text-align:center;width:260px;max-width:100%">'
       +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:8px">'+d.dept+'</div>'
       +(d.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fmtE(d.to)+'</div>':'')
       +(d.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(d.cc)+'</div>':'')
@@ -3637,16 +3637,18 @@ function renderFotonShowroomTab(arr){
 
   const emailHtml=mkReqCompCards(color, emTo, emCc, fmtE);
 
+  const hoursNote=branches.length?(branches.find(b=>b.hours)||{}).hours:'';
+  const hoursHTML=hoursNote?'<div style="background:'+color+'10;border-left:4px solid '+color+';border-radius:8px;padding:10px 16px;margin-bottom:14px;text-align:center;font-size:12px;color:'+color+';font-weight:700;white-space:pre-wrap">⏰ '+hoursNote.replace(/\n+/g,' · ').replace(/"$/,'')+'</div>':'';
+
   const branchHtml=branches.length?'<div class="ref-cards-grid">'+branches.map(b=>{
     return '<div class="ref-card" style="padding:12px 14px;text-align:center;border-top:3px solid '+color+'">'
       +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+b.city+'</div>'
       +(b.district?'<div style="font-size:11px;color:#888;margin:3px 0">📌 '+b.district+'</div>':'')
-      +(b.hours?'<div style="font-size:11px;color:#555;margin-top:6px;white-space:pre-wrap">⏰ '+b.hours.replace(/\n+/g,' · ').replace(/"$/,'')+'</div>':'')
       +(b.link&&b.link.startsWith('http')?'<div style="margin-top:6px"><a href="'+b.link+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
       +'</div>';
   }).join('')+'</div>':'';
 
-  return '<div>'+emailHtml+branchHtml+'</div>';
+  return '<div>'+hoursHTML+emailHtml+branchHtml+'</div>';
 }
 
 function renderFotonPMSTab(arr){
@@ -3674,6 +3676,9 @@ function renderFotonPMSTab(arr){
 
   const emailHtml=mkReqCompCards(color, emTo, emCc, fmtE);
 
+  const hoursNote=branches.length?(branches.find(b=>b.hours)||{}).hours:'';
+  const hoursHTML=hoursNote?'<div style="background:'+color+'10;border-left:4px solid '+color+';border-radius:8px;padding:10px 16px;margin-bottom:14px;text-align:center;font-size:12px;color:'+color+';font-weight:700;white-space:pre-wrap">⏰ '+hoursNote.replace(/\n+/g,' · ').replace(/"$/,'')+'</div>':'';
+
   const branchHtml=branches.length?'<div class="ref-cards-grid">'+branches.map(b=>{
     return '<div class="ref-card" style="padding:0;overflow:hidden;border-top:3px solid '+color+'">'
       +'<div style="background:'+color+'12;padding:10px 14px;text-align:center">'
@@ -3684,12 +3689,11 @@ function renderFotonPMSTab(arr){
       +(b.name?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+b.name+(b.title?' <span style="color:#aaa;font-size:10px">('+b.title+')</span>':'')+'</div>':'')
       +(b.mobile?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+b.mobile+'</div>':'')
       +(b.email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+b.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+b.email+'</a></div>':'')
-      +(b.hours?'<div class="ref-card-hours">⏰ '+b.hours.replace(/\n+/g,' · ')+'</div>':'')
       +(b.gps&&b.gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+b.gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
       +'</div></div>';
   }).join('')+'</div>':'';
 
-  return '<div>'+emailHtml+branchHtml+'</div>';
+  return '<div>'+hoursHTML+emailHtml+branchHtml+'</div>';
 }
 
 function renderFotonSparePartsTab(arr){
@@ -4405,7 +4409,7 @@ function showRefBrandPage(brand){
     +'<div id="petrominWarrantyDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px"></div>'
     +'<div class="ref-sub-tabs" id="refSubTabs_'+brand+'" style="justify-content:center">'
     +tabs.map((t,i)=>{
-      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📱 SMS Appointment','BAIC Location':'📅 Appointment & Location SMS'};
+      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📱 SMS Appointment','BAIC Location':'📅 Appointment & Location SMS','Showrooms':'Showroom','Location SMS':'SMS Location'};
       const label=TAB_LABELS[t]||t;
       return '<button class="ref-sub-tab'+(i===0?' active':'')+'" '
         +'style="'+(i===0?'background:'+meta.color+';color:#fff;border-color:'+meta.color:'')+'" '
@@ -4857,14 +4861,14 @@ async function renderRefBrand(brand,tabIdx){
       const fetchTabName = (t==='Spare Parts') ? 'PMS' : t;
       const data=await fetchSheet(cfg.id, fetchTabName);
       let arr=Array.isArray(data)?data:(data.rows||[]);
-      if(arr.length && Object.keys(arr[0]).length<2){
+      if(arr.length && Object.keys(arr[0]).length<4){
         arr=await fetchCSVRaw(cfg.id, fetchTabName);
       }
       if(t==='Instruction') container.innerHTML=renderFotonInstructionTab(arr);
-      else if(t==='Showroom') container.innerHTML=renderFotonShowroomTab(arr);
+      else if(t==='Showrooms') container.innerHTML=renderFotonShowroomTab(arr);
       else if(t==='PMS') container.innerHTML=renderFotonPMSTab(arr);
       else if(t==='Spare Parts') container.innerHTML=renderFotonSparePartsTab(arr);
-      else if(t==='SMS Location') container.innerHTML=renderFotonSMSLocationTab(arr);
+      else if(t==='Location SMS') container.innerHTML=renderFotonSMSLocationTab(arr);
       else container.innerHTML='<div style="text-align:center;padding:24px;color:#aaa">No renderer for '+t+'</div>';
     }catch(e){
       container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
