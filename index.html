@@ -1903,7 +1903,7 @@ const REF_SHEETS = {
   },
   foton: {
     id: '1PBhYlWtWqGZFZi_wgjDTlUaoN6O0QeS4P1CHcd40H4Y',
-    tabs: ['Instruction','Aftersales Truck','Aftersales Pickup','Sales Price List']
+    tabs: ['Instruction','Showroom','PMS','Spare Parts','SMS Location']
   },
   nos: {
     id: '1gKtlJ2VNz8ddL5yOuIgGCgAGGkqeizzZ_r9NZ1FNaj0',
@@ -3568,171 +3568,196 @@ function renderNosPriceTab(arr){
   }).join('');
 }
 
-function renderFotonPriceListTab(){
-  const color='#546e7a';
-  return '<div style="text-align:center;padding:40px 20px">'
-    +'<div style="font-size:40px;margin-bottom:12px">📄</div>'
-    +'<div style="font-size:14px;color:#555;margin-bottom:18px">Sales Price List — Stellantis & Foton<br>(Full Excel file on SharePoint)</div>'
-    +'<a href="https://petromincrm-my.sharepoint.com/:x:/r/personal/sali_aljehani_petromin_com/Documents/Inbound%20Team/Stellantis%20Price%20List.xlsx?d=w9c84f16bdac4414cb3078cb3a74f0d2e&csf=1&web=1&e=EHDgrM" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:'+color+';color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 12px rgba(84,110,122,.3)">📄 Open Sales Price List</a>'
-    +'</div>';
+function mkReqCompCards(color, emTo, emCc, fmtE){
+  return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+    +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+    +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
+    +(emTo.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fmtE(emTo.request)+'</div>':'')
+    +(emCc.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.request)+'</div>':'')
+    +'</div>'
+    +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+    +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
+    +(emTo.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fmtE(emTo.complaint)+'</div>':'')
+    +(emCc.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.complaint)+'</div>':'')
+    +'</div></div>';
 }
 
 function renderFotonInstructionTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#546e7a';
-  const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
-  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
+  const fmtE=v=>String(v||'').split(/,|;|\+/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
 
-  const contacts=[]; const emailRows=[];
-  let mode='contacts';
-
-  arr.forEach((r,idx)=>{
+  const warranty=[]; const deptRows=[];
+  arr.forEach(r=>{
     const v=Object.values(r).map(x=>String(x===undefined||x===null?'':x).trim());
-    const v0=v[0]||'', v1=v[1]||'', v2=v[2]||'', v3=v[3]||'';
-    if(v0==='Email' && !v1){ mode='email'; return; }
-    if(v0==='Parts Inquiries'){ return; }
-    if(v0==='Department'||(v1==='TO'&&v2==='CC')){ return; }
-    if(mode==='contacts'){
-      if(v0 && v1 && v2) contacts.push({region:v0,name:v1,mobile:fmtNum(v2)});
-      return;
-    }
-    if(mode==='email'){
-      if(v0) emailRows.push({dept:v0,to:v1,cc:v2,esc:v3});
-      return;
-    }
+    const v0=v[0]||'', v1=v[1]||'', v2=v[2]||'';
+    if(v1.replace(/\s+$/,'')==='Type of Car') return;
+    if(v1==='TO' && v2==='CC') return;
+    if(v0==='Warranty' && v1 && v2){ warranty.push({type:v1.trim(),content:v2.trim()}); return; }
+    if(v0 && v1){ deptRows.push({dept:v0,to:v1,cc:v2}); return; }
   });
 
-  const contactsHTML=contacts.length?'<div style="margin-bottom:16px">'
-    +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:8px;text-align:center">📦 Parts Inquiries</div>'
-    +'<div class="ref-cards-grid">'+contacts.map(c=>{
-      return '<div class="ref-card" style="padding:10px 14px;text-align:center">'
-        +'<div style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase">'+c.region+'</div>'
-        +'<div style="font-size:13px;font-weight:700;color:#333;margin:4px 0">'+c.name+'</div>'
-        +'<div style="font-size:12px;color:#555">📞 '+c.mobile+'</div>'
-        +'</div>';
-    }).join('')+'</div></div>':'';
+  const warrantyHTML=warranty.length?mkCollapsibleOpen('🛡️ Warranty',
+    '<div style="overflow-x:auto;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:13px">'
+    +'<thead><tr style="background:'+color+'15"><th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:left">Type of car</th><th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">Coverage</th></tr></thead><tbody>'
+    +warranty.map((w,i)=>'<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'"><td style="padding:9px 16px;font-weight:600">'+w.type+'</td><td style="padding:9px 16px;text-align:center">'+w.content+'</td></tr>').join('')
+    +'</tbody></table></div>'
+    ,'fotonInstrWarranty',color):'';
 
-  const emailHTML=emailRows.length?'<div class="ref-cards-grid">'+emailRows.map(e=>{
-    return '<div class="ref-card" style="padding:10px 14px">'
-      +'<div style="font-size:12px;font-weight:700;color:'+color+';margin-bottom:6px;text-align:center">'+e.dept+'</div>'
-      +(e.to?'<div style="margin-bottom:4px"><span style="background:'+color+'15;color:'+color+';font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">TO</span>'+fmtE(e.to)+'</div>':'')
-      +(e.cc?'<div style="margin-bottom:4px"><span style="background:#F4F7FA;color:#1565c0;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">CC</span>'+fmtE(e.cc)+'</div>':'')
-      +(e.esc?'<div><span style="background:#fdecea;color:#c0272d;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">ESC</span>'+fmtE(e.esc)+'</div>':'')
+  const deptHTML=deptRows.length?'<div class="ref-cards-grid">'+deptRows.map(d=>{
+    return '<div class="ref-card" style="padding:12px 14px;text-align:center">'
+      +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:8px">'+d.dept+'</div>'
+      +(d.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fmtE(d.to)+'</div>':'')
+      +(d.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(d.cc)+'</div>':'')
       +'</div>';
   }).join('')+'</div>':'';
 
-  return contactsHTML+emailHTML;
+  return warrantyHTML+deptHTML;
 }
 
-function renderFotonTruckTab(arr){
+function renderFotonShowroomTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#546e7a';
-  const keys=Object.keys(arr[0]||{});
-  const cityCol=keys[0], branchCol=keys[1], addrCol=keys[2], contactCol=keys[3], mobileCol=keys[4], emailCol=keys[5], gpsLinkCol=keys[6];
+  const fmtE=v=>String(v||'').split(/,|;|\+/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
 
-  const rows=arr.filter(r=>String(r[branchCol]||'').trim());
+  const branches=[];
+  let emTo={complaint:'',request:''}, emCc={complaint:'',request:''};
+  let mode='branches';
 
-  return '<div class="ref-cards-grid">'+rows.map(r=>{
-    const city=String(r[cityCol]||'').trim();
-    const branch=String(r[branchCol]||'').trim();
-    const addr=String(r[addrCol]||'').trim();
-    const contact=String(r[contactCol]||'').trim();
-    const mobile=String(r[mobileCol]||'').trim();
-    const email=String(r[emailCol]||'').trim();
-    const gpsLink=String(r[gpsLinkCol]||'').trim();
-    return '<div class="ref-card" style="padding:10px 14px;text-align:center;border-top:3px solid '+color+'">'
-      +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+branch+'</div>'
-      +(city?'<div style="font-size:11px;color:#888;margin:3px 0">📌 '+city+(addr?' · '+addr:'')+'</div>':'')
-      +(contact&&contact!=='N/A'?'<div style="font-size:12px;color:#555;margin-bottom:4px">👤 '+contact+'</div>':'')
-      +(mobile&&mobile!=='N/A'?'<div style="font-size:12px;color:#555;margin-bottom:4px">📞 '+mobile+'</div>':'')
-      +(email&&email!=='N/A'?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
-      +(gpsLink&&gpsLink.startsWith('http')?'<div style="margin-top:4px"><a href="'+gpsLink+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-      +'</div>';
-  }).join('')+'</div>';
-}
-
-function renderFotonPickupTab(arr){
-  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#546e7a';
-  const keys=Object.keys(arr[0]||{});
-  const regionCol=keys[0], cityCol=keys[1], branchCol=keys[2], mgrCol=keys[3], phoneCol=keys[4], emailCol=keys[5], hoursCol=keys[6], gpsCol=keys[7];
-
-  const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
-  const REGION_ORDER=['West','Central','East','South','North'];
-  const REGION_COLORS={West:'#c0272d',Central:'#1565c0',East:'#2e7d32',South:'#6a1b9a',North:'#e65100'};
-
-  const regions={};
-  const rmByBranch={};
   arr.forEach(r=>{
     const vals=Object.values(r).map(v=>String(v||'').trim());
-    const v0=vals[0]||'';
-    if(REGION_ORDER.includes(v0)){
-      if(!regions[v0])regions[v0]=[];
-      regions[v0].push(r);
+    const v0=vals[0]||'', v1=vals[1]||'';
+    if(v1==='for Complaint'){mode='complaint';return;}
+    if(v1==='for Request'){mode='request';return;}
+    if(v0==='TO'){ if(mode==='complaint') emTo.complaint=v1; else if(mode==='request') emTo.request=v1; return; }
+    if(v0==='CC'){ if(mode==='complaint') emCc.complaint=v1; else if(mode==='request') emCc.request=v1; return; }
+    if(!v0||v0==='City') return;
+    branches.push({city:v0,district:vals[1]||'',link:vals[2]||'',hours:vals[3]||''});
+  });
+
+  const emailHtml=mkReqCompCards(color, emTo, emCc, fmtE);
+
+  const branchHtml=branches.length?'<div class="ref-cards-grid">'+branches.map(b=>{
+    return '<div class="ref-card" style="padding:12px 14px;text-align:center;border-top:3px solid '+color+'">'
+      +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+b.city+'</div>'
+      +(b.district?'<div style="font-size:11px;color:#888;margin:3px 0">📌 '+b.district+'</div>':'')
+      +(b.hours?'<div style="font-size:11px;color:#555;margin-top:6px;white-space:pre-wrap">⏰ '+b.hours.replace(/\n+/g,' · ').replace(/"$/,'')+'</div>':'')
+      +(b.link&&b.link.startsWith('http')?'<div style="margin-top:6px"><a href="'+b.link+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
+      +'</div>';
+  }).join('')+'</div>':'';
+
+  return '<div>'+emailHtml+branchHtml+'</div>';
+}
+
+function renderFotonPMSTab(arr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const color='#546e7a';
+  const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
+  const fmtE=v=>String(v||'').split(/,|;|\+/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
+
+  const branches=[];
+  let emTo={complaint:'',request:''}, emCc={complaint:'',request:''};
+  let mode='branches', stop=false;
+
+  arr.forEach(r=>{
+    if(stop) return;
+    const vals=Object.values(r).map(v=>String(v||'').trim());
+    const v0=vals[0]||'', v1=vals[1]||'';
+    if(/^Spare Parts/i.test(v0)){ stop=true; return; }
+    if(v1==='for Complaint'){mode='complaint';return;}
+    if(v1==='for Request'){mode='request';return;}
+    if(v0==='TO'){ if(mode==='complaint') emTo.complaint=v1; else if(mode==='request') emTo.request=v1; return; }
+    if(v0==='CC'){ if(mode==='complaint') emCc.complaint=v1; else if(mode==='request') emCc.request=v1; return; }
+    if(!v0||v0==='Branch') return;
+    branches.push({branch:v0,location:vals[1]||'',name:vals[2]||'',mobile:fmtNum(vals[3]||''),email:vals[4]||'',title:vals[5]||'',hours:vals[6]||'',gps:vals[7]||''});
+  });
+
+  const emailHtml=mkReqCompCards(color, emTo, emCc, fmtE);
+
+  const branchHtml=branches.length?'<div class="ref-cards-grid">'+branches.map(b=>{
+    return '<div class="ref-card" style="padding:0;overflow:hidden;border-top:3px solid '+color+'">'
+      +'<div style="background:'+color+'12;padding:10px 14px;text-align:center">'
+      +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+b.branch+'</div>'
+      +(b.location?'<div style="font-size:11px;color:#888;margin-top:3px">📌 '+b.location+'</div>':'')
+      +'</div>'
+      +'<div style="padding:10px 14px;text-align:center">'
+      +(b.name?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+b.name+(b.title?' <span style="color:#aaa;font-size:10px">('+b.title+')</span>':'')+'</div>':'')
+      +(b.mobile?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+b.mobile+'</div>':'')
+      +(b.email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+b.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+b.email+'</a></div>':'')
+      +(b.hours?'<div class="ref-card-hours">⏰ '+b.hours.replace(/\n+/g,' · ')+'</div>':'')
+      +(b.gps&&b.gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+b.gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
+      +'</div></div>';
+  }).join('')+'</div>':'';
+
+  return '<div>'+emailHtml+branchHtml+'</div>';
+}
+
+function renderFotonSparePartsTab(arr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const color='#546e7a';
+  const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
+  const fmtE=v=>String(v||'').split(/,|;|\+/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
+
+  let started=false;
+  const contacts=[];
+  let emTo={complaint:'',request:''}, emCc={complaint:'',request:''};
+  let mode='contact';
+
+  arr.forEach(r=>{
+    const vals=Object.values(r).map(v=>String(v||'').trim());
+    const v0=vals[0]||'', v1=vals[1]||'';
+    if(!started){
+      if(/^Spare Parts/i.test(v0)) started=true;
       return;
     }
-    // RM mapping rows: col0/1 empty, col2=branch code, col3=RM, col4=RM email, col5=RM mobile
-    if(!v0 && vals[2] && vals[2]!=='Branch Code - Branch' && vals[2].trim()!=='Branch Code - Branch' && vals[3] && vals[4] && vals[4].includes('@')){
-      rmByBranch[vals[2]] = {name:vals[3], email:vals[4], mobile:fmtNum(vals[5])};
-    }
+    if(v1==='for Complaint'){mode='complaint';return;}
+    if(v1==='for Request'){mode='request';return;}
+    if(v0==='TO'){ if(mode==='complaint') emTo.complaint=v1; else if(mode==='request') emTo.request=v1; return; }
+    if(v0==='CC'){ if(mode==='complaint') emCc.complaint=v1; else if(mode==='request') emCc.request=v1; return; }
+    if(v0) contacts.push({name:v0,mobile:fmtNum(vals[1]||''),note:vals[2]||''});
   });
 
-  // Unique Area Managers summary
-  const amMap={};
-  Object.values(rmByBranch).forEach(rm=>{
-    if(!amMap[rm.email]) amMap[rm.email]={name:rm.name,email:rm.email,mobiles:new Set(),branches:0};
-    if(rm.mobile) amMap[rm.email].mobiles.add(rm.mobile);
-    amMap[rm.email].branches++;
-  });
-  const amList=Object.values(amMap);
-  const amHTML=amList.length?mkCollapsible('🗺️ Area Managers',
-    '<div class="ref-cards-grid">'+amList.map(am=>{
-      return '<div style="background:'+color+'08;border:1px solid '+color+'25;border-radius:10px;padding:10px 14px;text-align:center">'
-        +'<div style="font-size:13px;font-weight:700;color:#333">'+am.name+'</div>'
-        +'<div style="font-size:11px;color:#888;margin:3px 0">📦 '+am.branches+' branches</div>'
-        +'<div style="font-size:12px;color:#555;margin-bottom:4px">📞 '+[...am.mobiles].join(' / ')+'</div>'
-        +'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+am.email+'</a></div>'
-        +'</div>';
-    }).join('')+'</div>'
-    ,'fotonPickupAM',color):'';
+  const emailHtml=mkReqCompCards(color, emTo, emCc, fmtE);
 
-  const regHTML=REGION_ORDER.filter(r=>regions[r]).map(reg=>{
-    const rows=regions[reg];
-    const rc=REGION_COLORS[reg]||color;
-    const regId='fotonPickup_'+reg;
-    const hours=String(rows[0][hoursCol]||'').trim();
-    return '<div style="margin-bottom:14px">'
-      +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px">'
-      +'<span style="font-size:13px;font-weight:700;color:'+rc+'">'+reg+'</span>'
-      +'<span style="font-size:11px;color:#aaa">('+rows.length+')</span>'
-      +(hours?'<span style="font-size:11px;color:'+rc+';margin-left:auto">⏰ '+hours+'</span>':'')
-      +'<span id="ico_'+regId+'" style="color:'+rc+'">▼</span>'
+  const contactHtml=contacts.length?'<div class="ref-cards-grid">'+contacts.map(c=>{
+    return '<div class="ref-card" style="padding:14px;text-align:center;border-top:3px solid '+color+'">'
+      +'<div style="font-size:13px;font-weight:700;color:'+color+'">📦 '+c.name+'</div>'
+      +(c.mobile?'<div style="font-size:12px;color:#555;margin-top:6px">📞 '+c.mobile+'</div>':'')
+      +(c.note?'<div style="font-size:12px;color:#555;margin-top:6px;direction:rtl">'+c.note+'</div>':'')
+      +'</div>';
+  }).join('')+'</div>':'';
+
+  return '<div>'+contactHtml+emailHtml+'</div>';
+}
+
+function renderFotonSMSLocationTab(arr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const color='#546e7a';
+  const mkBox=(text,id,label)=>{
+    if(!text) return '';
+    const safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const isAR=/[\u0600-\u06FF]/.test(text.substring(0,20));
+    return '<div style="background:#fff;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
+      +'<span style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase">'+label+'</span>'
+      +'<button onclick="copySMS(\''+id+'\')" style="padding:3px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer">📋 Copy</button>'
       +'</div>'
-      +'<div id="'+regId+'"><div class="ref-cards-grid">'+rows.map(r=>{
-        const city=String(r[cityCol]||'').trim();
-        const branch=String(r[branchCol]||'').replace(/\n/g,' ').trim();
-        const mgr=String(r[mgrCol]||'').trim();
-        const phone=String(r[phoneCol]||'').split(',').map(s=>fmtNum(s.trim())).filter(Boolean).join(' / ');
-        const email=String(r[emailCol]||'').trim();
-        const gps=String(r[gpsCol]||'').trim();
-        const gpsLink=gps?'https://www.google.com/maps?q='+encodeURIComponent(gps):'';
-        const rm=rmByBranch[branch]||null;
-        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
-          +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
-          +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
-          +(city?'<div style="font-size:11px;color:#888;margin-top:3px">📌 '+city+'</div>':'')
-          +'</div>'
-          +'<div style="padding:10px 14px;text-align:center">'
-          +(mgr?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+mgr+'</div>':'')
-          +(phone?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+phone+'</div>':'')
-          +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
-          +(rm?'<div style="font-size:10px;color:#999;margin-top:6px;padding-top:6px;border-top:1px solid #f5f5f5">🗺️ RM: '+rm.name+(rm.mobile?' · '+rm.mobile:'')+'</div>':'')
-          +(gpsLink?'<div style="margin-top:6px"><a href="'+gpsLink+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-          +'</div></div>';
-      }).join('')+'</div></div></div>';
-  }).join('');
+      +'<div id="sms_'+id+'" style="font-size:11px;color:#444;line-height:1.6;white-space:pre-wrap;direction:'+(isAR?'rtl':'ltr')+';text-align:'+(isAR?'right':'left')+'">'+safe+'</div>'
+      +'</div>';
+  };
 
-  return '<div>'+amHTML+regHTML+'</div>';
+  const rows=arr.map(r=>Object.values(r).map(x=>String(x||'').trim())).filter(v=>v[0] && v[1]);
+
+  return '<div class="ref-cards-grid">'+rows.map((v,i)=>{
+    const en=v[0]||'', ar=v[1]||'';
+    const m=en.match(/\(([^)\n]+)/);
+    const branch=m?m[1].trim():('Branch '+(i+1));
+    return '<div class="ref-card" style="padding:10px 14px;border-top:3px solid '+color+'">'
+      +'<div style="text-align:center;margin-bottom:8px"><span style="font-size:13px;font-weight:700;color:'+color+'">📍 '+branch+'</span></div>'
+      +mkBox(en,'fotonSms_en_'+i,'EN')
+      +mkBox(ar,'fotonSms_ar_'+i,'AR')
+      +'</div>';
+  }).join('')+'</div>';
 }
 
 function renderPetrominPACTab(arr){
@@ -4380,7 +4405,7 @@ function showRefBrandPage(brand){
     +'<div id="petrominWarrantyDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px"></div>'
     +'<div class="ref-sub-tabs" id="refSubTabs_'+brand+'" style="justify-content:center">'
     +tabs.map((t,i)=>{
-      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','PMS':'Service','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📱 SMS Appointment','BAIC Location':'📅 Appointment & Location SMS'};
+      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📱 SMS Appointment','BAIC Location':'📅 Appointment & Location SMS'};
       const label=TAB_LABELS[t]||t;
       return '<button class="ref-sub-tab'+(i===0?' active':'')+'" '
         +'style="'+(i===0?'background:'+meta.color+';color:#fff;border-color:'+meta.color:'')+'" '
@@ -4827,18 +4852,19 @@ async function renderRefBrand(brand,tabIdx){
   }
   if(brand==='foton'){
     container.innerHTML='<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading '+sheetName+'...</div>';
-    const t0=sheetName.trim();
-    if(t0==='Sales Price List'){ container.innerHTML=renderFotonPriceListTab(); return; }
     try{
       const t=sheetName.trim();
-      const data=await fetchSheet(cfg.id, sheetName);
+      const fetchTabName = (t==='Spare Parts') ? 'PMS' : t;
+      const data=await fetchSheet(cfg.id, fetchTabName);
       let arr=Array.isArray(data)?data:(data.rows||[]);
-      if(arr.length && Object.keys(arr[0]).length<4){
-        arr=await fetchCSVRaw(cfg.id, sheetName);
+      if(arr.length && Object.keys(arr[0]).length<2){
+        arr=await fetchCSVRaw(cfg.id, fetchTabName);
       }
       if(t==='Instruction') container.innerHTML=renderFotonInstructionTab(arr);
-      else if(t==='Aftersales Truck') container.innerHTML=renderFotonTruckTab(arr);
-      else if(t==='Aftersales Pickup') container.innerHTML=renderFotonPickupTab(arr);
+      else if(t==='Showroom') container.innerHTML=renderFotonShowroomTab(arr);
+      else if(t==='PMS') container.innerHTML=renderFotonPMSTab(arr);
+      else if(t==='Spare Parts') container.innerHTML=renderFotonSparePartsTab(arr);
+      else if(t==='SMS Location') container.innerHTML=renderFotonSMSLocationTab(arr);
       else container.innerHTML='<div style="text-align:center;padding:24px;color:#aaa">No renderer for '+t+'</div>';
     }catch(e){
       container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
