@@ -1701,18 +1701,21 @@ async function fetchCSVRaw(sheetId, sheetName, retries){
   const cacheKey = sheetId+'__RAW__'+sheetName;
   if(REF_CACHE[cacheKey]) return REF_CACHE[cacheKey];
   retries = retries===undefined ? 2 : retries;
-  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=`+encodeURIComponent(sheetName)+'&range=A1:Z300';
+  // Use CSV export (via gviz tqx=out:csv) instead of out:json.
+  // The JSON endpoint has a known bug where multi-line cells (e.g. cells with
+  // embedded \n, like "Workin Hours" notes) can cause Google to mis-serialize
+  // entire blocks of rows into a single merged row. CSV + PapaParse handles
+  // embedded newlines inside quoted fields correctly (RFC4180), avoiding this.
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=`+encodeURIComponent(sheetName);
   const controller = new AbortController();
   const timeoutId = setTimeout(()=>controller.abort(), 30000);
   try{
     const res = await fetch(url, {signal: controller.signal});
     clearTimeout(timeoutId);
     const text = await res.text();
-    const json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}')+1));
-    const cols = json.table.cols.map(c=>c.label||'');
-    const rows = json.table.rows.map(r=>r.c.map(c=>c?(c.f!==undefined?c.f:c.v):''));
-    console.log('fetchCSVRaw(json)', sheetName, 'cols:', cols, 'rows:', rows.length, 'sample:', rows[0]);
-    const result=[cols, ...rows];
+    const parsed = Papa.parse(text, {skipEmptyLines:false});
+    const result = parsed.data; // array of arrays, row 0 = header
+    console.log('fetchCSVRaw(csv)', sheetName, 'rows:', result.length, 'sample row0:', result[0], 'sample row1:', result[1]);
     REF_CACHE[cacheKey]=result;
     return result;
   }catch(err){
@@ -3657,12 +3660,6 @@ function renderFotonShowroomTab(arr){
 
 function renderFotonPMSTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const __debugHtml='<div style="background:#fffbe6;border:2px solid #e6c200;border-radius:8px;padding:12px;margin-bottom:14px;font-size:11px;color:#333;text-align:left;direction:ltr;white-space:pre-wrap;max-height:300px;overflow:auto">'
-    +'<b>DEBUG — arr.length: '+arr.length+'</b>\n'
-    +'<b>Row 0 (should be header):</b> '+JSON.stringify(arr[0])+'\n'
-    +'<b>Row 1 (should be branch #1):</b> '+JSON.stringify(arr[1])+'\n'
-    +'<b>Row 2 (should be branch #2):</b> '+JSON.stringify(arr[2])+'\n'
-    +'</div>';
   const color='#546e7a';
   const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
   const fmtE=v=>String(v||'').split(/,|;|\+/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
@@ -3703,7 +3700,7 @@ function renderFotonPMSTab(arr){
       +'</div></div>';
   }).join('')+'</div>':'';
 
-  return '<div>'+__debugHtml+hoursHTML+emailHtml+branchHtml+'</div>';
+  return '<div>'+hoursHTML+emailHtml+branchHtml+'</div>';
 }
 
 function renderFotonSparePartsTab(arr){
