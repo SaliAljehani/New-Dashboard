@@ -1676,7 +1676,7 @@ let EOM_DATA = [];
 
 async function fetchCSVRawByGid(sheetId, gid, retries){
   retries = retries===undefined ? 2 : retries;
-  const url = 'https://docs.google.com/spreadsheets/d/'+sheetId+'/gviz/tq?tqx=out:json&gid='+gid;
+  const url = 'https://docs.google.com/spreadsheets/d/'+sheetId+'/gviz/tq?tqx=out:json&gid='+gid+'&range=A1:Z300';
   const controller = new AbortController();
   const timeoutId = setTimeout(()=>controller.abort(), 30000);
   try{
@@ -1701,7 +1701,7 @@ async function fetchCSVRaw(sheetId, sheetName, retries){
   const cacheKey = sheetId+'__RAW__'+sheetName;
   if(REF_CACHE[cacheKey]) return REF_CACHE[cacheKey];
   retries = retries===undefined ? 2 : retries;
-  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=`+encodeURIComponent(sheetName);
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=`+encodeURIComponent(sheetName)+'&range=A1:Z300';
   const controller = new AbortController();
   const timeoutId = setTimeout(()=>controller.abort(), 30000);
   try{
