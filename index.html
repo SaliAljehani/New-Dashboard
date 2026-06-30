@@ -1694,6 +1694,35 @@ async function fetchCSVRawByGid(sheetId, gid, retries){
   }
 }
 
+async function fetchCSVExportByGid(sheetId, gid, retries){
+  const cacheKey = sheetId+'__EXPGID__'+gid;
+  if(REF_CACHE[cacheKey]) return REF_CACHE[cacheKey];
+  retries = retries===undefined ? 2 : retries;
+  // Plain CSV export endpoint — a completely different code path on Google's
+  // servers than the gviz "tq" query engine, which has a known bug merging
+  // rows for certain sheets regardless of output format (json or csv via tq).
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gid}`;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(()=>controller.abort(), 30000);
+  try{
+    const res = await fetch(url, {signal: controller.signal});
+    clearTimeout(timeoutId);
+    const text = await res.text();
+    const parsed = Papa.parse(text, {skipEmptyLines:false});
+    const result = parsed.data;
+    console.log('fetchCSVExportByGid', gid, 'rows:', result.length, 'sample row0:', result[0], 'sample row1:', result[1]);
+    REF_CACHE[cacheKey]=result;
+    return result;
+  }catch(err){
+    clearTimeout(timeoutId);
+    if(retries>0){
+      await new Promise(r=>setTimeout(r,800));
+      return fetchCSVExportByGid(sheetId, gid, retries-1);
+    }
+    throw new Error('Failed to load PMS export — '+err.message);
+  }
+}
+
 async function fetchCSVRaw(sheetId, sheetName, retries){
   if(window.__PRELOADED_RAW__ && window.__PRELOADED_RAW__[sheetName]){
     return window.__PRELOADED_RAW__[sheetName];
@@ -4879,8 +4908,11 @@ async function renderRefBrand(brand,tabIdx){
       let arr;
       if(fetchTabName==='PMS'){
         // PMS sheet has two columns both labeled "Location" (B & H) which collide when
-        // fetched as keyed objects, so always use the positional raw fetch here.
-        arr=await fetchCSVRaw(cfg.id, fetchTabName);
+        // fetched as keyed objects. Also: this specific tab triggers a Google gviz "tq"
+        // bug that merges multiple rows into one regardless of output format, so we use
+        // the plain CSV export endpoint (different code path on Google's side) instead.
+        const FOTON_PMS_GID = '298690841';
+        arr=await fetchCSVExportByGid(cfg.id, FOTON_PMS_GID);
       }else{
         const data=await fetchSheet(cfg.id, fetchTabName);
         arr=Array.isArray(data)?data:(data.rows||[]);
