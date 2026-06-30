@@ -3791,7 +3791,7 @@ function renderPetrominPACTab(arr){
     if(!m) return s?'<span style="font-size:11px;font-weight:700;color:#444">'+s+'</span>':'';
     const email=m[1].replace(/,$/,'').replace(/,(?=[a-zA-Z]{2,4}$)/,'.');
     const prefix=s.slice(0,m.index).trim();
-    return (prefix?'<span style="font-size:11px;font-weight:700;color:#444">'+prefix+' </span>':'')
+    return (prefix?'<span style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700">'+prefix+'</span>':'')
       +'<a href="mailto:'+email+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+email+'</a>';
   };
   const emCard=(label,data)=>'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
