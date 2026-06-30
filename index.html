@@ -3640,8 +3640,8 @@ function renderFotonShowroomTab(arr){
   const hoursNote=branches.length?(branches.find(b=>b.hours)||{}).hours:'';
   const hoursHTML=hoursNote?'<div style="background:'+color+'10;border-left:4px solid '+color+';border-radius:8px;padding:10px 16px;margin-bottom:14px;text-align:center;font-size:12px;color:'+color+';font-weight:700;white-space:pre-wrap">⏰ '+hoursNote.replace(/\n+/g,' · ').replace(/"$/,'')+'</div>':'';
 
-  const branchHtml=branches.length?'<div class="ref-cards-grid">'+branches.map(b=>{
-    return '<div class="ref-card" style="padding:12px 14px;text-align:center;border-top:3px solid '+color+'">'
+  const branchHtml=branches.length?'<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:14px">'+branches.map(b=>{
+    return '<div class="ref-card" style="padding:12px 14px;text-align:center;border-top:3px solid '+color+';width:260px;max-width:100%">'
       +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+b.city+'</div>'
       +(b.district?'<div style="font-size:11px;color:#888;margin:3px 0">📌 '+b.district+'</div>':'')
       +(b.link&&b.link.startsWith('http')?'<div style="margin-top:6px"><a href="'+b.link+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
@@ -3693,7 +3693,7 @@ function renderFotonPMSTab(arr){
       +'</div></div>';
   }).join('')+'</div>':'';
 
-  return '<div>'+hoursHTML+emailHtml+branchHtml+'</div>';
+  return '<div>'+emailHtml+hoursHTML+branchHtml+'</div>';
 }
 
 function renderFotonSparePartsTab(arr){
@@ -3723,13 +3723,22 @@ function renderFotonSparePartsTab(arr){
 
   const emailHtml=mkReqCompCards(color, emTo, emCc, fmtE);
 
-  const contactHtml=contacts.length?'<div class="ref-cards-grid">'+contacts.map(c=>{
-    return '<div class="ref-card" style="padding:14px;text-align:center;border-top:3px solid '+color+'">'
-      +'<div style="font-size:13px;font-weight:700;color:'+color+'">📦 '+c.name+'</div>'
-      +(c.mobile?'<div style="font-size:12px;color:#555;margin-top:6px">📞 '+c.mobile+'</div>':'')
-      +(c.note?'<div style="font-size:12px;color:#555;margin-top:6px;direction:rtl">'+c.note+'</div>':'')
+  const contactHtml=contacts.length?contacts.map(c=>{
+    return '<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:14px;margin-bottom:16px">'
+      +'<div class="ref-card" style="padding:14px;text-align:center;border-top:3px solid '+color+';width:200px;max-width:100%">'
+      +'<div style="font-size:11px;color:#999;text-transform:uppercase;margin-bottom:6px">👤 Name</div>'
+      +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+c.name+'</div>'
+      +'</div>'
+      +'<div class="ref-card" style="padding:14px;text-align:center;border-top:3px solid '+color+';width:200px;max-width:100%">'
+      +'<div style="font-size:11px;color:#999;text-transform:uppercase;margin-bottom:6px">📞 Mobile</div>'
+      +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+(c.mobile||'—')+'</div>'
+      +'</div>'
+      +'<div class="ref-card" style="padding:14px;text-align:center;border-top:3px solid '+color+';width:200px;max-width:100%">'
+      +'<div style="font-size:11px;color:#999;text-transform:uppercase;margin-bottom:6px">🗺️ Coverage</div>'
+      +'<div style="font-size:13px;font-weight:700;color:'+color+';direction:rtl">'+(c.note||'—')+'</div>'
+      +'</div>'
       +'</div>';
-  }).join('')+'</div>':'';
+  }).join('') : '';
 
   return '<div>'+contactHtml+emailHtml+'</div>';
 }
@@ -4859,10 +4868,17 @@ async function renderRefBrand(brand,tabIdx){
     try{
       const t=sheetName.trim();
       const fetchTabName = (t==='Spare Parts') ? 'PMS' : t;
-      const data=await fetchSheet(cfg.id, fetchTabName);
-      let arr=Array.isArray(data)?data:(data.rows||[]);
-      if(arr.length && Object.keys(arr[0]).length<4){
+      let arr;
+      if(fetchTabName==='PMS'){
+        // PMS sheet has two columns both labeled "Location" (B & H) which collide when
+        // fetched as keyed objects, so always use the positional raw fetch here.
         arr=await fetchCSVRaw(cfg.id, fetchTabName);
+      }else{
+        const data=await fetchSheet(cfg.id, fetchTabName);
+        arr=Array.isArray(data)?data:(data.rows||[]);
+        if(arr.length && Object.keys(arr[0]).length<4){
+          arr=await fetchCSVRaw(cfg.id, fetchTabName);
+        }
       }
       if(t==='Instruction') container.innerHTML=renderFotonInstructionTab(arr);
       else if(t==='Showrooms') container.innerHTML=renderFotonShowroomTab(arr);
