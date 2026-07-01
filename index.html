@@ -817,8 +817,8 @@ function initPresence(){
   presenceStarted = true;
   ensureAgentNameSelected();
   if(currentAgentName) sendHeartbeat();
-  setInterval(()=>{ if(currentAgentName) sendHeartbeat(); }, 30000);
-  setInterval(loadOnlineUsers, 30000);
+  setInterval(()=>{ if(currentAgentName) sendHeartbeat(); }, 60000);
+  setInterval(()=>{ const p=document.getElementById('onlinePanel'); if(p && p.style.display!=='none') loadOnlineUsers(); }, 90000);
   loadOnlineUsers();
 }
 
@@ -7204,7 +7204,7 @@ window.addEventListener('DOMContentLoaded', () => { loadAllData(); showMotivatio
 
 // تحديث تلقائي للبيانات كل 5 دقائق
 // تحديث تلقائي للبيانات كل 5 دقائق — بدون أي تأثير على الشاشة (يعمل في الخلفية بهدوء)
-setInterval(() => { loadAllData(true); }, 300000);
+setInterval(() => { loadAllData(true); }, 900000);
 </script>
 </body>
 </html>
