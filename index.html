@@ -7202,9 +7202,9 @@ function markAllNotifRead(){
 // Auto-start on page load
 window.addEventListener('DOMContentLoaded', () => { loadAllData(); showMotivation(); });
 
-// تحديث تلقائي للبيانات كل 5 دقائق
-// تحديث تلقائي للبيانات كل 5 دقائق — بدون أي تأثير على الشاشة (يعمل في الخلفية بهدوء)
-setInterval(() => { loadAllData(true); }, 900000);
+// تحديث تلقائي متوقف — الموظفات يحدّثن يدوياً بزر Refresh
+// setInterval(() => { loadAllData(true); }, 300000);
+// setInterval(() => { loadAllData(true); }, 900000);
 </script>
 </body>
 </html>
