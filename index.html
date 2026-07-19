@@ -2401,7 +2401,7 @@ function renderTristarTab(arr){
   const phoneKey=keys[8], ccKey=keys[9], gpsKey=keys[10];
 
   const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
-  const fmtCC=v=>String(v||'').split(/,/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="background:#F4F7FA;color:#1565c0;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;text-decoration:none;margin:1px;display:inline-flex">'+s+'</a>';}).filter(Boolean).join('');
+  const fmtCC=v=>String(v||'').split(/,/).map(e=>{const s=e.trim();if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="background:#F4F7FA;color:#1565c0;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:600;text-decoration:none;margin:1px;display:inline-flex">'+s+'</a>';}).filter(Boolean).join('');
 
   // Separate Warranty and No Warranty
   const warrantyRows=arr.filter(r=>String(r[warrantyKey]||'').trim()==='Warranty');
@@ -2699,7 +2699,7 @@ function renderStellantisPMSTab(arr, sheetName){
   const color='#1565c0';
   const keys=Object.keys(arr[0]||{});
   const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
-  const fmtE=(v,bg,tc)=>{bg=bg||'#f0f6fc';tc=tc||'#1565c0';return String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+bg+';color:'+tc+';padding:3px 9px;border-radius:5px;font-size:10px;font-weight:800;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');}
+  const fmtE=(v,bg,tc)=>{bg=bg||'#f0f6fc';tc=tc||'#1565c0';return String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+bg+';color:'+tc+';padding:3px 9px;border-radius:5px;font-size:10px;font-weight:800;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');}
 
   const VALID_REGIONS=new Set(['Western','Central','Eastern','Southern','Northern','West','East','South','North']);
   const branchRows=arr.filter(r=>{const reg=String(r[keys[0]]||'').trim();return reg&&VALID_REGIONS.has(reg);});
@@ -2783,13 +2783,30 @@ function renderStellantisPACTab(arr){
   const mgrKey=keys[3], mobileKey=keys[4], emailKey=keys[5], gpsKey=keys[6];
 
   const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
-  const fmtE=(v,bg,tc)=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="background:#f0f6fc;color:#1565c0;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px;display:inline-flex">'+s+'</a>';}).filter(Boolean).join('');
+  const fmtE=(v,bg,tc)=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="background:#f0f6fc;color:#1565c0;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px;display:inline-flex">'+s+'</a>';}).filter(Boolean).join('');
 
   // Separate branch rows from RM section
   const branchRows=[], rmRows=[];
   let rmSection=false;
 
+  // Email routing (TO/CC) — read from sheet if present, else fall back to defaults
+  let emTo={request:'Manager Branch + sali.aljehani@petromin.com',complaint:'Manager Branch + CRTeam@petromin.com'};
+  let emCc={request:'cs.agent@petromin.com',complaint:'cs.agent@petromin.com'};
+  let emMode='';
+
   arr.forEach(r=>{
+    const allVals=Object.values(r).map(v=>String(v||'').trim());
+    // email marker + TO/CC rows
+    const marker=allVals.find(x=>/^for\s+(Complaint|Request)$/i.test(x));
+    if(marker){ emMode=/complaint/i.test(marker)?'complaint':'request'; return; }
+    const tagIdx=allVals.findIndex(x=>x==='TO'||x==='CC');
+    if(tagIdx>=0 && emMode){
+      const tag=allVals[tagIdx];
+      const val=allVals.slice(tagIdx+1).find(x=>x)||'';
+      if(tag==='TO') emTo[emMode]=val; else emCc[emMode]=val;
+      return;
+    }
+
     const city=String(r[cityKey]||'').trim();
     const branch=String(r[branchKey]||'').trim();
     const col2=String(r[hoursKey]||'').trim();
@@ -2803,17 +2820,19 @@ function renderStellantisPACTab(arr){
     if(city && branch) branchRows.push(r);
   });
 
-  // Email header — matches reference image, with CC added to both
+  const linkifyTo=v=>String(v||'').replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/g,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px '+color+'20">'+m+'</a>');
+
+  // Email header — read from sheet (with fallback)
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;background:#f0f6fc;color:#1565c0;padding:3px 9px;border-radius:5px;font-weight:700;margin:2px">Manager Branch +</span> <a href="mailto:sali.aljehani@petromin.com" style="background:#f0f6fc;color:#1565c0;font-size:11px;font-weight:700;text-decoration:none;padding:3px 9px;border-radius:5px;margin:2px">sali.aljehani@petromin.com</a></span></div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span><span style="font-size:11px;font-weight:700;color:#444"><a href="mailto:cs.agent@petromin.com" style="background:#f0f6fc;color:#1565c0;font-size:11px;font-weight:700;text-decoration:none;padding:3px 9px;border-radius:5px">cs.agent@petromin.com</a></span></div>'
+    +(emTo.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;font-weight:700;color:#444">'+linkifyTo(emTo.request)+'</span></div>':'')
+    +(emCc.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.request)+'</div>':'')
     +'</div>'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;background:#f0f6fc;color:#1565c0;padding:3px 9px;border-radius:5px;font-weight:700;margin:2px">Manager Branch +</span> <a href="mailto:CRTeam@petromin.com" style="background:#f0f6fc;color:#1565c0;font-size:11px;font-weight:700;text-decoration:none;padding:3px 9px;border-radius:5px;margin:2px">CRTeam@petromin.com</a></span></div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span><span style="font-size:11px;font-weight:700;color:#444"><a href="mailto:cs.agent@petromin.com" style="background:#f0f6fc;color:#1565c0;font-size:11px;font-weight:700;text-decoration:none;padding:3px 9px;border-radius:5px">cs.agent@petromin.com</a></span></div>'
+    +(emTo.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;font-weight:700;color:#444">'+linkifyTo(emTo.complaint)+'</span></div>':'')
+    +(emCc.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.complaint)+'</div>':'')
     +'</div></div>';
 
   // Map branch -> RM for inline display
@@ -3008,7 +3027,7 @@ function renderBaicServiceTab(arr, apptArr){
   const regionCol=keys[0], cityCol=keys[1], branchCol=keys[2], mgrCol=keys[3], phoneCol=keys[4], emailCol=keys[5], gpsLinkCol=keys[7];
 
   const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
-  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
+  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
 
   const VALID_REGIONS=new Set(['West','Western','Central','Center','East','Eastern','South','Southern','North','Northern']);
   const REGION_ORDER=['West','Western','Central','Center','East','Eastern','South','Southern','North','Northern'];
@@ -3443,7 +3462,7 @@ function renderPetrominTireBatteryTab(arr){
 function renderPetrominEmailzTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#DAA520';
-  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
+  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
 
   const SECTION_COLORS={Complaint:'#c0272d',Contract:'#1565c0'};
   let sections=[{title:null,rows:[]}];
@@ -3621,7 +3640,7 @@ function mkReqCompCards(color, emTo, emCc, fmtE){
 function renderFotonInstructionTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#546e7a';
-  const fmtE=v=>String(v||'').split(/,|;|\+/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
+  const fmtE=v=>String(v||'').split(/,|;|\+/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
 
   const warranty=[]; const deptRows=[];
   arr.forEach(r=>{
@@ -3654,7 +3673,7 @@ function renderFotonInstructionTab(arr){
 function renderFotonShowroomTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#546e7a';
-  const fmtE=v=>String(v||'').split(/,|;|\+/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
+  const fmtE=v=>String(v||'').split(/,|;|\+/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
 
   const branches=[];
   let emTo={complaint:'',request:''}, emCc={complaint:'',request:''};
@@ -3691,7 +3710,7 @@ function renderFotonPMSTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#546e7a';
   const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
-  const fmtE=v=>String(v||'').split(/,|;|\+/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
+  const fmtE=v=>String(v||'').split(/,|;|\+/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
 
   const branches=[];
   let emTo={complaint:'',request:''}, emCc={complaint:'',request:''};
@@ -3736,7 +3755,7 @@ function renderFotonSparePartsTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#546e7a';
   const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
-  const fmtE=v=>String(v||'').split(/,|;|\+/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
+  const fmtE=v=>String(v||'').split(/,|;|\+/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
 
   let started=false;
   const contacts=[];
@@ -3817,7 +3836,7 @@ function renderPetrominPACTab(arr){
   const REGION_COLORS={West:'#c0272d',Central:'#1565c0',East:'#2e7d32',South:'#6a1b9a',North:'#e65100'};
 
   const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
-  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
+  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
 
   const regions={};
   const rmByBranch={};
@@ -3959,7 +3978,7 @@ function renderPetrominTristarTab(arr){
     branchRows.push(vals);
   });
 
-  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
+  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
 
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
@@ -4046,7 +4065,7 @@ function renderBodyShopTab(arr){
   const color='#7b0000';
   const keys=Object.keys(arr[0]||{});
   const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
-  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:#fdf0f1;color:#c0272d;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
+  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="display:inline-flex;background:#fdf0f1;color:#c0272d;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
 
   // Columns: Region, City, Branch Code-Branch, District, Manager, Phone, Email, Working Hours, SMS EN, SMS AR
   const regionCol=keys[0];  // Region
@@ -4058,25 +4077,47 @@ function renderBodyShopTab(arr){
   const hoursCol=keys[7];   // Working Hours
   const gpsCol='';          // No GPS column
 
+  // Email routing (TO/CC) — read from sheet if present, else fall back to defaults
+  let emTo={request:'Manager Branch + sali.aljehani@petromin.com',complaint:'Manager Branch + CRTeam@petromin.com'};
+  let emCc={request:'cs.agent@petromin.com',complaint:'cs.agent@petromin.com'};
+  let emMode='';
+  arr.forEach(r=>{
+    const allVals=Object.values(r).map(v=>String(v||'').trim());
+    const marker=allVals.find(x=>/^for\s+(Complaint|Request)$/i.test(x));
+    if(marker){ emMode=/complaint/i.test(marker)?'complaint':'request'; return; }
+    const tagIdx=allVals.findIndex(x=>x==='TO'||x==='CC');
+    if(tagIdx>=0 && emMode){
+      const tag=allVals[tagIdx];
+      const val=allVals.slice(tagIdx+1).find(x=>x)||'';
+      if(tag==='TO') emTo[emMode]=val; else emCc[emMode]=val;
+    }
+  });
+
   // Email section
   const VALID_REGIONS=new Set(['Western','Central','Eastern','Southern','Northern','West','East','South','North','Central ','Western ']);
   const branchRows=arr.filter(r=>{
     const reg=String(r[regionCol]||'').trim();
+    // skip email-routing marker/TO/CC rows
+    const av=Object.values(r).map(v=>String(v||'').trim());
+    if(av.some(x=>/^for\s+(Complaint|Request)$/i.test(x))) return false;
+    if(av[0]==='TO'||av[0]==='CC') return false;
     // Accept any row that has a branch name and non-empty region that's not a header
     return reg && reg!=='Region' && String(r[branchCol]||'').trim();
   });
 
-  // Email header
+  const linkifyTo=v=>String(v||'').replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/g,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:#fdf0f1;color:#c0272d;padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px #c0272d20">'+m+'</a>');
+
+  // Email header — read from sheet (with fallback)
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;background:#fdf0f1;color:#c0272d;padding:3px 9px;border-radius:5px;font-weight:700;margin:2px">Manager Branch +</span> <a href="mailto:sali.aljehani@petromin.com" style="background:#fdf0f1;color:#c0272d;font-size:11px;font-weight:700;text-decoration:none;padding:3px 9px;border-radius:5px;margin:2px">sali.aljehani@petromin.com</a></span></div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span><span style="font-size:11px;font-weight:700;color:#444"><a href="mailto:cs.agent@petromin.com" style="background:#fdf0f1;color:#c0272d;font-size:11px;font-weight:700;text-decoration:none;padding:3px 9px;border-radius:5px">cs.agent@petromin.com</a></span></div>'
+    +(emTo.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;font-weight:700;color:#444">'+linkifyTo(emTo.request)+'</span></div>':'')
+    +(emCc.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.request)+'</div>':'')
     +'</div>'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;background:#fdf0f1;color:#c0272d;padding:3px 9px;border-radius:5px;font-weight:700;margin:2px">Manager Branch +</span> <a href="mailto:CRTeam@petromin.com" style="background:#fdf0f1;color:#c0272d;font-size:11px;font-weight:700;text-decoration:none;padding:3px 9px;border-radius:5px;margin:2px">CRTeam@petromin.com</a></span></div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span><span style="font-size:11px;font-weight:700;color:#444"><a href="mailto:cs.agent@petromin.com" style="background:#fdf0f1;color:#c0272d;font-size:11px;font-weight:700;text-decoration:none;padding:3px 9px;border-radius:5px">cs.agent@petromin.com</a></span></div>'
+    +(emTo.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;font-weight:700;color:#444">'+linkifyTo(emTo.complaint)+'</span></div>':'')
+    +(emCc.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.complaint)+'</div>':'')
     +'</div></div>';
 
   // Group by region
@@ -4654,7 +4695,7 @@ async function renderInstructionTab(brand, cfg){
     }
   });
 
-  const fmtEmails=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s||!s.includes('@'))return'';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:800;text-decoration:none;margin:2px;box-shadow:inset 0 0 0 1px '+color+'20">'+s+'</a>';}).filter(Boolean).join('');
+  const fmtEmails=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:800;text-decoration:none;margin:2px;box-shadow:inset 0 0 0 1px '+color+'20">'+s+'</a>';}).filter(Boolean).join('');
 
   // ===== Warranty section =====
   let warrantyBody='';
