@@ -6745,6 +6745,17 @@ async function renderDailyOff(){
           if(full && !curDayMap[full]) curDayMap[full]=ci;
           if(h.trim().toLowerCase().includes('break')) breakColIdx=ci;
         });
+        // Fallback: gviz types the Break column as time-of-day, so its header
+        // text ("Break Time") comes back empty and the check above misses it.
+        // In that case the Break column is the one right after Saturday (last day).
+        if(breakColIdx < 0){
+          var maxDayIdx = -1;
+          DAY_COLS.forEach(function(d){ if(curDayMap[d]!==undefined && curDayMap[d]>maxDayIdx) maxDayIdx=curDayMap[d]; });
+          var cand = maxDayIdx + 1;
+          if(maxDayIdx>=0 && (cand>=cells.length || !cells[cand] || cells[cand].trim()==='')){
+            breakColIdx = cand;
+          }
+        }
         if(breakColIdx>=0) curDayMap[BREAK_COL]=breakColIdx;
         if(!curWeek||curWeek.label!==wLabel){curWeek={label:wLabel,agents:[]};weeks.push(curWeek);}
         continue;
@@ -6865,7 +6876,8 @@ async function renderDailyOff(){
           var wknd=d==='Friday';
           t+='<td style="padding:3px 4px;text-align:center;background:'+(wknd?'rgba(237,224,212,.2)':'')+'">'+badge(ag[d])+'</td>';
         });
-        var brk=ag[BREAK_COL]||'';
+        var brk=(ag[BREAK_COL]||'').trim();
+        brk=brk.replace(/^(\d{1,2}):(\d{2}):\d{2}\s*(AM|PM)$/i,'$1:$2 $3');
         t+='<td style="padding:10px 4px;text-align:center;background:rgba(192,39,45,.03);font-size:11px;font-weight:600;color:#555">'+(brk||'—')+'</td>';
         t+='</tr>';
       });
