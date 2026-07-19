@@ -2192,9 +2192,9 @@ function renderNissanBranchTab(arr, sheetName, brand){
   const isBP = sh.includes('body');
 
   const emCfg = isSP
-    ? {req:{to:'Manager Branch + sali.aljehani@petromin.com',cc:'o.alghamdi@petromin.com, cs.agent@petromin.com'},
+    ? {req:{to:'Manager Branch',cc:'o.alghamdi@petromin.com, cs.agent@petromin.com'},
        com:{to:'Manager Branch + CRTeam@petromin.com',cc:'o.alghamdi@petromin.com, cs.agent@petromin.com'}}
-    : {req:{to:'Manager Branch + sali.aljehani@petromin.com',cc:'cs.agent@petromin.com'},
+    : {req:{to:'Manager Branch',cc:'cs.agent@petromin.com'},
        com:{to:'Manager Branch + CRTeam@petromin.com',cc:'cs.agent@petromin.com'}};
 
   const emailHdr =
@@ -2656,7 +2656,7 @@ function renderStellantisSparePartsTab(arr){
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
-    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;background:#f0f6fc;color:#1565c0;padding:3px 9px;border-radius:5px;font-weight:700;margin:2px">Manager Branch +</span> <a href="mailto:sali.aljehani@petromin.com" style="background:#f0f6fc;color:#1565c0;font-size:11px;font-weight:700;text-decoration:none;padding:3px 9px;border-radius:5px;margin:2px">sali.aljehani@petromin.com</a></span></div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;background:#f0f6fc;color:#1565c0;padding:3px 9px;border-radius:5px;font-weight:700;margin:2px">Manager Branch</span></div>'
     +'</div>'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
@@ -2790,7 +2790,7 @@ function renderStellantisPACTab(arr){
   let rmSection=false;
 
   // Email routing (TO/CC) — read from sheet if present, else fall back to defaults
-  let emTo={request:'Manager Branch + sali.aljehani@petromin.com',complaint:'Manager Branch + CRTeam@petromin.com'};
+  let emTo={request:'Manager Branch',complaint:'Manager Branch + CRTeam@petromin.com'};
   let emCc={request:'cs.agent@petromin.com',complaint:'cs.agent@petromin.com'};
   let emMode='';
 
@@ -4078,7 +4078,7 @@ function renderBodyShopTab(arr){
   const gpsCol='';          // No GPS column
 
   // Email routing (TO/CC) — read from sheet if present, else fall back to defaults
-  let emTo={request:'Manager Branch + sali.aljehani@petromin.com',complaint:'Manager Branch + CRTeam@petromin.com'};
+  let emTo={request:'Manager Branch',complaint:'Manager Branch + CRTeam@petromin.com'};
   let emCc={request:'cs.agent@petromin.com',complaint:'cs.agent@petromin.com'};
   let emMode='';
   arr.forEach(r=>{
