@@ -3033,7 +3033,7 @@ function renderBaicServiceTab(arr, apptArr){
   const REGION_ORDER=['West','Western','Central','Center','East','Eastern','South','Southern','North','Northern'];
   const REGION_COLORS={West:'#c0272d',Western:'#c0272d',Central:'#1565c0',Center:'#1565c0',East:'#2e7d32',Eastern:'#2e7d32',South:'#6a1b9a',Southern:'#6a1b9a',North:'#e65100',Northern:'#e65100'};
 
-  let instruction='', emTo={complaint:'',request:''}, emCc={complaint:'',request:''};
+  let instruction='', emTo={complaint:'',request:'',spare:''}, emCc={complaint:'',request:'',spare:''};
   const branchRows=[];
   let mode='branches', emMode='complaint';
   arr.forEach(r=>{
@@ -3044,10 +3044,11 @@ function renderBaicServiceTab(arr, apptArr){
 
     if(v1==='for Complaint'||v0==='for Complaint'){ mode='email'; emMode='complaint'; return; }
     if(v1==='for Request'||v0==='for Request'){ mode='email'; emMode='request'; return; }
+    if(/^Spare Parts/i.test(v0)||/^Spare Parts/i.test(v1)){ mode='email'; emMode='spare'; return; }
     if(v0==='TO'||v0==='CC'){
       if(mode==='email'){
-        if(v0==='TO'){ if(emMode==='complaint') emTo.complaint=v1; else emTo.request=v1; }
-        if(v0==='CC'){ if(emMode==='complaint') emCc.complaint=v1; else emCc.request=v1; }
+        if(v0==='TO'){ if(emMode==='complaint') emTo.complaint=v1; else if(emMode==='spare') emTo.spare=v1; else emTo.request=v1; }
+        if(v0==='CC'){ if(emMode==='complaint') emCc.complaint=v1; else if(emMode==='spare') emCc.spare=v1; else emCc.request=v1; }
       }
       return;
     }
@@ -3060,18 +3061,19 @@ function renderBaicServiceTab(arr, apptArr){
     if(!v0 && v3 && v3.length>30){ instruction=v3; return; }
   });
 
-  // Email header
-  const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
-    +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
-    +(emTo.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;font-weight:700;color:#444">'+emTo.request.replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/g,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px '+color+'20">'+m+'</a>')+'</span></div>':'')
-    +(emCc.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.request)+'</div>':'')
-    +'</div>'
-    +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
-    +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
-    +(emTo.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;font-weight:700;color:#444">'+emTo.complaint.replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/g,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px '+color+'20">'+m+'</a>')+'</span></div>':'')
-    +(emCc.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.complaint)+'</div>':'')
-    +'</div></div>';
+  // Email header — Request / Complaint / Spare Parts
+  const linkTo=v=>String(v||'').replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/g,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px '+color+'20">'+m+'</a>');
+  const emCard=(icon,title,to,cc)=>'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+    +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">'+icon+' '+title+'</div>'
+    +(to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;font-weight:700;color:#444">'+linkTo(to)+'</span></div>':'')
+    +(cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(cc)+'</div>':'')
+    +'</div>';
+  const hasSpare=emTo.spare||emCc.spare;
+  const emailHtml='<div style="display:grid;grid-template-columns:'+(hasSpare?'repeat(auto-fit,minmax(260px,1fr))':'1fr 1fr')+';gap:12px;margin-bottom:16px">'
+    +emCard('📧','Request',emTo.request,emCc.request)
+    +emCard('📧','Complaint',emTo.complaint,emCc.complaint)
+    +(hasSpare?emCard('🔧','Spare Parts',emTo.spare,emCc.spare):'')
+    +'</div>';
 
 
   // Group branches by region
