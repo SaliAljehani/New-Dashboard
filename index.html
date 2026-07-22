@@ -4007,18 +4007,15 @@ function renderFotonPMSTab(arr){
   };
   emailBlocks.sort((a,b)=>emRank(a.label)-emRank(b.label));
 
-  // Working hours shown on each region bar. The PMS sheet's hours column only
-  // holds a bare time range ("08:00 - 17:00"), so the full opening line is set
-  // here instead. To drive this from the sheet again, put this exact text in
-  // the sheet's Working hours column and swap FOTON_PMS_HOURS for hoursRaw.
-  const FOTON_PMS_HOURS = 'Saturday to Thursday · 9 AM - 5 PM · ❌ Fridays closed';
+  // Working hours shown on each region bar — read from the sheet's
+  // "Working hours" column, same as every other value on this tab.
   const order=[], groups={};
   branches.forEach(b=>{
     const reg=b.region||'Other';
     if(!groups[reg]){ groups[reg]=[]; order.push(reg); }
     groups[reg].push(b);
   });
-  const hoursDisp = FOTON_PMS_HOURS;
+  const hoursDisp = hoursRaw.split('\n').map(s=>s.trim()).filter(Boolean).join(' · ').replace(/"$/,'');
   const regionsHTML = order.map((reg,ri)=>{
     const rc=fotonRegColor(reg);
     const regId='rgn_foton_pms_'+reg.replace(/\s/g,'')+'_'+ri;
