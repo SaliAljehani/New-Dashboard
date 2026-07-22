@@ -2110,7 +2110,7 @@ const REF_SHEETS = {
   },
   baic: {
     id: '1FQaNEkC-gKFIJLT5hBE9qzBL7pXf_m5Aot35h622hR4',
-    tabs: ['Instruction','Service','BAIC Location']
+    tabs: ['Instruction','Service','BAIC Location','BAIC Website']
   },
   petromin: {
     id: '11M28wIA4Ee84ohrIqzXtobK7X-QsrruoL4MwjoGz-6k',
@@ -5148,6 +5148,17 @@ async function renderRefBrand(brand,tabIdx){
   const container=document.getElementById('refTab_'+brand);
   if(!container)return;
   const __reqId=(container.dataset.reqId=Date.now()+'_'+Math.random());
+  // BAIC Website — رابط مباشر، ما فيه شيت يُقرأ، فنرجع قبل أي fetch
+  if(brand==='baic' && sheetName.trim()==='BAIC Website'){
+    container.innerHTML=
+      '<div style="text-align:center;padding:40px 20px">'
+      +'<div style="font-size:48px;margin-bottom:16px">🌐</div>'
+      +'<div style="font-size:16px;font-weight:700;color:#1a1a2e;margin-bottom:8px">BAIC Saudi Arabia — Petromin</div>'
+      +'<div style="font-size:13px;color:#888;margin-bottom:24px">موديلات بايك — الأسعار والمواصفات</div>'
+      +'<a href="https://www.petromin-baic.com/ar/models" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;padding:14px 32px;background:#f9a825;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(249,168,37,.35)">🔗 petromin-baic.com</a>'
+      +'</div>';
+    return;
+  }
   if(brand==='petromin'){
     const t0=sheetName.trim();
     if(t0==='Petromin Website'){
@@ -5158,7 +5169,7 @@ async function renderRefBrand(brand,tabIdx){
         +'<div style="font-size:16px;font-weight:700;color:#1a1a2e">Petromin Websites</div>'
         +'</div>'
         +'<a href="https://petromin.com/ar/" target="_blank" style="display:flex;align-items:center;gap:10px;padding:14px 32px;background:#DAA520;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(218,165,32,.3);width:280px;justify-content:center">🔗 الصفحة الرئيسية - Petromin</a>'
-        +'<a href="https://petromin.express/" target="_blank" style="display:flex;align-items:center;gap:10px;padding:14px 32px;background:#c0272d;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(192,39,45,.3);width:280px;justify-content:center">🔗 بترومين إكسبرس - 650 محطة</a>'
+        +'<a href="https://www.petrominexpress.com/" target="_blank" style="display:flex;align-items:center;gap:10px;padding:14px 32px;background:#c0272d;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(192,39,45,.3);width:280px;justify-content:center">🔗 بترومين إكسبرس - 650 محطة</a>'
         +'</div>';
       return;
     }
@@ -5378,7 +5389,7 @@ async function renderRefBrand(brand,tabIdx){
         +'<div style="font-size:16px;font-weight:700;color:#1a1a2e">Petromin Websites</div>'
         +'</div>'
         +'<a href="https://petromin.com/ar/" target="_blank" style="display:flex;align-items:center;gap:10px;padding:14px 32px;background:#DAA520;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(218,165,32,.3);width:280px;justify-content:center">🔗 الصفحة الرئيسية - Petromin</a>'
-        +'<a href="https://petromin.express/" target="_blank" style="display:flex;align-items:center;gap:10px;padding:14px 32px;background:#c0272d;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(192,39,45,.3);width:280px;justify-content:center">🔗 بترومين إكسبرس - 650 محطة</a>'
+        +'<a href="https://www.petrominexpress.com/" target="_blank" style="display:flex;align-items:center;gap:10px;padding:14px 32px;background:#c0272d;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(192,39,45,.3);width:280px;justify-content:center">🔗 بترومين إكسبرس - 650 محطة</a>'
         +'</div>';
       return;
     }
