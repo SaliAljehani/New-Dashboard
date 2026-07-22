@@ -683,10 +683,15 @@ function clearSheetCache(){
 function refreshAll(){ clearSheetCache(); try{ REF_CACHE = {}; }catch(e){} loadAllData(); }
 
 // Sheets moved off the Apps Script proxy onto Google's CSV export endpoint.
-// Deliberately rolled out one at a time: add a sheet here only after its tab
-// has been checked in the live dashboard. If the CSV read fails for any
-// reason the proxy still runs as the fallback, so nothing breaks outright.
-const FAST_SHEETS = ['Agent Performance'];
+// Rolled out in stages, each one checked in the live dashboard before the
+// next was added. If the CSV read fails the proxy still runs as the fallback.
+//
+// Deliberately NOT moved: 'Daily Off Schedule & Weekly Calls & Breakk'.
+// That sheet holds two tables side by side and loadSchedule() reads the
+// right-hand one by column index, relying on the exact key order it gets
+// back. It is one request out of six, so moving it buys little and risks a
+// schedule that is subtly wrong rather than obviously broken.
+const FAST_SHEETS = ['Agent Performance', 'Attendance Data', 'Agent', 'Escalation', 'Announcement Board'];
 
 // CSV gives every cell as display text. "1,234" would be read by parseInt as
 // 1, so strip the separators — but only when the entire cell is a plain
@@ -773,10 +778,22 @@ async function loadSheet(name, retries){
         // Keep header text exactly as it appears in the sheet — several
         // columns are looked up with a trailing space (e.g. 'Tickets '),
         // so trimming here would silently break those lookups.
-        const cols = raw[0].map(c=>String(c===undefined||c===null?'':c));
+        //
+        // Every column is kept, including ones with a blank header. Some
+        // parsers read by position (Object.values(r)[n]) or by key order, so
+        // dropping a blank-header column would shift everything after it.
+        // Blank headers get a unique placeholder key instead of collapsing
+        // onto a single '' key and overwriting each other.
+        const seen = {};
+        const cols = raw[0].map((c,i)=>{
+          let k = String(c===undefined||c===null?'':c);
+          if(!k.trim()) return '__col'+i;
+          if(seen[k]) k = k + ' ('+(++seen[k])+')'; else seen[k] = 1;
+          return k;
+        });
         const rows = raw.slice(1).map(r=>{
           const o = {};
-          cols.forEach((c,i)=>{ if(c.trim()) o[c] = normaliseCsvCell(r[i]); });
+          cols.forEach((c,i)=>{ o[c] = normaliseCsvCell(r[i]); });
           return o;
         }).filter(o=>Object.values(o).some(v=>String(v).trim()!==''));
         if(rows.length){ sheetCacheSet(ckey, rows); return rows; }
@@ -956,7 +973,11 @@ function initPresence(){
   presenceStarted = true;
   ensureAgentNameSelected();
   if(currentAgentName) sendHeartbeat();
-  setInterval(()=>{ if(currentAgentName) sendHeartbeat(); }, 60000);
+  // Heartbeat every 3 minutes rather than every minute. With 18 agents online
+  // this was 18 Apps Script executions per minute, running all day — the main
+  // steady pressure behind the "800 of 1,000 concurrent executions" warning.
+  // Three minutes still keeps the online list current enough to be useful.
+  setInterval(()=>{ if(currentAgentName) sendHeartbeat(); }, 180000);
   setInterval(()=>{ const p=document.getElementById('onlinePanel'); if(p && p.style.display!=='none') loadOnlineUsers(); }, 90000);
   loadOnlineUsers();
 }
