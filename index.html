@@ -6250,6 +6250,18 @@ function closeRecallInRef(){
   renderRef();
 }
 
+// Links & Systems — مقفلة افتراضياً. تُفتح بالضغط على الدائرة الزرقاء 🔗
+// وتُقفل بالضغط على الدائرة مرة ثانية أو على الهيدر نفسه.
+function toggleLinksPanel(){
+  const p = document.getElementById('refLinksPanel');
+  if(!p) return;
+  const isOpen = p.style.display !== 'none';
+  p.style.display = isOpen ? 'none' : 'block';
+  const ico = document.getElementById('refLinksIco');
+  if(ico) ico.textContent = isOpen ? '▼' : '▲';
+  if(!isOpen) p.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
 const RECALL_BRANDS = {
   'Nissan Search':    {key:'recallNissan',    color:'#c0272d', icon:'🔍'},
   'Stellantis Search':{key:'recallStellantis',color:'#1565c0', icon:'🔍'},
@@ -6910,14 +6922,14 @@ async function renderRef(){
       // BRAND CIRCLES — Order: Petromin, BAIC, Nissan, Stellantis, Body Shop, Foton, National Oil, Electromin, Recall, Links
       +'<div class="ref-brand-circles" style="justify-content:center">'
       +['petromin','baic','nissan','stellantis','bodyshop','foton','nos','electromin','baicRecall'].map(k=>{const c=BRAND_CONFIGS.find(b=>b.key===k);if(!c)return'';return'<div class="ref-brand-circle" onclick="'+(c.onclick||'showRefBrandPage(\''+c.key+'\')')+'"><div class="ref-brand-circle-icon" style="background:'+c.color+'">'+c.icon+'</div><div class="ref-brand-circle-label" style="color:'+c.color+'">'+c.label+'</div></div>';}).join('')
-      +(linkCards?'<div class="ref-brand-circle" onclick="var p=document.getElementById(\'refLinksPanel\');p.style.display=p.style.display===\'none\'?\'block\':\'none\'">'
+      +(linkCards?'<div class="ref-brand-circle" onclick="toggleLinksPanel()">'
         +'<div class="ref-brand-circle-icon" style="background:#1565c0">🔗</div>'
         +'<div class="ref-brand-circle-label" style="color:#1565c0">Links</div>'
         +'</div>':'')
       +'</div>'
 
       // LINKS PANEL - hidden, toggled by blue circle, opens BELOW circles
-      +(linkCards?('<div id="refLinksPanel" style="display:none;margin-top:8px;margin-bottom:4px;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)"><div style="background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;padding:14px 20px;min-height:53px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700">🔗 Links & Systems</div><div class="ref-panel-body">'+linkCards+'</div></div>'):'')
+      +(linkCards?('<div id="refLinksPanel" style="display:none;margin-top:8px;margin-bottom:4px;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)"><div onclick="toggleLinksPanel()" title="اضغطي للإغلاق" style="background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;padding:14px 20px;min-height:53px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:700;cursor:pointer;user-select:none">🔗 Links & Systems <span id="refLinksIco" style="font-size:12px;opacity:.85">▲</span></div><div class="ref-panel-body">'+linkCards+'</div></div>'):'')
 
       // CONTACT NUMBERS — merged single panel
       +'<div class="ref-info-panel">'
