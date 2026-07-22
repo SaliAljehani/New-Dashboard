@@ -384,7 +384,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
       <div id="notifList" style="font-size:12px;color:#555"></div>
     </div>
   </div>
-  <span class="lupd" id="lupd" onclick="loadAllData()" title="Refresh" style="flex-shrink:0;font-size:14px">🔄</span>
+  <span class="lupd" id="lupd" onclick="refreshAll()" title="Refresh" style="flex-shrink:0;font-size:14px">🔄</span>
 </div>
 
 <div id="nameModalOverlay" style="display:none;position:fixed;inset:0;background:rgba(40,30,30,.35);z-index:200;align-items:center;justify-content:center">
@@ -419,7 +419,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 <!-- ERROR STATE -->
 <div id="errDiv" style="display:none;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px">
   <div class="err">❌ <span id="errMsg">Could not load data.</span></div>
-  <button onclick="loadAllData()" style="padding:10px 28px;background:#c0272d;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">🔄 إعادة المحاولة</button>
+  <button onclick="refreshAll()" style="padding:10px 28px;background:#c0272d;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">🔄 إعادة المحاولة</button>
 </div>
 
 <!-- MAIN CONTENT (hidden until loaded) -->
@@ -432,7 +432,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
       <option value="">— All Agents —</option>
     </select>
     <button class="rbtn" onclick="resetAll()">↺ Reset</button>
-    <button class="rfbtn" onclick="loadAllData()">🔄 Refresh from Sheets</button>
+    <button class="rfbtn" onclick="refreshAll()">🔄 Refresh from Sheets</button>
     <span class="ptag" id="ptag"></span>
   </div>
 
@@ -456,7 +456,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
         <option value="">— All Agents —</option>
       </select>
       <button class="rbtn" onclick="resetAll()">↺ Reset</button>
-      <button class="rfbtn" onclick="loadAllData()">🔄 Refresh</button>
+      <button class="rfbtn" onclick="refreshAll()">🔄 Refresh</button>
     </div>
     <div id="vAll">
 
@@ -639,13 +639,155 @@ const TEAM_LOGOS={
 };
 
 const SHEET_GIDS={'Agent':1123791969,'Agent Performance':810269545,'Attendance Data':1979596727,'Data Call':95246895,'Call Data':95246895,'Call Data ':95246895,'Reference':910779499,'Weekly Calls & Break':1429234410,'Daily Off Schedule':1979894769,'Daily Off Schedule & Weekly Cal':1979894769,'Announcement Board':536403637,'Escalation':1827857824,'Escalation ':1827857824,'Employee of the MONTH':1892899267,'Subject':124854438,'Emails ':124854438,'Emails':124854438,'Contact Number ':124854438,'Contact Number':124854438,'Vacation Schedule 2026':644438759,'Daily Off Schedule & Weekly Calls & Breakk':920710775};
+// ---------------------------------------------------------------------------
+// Sheet loading
+//
+// The Apps Script proxy (script.google.com/macros/.../exec) used to be the
+// only way data was fetched, and it was the main reason the dashboard took so
+// long to open. Apps Script has a cold start and a hard cap on concurrent
+// executions, so when several agents opened the dashboard at the same time
+// their nine parallel requests queued behind one another and everyone waited.
+//
+// Google's own gviz endpoint is served directly by Sheets: no cold start, no
+// execution quota, and it already returns CORS headers for a link-shared
+// sheet (the dashboard has been using the sibling CSV endpoint in production
+// for the Foton PMS tab). So we try gviz first and only fall back to the
+// Apps Script proxy if it fails, which keeps the old path as a safety net.
+// ---------------------------------------------------------------------------
+
+// Short cache, deliberately: it only helps the same person reloading twice in
+// a row (sessionStorage is per-browser, so it does nothing for the Apps Script
+// concurrency limit across agents). Sheet edits must show up quickly, so this
+// is kept low and the manual refresh button clears it outright.
+const SHEET_CACHE_TTL = 30000; // 30s
+
+function sheetCacheGet(key){
+  try{
+    const raw = sessionStorage.getItem(key);
+    if(!raw) return null;
+    const o = JSON.parse(raw);
+    if(!o || (Date.now() - o.t) > SHEET_CACHE_TTL) return null;
+    return o.v;
+  }catch(e){ return null; }
+}
+function sheetCacheSet(key, val){
+  try{ sessionStorage.setItem(key, JSON.stringify({t:Date.now(), v:val})); }
+  catch(e){ /* quota exceeded — caching is optional, carry on */ }
+}
+function clearSheetCache(){
+  try{
+    Object.keys(sessionStorage).forEach(k=>{ if(k.indexOf('sheet:')===0) sessionStorage.removeItem(k); });
+  }catch(e){}
+}
+// Manual refresh must always hit the network, never the cache.
+function refreshAll(){ clearSheetCache(); try{ REF_CACHE = {}; }catch(e){} loadAllData(); }
+
+// Sheets moved off the Apps Script proxy onto Google's CSV export endpoint.
+// Deliberately rolled out one at a time: add a sheet here only after its tab
+// has been checked in the live dashboard. If the CSV read fails for any
+// reason the proxy still runs as the fallback, so nothing breaks outright.
+const FAST_SHEETS = ['Agent Performance'];
+
+// CSV gives every cell as display text. "1,234" would be read by parseInt as
+// 1, so strip the separators — but only when the entire cell is a plain
+// number, to leave dates, times, phone numbers and free text untouched.
+function normaliseCsvCell(v){
+  const s = String(v===undefined||v===null?'':v);
+  if(/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(s.trim())) return s.trim().replace(/,/g,'');
+  return s;
+}
+
+// Turn a gviz table into the same array-of-objects shape the proxy returns.
+function gvizToObjects(json){
+  const cols = json.table.cols.map(c=>c.label||'');
+  return json.table.rows.map(r=>Object.fromEntries(cols.map((c,i)=>{
+    const cell = r.c ? r.c[i] : null;
+    if(!cell) return [c,''];
+    // Numbers: prefer the raw value, because the formatted string can carry
+    // thousands separators ("1,234") and parseInt would read that as 1.
+    // But Sheets also stores durations and times as numbers (0:03:12 is the
+    // number 0.00222...), so only take the raw value when the formatted
+    // string really is a plain number; otherwise keep the formatted text,
+    // which is what t2s() and the date parsers expect.
+    if(typeof cell.v === 'number'){
+      if(cell.f === undefined || /^-?[\d.,\s]*$/.test(String(cell.f))) return [c, cell.v];
+      return [c, cell.f];
+    }
+    // Everything else (dates, times, text): prefer the formatted string,
+    // which is what the rest of the dashboard's parsers expect.
+    if(cell.f !== undefined) return [c, cell.f];
+    return [c, (cell.v === null || cell.v === undefined) ? '' : cell.v];
+  })));
+}
+
+async function fetchGvizSheet(sheetId, gid, name){
+  const url = gid
+    ? `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`
+    : `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(name)}`;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(()=>controller.abort(), 20000);
+  try{
+    const res = await fetch(url, {signal: controller.signal});
+    clearTimeout(timeoutId);
+    if(!res.ok) throw new Error('gviz error: ' + res.status);
+    const text = await res.text();
+    const start = text.indexOf('{'), end = text.lastIndexOf('}');
+    if(start < 0 || end < 0) throw new Error('gviz: unexpected response');
+    const json = JSON.parse(text.substring(start, end + 1));
+    if(!json.table || !json.table.cols) throw new Error('gviz: no table');
+    return gvizToObjects(json);
+  }catch(err){
+    clearTimeout(timeoutId);
+    throw err;
+  }
+}
+
 // Use preloaded data if available (Apps Script), otherwise fetch
 async function loadSheet(name, retries){
   if(window.__PRELOADED_DATA__ && window.__PRELOADED_DATA__[name]){
     return window.__PRELOADED_DATA__[name];
   }
-  retries = retries===undefined ? 1 : retries;
   const gid = SHEET_GIDS[name] || '';
+  const ckey = 'sheet:' + name;
+
+  const cached = sheetCacheGet(ckey);
+  if(cached) return cached;
+
+  // ---- Fast path (being rolled out one sheet at a time) -------------------
+  // The Apps Script proxy is capped at 1,000 concurrent executions and we've
+  // already been warned at ~800. Every dashboard open costs nine of them, so
+  // with the whole team opening at once the requests queue and everyone waits.
+  //
+  // Google's plain CSV export endpoint has no such cap. Crucially it is NOT
+  // the gviz endpoint: gviz guesses which row is the header and guessed wrong
+  // on the Announcement Board, which shifted every column. Here row 1 is
+  // always the header, exactly like the proxy does it.
+  if(FAST_SHEETS.indexOf(name) >= 0 && gid){
+    try{
+      // fetchCSVExportByGid keeps its own in-page cache with no expiry, which
+      // would keep serving a stale copy after the sheet is edited. Drop that
+      // entry first so dashboard data always comes fresh from the sheet.
+      try{ delete REF_CACHE[SHEET_ID+'__EXPGID__'+gid]; }catch(e){}
+      const raw = await fetchCSVExportByGid(SHEET_ID, gid);
+      if(raw && raw.length > 1){
+        // Keep header text exactly as it appears in the sheet — several
+        // columns are looked up with a trailing space (e.g. 'Tickets '),
+        // so trimming here would silently break those lookups.
+        const cols = raw[0].map(c=>String(c===undefined||c===null?'':c));
+        const rows = raw.slice(1).map(r=>{
+          const o = {};
+          cols.forEach((c,i)=>{ if(c.trim()) o[c] = normaliseCsvCell(r[i]); });
+          return o;
+        }).filter(o=>Object.values(o).some(v=>String(v).trim()!==''));
+        if(rows.length){ sheetCacheSet(ckey, rows); return rows; }
+      }
+      console.warn('CSV fast path returned nothing usable for', name, '— using proxy');
+    }catch(e){
+      console.warn('CSV fast path failed for', name, '— using proxy:', e.message);
+    }
+  }
+
+  retries = retries===undefined ? 1 : retries;
   const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${SHEET_ID}&gid=${gid}`;
   const controller = new AbortController();
   const timeoutId = setTimeout(()=>controller.abort(), 45000);
@@ -653,7 +795,9 @@ async function loadSheet(name, retries){
     const res = await fetch(url, {signal: controller.signal});
     clearTimeout(timeoutId);
     if(!res.ok) throw new Error('Proxy error: ' + res.status);
-    return await res.json();
+    const rows = await res.json();
+    sheetCacheSet(ckey, rows);
+    return rows;
   }catch(err){
     clearTimeout(timeoutId);
     if(retries>0){
@@ -661,16 +805,11 @@ async function loadSheet(name, retries){
       await new Promise(r=>setTimeout(r,2000));
       return loadSheet(name, retries-1);
     }
-    // Fallback: gviz
+    // Last resort: gviz. Column detection can be off on some sheets, but a
+    // slightly wrong render beats no data at all when the proxy is down.
     console.warn('Proxy failed, trying gviz for', name);
-    const gurl = gid
-      ? `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${gid}`
-      : `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(name)}`;
-    const res2 = await fetch(gurl);
-    const text = await res2.text();
-    const json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}')+1));
-    const cols = json.table.cols.map(c=>c.label||'');
-    return json.table.rows.map(r=>Object.fromEntries(cols.map((c,i)=>[c, r.c[i]?(r.c[i].f!==undefined?r.c[i].f:r.c[i].v):''])));
+    const rows = await fetchGvizSheet(SHEET_ID, gid, name);
+    return rows;
   }
 }
 
@@ -3054,6 +3193,11 @@ function renderBaicServiceTab(arr, apptArr){
     }
     if(v0==='Region'||v0==='Branch Manager') { mode='other'; return; }
     if(VALID_REGIONS.has(v0)){
+      // Skip Area Manager rows: their columns are shifted so the branch-name
+      // cell holds an email instead of a real branch name. They already have
+      // their own "Area Manager" table above.
+      const bn=String(vals[2]||'').trim();
+      if(!bn||bn.includes('@')) return;
       branchRows.push(r);
       return;
     }
@@ -3672,86 +3816,178 @@ function renderFotonInstructionTab(arr){
   return warrantyHTML+deptHTML;
 }
 
+// ---- Foton shared helpers (Nissan-style layout, Foton colours) ------------
+const FOTON_COLOR   = '#546e7a';
+const FOTON_REGIONS = {WEST:'#c0272d',WESTERN:'#c0272d',CENTRAL:'#1565c0',CENTER:'#1565c0',CENTERAL:'#1565c0',EAST:'#2e7d32',EASTERN:'#2e7d32',SOUTH:'#6a1b9a',SOUTHERN:'#6a1b9a',NORTH:'#e65100',NORTHERN:'#e65100'};
+const fotonRegColor = r => FOTON_REGIONS[String(r||'').trim().toUpperCase()] || FOTON_COLOR;
+
+function fotonFmtE(v, color){
+  return String(v||'').split(/,|;|\+|\n/).map(e=>{
+    const s=e.trim().replace(/,$/,'');
+    if(!s) return '';
+    if(!s.includes('@')) return '<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';
+    return '<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';
+  }).filter(Boolean).join('');
+}
+
+// Wide email cards — same .ref-email-card shell Nissan uses.
+function fotonEmailHdr(blocks, color){
+  if(!blocks.length) return '';
+  const cols = blocks.length===1 ? '1fr' : (blocks.length===2 ? '1fr 1fr' : 'repeat(auto-fit,minmax(300px,1fr))');
+  return '<div style="display:grid;grid-template-columns:'+cols+';gap:12px;margin-bottom:20px">'
+    + blocks.map(b=>
+        '<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+        +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 '+b.label+'</div>'
+        +(b.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fotonFmtE(b.to,color)+'</div>':'')
+        +(b.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fotonFmtE(b.cc,color)+'</div>':'')
+        +'</div>'
+      ).join('')
+    +'</div>';
+}
+
+// Collapsible region bar — same structure/behaviour as Nissan's (toggleRegion).
+function fotonRegionBlock(reg, regColor, count, hoursDisp, regId, cardsHTML){
+  return '<div style="margin-bottom:14px">'
+    +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+regColor+'12;border-radius:8px;border-left:4px solid '+regColor+';cursor:pointer;user-select:none;margin-bottom:10px">'
+    +'<span style="font-size:13px;font-weight:700;color:'+regColor+';text-transform:uppercase;letter-spacing:.04em">'+reg+'</span>'
+    +'<span style="font-size:11px;color:#aaa">('+count+(count===1?' branch':' branches')+')</span>'
+    +(hoursDisp?'<span style="font-size:11px;color:#888;margin-left:auto">🕐 '+hoursDisp+'</span>':'')
+    +'<span id="ico_'+regId+'" style="margin-left:8px;color:'+regColor+'">▼</span>'
+    +'</div>'
+    +'<div id="'+regId+'"><div class="ref-cards-grid">'+cardsHTML+'</div></div>'
+    +'</div>';
+}
+
+// Branch card — same shell as Nissan's makeCard.
+function fotonBranchCard(b, regColor){
+  const sub = [b.city?'<span>📌 '+b.city+'</span>':'', b.district?'<span>📍 '+b.district+'</span>':''].filter(Boolean).join('');
+  const body = [
+    b.street?'<div style="font-size:11px;color:#888;margin-bottom:4px">🛣️ '+b.street+'</div>':'',
+    b.contact&&b.contact!=='N/A'?'<div style="font-size:12px;font-weight:600;color:#555;margin-bottom:2px">👤 '+b.contact+'</div>':'',
+    b.mobile&&b.mobile!=='N/A'?'<div style="font-size:12px;color:#555;margin-bottom:2px">📞 '+b.mobile+'</div>':'',
+    b.email?'<div style="font-size:11px;margin-bottom:2px"><a href="mailto:'+b.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+b.email+'</a></div>':'',
+    /^https?:/i.test(b.gps||'')?'<div style="margin-top:6px"><a href="'+b.gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':''
+  ].filter(Boolean).join('');
+  return '<div style="background:#fff;border-radius:10px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+regColor+';direction:ltr">'
+    +'<div style="background:'+regColor+'18;border-bottom:2px solid '+regColor+'22;padding:10px 14px;text-align:center">'
+    +'<div style="font-size:13px;font-weight:700;color:'+regColor+'">'+b.name+'</div>'
+    +(sub?'<div style="font-size:11px;color:#666;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">'+sub+'</div>':'')
+    +'</div>'
+    +(body?'<div style="padding:10px 14px;text-align:center">'+body+'</div>':'')
+    +'</div>';
+}
+
 function renderFotonShowroomTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#546e7a';
-  const fmtE=v=>String(v||'').split(/,|;|\+/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
+  const color=FOTON_COLOR;
 
-  const branches=[];
-  let emTo={complaint:'',request:''}, emCc={complaint:'',request:''};
-  let mode='branches';
+  // Sheet layout: A=City | B=District | C=Location | D=Working hours
+  // Email blocks:  A=Label | B=TO | C=CC
+  const branches=[], emailBlocks=[];
+  let hoursRaw='';
 
   arr.forEach(r=>{
-    const vals=Object.values(r).map(v=>String(v||'').trim());
-    const v0=vals[0]||'', v1=vals[1]||'';
-    if(v1==='for Complaint'){mode='complaint';return;}
-    if(v1==='for Request'){mode='request';return;}
-    if(v0==='TO'){ if(mode==='complaint') emTo.complaint=v1; else if(mode==='request') emTo.request=v1; return; }
-    if(v0==='CC'){ if(mode==='complaint') emCc.complaint=v1; else if(mode==='request') emCc.request=v1; return; }
-    if(!v0||v0==='City') return;
-    branches.push({city:v0,district:vals[1]||'',link:vals[2]||'',hours:vals[3]||''});
+    const vals=Object.values(r).map(v=>String(v===undefined||v===null?'':v).trim());
+    const v0=vals[0]||'', v1=vals[1]||'', v2=vals[2]||'', v3=vals[3]||'';
+    if(!v0 && !v1 && !v2) return;
+    if(v0==='City') return;                    // header row
+    if(v1==='TO' && v2==='CC') return;         // TO/CC header row
+    if(v0 && (v1.includes('@')||v2.includes('@'))){
+      emailBlocks.push({label:v0.replace(/^for\s+/i,'').replace(/\s+/g,' ').trim(), to:v1, cc:v2});
+      return;
+    }
+    if(v0 && v2 && /^https?:/i.test(v2)){
+      branches.push({name:v0, district:v1, gps:v2});
+      if(!hoursRaw && v3) hoursRaw=v3;
+      return;
+    }
   });
 
-  const emailHtml=mkReqCompCards(color, emTo, emCc, fmtE);
+  const hoursDisp = hoursRaw.split('\n').map(s=>s.trim()).filter(Boolean).join(' · ').replace(/"$/,'');
+  const regionHTML = branches.length
+    ? fotonRegionBlock('Showrooms', color, branches.length, hoursDisp, 'rgn_foton_showroom',
+        branches.map(b=>fotonBranchCard(b,color)).join(''))
+    : '';
 
-  const hoursNote=branches.length?(branches.find(b=>b.hours)||{}).hours:'';
-  const hoursHTML=hoursNote?'<div style="background:'+color+'10;border-left:4px solid '+color+';border-radius:8px;padding:10px 16px;margin-bottom:14px;text-align:center;font-size:12px;color:'+color+';font-weight:700;white-space:pre-wrap">⏰ '+hoursNote.replace(/\n+/g,' · ').replace(/"$/,'')+'</div>':'';
-
-  const branchHtml=branches.length?'<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:14px">'+branches.map(b=>{
-    return '<div class="ref-card" style="padding:12px 14px;text-align:center;border-top:3px solid '+color+';width:260px;max-width:100%">'
-      +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+b.city+'</div>'
-      +(b.district?'<div style="font-size:11px;color:#888;margin:3px 0">📌 '+b.district+'</div>':'')
-      +(b.link&&b.link.startsWith('http')?'<div style="margin-top:6px"><a href="'+b.link+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-      +'</div>';
-  }).join('')+'</div>':'';
-
-  return '<div>'+hoursHTML+emailHtml+branchHtml+'</div>';
+  return '<div style="text-align:center">'+fotonEmailHdr(emailBlocks,color)+regionHTML+'</div>';
 }
 
 function renderFotonPMSTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#546e7a';
+  const color=FOTON_COLOR;
   const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
-  const fmtE=v=>String(v||'').split(/,|;|\+/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
 
-  const branches=[];
-  let emTo={complaint:'',request:''}, emCc={complaint:'',request:''};
-  let mode='branches', stop=false;
+  // Sheet layout:
+  //   Branches  A=Regions B=City C=Branch Code-Station D=Street E=District F=GPS G=Contact H=Mobile
+  //   Spare     B="Spare Parts" C=Name D=Mobile E=Coverage
+  //   Emails    B=Label C=TO D=CC   (preceded by a C="TO" D="CC" header row)
+  const branches=[], emailBlocks=[], spare=[];
+  let hoursIdx=-1, hoursRaw='';
 
   arr.forEach(r=>{
-    if(stop) return;
-    const vals=Object.values(r).map(v=>String(v||'').trim());
-    const v0=vals[0]||'', v1=vals[1]||'';
-    if(/^Spare Parts/i.test(v0)){ stop=true; return; }
-    if(v1==='for Complaint'){mode='complaint';return;}
-    if(v1==='for Request'){mode='request';return;}
-    if(v0==='TO'){ if(mode==='complaint') emTo.complaint=v1; else if(mode==='request') emTo.request=v1; return; }
-    if(v0==='CC'){ if(mode==='complaint') emCc.complaint=v1; else if(mode==='request') emCc.request=v1; return; }
-    if(!v0||v0==='Branch') return;
-    branches.push({branch:v0,location:vals[1]||'',name:vals[2]||'',mobile:fmtNum(vals[3]||''),email:vals[4]||'',title:vals[5]||'',hours:vals[6]||'',gps:vals[7]||''});
+    const vals=Object.values(r).map(v=>String(v===undefined||v===null?'':v).trim());
+    const v0=vals[0]||'', v1=vals[1]||'', v2=vals[2]||'', v3=vals[3]||'', v4=vals[4]||'';
+    if(!v0 && !v1 && !v2 && !v3) return;
+
+    if(/^regions?$/i.test(v0)){
+      vals.forEach((h,i)=>{ if(/working\s*hours?|timings?/i.test(h)) hoursIdx=i; });
+      return;
+    }
+    if(v2==='TO' && v3==='CC') return;
+    if(v1==='TO' && v2==='CC') return;
+
+    if(/^spare parts$/i.test(v1) && v2 && !v2.includes('@')){
+      spare.push({name:v2, mobile:fmtNum(v3), note:v4});
+      return;
+    }
+    if(v1 && !v0 && (v2.includes('@')||v3.includes('@')||/manager branch/i.test(v2))){
+      emailBlocks.push({label:v1.replace(/^for\s+/i,'').replace(/\s+/g,' ').trim(), to:v2, cc:v3});
+      return;
+    }
+    if(v0 && v1 && v2){
+      branches.push({region:v0, name:v2, city:v1, street:v3, district:v4,
+                     gps:vals[5]||'', contact:vals[6]||'', mobile:fmtNum(vals[7]||'')});
+      if(hoursIdx>=0 && !hoursRaw && vals[hoursIdx]) hoursRaw=vals[hoursIdx];
+    }
   });
 
-  const emailHtml=mkReqCompCards(color, emTo, emCc, fmtE);
+  // Spare Parts contact — small drawer above the regions, Nissan-button styling.
+  const spareHTML = spare.length
+    ? '<div style="margin-bottom:14px">'
+      +'<button onclick="toggleRegion(\'fotonSpareSec\')" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:'+color+';color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;margin:4px;box-shadow:0 1px 4px rgba(84,110,122,.25)">🔧 Spare Parts Contact <span id="ico_fotonSpareSec">▼</span></button>'
+      +'<div id="fotonSpareSec" style="display:none;margin-top:10px">'
+      +'<div style="overflow-x:auto;border-radius:10px;border:1px solid '+color+'33;background:'+color+'08">'
+      +'<table style="width:100%;border-collapse:collapse;font-size:12px">'
+      +'<thead><tr style="background:'+color+'12">'
+      +'<th style="padding:8px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">👤 Name</th>'
+      +'<th style="padding:8px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">📞 Mobile</th>'
+      +'<th style="padding:8px 12px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">🗺️ Coverage</th>'
+      +'</tr></thead><tbody>'
+      +spare.map((c,i)=>'<tr'+(i%2?' style="background:'+color+'08"':'')+'>'
+        +'<td style="padding:7px 12px;font-weight:600;text-align:center">'+(c.name||'—')+'</td>'
+        +'<td style="padding:7px 12px;text-align:center">'+(c.mobile?'<a href="tel:'+c.mobile+'" style="color:#2e7d32;font-weight:600;text-decoration:none">📞 '+c.mobile+'</a>':'—')+'</td>'
+        +'<td style="padding:7px 12px;text-align:center;direction:rtl">'+(c.note||'—')+'</td></tr>').join('')
+      +'</tbody></table></div></div></div>'
+    : '';
 
-  const hoursNote=branches.length?(branches.find(b=>b.hours)||{}).hours:'';
-  const hoursHTML=hoursNote?'<div style="background:'+color+'10;border-left:4px solid '+color+';border-radius:8px;padding:10px 16px;margin-bottom:14px;text-align:center;font-size:12px;color:'+color+';font-weight:700;white-space:pre-wrap">⏰ '+hoursNote.replace(/\n+/g,' · ').replace(/"$/,'')+'</div>':'';
+  // Group branches by region, in first-seen order — same as Nissan.
+  const order=[], groups={};
+  branches.forEach(b=>{
+    const reg=b.region||'Other';
+    if(!groups[reg]){ groups[reg]=[]; order.push(reg); }
+    groups[reg].push(b);
+  });
+  const hoursDisp = hoursRaw.split('\n').map(s=>s.trim()).filter(Boolean).join(' · ').replace(/"$/,'');
+  const regionsHTML = order.map((reg,ri)=>{
+    const rc=fotonRegColor(reg);
+    const regId='rgn_foton_pms_'+reg.replace(/\s/g,'')+'_'+ri;
+    return fotonRegionBlock(reg, rc, groups[reg].length, hoursDisp, regId,
+      groups[reg].map(b=>fotonBranchCard(b,rc)).join(''));
+  }).join('');
 
-  const branchHtml=branches.length?'<div class="ref-cards-grid">'+branches.map(b=>{
-    return '<div class="ref-card" style="padding:0;overflow:hidden;border-top:3px solid '+color+'">'
-      +'<div style="background:'+color+'12;padding:10px 14px;text-align:center">'
-      +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+b.branch+'</div>'
-      +(b.location?'<div style="font-size:11px;color:#888;margin-top:3px">📌 '+b.location+'</div>':'')
-      +'</div>'
-      +'<div style="padding:10px 14px;text-align:center">'
-      +(b.name?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+b.name+(b.title?' <span style="color:#aaa;font-size:10px">('+b.title+')</span>':'')+'</div>':'')
-      +(b.mobile?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+b.mobile+'</div>':'')
-      +(b.email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+b.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+b.email+'</a></div>':'')
-      +(b.gps&&b.gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+b.gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-      +'</div></div>';
-  }).join('')+'</div>':'';
-
-  return '<div>'+hoursHTML+emailHtml+branchHtml+'</div>';
+  return '<div style="text-align:center">'+fotonEmailHdr(emailBlocks,color)+spareHTML+regionsHTML+'</div>';
 }
+
 
 function renderFotonSparePartsTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
@@ -4497,7 +4733,7 @@ function showRefBrandPage(brand){
     +'<div id="petrominWarrantyDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px"></div>'
     +'<div class="ref-sub-tabs" id="refSubTabs_'+brand+'" style="justify-content:center">'
     +tabs.map((t,i)=>{
-      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📱 SMS Appointment','BAIC Location':'📅 Appointment & Location SMS','Showrooms':'Showroom','Location SMS':'SMS Location'};
+      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📱 SMS Appointment','BAIC Location':'📅 Appointment & Location SMS','Showrooms':'Showroom','PMS':'PMS - Spare Parts','Location SMS':'SMS Location'};
       const label=TAB_LABELS[t]||t;
       return '<button class="ref-sub-tab'+(i===0?' active':'')+'" '
         +'style="'+(i===0?'background:'+meta.color+';color:#fff;border-color:'+meta.color:'')+'" '
