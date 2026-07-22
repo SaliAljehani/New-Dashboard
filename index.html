@@ -680,7 +680,8 @@ function clearSheetCache(){
   }catch(e){}
 }
 // Manual refresh must always hit the network, never the cache.
-function refreshAll(){ clearSheetCache(); try{ REF_CACHE = {}; }catch(e){} loadAllData(); }
+let FORCE_FRESH = false;
+function refreshAll(){ clearSheetCache(); try{ REF_CACHE = {}; }catch(e){} FORCE_FRESH = true; loadAllData(); }
 
 // Sheets read from Google's CSV export instead of the Apps Script proxy.
 //
@@ -822,7 +823,7 @@ async function loadSheet(name, retries){
   }
 
   retries = retries===undefined ? 1 : retries;
-  const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${SHEET_ID}&gid=${gid}`;
+  const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${SHEET_ID}&gid=${gid}` + (FORCE_FRESH ? '&fresh=1' : '');
   const controller = new AbortController();
   const timeoutId = setTimeout(()=>controller.abort(), 45000);
   try{
@@ -1122,6 +1123,7 @@ async function loadAllData(silent){
     // is meant for the very first paint only. Clear it now so the "Refresh" button
     // and the 5-minute background auto-refresh fetch genuinely fresh data afterwards
     // instead of replaying the same snapshot forever.
+    FORCE_FRESH = false;
     window.__PRELOADED_DATA__ = null;
     window.__PRELOADED_RAW__ = null;
     window.__ATT_RAW__ = attRows;
