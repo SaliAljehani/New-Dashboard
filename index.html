@@ -2099,7 +2099,7 @@ const REF_SHEETS = {
   },
   foton: {
     id: '1PBhYlWtWqGZFZi_wgjDTlUaoN6O0QeS4P1CHcd40H4Y',
-    tabs: ['Instruction','Showrooms','PMS','Spare Parts','Location SMS']
+    tabs: ['Instruction','Showrooms','PMS','Location SMS']
   },
   nos: {
     id: '1gKtlJ2VNz8ddL5yOuIgGCgAGGkqeizzZ_r9NZ1FNaj0',
@@ -3851,10 +3851,12 @@ function fotonFmtE(v, color){
   }).filter(Boolean).join('');
 }
 
-// Wide email cards — same .ref-email-card shell Nissan uses.
+// Wide email cards — same .ref-email-card shell Nissan uses, laid out two per
+// row like the Autocare tab so four cards stack 2x2 instead of squeezing into
+// a single row.
 function fotonEmailHdr(blocks, color){
   if(!blocks.length) return '';
-  const cols = blocks.length===1 ? '1fr' : (blocks.length===2 ? '1fr 1fr' : 'repeat(auto-fit,minmax(300px,1fr))');
+  const cols = blocks.length===1 ? '1fr' : '1fr 1fr';
   return '<div style="display:grid;grid-template-columns:'+cols+';gap:12px;margin-bottom:20px">'
     + blocks.map(b=>
         '<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
@@ -3867,7 +3869,12 @@ function fotonEmailHdr(blocks, color){
 }
 
 // Collapsible region bar — same structure/behaviour as Nissan's (toggleRegion).
-function fotonRegionBlock(reg, regColor, count, hoursDisp, regId, cardsHTML){
+// `centred` swaps the fill-from-left grid for a centred row, which suits tabs
+// with only a couple of cards (Showroom) instead of leaving a wide gap.
+function fotonRegionBlock(reg, regColor, count, hoursDisp, regId, cardsHTML, centred){
+  const inner = centred
+    ? '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,250px));justify-content:center;gap:10px">'+cardsHTML+'</div>'
+    : '<div class="ref-cards-grid">'+cardsHTML+'</div>';
   return '<div style="margin-bottom:14px">'
     +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+regColor+'12;border-radius:8px;border-left:4px solid '+regColor+';cursor:pointer;user-select:none;margin-bottom:10px">'
     +'<span style="font-size:13px;font-weight:700;color:'+regColor+';text-transform:uppercase;letter-spacing:.04em">'+reg+'</span>'
@@ -3875,15 +3882,20 @@ function fotonRegionBlock(reg, regColor, count, hoursDisp, regId, cardsHTML){
     +(hoursDisp?'<span style="font-size:11px;color:#888;margin-left:auto">🕐 '+hoursDisp+'</span>':'')
     +'<span id="ico_'+regId+'" style="margin-left:8px;color:'+regColor+'">▼</span>'
     +'</div>'
-    +'<div id="'+regId+'"><div class="ref-cards-grid">'+cardsHTML+'</div></div>'
+    +'<div id="'+regId+'">'+inner+'</div>'
     +'</div>';
 }
 
-// Branch card — same shell as Nissan's makeCard.
+// Branch card — same shell as Nissan's makeCard. The header carries the full
+// address (city, district, street) and the body is kept to just the branch
+// manager, their number and the location link.
 function fotonBranchCard(b, regColor){
-  const sub = [b.city?'<span>📌 '+b.city+'</span>':'', b.district?'<span>📍 '+b.district+'</span>':''].filter(Boolean).join('');
+  const sub = [
+    b.city?'<span>📌 '+b.city+'</span>':'',
+    b.district?'<span>📍 '+b.district+'</span>':'',
+    b.street?'<span>🛣️ '+b.street+'</span>':''
+  ].filter(Boolean).join('');
   const body = [
-    b.street?'<div style="font-size:11px;color:#888;margin-bottom:4px">🛣️ '+b.street+'</div>':'',
     b.contact&&b.contact!=='N/A'?'<div style="font-size:12px;font-weight:600;color:#555;margin-bottom:2px">👤 '+b.contact+'</div>':'',
     b.mobile&&b.mobile!=='N/A'?'<div style="font-size:12px;color:#555;margin-bottom:2px">📞 '+b.mobile+'</div>':'',
     b.email?'<div style="font-size:11px;margin-bottom:2px"><a href="mailto:'+b.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+b.email+'</a></div>':'',
@@ -3927,7 +3939,7 @@ function renderFotonShowroomTab(arr){
   const hoursDisp = hoursRaw.split('\n').map(s=>s.trim()).filter(Boolean).join(' · ').replace(/"$/,'');
   const regionHTML = branches.length
     ? fotonRegionBlock('Showrooms', color, branches.length, hoursDisp, 'rgn_foton_showroom',
-        branches.map(b=>fotonBranchCard(b,color)).join(''))
+        branches.map(b=>fotonBranchCard(b,color)).join(''), true)
     : '';
 
   return '<div style="text-align:center">'+fotonEmailHdr(emailBlocks,color)+regionHTML+'</div>';
@@ -5204,7 +5216,7 @@ async function renderRefBrand(brand,tabIdx){
     container.innerHTML='<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading '+sheetName+'...</div>';
     try{
       const t=sheetName.trim();
-      const fetchTabName = (t==='Spare Parts') ? 'PMS' : t;
+      const fetchTabName = t;
       let arr;
       if(fetchTabName==='PMS'){
         // PMS sheet has two columns both labeled "Location" (B & H) which collide when
@@ -5224,7 +5236,6 @@ async function renderRefBrand(brand,tabIdx){
       if(t==='Instruction') container.innerHTML=renderFotonInstructionTab(arr);
       else if(t==='Showrooms') container.innerHTML=renderFotonShowroomTab(arr);
       else if(t==='PMS') container.innerHTML=renderFotonPMSTab(arr);
-      else if(t==='Spare Parts') container.innerHTML=renderFotonSparePartsTab(arr);
       else if(t==='Location SMS') container.innerHTML=renderFotonSMSLocationTab(arr);
       else container.innerHTML='<div style="text-align:center;padding:24px;color:#aaa">No renderer for '+t+'</div>';
     }catch(e){
