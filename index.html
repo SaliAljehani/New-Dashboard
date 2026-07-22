@@ -682,16 +682,23 @@ function clearSheetCache(){
 // Manual refresh must always hit the network, never the cache.
 function refreshAll(){ clearSheetCache(); try{ REF_CACHE = {}; }catch(e){} loadAllData(); }
 
-// Sheets moved off the Apps Script proxy onto Google's CSV export endpoint.
-// Rolled out in stages, each one checked in the live dashboard before the
-// next was added. If the CSV read fails the proxy still runs as the fallback.
+// Sheets read from Google's CSV export instead of the Apps Script proxy.
 //
-// Deliberately NOT moved: 'Daily Off Schedule & Weekly Calls & Breakk'.
-// That sheet holds two tables side by side and loadSchedule() reads the
-// right-hand one by column index, relying on the exact key order it gets
-// back. It is one request out of six, so moving it buys little and risks a
-// schedule that is subtly wrong rather than obviously broken.
-const FAST_SHEETS = ['Agent Performance', 'Attendance Data', 'Agent', 'Escalation', 'Announcement Board'];
+// Currently EMPTY on purpose. The dashboard's own sheet is almost certainly
+// not link-shared publicly — the Apps Script proxy exists precisely because
+// it reads with the owner's permissions. When the CSV endpoint is not allowed
+// to see the sheet, every entry here cost three timed-out attempts before
+// falling back to the proxy, which made loading far slower, not faster.
+//
+// To re-enable: open
+//   https://docs.google.com/spreadsheets/d/<SHEET_ID>/export?format=csv&gid=810269545
+// in a private window. If the file downloads, the sheet is public and names
+// can be added back here. If it shows a sign-in page, leave this empty.
+const FAST_SHEETS = [];
+
+// If the fast path ever fails once, stop trying it for the rest of the page
+// load. Retrying it per sheet is what turned a slow load into a stalled one.
+let FAST_PATH_OFF = false;
 
 // CSV gives every cell as display text. "1,234" would be read by parseInt as
 // 1, so strip the separators — but only when the entire cell is a plain
@@ -758,22 +765,30 @@ async function loadSheet(name, retries){
   const cached = sheetCacheGet(ckey);
   if(cached) return cached;
 
-  // ---- Fast path (being rolled out one sheet at a time) -------------------
-  // The Apps Script proxy is capped at 1,000 concurrent executions and we've
-  // already been warned at ~800. Every dashboard open costs nine of them, so
-  // with the whole team opening at once the requests queue and everyone waits.
+  // ---- Fast path (opt-in via FAST_SHEETS, currently empty) ----------------
+  // Reads straight from Google's CSV export, bypassing the Apps Script proxy
+  // and its concurrent-execution cap. Only usable if the sheet is public.
   //
-  // Google's plain CSV export endpoint has no such cap. Crucially it is NOT
-  // the gviz endpoint: gviz guesses which row is the header and guessed wrong
-  // on the Announcement Board, which shifted every column. Here row 1 is
-  // always the header, exactly like the proxy does it.
-  if(FAST_SHEETS.indexOf(name) >= 0 && gid){
+  // Fails fast on purpose: one attempt, short timeout, and a single failure
+  // switches the whole path off for the rest of the load. Without that, a
+  // sheet the CSV endpoint cannot see costs a long retry chain per sheet
+  // before the proxy is even tried.
+  if(!FAST_PATH_OFF && FAST_SHEETS.indexOf(name) >= 0 && gid){
     try{
-      // fetchCSVExportByGid keeps its own in-page cache with no expiry, which
-      // would keep serving a stale copy after the sheet is edited. Drop that
-      // entry first so dashboard data always comes fresh from the sheet.
-      try{ delete REF_CACHE[SHEET_ID+'__EXPGID__'+gid]; }catch(e){}
-      const raw = await fetchCSVExportByGid(SHEET_ID, gid);
+      const url = 'https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/export?format=csv&gid='+gid;
+      const ctrl = new AbortController();
+      const tid = setTimeout(()=>ctrl.abort(), 8000);
+      let raw;
+      try{
+        const res = await fetch(url, {signal: ctrl.signal});
+        clearTimeout(tid);
+        if(!res.ok) throw new Error('CSV export ' + res.status);
+        const text = await res.text();
+        // A sign-in page means the sheet is not public — treat it as a failure
+        // rather than parsing HTML into nonsense rows.
+        if(/^\s*</.test(text)) throw new Error('CSV export returned HTML (sheet not public?)');
+        raw = Papa.parse(text, {skipEmptyLines:false}).data;
+      }catch(e){ clearTimeout(tid); throw e; }
       if(raw && raw.length > 1){
         // Keep header text exactly as it appears in the sheet — several
         // columns are looked up with a trailing space (e.g. 'Tickets '),
@@ -798,9 +813,11 @@ async function loadSheet(name, retries){
         }).filter(o=>Object.values(o).some(v=>String(v).trim()!==''));
         if(rows.length){ sheetCacheSet(ckey, rows); return rows; }
       }
-      console.warn('CSV fast path returned nothing usable for', name, '— using proxy');
+      FAST_PATH_OFF = true;
+      console.warn('CSV fast path returned nothing usable for', name, '— using proxy from here on');
     }catch(e){
-      console.warn('CSV fast path failed for', name, '— using proxy:', e.message);
+      FAST_PATH_OFF = true;
+      console.warn('CSV fast path failed for', name, '— using proxy from here on:', e.message);
     }
   }
 
