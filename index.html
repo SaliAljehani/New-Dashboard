@@ -3826,13 +3826,7 @@ function renderFotonInstructionTab(arr){
     +'</tbody></table></div>'
     ,'fotonInstrWarranty',color):'';
 
-  const deptHTML=deptRows.length?'<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:14px">'+deptRows.map(d=>{
-    return '<div class="ref-card" style="padding:12px 14px;text-align:center;width:260px;max-width:100%">'
-      +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:8px">'+d.dept+'</div>'
-      +(d.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fmtE(d.to)+'</div>':'')
-      +(d.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(d.cc)+'</div>':'')
-      +'</div>';
-  }).join('')+'</div>':'';
+  const deptHTML=deptRows.length?fotonEmailHdr(deptRows.map(d=>({label:d.dept,to:d.to,cc:d.cc})),color):'';
 
   return warrantyHTML+deptHTML;
 }
@@ -4003,14 +3997,28 @@ function renderFotonPMSTab(arr){
       +'</tbody></table></div></div></div>'
     : '';
 
-  // Group branches by region, in first-seen order — same as Nissan.
+  // Card order: PMS pair first, then the Spare Parts pair — Request before
+  // Complaint in each. The sheet lists Spare Parts first, so reorder here.
+  const emRank = l => {
+    const s = String(l||'').toLowerCase();
+    const isSpare = s.includes('spare');
+    const isComplaint = s.includes('complaint');
+    return (isSpare ? 2 : 0) + (isComplaint ? 1 : 0);
+  };
+  emailBlocks.sort((a,b)=>emRank(a.label)-emRank(b.label));
+
+  // Working hours shown on each region bar. The PMS sheet's hours column only
+  // holds a bare time range ("08:00 - 17:00"), so the full opening line is set
+  // here instead. To drive this from the sheet again, put this exact text in
+  // the sheet's Working hours column and swap FOTON_PMS_HOURS for hoursRaw.
+  const FOTON_PMS_HOURS = 'Saturday to Thursday · 9 AM - 5 PM · ❌ Fridays closed';
   const order=[], groups={};
   branches.forEach(b=>{
     const reg=b.region||'Other';
     if(!groups[reg]){ groups[reg]=[]; order.push(reg); }
     groups[reg].push(b);
   });
-  const hoursDisp = hoursRaw.split('\n').map(s=>s.trim()).filter(Boolean).join(' · ').replace(/"$/,'');
+  const hoursDisp = FOTON_PMS_HOURS;
   const regionsHTML = order.map((reg,ri)=>{
     const rc=fotonRegColor(reg);
     const regId='rgn_foton_pms_'+reg.replace(/\s/g,'')+'_'+ri;
@@ -4739,7 +4747,7 @@ function showRefBrandPage(brand){
     +'<button onclick="renderRef()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:#f5f5f5;border:1.5px solid #ddd;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;color:#555">'
     +'← Back to References</button></div>'
     +'<div class="ref-brand-section">'
-    +'<div style="padding:14px 20px;background:linear-gradient(135deg,'+meta.color+','+meta.color+'99);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;gap:12px;position:relative">'
+    +'<div style="padding:14px 20px;min-height:30px;background:linear-gradient(135deg,'+meta.color+','+meta.color+'99);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;gap:12px;position:relative">'
     +'<div style="position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:10px;pointer-events:none">'
     +'<span style="font-size:22px">'+meta.icon+'</span>'
     +'<span style="font-size:15px;font-weight:700">'+meta.label+'</span>'
