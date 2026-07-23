@@ -2364,7 +2364,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
     if(s.includes('@')) return '<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'12;color:'+color+';padding:3px 9px;border-radius:6px;font-size:11px;font-weight:800;text-decoration:none;margin:2px;box-shadow:inset 0 0 0 1px '+color+'25">'+s+'</a>';
     return '<span style="font-size:11px;color:#444;padding:2px 4px;font-weight:600;margin:2px">'+s+'</span>';
   };
-  const pills = (v,c) => String(v||'').split(/[,;]/).map(function(e){const s=e.trim();if(!s)return'';if(s.includes('@'))return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+(c||color)+'15;color:'+(c||color)+';padding:3px 9px;border-radius:6px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';return'<span style="font-size:11px;color:#444;padding:2px 4px;font-weight:600;margin:2px">'+s+'</span>';}).filter(Boolean).join('');
+  const pills = (v,c) => chipTo(v, c||color);
 
   const sh = sheetName.trim().toLowerCase();
   const isSP = sh.includes('spare');
@@ -2999,7 +2999,7 @@ function renderStellantisPACTab(arr){
     if(city && branch) branchRows.push(r);
   });
 
-  const linkifyTo=v=>String(v||'').replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/g,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px '+color+'20">'+m+'</a>');
+  const linkifyTo=v=>chipTo(v,color);
 
   // Email header — read from sheet (with fallback)
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
@@ -3223,7 +3223,7 @@ function renderBaicServiceTab(arr, apptArr){
 
     if(v1==='for Complaint'||v0==='for Complaint'){ mode='email'; emMode='complaint'; return; }
     if(v1==='for Request'||v0==='for Request'){ mode='email'; emMode='request'; return; }
-    if(/^Spare Parts/i.test(v0)||/^Spare Parts/i.test(v1)){ mode='email'; emMode='spare'; return; }
+    if(/Spare\s*Parts/i.test(v0)||/Spare\s*Parts/i.test(v1)){ mode='email'; emMode='spare'; return; }
     if(v0==='TO'||v0==='CC'){
       if(mode==='email'){
         if(v0==='TO'){ if(emMode==='complaint') emTo.complaint=v1; else if(emMode==='spare') emTo.spare=v1; else emTo.request=v1; }
@@ -3246,7 +3246,7 @@ function renderBaicServiceTab(arr, apptArr){
   });
 
   // Email header — Request / Complaint / Spare Parts
-  const linkTo=v=>String(v||'').replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/g,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px '+color+'20">'+m+'</a>');
+  const linkTo=v=>chipTo(v,color);
   const emCard=(icon,title,to,cc)=>'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">'+icon+' '+title+'</div>'
     +(to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;font-weight:700;color:#444">'+linkTo(to)+'</span></div>':'')
@@ -3809,6 +3809,27 @@ function renderNosPriceTab(arr){
   }).join('');
 }
 
+/* تضليل موحّد لصف TO — يعطي "Manager Branch" و"Regional Manager" وغيرها
+   نفس شكل شرائح الإيميلات، بلون العلامة التجارية نفسه. */
+function chipTo(v, color){
+  color = color || '#c0272d';
+  var raw = String(v||'').replace(/,\s*$/,'').trim();
+  if(!raw) return '';
+  var parts = raw.split(/(\s+\+\s*|\s*,\s*|\s*;\s*)/);
+  var out = '';
+  parts.forEach(function(p){
+    var t = String(p||'').trim();
+    if(!t || t===',' || t===';') return;
+    if(t==='+'){ out += '<span style="font-size:11px;font-weight:800;color:#bbb;margin:0 1px">+</span>'; return; }
+    if(t.indexOf('@')>-1){
+      out += '<a href="mailto:'+t+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:800;text-decoration:none;margin:2px;box-shadow:inset 0 0 0 1px '+color+'25">'+t+'</a>';
+    }else{
+      out += '<span style="display:inline-flex;background:'+color+'22;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;margin:2px">'+t+'</span>';
+    }
+  });
+  return out;
+}
+
 function mkReqCompCards(color, emTo, emCc, fmtE){
   return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
@@ -4173,15 +4194,8 @@ function renderPetrominPACTab(arr){
   });
 
   // Email cards (4 boxes: PAC Request, PAC Complaint, Express Request, Express Complaint)
-  const fmtTo=v=>{
-    const s=String(v||'').trim();
-    const m=s.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/);
-    if(!m) return s?'<span style="font-size:11px;font-weight:700;color:#444">'+s+'</span>':'';
-    const email=m[1].replace(/,$/,'').replace(/,(?=[a-zA-Z]{2,4}$)/,'.');
-    const prefix=s.slice(0,m.index).trim();
-    return (prefix?'<span style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700">'+prefix+'</span>':'')
-      +'<a href="mailto:'+email+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+email+'</a>';
-  };
+  const fmtTo=v=>chipTo(v,color);
+
   const emCard=(label,data)=>'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 '+label+'</div>'
     +(data?.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fmtTo(data.to)+'</div>':'')
@@ -4278,12 +4292,12 @@ function renderPetrominTristarTab(arr){
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
-    +(emTo.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;font-weight:700;color:#444">'+emTo.request.replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/g,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px '+color+'20">'+m+'</a>')+'</span></div>':'')
+    +(emTo.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+chipTo(emTo.request,color)+'</div>':'')
     +(emCc.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.request)+'</div>':'')
     +'</div>'
     +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
-    +(emTo.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;font-weight:700;color:#444">'+emTo.complaint.replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/g,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:'+color+'10;color:'+color+';padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px '+color+'20">'+m+'</a>')+'</span></div>':'')
+    +(emTo.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+chipTo(emTo.complaint,color)+'</div>':'')
     +(emCc.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.complaint)+'</div>':'')
     +'</div></div>';
 
@@ -4400,7 +4414,7 @@ function renderBodyShopTab(arr){
     return reg && reg!=='Region' && String(r[branchCol]||'').trim();
   });
 
-  const linkifyTo=v=>String(v||'').replace(/,\s*$/,'').replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+)/g,m=>'<a href="mailto:'+m+'" style="display:inline-flex;background:#fdf0f1;color:#c0272d;padding:3px 9px;border-radius:5px;font-weight:800;text-decoration:none;box-shadow:inset 0 0 0 1px #c0272d20">'+m+'</a>');
+  const linkifyTo=v=>chipTo(v,color);
 
   // Email header — read from sheet (with fallback)
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
@@ -4790,8 +4804,9 @@ function showRefBrandPage(brand){
     +'<div id="petrominWarrantyDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px"></div>'
     +'<div class="ref-sub-tabs" id="refSubTabs_'+brand+'" style="justify-content:center">'
     +tabs.map((t,i)=>{
-      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📱 SMS Appointment','BAIC Location':'📅 Appointment & Location SMS','Showrooms':'Showroom','PMS':'PMS - Spare Parts','Location SMS':'SMS Location'};
-      const label=TAB_LABELS[t]||t;
+      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📅 Appointment SMS','SMS & Location':'📅 Appointment & Location SMS','BAIC Location':'📅 Appointment & Location SMS','Showrooms':'Showroom','PMS':'PMS - Spare Parts','Location SMS':'SMS Location'};
+      const BRAND_TAB_LABELS={baic:{'Service':'Service & Spare Parts'}};
+      const label=(BRAND_TAB_LABELS[brand]&&BRAND_TAB_LABELS[brand][t])||TAB_LABELS[t]||t;
       return '<button class="ref-sub-tab'+(i===0?' active':'')+'" '
         +'style="'+(i===0?'background:'+meta.color+';color:#fff;border-color:'+meta.color:'')+'" '
         +'onclick="switchRefTab(\''+brand+'\','+i+',this)">'+label+'</button>';
