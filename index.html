@@ -6075,7 +6075,7 @@ function renderNewWeeklySchedule(){
     if(!v) return '';
     const vl = v.toLowerCase();
     let bg,col;
-    if(vl==='off'){bg='#F8ECEC';col='#7A3A3A';}
+    if(vl==='off'){bg='#F5A0A5';col='#5A1518';}
     else if(vl==='live chat'){bg='#EEF0EC';col='#4A5A42';}
     else if(vl.includes('multi')){bg='#F5F0E8';col='#6B5A3A';}
     else{bg='#F2F3F4';col='#555';}
@@ -7218,7 +7218,7 @@ async function renderDailyOff(){
       if(!v) return '<span style="color:#ccc">—</span>';
       var vl=v.toLowerCase().trim();
       var bg,col;
-      if(vl==='off'){bg='#F8ECEC';col='#7A3A3A';}
+      if(vl==='off'){bg='#F5A0A5';col='#5A1518';}
       else if(vl==='vacation'||vl==='v'||vl==='vaction'){bg='#FFF3D0';col='#8A6000';}
       else if(vl==='live chat'||vl==='livechat'){bg='#EEF0EC';col='#4A5A42';}
       else if(vl.includes('multi')){bg='#F5F0E8';col='#6B5A3A';}
@@ -7242,7 +7242,7 @@ async function renderDailyOff(){
         t+='<tr data-bg="'+rowBg+'" style="background:'+rowBg+';cursor:pointer" '
           +'onmouseover="if(this.getAttribute(\'data-sel\')!==\'1\'){this.querySelectorAll(\'td\').forEach(function(td){td.style.background=\'#FFF0F0\';});this.querySelectorAll(\'span.bdg\').forEach(function(s){s.style.background=\'#FFD0D0\';});}" '
           +'onmouseout="if(this.getAttribute(\'data-sel\')!==\'1\'){this.querySelectorAll(\'td\').forEach(function(td){td.style.background=\'\';});this.querySelectorAll(\'span.bdg\').forEach(function(s){s.style.background=s.getAttribute(\'data-bg\');});}" '
-          +'onclick="(function(row){var tbl=row.closest(\'table\');tbl.querySelectorAll(\'tr[data-sel=\\\"1\\\"]\').forEach(function(r){r.setAttribute(\'data-sel\',\'0\');r.style.outline=\'\';r.querySelectorAll(\'td\').forEach(function(td){td.style.background=\'\';td.style.fontWeight=\'\';});r.querySelectorAll(\'span.bdg\').forEach(function(s){s.style.background=s.getAttribute(\'data-bg\');});});row.setAttribute(\'data-sel\',\'1\');row.style.outline=\'2px solid #c0272d\';row.querySelectorAll(\'td\').forEach(function(td){td.style.background=\'#FCCCCF\';td.style.fontWeight=\'700\';});row.querySelectorAll(\'span.bdg\').forEach(function(s){s.style.background=\'#F5A0A5\';});})(this)">';
+          +'onclick="(function(row){var tbl=row.closest(\'table\');tbl.querySelectorAll(\'tr[data-sel=\\\"1\\\"]\').forEach(function(r){r.setAttribute(\'data-sel\',\'0\');r.style.outline=\'\';r.querySelectorAll(\'td\').forEach(function(td){td.style.background=\'\';td.style.fontWeight=\'\';});r.querySelectorAll(\'span.bdg\').forEach(function(s){s.style.background=s.getAttribute(\'data-bg\');});});row.setAttribute(\'data-sel\',\'1\');row.style.outline=\'2px solid #c0272d\';row.querySelectorAll(\'td\').forEach(function(td){td.style.background=\'#FCCCCF\';td.style.fontWeight=\'700\';});row.querySelectorAll(\'span.bdg\').forEach(function(s){s.style.background=(s.textContent.trim().toLowerCase()===\'off\')?\'#F5A0A5\':s.getAttribute(\'data-bg\');});})(this)">';
         var _nc=getAvatarColor(ag.name);
         t+='<td style="padding:7px 12px;text-align:left;font-size:11px;font-weight:500;color:#1a1a2e">'+ag.name+'</td>';
         DAY_COLS.forEach(function(d){
