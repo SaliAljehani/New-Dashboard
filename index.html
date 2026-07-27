@@ -3253,10 +3253,12 @@ function renderBaicServiceTab(arr, apptArr){
     +(cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(cc)+'</div>':'')
     +'</div>';
   const hasSpare=emTo.spare||emCc.spare;
-  const emailHtml='<div style="display:grid;grid-template-columns:'+(hasSpare?'repeat(auto-fit,minmax(260px,1fr))':'1fr 1fr')+';gap:12px;margin-bottom:16px">'
-    +emCard('📧','Request',emTo.request,emCc.request)
-    +emCard('📧','Complaint',emTo.complaint,emCc.complaint)
-    +(hasSpare?emCard('🔧','Spare Parts',emTo.spare,emCc.spare):'')
+  const emailHtml='<div style="margin-bottom:16px">'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">'
+    +emCard('📧','Service Request',emTo.request,emCc.request)
+    +emCard('📧','Service Complaint',emTo.complaint,emCc.complaint)
+    +'</div>'
+    +(hasSpare?emCard('🔧','Spare Parts (Request - Complaint)',emTo.spare,emCc.spare):'')
     +'</div>';
 
 
