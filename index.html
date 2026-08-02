@@ -5768,7 +5768,7 @@ function renderRoster(){
 
   el.innerHTML = '<div style="padding:4px">'
     +'<div style="text-align:center;margin-bottom:16px">'
-    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:rgba(192,39,45,.05);color:#a02030;border:1.5px solid rgba(192,39,45,.12);margin:4px">📋 Attendance</button>'    +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">📅 Daily Off + Weekly Calls & Break</button>'    +'<button onclick="switchScheduleTab(&apos;vacation2026&apos;)" id="stab_vacation2026" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">🌴 Vacation 2026</button>'    +'<button onclick="switchScheduleTab(&apos;campaigntraining&apos;)" id="stab_campaigntraining" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">🎓 Campaign Training</button>'
+    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:rgba(192,39,45,.05);color:#a02030;border:1.5px solid rgba(192,39,45,.12);margin:4px">📋 Attendance</button>'    +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">📅 Daily Off + Weekly Calls & Break</button>'    +'<button onclick="switchScheduleTab(&apos;campaigntraining&apos;)" id="stab_campaigntraining" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">Campaign Training</button>'    +'<button onclick="switchScheduleTab(&apos;vacation2026&apos;)" id="stab_vacation2026" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">🌴 Vacation 2026</button>'
     +'</div>'
     
     +'<div id="schedule_dailyoff" style="display:none"></div>'    +'<div id="schedule_vacation2026" style="display:none"></div>'    +'<div id="schedule_campaigntraining" style="display:none"></div>'    +'<div id="schedule_attendance" style="display:block">'
@@ -6176,10 +6176,18 @@ async function renderCampaignTraining(){
       return;
     }
 
-    // First column = agent name, remaining columns = campaigns
+    // Detect columns: skip a leading index/number column (e.g. "#"), take the
+    // next as the agent-name column, and the rest as campaigns.
     var keys = Object.keys(rows[0]).filter(function(k){ return k && !/^__col/.test(k); });
-    var agentKey = keys[0];
-    var campaigns = keys.slice(1).filter(function(k){ return String(k).trim() !== ''; });
+    var startIdx = 0;
+    if(/^(#|no\.?|s\/?n|num?)$/i.test(String(keys[0]).trim())) startIdx = 1;
+    var agentKey = keys[startIdx];
+    var campaigns = keys.slice(startIdx+1).filter(function(k){ return String(k).trim() !== ''; });
+    var ncols = campaigns.length + 2; // Agent + campaigns + Total (all equal width)
+    var colgroup = '<colgroup><col style="width:44px">';
+    for(var _c=0; _c<ncols; _c++) colgroup += '<col>';
+    colgroup += '</colgroup>';
+    var minW = 44 + ncols*110;
 
     // Soft brand-tinted header colors (fallback = neutral)
     var COLHUE = {
@@ -6200,12 +6208,13 @@ async function renderCampaignTraining(){
       return {t:'sched', text:s};
     }
 
-    var thead = '<th style="position:sticky;left:0;background:#fff;text-align:left;padding:10px 12px;color:#555;font-weight:600;border-bottom:2px solid #eee;z-index:2">Agent</th>';
+    var thead = '<th style="text-align:center;padding:10px 4px;color:#999;font-weight:600;border-bottom:2px solid #eee">#</th>'
+      + '<th style="text-align:left;padding:10px 12px;color:#555;font-weight:600;border-bottom:2px solid #eee">Agent</th>';
     campaigns.forEach(function(c){
       var h = COLHUE[c.trim()] || {bg:'#F1EFE8', fg:'#5F5E5A'};
-      thead += '<th style="padding:10px 6px;background:'+h.bg+';color:'+h.fg+';font-weight:600;border-bottom:2px solid #eee">'+c.trim()+'</th>';
+      thead += '<th style="text-align:center;padding:10px 6px;background:'+h.bg+';color:'+h.fg+';font-weight:600;border-bottom:2px solid #eee">'+c.trim()+'</th>';
     });
-    thead += '<th style="padding:10px 8px;color:#777;font-weight:600;border-bottom:2px solid #eee">Total</th>';
+    thead += '<th style="text-align:center;padding:10px 8px;color:#777;font-weight:600;border-bottom:2px solid #eee">Total</th>';
 
     var body = '';
     var totals = campaigns.map(function(){ return 0; });
@@ -6230,20 +6239,23 @@ async function renderCampaignTraining(){
         }
       });
       body += '<tr style="background:'+bg+'">'
-        + '<td style="position:sticky;left:0;background:'+bg+';padding:6px 12px;border-bottom:1px solid #f4f4f4;white-space:nowrap"><span style="display:inline-flex;align-items:center;gap:8px"><span style="width:26px;height:26px;border-radius:50%;background:'+av+';color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">'+init+'</span>'+name+'</span></td>'
+        + '<td style="text-align:center;padding:6px 4px;border-bottom:1px solid #f4f4f4;color:#bbb;font-size:11px">'+(shown+1)+'</td>'
+        + '<td style="padding:6px 10px;border-bottom:1px solid #f4f4f4"><span style="display:inline-flex;align-items:center;gap:8px"><span style="width:24px;height:24px;flex:0 0 24px;border-radius:50%;background:'+av+';color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">'+init+'</span><span style="line-height:1.25">'+name+'</span></span></td>'
         + cells
         + '<td style="text-align:center;padding:6px 8px;border-bottom:1px solid #f4f4f4;font-weight:700;color:#888">'+done+'/'+campaigns.length+'</td>'
         + '</tr>';
       shown++;
     });
 
-    var foot = '<tr style="background:#FAF7F7"><td style="position:sticky;left:0;background:#FAF7F7;padding:9px 12px;font-weight:700;color:#a02030;border-top:2px solid #eee">Trained</td>';
+    var foot = '<tr style="background:#FAF7F7">'
+      + '<td style="border-top:2px solid #eee"></td>'
+      + '<td style="padding:9px 12px;font-weight:700;color:#a02030;border-top:2px solid #eee">Trained</td>';
     totals.forEach(function(t){ foot += '<td style="text-align:center;padding:9px 6px;font-weight:700;color:#a02030;border-top:2px solid #eee">'+t+'</td>'; });
     foot += '<td style="border-top:2px solid #eee"></td></tr>';
 
     el.innerHTML = ''
       + '<div style="background:#fff;border-radius:12px;padding:12px 16px;margin-bottom:12px;border-left:4px solid #A85060;box-shadow:0 1px 4px rgba(0,0,0,.05);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">'
-      +   '<div><div style="font-size:15px;font-weight:700;color:#3A352B">🎓 Campaign Training</div><div style="font-size:11px;color:#999">'+shown+' agents · live from Google Sheet</div></div>'
+      +   '<div><div style="font-size:15px;font-weight:700;color:#3A352B">Campaign Training</div><div style="font-size:11px;color:#999">'+shown+' agents · live from Google Sheet</div></div>'
       +   '<div style="display:flex;gap:10px;font-size:11px;color:#666">'
       +     '<span><span style="display:inline-block;width:14px;height:14px;border-radius:4px;background:#E8F0E6;border:1px solid #B7D0B2;vertical-align:-2px"></span> Trained</span>'
       +     '<span><span style="display:inline-block;width:14px;height:14px;border-radius:4px;background:#F5EDDD;border:1px solid #E0CDA0;vertical-align:-2px"></span> Scheduled</span>'
@@ -6251,7 +6263,7 @@ async function renderCampaignTraining(){
       +   '</div>'
       + '</div>'
       + '<div style="overflow-x:auto;background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.05);padding:4px">'
-      +   '<table style="border-collapse:separate;border-spacing:0;width:100%;font-size:12px;min-width:720px"><thead><tr>'+thead+'</tr></thead><tbody>'+body+foot+'</tbody></table>'
+      +   '<table style="table-layout:fixed;border-collapse:separate;border-spacing:0;width:100%;font-size:12px;min-width:'+minW+'px">'+colgroup+'<thead><tr>'+thead+'</tr></thead><tbody>'+body+foot+'</tbody></table>'
       + '</div>';
 
   }catch(e){
