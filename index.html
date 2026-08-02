@@ -2124,6 +2124,10 @@ const REF_SHEETS = {
     id: '1gKtlJ2VNz8ddL5yOuIgGCgAGGkqeizzZ_r9NZ1FNaj0',
     tabs: ['FAQ','Franchise Locations','Price List','NOS Complaint ']
   },
+  electromin: {
+    id: '1Rr37Ojft0hnRjjSv8KF6Dmt4ywA0P7ObApKTMOHgmOc',
+    tabs: ['Emails','EV Maintenance Branches','EV Charging Stations','PAC','FAQ','SMS']
+  },
   baicRecall: {
     id: '1FuHyS6n5BxKpSMy2jShFzd0gaq9s8pElFfnwjNfOGf0',
     tabs: ['D50-1137Units','BJ40-1778Units','BJ40-845Units','X7-2234Units']
@@ -2334,6 +2338,395 @@ async function vinSearch(brand, value){
     cnt.textContent = value ? `🔍 Found: ${matched.length} records` : '';
   }
 }
+
+
+// ==== Electromin Reference renderers =====================================
+const ELM_GREEN='#3A6048';
+const ELM_REGION_COLORS={
+  'CR North':'#1565c0','CR South':'#6a1b9a','Central':'#1565c0','Centeral':'#1565c0','Center':'#1565c0',
+  'WR North':'#e65100','WR South':'#c0272d','Western':'#c0272d','West':'#c0272d',
+  'Eastern':'#2e7d32','East':'#2e7d32','Northern':'#00838f','Southern':'#ad1457'
+};
+const ELM_REGION_ORDER=['CR North','CR South','Central','Centeral','Center','WR North','WR South','Western','West','Eastern','East','Northern','Southern'];
+const ELM_CITY_AR={'Jeddah':'جدة','Makkah':'مكة المكرمة','Mecca':'مكة المكرمة','Madinah':'المدينة المنورة','Medina':'المدينة المنورة','Madina':'المدينة المنورة','Riyadh':'الرياض','Ryiadh':'الرياض','Dammam':'الدمام','Khobar':'الخبر','Al Khobar':'الخبر','Jubail':'الجبيل','Al Jubail':'الجبيل','Hassa':'الأحساء','Al Hofuf':'الهفوف','Jizan':'جيزان','Jazan':'جازان','Hail':'حائل','Buraydah':'بريدة','Buraidah':'بريدة','Unayzah':'عنيزة','Unaizah':'عنيزة','Tabuk':'تبوك','Abha':'أبها','Taif':'الطائف','Yanbu':'ينبع','Najran':'نجران','Sharorah':'شرورة','Baha':'الباحة','Al Bahah':'الباحة','Baljurashi':'بلجرشي','Sakaka':'سكاكا','Arar':'عرعر','Turaif':'طريف','Duba':'ضباء','Khamis Mushait':'خميس مشيط','Kharj':'الخرج','Al-Kharj':'الخرج','Dwadmi':'الدوادمي','Al Duwadimi':'الدوادمي','Al Duwadimi ':'الدوادمي','Rabigh':'رابغ','Khulais':'خليص','Safwa':'صفوة','Al Jumum':'الجموم','Bani Tamim':'بني تميم','Al Quwaiiyah':'القويعية','Shaqra':'شقراء','Az Zulfi':'الزلفي','Al Mithnab':'المذنب','Ar Rass':'الرص','Al Bukayriyah':'البكيرية','Abu Arish':'أبو عريش','Sabya':'صبيا','Al Wajh':'الوجه','Al Qurayyat':'القريات','Al Henakiyah':'الحناكية','Khaybar':'خيبر','Hafar Al Batin':'حفر الباطن','Al Faihaa':'الفيحاء','Buqayq':'بقيق','Khafji':'الخفجي','Almajaridah':'المجاردة','Al Namas':'النماص','Sabt Al Alayah':'سبت العلاية','Al Ula':'العلا','Tanomah':'تنومة','Al Sharqiyyah':'الشرقية','Bisha':'بيشة'};
+function elmNum(n){var s=String(n==null?'':n).trim();if(!s||s==='-')return'';if(/[eE]\+/.test(s)){var p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;}
+function elmCity(c){c=String(c||'').trim();return ELM_CITY_AR[c]?ELM_CITY_AR[c]+' · '+c:c;}
+function elmClean(rows){return (rows||[]).map(function(r){return Array.isArray(r)?r.map(function(x){return String(x==null?'':x).trim();}):[];});}
+function elmSortRegs(keys){return keys.sort(function(a,b){var ia=ELM_REGION_ORDER.indexOf(a);var ib=ELM_REGION_ORDER.indexOf(b);return (ia<0?99:ia)-(ib<0?99:ib);});}
+function elmMapBtn(map,gps){
+  if(map&&map.indexOf('http')===0) return '<a href="'+map+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600;text-decoration:none">🗺️ Open Location</a>';
+  if(gps&&/\d/.test(gps)&&gps.indexOf('http')!==0) return '<a href="https://www.google.com/maps?q='+encodeURIComponent(gps)+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600;text-decoration:none">🗺️ Open Location</a>';
+  if(gps&&gps.indexOf('http')===0) return '<a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600;text-decoration:none">🗺️ Open Location</a>';
+  return '';
+}
+function elmBranchCard(b,col){
+  var mapBtn=elmMapBtn(b.map,b.gps);
+  return '<div style="background:#fff;border-radius:10px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+col+';direction:ltr">'
+    +'<div style="background:'+col+'18;border-bottom:2px solid '+col+'22;padding:10px 14px;text-align:center">'
+    +'<div style="font-size:13px;font-weight:700;color:'+col+'">'+b.name+'</div>'
+    +(b.city?'<div style="font-size:11px;color:#666;margin-top:4px">📌 '+elmCity(b.city)+'</div>':'')
+    +'</div>'
+    +'<div style="padding:10px 14px;text-align:center">'
+    +(b.manager?'<div style="font-size:12px;font-weight:600;color:#555;margin-bottom:3px">👤 '+b.manager+'</div>':'')
+    +(b.phone?'<div style="font-size:12px;color:#555;margin-bottom:3px">📞 '+b.phone+'</div>':'')
+    +(b.email?'<div style="font-size:11px;margin-bottom:3px"><a href="mailto:'+b.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+b.email+'</a></div>':'')
+    +(mapBtn?'<div style="margin-top:6px">'+mapBtn+'</div>':'')
+    +'</div></div>';
+}
+
+// EV Maintenance Branches (mode='branch') & PAC (mode='pac') — region-grouped cards
+function renderElectrominBranchTab(rows,mode){
+  rows=elmClean(rows);
+  if(!rows.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  var hIdx=-1;
+  for(var i=0;i<rows.length;i++){ if(rows[i].some(function(c){return /region/i.test(c);})){hIdx=i;break;} }
+  if(hIdx<0) hIdx=0;
+  var H=rows[hIdx].map(function(x){return x.toLowerCase();});
+  function fc(){var kws=Array.prototype.slice.call(arguments);for(var i=0;i<H.length;i++){for(var k=0;k<kws.length;k++){if(H[i].indexOf(kws[k])>-1)return i;}}return -1;}
+  var cReg=0;
+  var cCity=fc('city');    if(cCity<0)cCity=1;
+  var cBr=fc('branch','station name'); if(cBr<0)cBr=2;
+  var cMgr=fc('workshop manager','manager');
+  var cMob=fc('mobile','phone','number');
+  var cEmail=fc('email to','email address','email');
+  var cHours=fc('working','hours');
+  var cMap=fc('google map','map link','map');
+  var cGps=fc('gps');
+  var cCC=fc('email cc'); if(cCC<0)cCC=fc('cc');
+  if(cCC===cEmail) cCC=-1;
+  var regions={};
+  for(var r=hIdx+1;r<rows.length;r++){
+    var row=rows[r];
+    var joined=row.join(' ').toLowerCase();
+    if(joined.indexOf('regional manager')>-1 || joined.indexOf('rm email')>-1 || joined.indexOf('rm mobile')>-1) break;
+    var name=(cBr>-1?row[cBr]:'').replace(/\n/g,' ').trim();
+    if(!name) continue;
+    var reg=(row[cReg]||'').trim()||'Other';
+    (regions[reg]=regions[reg]||[]).push(row);
+  }
+  var regKeys=Object.keys(regions).sort(function(a,b){var ia=ELM_REGION_ORDER.indexOf(a);var ib=ELM_REGION_ORDER.indexOf(b);if(ia<0&&ib<0)return a.localeCompare(b);return (ia<0?99:ia)-(ib<0?99:ib);});
+  if(!regKeys.length) return '<div style="text-align:center;padding:24px;color:#aaa">No branches found</div>';
+  var out='';
+  regKeys.forEach(function(reg,ri){
+    var list=regions[reg];
+    var col=ELM_REGION_COLORS[reg]||ELM_GREEN;
+    var hoursDisp='';
+    if(cHours>-1){
+      var hc={}; list.forEach(function(x){var h=(x[cHours]||'').trim();if(h)hc[h]=(hc[h]||0)+1;});
+      var top=Object.keys(hc).sort(function(a,b){return hc[b]-hc[a];})[0]||'';
+      hoursDisp=top.split('\n').map(function(s){return s.trim();}).filter(Boolean).join(' · ');
+    }
+    var cards=list.map(function(x){
+      return elmBranchCard({
+        name:(x[cBr]||'').replace(/\n/g,' ').trim(),
+        city:cCity>-1?(x[cCity]||''):'',
+        manager:cMgr>-1?(x[cMgr]||''):'',
+        phone:cMob>-1?elmNum(x[cMob]):'',
+        email:cEmail>-1?(x[cEmail]||'').trim():'',
+        map:cMap>-1?(x[cMap]||'').trim():'',
+        gps:cGps>-1?(x[cGps]||'').trim():'',
+        cc:cCC>-1?(x[cCC]||'').trim():'',
+        hours:cHours>-1?(x[cHours]||'').trim():''
+      },col);
+    }).join('');
+    var regId='rgn_elm_'+mode+'_'+reg.replace(/\s/g,'')+'_'+ri;
+    out+='<div style="margin-bottom:14px">'
+      +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+col+'12;border-radius:8px;border-left:4px solid '+col+';cursor:pointer;user-select:none;margin-bottom:10px">'
+      +'<span style="font-size:13px;font-weight:700;color:'+col+';text-transform:uppercase;letter-spacing:.04em">'+reg+'</span>'
+      +'<span style="font-size:11px;color:#aaa">('+list.length+' '+(list.length===1?'branch':'branches')+')</span>'
+      +(hoursDisp?'<span style="font-size:11px;color:#888;margin-left:auto">🕐 '+hoursDisp+'</span>':'')
+      +'<span id="ico_'+regId+'" style="'+(hoursDisp?'margin-left:8px':'margin-left:auto')+';color:'+col+'">▼</span>'
+      +'</div>'
+      +'<div id="'+regId+'"><div class="ref-cards-grid">'+cards+'</div></div>'
+      +'</div>';
+  });
+  return '<div style="text-align:center">'+out+'</div>';
+}
+
+// EV Charging Stations — grouped by region
+const ELM_CITY_REGION={
+  'Jeddah':'West','Makkah':'West','Mecca':'West','Madinah':'West','Medina':'West','Madina':'West','Taif':'West','Yanbu':'West','Rabigh':'West','Khulais':'West','Al Jumum':'West','Al Ula':'West','Al Henakiyah':'West','Khaybar':'West','Abu Arish':'West','Jazan':'West','Jizan':'West','Sabya':'West','Al Wajh':'West','Duba':'West','Tabuk':'West','Sakaka':'West','Al Qurayyat':'West','Arar':'West','Turaif':'West','Najran':'West','Sharorah':'West','Abha':'West','Bisha':'West','Khamis Mushait':'West','Almajaridah':'West','Al Namas':'West','Sabt Al Alayah':'West','Tanomah':'West','Al Bahah':'West','Baljurashi':'West','Al Sharqiyyah':'East',
+  'Riyadh':'Central','Ryiadh':'Central','Al-Kharj':'Central','Kharj':'Central','Bani Tamim':'Central','Al Duwadimi':'Central','Dwadmi':'Central','Al Quwaiiyah':'Central','Shaqra':'Central','Az Zulfi':'Central','Buraydah':'Central','Buraidah':'Central','Unayzah':'Central','Unaizah':'Central','Ar Rass':'Central','Al Mithnab':'Central','Al Bukayriyah':'Central','Hail':'Central',
+  'Dammam':'East','Khobar':'East','Al Khobar':'East','Jubail':'East','Al Jubail':'East','Al Hofuf':'East','Hassa':'East','Safwa':'East','Buqayq':'East','Khafji':'East','Hafar Al Batin':'East','Al Faihaa':'East'
+};
+const ELM_STATION_REGION_COLORS={'West':'#c0272d','Central':'#1565c0','East':'#2e7d32','Other':'#546e7a'};
+const ELM_STATION_REGION_ORDER=['West','Central','East','Other'];
+function elmCityToRegion(city){city=String(city||'').trim();return ELM_CITY_REGION[city]||'Other';}
+function renderElectrominStationsTab(rows){
+  rows=elmClean(rows);
+  if(!rows.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  var hIdx=-1;
+  for(var i=0;i<rows.length;i++){ if(rows[i].some(function(c){return /station name/i.test(c);})){hIdx=i;break;} }
+  if(hIdx<0) hIdx=0;
+  var H=rows[hIdx].map(function(x){return x.toLowerCase();});
+  function fc(){var kws=Array.prototype.slice.call(arguments);for(var i=0;i<H.length;i++){for(var k=0;k<kws.length;k++){if(H[i].indexOf(kws[k])>-1)return i;}}return -1;}
+  var cId=fc('station id'); if(cId<0)cId=1;
+  var cCity=fc('city'); if(cCity<0)cCity=2;
+  var cName=fc('station name'); if(cName<0)cName=3;
+  var cType=fc('type');
+  var cSM=fc('sm name'); if(cSM<0)cSM=fc('sm ');
+  var cSMNo=fc('sm number'); if(cSMNo<0)cSMNo=fc('sm no');
+  var cAM=fc('area manger','area manager');
+  var cAMNo=-1;
+  if(cAM>-1){ for(var j=cAM+1;j<H.length;j++){ if(H[j].indexOf('number')>-1||H[j].indexOf('no')>-1){cAMNo=j;break;} } }
+  var regions={};
+  for(var r=hIdx+1;r<rows.length;r++){
+    var row=rows[r];
+    var nm=(cName>-1?row[cName]:'').trim();
+    if(!nm) continue;
+    var city=(cCity>-1?row[cCity]:'').trim();
+    var reg=elmCityToRegion(city);
+    (regions[reg]=regions[reg]||[]).push(row);
+  }
+  var regKeys=Object.keys(regions).sort(function(a,b){var ia=ELM_STATION_REGION_ORDER.indexOf(a);var ib=ELM_STATION_REGION_ORDER.indexOf(b);return (ia<0?99:ia)-(ib<0?99:ib);});
+  if(!regKeys.length) return '<div style="text-align:center;padding:24px;color:#aaa">No stations found</div>';
+  function stCard(row,col){
+    var nm=(cName>-1?row[cName]:'').trim();
+    var id=(cId>-1?row[cId]:'').trim();
+    var city=(cCity>-1?row[cCity]:'').trim();
+    var type=(cType>-1?row[cType]:'').trim();
+    var sm=(cSM>-1?row[cSM]:'').trim();
+    var smno=cSMNo>-1?elmNum(row[cSMNo]):'';
+    var am=(cAM>-1?row[cAM]:'').trim();
+    var amno=cAMNo>-1?elmNum(row[cAMNo]):'';
+    return '<div style="background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+col+';direction:ltr">'
+      +'<div style="background:'+col+'18;border-bottom:2px solid '+col+'22;padding:10px 14px;text-align:center">'
+      +'<div style="font-size:12.5px;font-weight:700;color:'+col+'">'+nm+'</div>'
+      +'<div style="font-size:10px;color:#888;margin-top:3px">'+(id?'🆔 E-'+id:'')+(type?' · '+type:'')+'</div>'
+      +(city?'<div style="font-size:11px;color:#666;margin-top:3px">📌 '+elmCity(city)+'</div>':'')
+      +'</div>'
+      +'<div style="padding:10px 14px;text-align:center">'
+      +(sm?'<div style="font-size:12px;font-weight:600;color:#555;margin-bottom:3px">👤 '+sm+'</div>':'')
+      +(smno?'<div style="font-size:12px;color:#555">📞 '+smno+'</div>':'')
+      +((am||amno)?'<div style="margin-top:8px;padding-top:8px;border-top:1px solid #f0f0f0;font-size:11px;color:#888">🗺️ '+am+(amno?' · '+amno:'')+'</div>':'')
+      +'</div></div>';
+  }
+  var out='';
+  regKeys.forEach(function(reg,ci){
+    var list=regions[reg];
+    var col=ELM_STATION_REGION_COLORS[reg]||'#546e7a';
+    var rid='streg_elm_'+reg.replace(/[^a-zA-Z0-9]/g,'')+'_'+ci;
+    out+='<div style="margin-bottom:12px">'
+      +'<div onclick="toggleRegion(\''+rid+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+col+'12;border-radius:8px;border-left:4px solid '+col+';cursor:pointer;user-select:none;margin-bottom:10px">'
+      +'<span style="font-size:13px;font-weight:700;color:'+col+';text-transform:uppercase;letter-spacing:.04em">'+reg+'</span>'
+      +'<span style="font-size:11px;color:#aaa">('+list.length+' '+(list.length===1?'station':'stations')+')</span>'
+      +'<span id="ico_'+rid+'" style="margin-left:auto;color:'+col+'">▼</span>'
+      +'</div>'
+      +'<div id="'+rid+'"><div class="ref-cards-grid">'+list.map(function(x){return stCard(x,col);}).join('')+'</div></div>'
+      +'</div>';
+  });
+  return '<div style="text-align:center">'+out+'</div>';
+}
+
+// Emails — Escalation matrix, grouped by category
+function renderElectrominEmailsTab(rows){
+  rows=elmClean(rows);
+  if(!rows.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  var hIdx=-1;
+  for(var i=0;i<rows.length;i++){ if(rows[i].some(function(c){return /request type/i.test(c);})){hIdx=i;break;} }
+  if(hIdx<0) hIdx=0;
+  var H=rows[hIdx].map(function(x){return x.toLowerCase();});
+  function fc(){var kws=Array.prototype.slice.call(arguments);for(var i=0;i<H.length;i++){for(var k=0;k<kws.length;k++){if(H[i].indexOf(kws[k])>-1)return i;}}return -1;}
+  var cCat=fc('category'); if(cCat<0)cCat=0;
+  var cReq=fc('request type','request'); if(cReq<0)cReq=1;
+  var cOwn=fc('responsible','owner'); if(cOwn<0)cOwn=2;
+  var cEsc=fc('escalation'); if(cEsc<0)cEsc=3;
+  var cCC=fc('cc'); if(cCC<0)cCC=4;
+  var groups={};
+  for(var r=hIdx+1;r<rows.length;r++){
+    var row=rows[r];
+    var req=(row[cReq]||'').trim();
+    if(!req) continue;
+    var cat=(row[cCat]||'').trim()||'Other';
+    (groups[cat]=groups[cat]||[]).push(row);
+  }
+  var order=['Inquiry','Complaints','Complaint'];
+  var keys=Object.keys(groups).sort(function(a,b){var ia=order.indexOf(a);var ib=order.indexOf(b);return (ia<0?99:ia)-(ib<0?99:ib);});
+  if(!keys.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  var out='';
+  keys.forEach(function(cat){
+    var isComp=/complaint/i.test(cat);
+    var col=isComp?'#c0272d':'#2e7d32';
+    var cards=groups[cat].map(function(row){
+      var req=(row[cReq]||'').trim();
+      var own=(row[cOwn]||'').trim();
+      var esc=(row[cEsc]||'').trim();
+      var cc=(row[cCC]||'').trim();
+      return '<div style="background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-left:4px solid '+col+';padding:12px 14px;text-align:left;direction:ltr">'
+        +'<div style="font-size:13px;font-weight:700;color:'+col+';margin-bottom:8px">'+req+'</div>'
+        +(own?'<div style="font-size:12px;color:#555;margin-bottom:4px">👤 <b style="color:#333">Owner:</b> '+own+'</div>':'')
+        +(esc?'<div style="font-size:12px;color:#555;margin-bottom:6px">⬆️ <b style="color:#333">Escalation:</b> '+esc+'</div>':'')
+        +(cc?'<div style="padding-top:6px;border-top:1px solid #f0f0f0"><div style="font-size:10px;color:#999;font-weight:700;margin-bottom:3px">CC</div>'+chipTo(cc,col)+'</div>':'')
+        +'</div>';
+    }).join('');
+    out+='<div style="margin-bottom:16px">'
+      +'<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+col+'12;border-radius:8px;border-left:4px solid '+col+';margin-bottom:10px">'
+      +'<span style="font-size:13px;font-weight:700;color:'+col+';text-transform:uppercase;letter-spacing:.04em">'+(isComp?'📮 '+cat:'📥 '+cat)+'</span>'
+      +'<span style="font-size:11px;color:#aaa">('+groups[cat].length+')</span>'
+      +'</div>'
+      +'<div class="ref-cards-grid">'+cards+'</div>'
+      +'</div>';
+  });
+  return '<div>'+out+'</div>';
+}
+
+// FAQ — bilingual accordion
+function renderElectrominFAQTab(rows){
+  rows=elmClean(rows);
+  if(!rows.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  var color=ELM_GREEN;
+  var items=[]; var cur=null; var section='';
+  function isHeaderRow(r){var j=r.join(' ').toLowerCase();return j.indexOf('interaction nature')>-1&&j.indexOf('response')>-1;}
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i];
+    var qEn=(r[0]||'').replace(/^\[merged\]\s*/i,'').trim();
+    var qAr=(r[8]||'').replace(/^\[merged\]\s*/i,'').trim();
+    var resEn=(r[3]||'').replace(/^\[merged\]\s*/i,'').trim();
+    var resAr=(r[5]||'').replace(/^\[merged\]\s*/i,'').trim();
+    var qrc=(r[1]||'').replace(/^\[merged\]\s*/i,'').trim();
+    var cat=(r[2]||'').replace(/^\[merged\]\s*/i,'').trim();
+    var joined=r.join('').trim();
+    if(!joined) continue;
+    if(isHeaderRow(r)) continue;
+    // section divider (e.g. "EV charger Sales")
+    var nonEmpty=r.filter(Boolean);
+    if(nonEmpty.length<=1 && (qEn||joined)){ section=qEn||joined; continue; }
+    if(qEn||qAr){
+      cur={qEn:qEn,qAr:qAr,qrc:qrc,cat:cat,section:section,ans:[]};
+      if(resEn||resAr) cur.ans.push({en:resEn,ar:resAr});
+      items.push(cur);
+    }else if(cur&&(resEn||resAr)){
+      cur.ans.push({en:resEn,ar:resAr});
+    }
+  }
+  if(!items.length) return '<div style="text-align:center;padding:24px;color:#aaa">No FAQs found</div>';
+  var out=''; var lastSection='__init__';
+  items.forEach(function(it,idx){
+    if(it.section!==lastSection && it.section){
+      out+='<div style="margin:14px 0 8px;font-size:13px;font-weight:700;color:'+color+';text-align:center;padding:8px;background:'+color+'12;border-radius:8px">'+it.section+'</div>';
+      lastSection=it.section;
+    }
+    var fid='faq_elm_'+idx;
+    var qLabel=it.qAr||it.qEn;
+    var qSub=(it.qAr&&it.qEn)?it.qEn:'';
+    var ansHTML=it.ans.map(function(a){
+      return '<div style="padding:8px 0;border-bottom:1px solid #f5f5f5">'
+        +(a.ar?'<div style="font-size:12.5px;color:#333;direction:rtl;text-align:right;line-height:1.9;margin-bottom:'+(a.en?'4px':'0')+'">'+a.ar+'</div>':'')
+        +(a.en?'<div style="font-size:12px;color:#777;line-height:1.7">'+a.en+'</div>':'')
+        +'</div>';
+    }).join('');
+    out+='<div style="margin-bottom:8px;background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden">'
+      +'<div onclick="toggleRegion(\''+fid+'\')" style="display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;user-select:none;border-left:4px solid '+color+'">'
+      +(it.qrc?'<span style="font-size:10px;font-weight:700;color:'+color+';background:'+color+'18;padding:2px 8px;border-radius:6px;flex-shrink:0">'+it.qrc+'</span>':'')
+      +'<span style="font-size:13px;font-weight:600;color:#333;flex:1;direction:'+((/[\u0600-\u06FF]/.test(qLabel))?'rtl;text-align:right':'ltr;text-align:left')+'">'+qLabel+'</span>'
+      +'<span id="ico_'+fid+'" style="color:'+color+';flex-shrink:0">▶</span>'
+      +'</div>'
+      +'<div id="'+fid+'" style="display:none;padding:4px 16px 12px">'
+      +(qSub?'<div style="font-size:11px;color:#aaa;margin-bottom:6px">'+qSub+'</div>':'')
+      +(it.cat?'<div style="margin-bottom:6px"><span style="font-size:10px;color:#9e7700;background:#FDF5E8;padding:2px 8px;border-radius:6px">'+it.cat+'</span></div>':'')
+      +ansHTML
+      +'</div>'
+      +'</div>';
+  });
+  return '<div>'+out+'</div>';
+}
+
+// SMS — templates (AR / EN) with single Copy button (matches other tabs)
+function renderElectrominSMSTab(rows){
+  rows=elmClean(rows);
+  if(!rows.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  var color=ELM_GREEN;
+  function mkBox(text,id,label){
+    if(!text) return '';
+    var safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    var isAR=/[\u0600-\u06FF]/.test(text.substring(0,20));
+    return '<div style="background:#fff;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
+      +'<span style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase">'+label+'</span>'
+      +'<button onclick="copySMS(\''+id+'\')" style="padding:3px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer">\ud83d\udccb Copy</button>'
+      +'</div>'
+      +'<div id="sms_'+id+'" style="font-size:11px;color:#444;line-height:1.7;white-space:pre-wrap;direction:'+(isAR?'rtl':'ltr')+';text-align:'+(isAR?'right':'left')+'">'+safe+'</div>'
+      +'</div>';
+  }
+  var cards=[];
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i];
+    var label=(r[0]||'').replace(/^\[merged\]\s*/i,'').trim();
+    var en=(r[1]||'').replace(/^\[merged\]\s*/i,'').trim();
+    var ar=(r[2]||'').replace(/^\[merged\]\s*/i,'').trim();
+    var lc=label.toLowerCase();
+    if(!label && !en && !ar) continue;
+    if(lc==='templates'||lc==='template') continue;
+    if((en.toLowerCase()==='english')||(ar.toLowerCase()==='arabic')) continue;
+    if(!en && !ar) continue;
+    cards.push('<div style="background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+color+'">'
+      +'<div style="background:'+color+'18;border-bottom:2px solid '+color+'22;padding:10px 14px;text-align:center">'
+      +'<span style="font-size:13px;font-weight:700;color:'+color+'">\ud83d\udce8 '+(label||'Template')+'</span>'
+      +'</div>'
+      +'<div style="padding:12px 14px">'
+      +mkBox(ar,'elmSms_ar_'+i,'AR')
+      +mkBox(en,'elmSms_en_'+i,'EN')
+      +'</div></div>');
+  }
+  if(!cards.length) return '<div style="text-align:center;padding:24px;color:#aaa">No templates found</div>';
+  return '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px">'+cards.join('')+'</div>';
+}
+
+// PAC (merged) — PAC tab workshops + Type=PAC rows from EV Charging Stations
+const ELM_CITY_PACREGION={
+  'Dammam':'Eastern','Khobar':'Eastern','Al Khobar':'Eastern','Jubail':'Eastern','Al Jubail':'Eastern','Al Hofuf':'Eastern','Hassa':'Eastern','Safwa':'Eastern','Buqayq':'Eastern','Khafji':'Eastern','Hafar Al Batin':'Eastern','Al Faihaa':'Eastern',
+  'Taif':'WR South','Mecca':'WR South','Makkah':'WR South','Al Bahah':'WR South','Baljurashi':'WR South','Abha':'WR South','Bisha':'WR South','Najran':'WR South','Sharorah':'WR South','Al Namas':'WR South','Almajaridah':'WR South',
+  'Jeddah':'WR North','Medina':'WR North','Madina':'WR North','Madinah':'WR North','Khamis Mushait':'WR North','Muhyail':'WR North','Yanbu':'WR North','Duba':'WR North','Jizan':'WR North','Jazan':'WR North','Rabigh':'WR North','Khulais':'WR North','Al Ula':'WR North','Al Wajh':'WR North','Tabuk':'WR North','Sabya':'WR North','Abu Arish':'WR North',
+  'Riyadh':'CR South','Ryiadh':'CR South','Dwadmi':'CR South','Al Duwadimi':'CR South','Kharj':'CR South','Al-Kharj':'CR South','Shaqra':'CR South','Az Zulfi':'CR South','Al Quwaiiyah':'CR South','Bani Tamim':'CR South',
+  'Buraidah':'CR North','Buraydah':'CR North','Unaizah':'CR North','Unayzah':'CR North','Ar Rass':'CR North','Al Mithnab':'CR North','Al Bukayriyah':'CR North','Sakaka':'CR North','Arar':'CR North','Turaif':'CR North','Al Qurayyat':'CR North','Hail':'CR North','Al Henakiyah':'CR North','Khaybar':'CR North'
+};
+function elmCityToPacRegion(c){c=String(c||'').trim();return ELM_CITY_PACREGION[c]||'Other';}
+function renderElectrominPACTab(pacRows, stationRows){
+  pacRows=elmClean(pacRows);
+  if(!pacRows.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  var ph=-1; for(var i=0;i<pacRows.length;i++){ if(pacRows[i].some(function(c){return /region/i.test(c);})){ph=i;break;} } if(ph<0)ph=0;
+  var existing={};
+  var combined=[pacRows[ph]];
+  for(var r=ph+1;r<pacRows.length;r++){
+    var joined=pacRows[r].join(' ').toLowerCase();
+    if(joined.indexOf('rm email')>-1||joined.indexOf('rm mobile')>-1||joined.indexOf('regional manager')>-1) break;
+    var b=(pacRows[r][2]||'').trim();
+    if(!b) continue;
+    var m=b.match(/(\d{2,4})/);
+    if(m) existing[m[1]]=1;
+    combined.push(pacRows[r]);
+  }
+  var st=elmClean(stationRows||[]);
+  if(st.length){
+    var sh=-1; for(var i=0;i<st.length;i++){ if(st[i].some(function(c){return /station name/i.test(c);})){sh=i;break;} } if(sh<0)sh=0;
+    var SH=st[sh].map(function(x){return x.toLowerCase();});
+    function sfc(){var kws=Array.prototype.slice.call(arguments);for(var i=0;i<SH.length;i++){for(var k=0;k<kws.length;k++){if(SH[i].indexOf(kws[k])>-1)return i;}}return -1;}
+    var sCity=sfc('city'); if(sCity<0)sCity=2;
+    var sName=sfc('station name'); if(sName<0)sName=3;
+    var sType=sfc('type');
+    var sSM=sfc('sm name'); if(sSM<0)sSM=6;
+    var sSMNo=sfc('sm number'); if(sSMNo<0)sSMNo=7;
+    var sCode=sName+1;
+    for(var r=sh+1;r<st.length;r++){
+      var row=st[r];
+      var type=(sType>-1?(row[sType]||''):'').trim().toUpperCase();
+      if(type!=='PAC') continue;
+      var code=(row[sCode]||'').trim();
+      var m=code.match(/(\d{2,4})/);
+      if(m && existing[m[1]]) continue;
+      if(m) existing[m[1]]=1;
+      var city=(sCity>-1?(row[sCity]||''):'').trim();
+      var name=(sName>-1?(row[sName]||''):'').replace(/^Electromin[-\s]*/i,'').replace(/^Elecromin[-\s]*/i,'').trim();
+      var mgr=(sSM>-1?(row[sSM]||''):'').replace(/\(.*?\)/g,'').replace(/[\u0600-\u06FF]/g,'').replace(/\s{2,}/g,' ').trim();
+      var mob=elmNum(sSMNo>-1?row[sSMNo]:'');
+      var reg=elmCityToPacRegion(city);
+      combined.push([reg, city, (code?code+' - ':'')+name, mgr, mob, '', '', '', '', '']);
+    }
+  }
+  return renderElectrominBranchTab(combined,'pac');
+}
+
+// ==== end Electromin renderers ==========================================
 
 
 // Branch tab — Nissan/Stellantis
@@ -4770,6 +5163,7 @@ function showRefBrandPage(brand){
     petromin:  {label:'Petromin',  icon:'<svg viewBox="0 0 36 36" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="14" width="20" height="16" rx="3" fill="#c0272d"/><rect x="8" y="10" width="12" height="6" rx="2" fill="#1a1a2e"/><rect x="24" y="16" width="8" height="4" rx="2" fill="#1a1a2e"/><rect x="13" y="6" width="4" height="6" rx="1" fill="#c0272d"/><circle cx="10" cy="20" r="2" fill="#fff" opacity=".4"/></svg>',color:'#DAA520'},
     foton:     {label:'Foton',     icon:'🚛',color:'#546e7a'},
     nos:       {label:'National Oil', icon:'🟢',color:'#2e7d32'},
+    electromin:{label:'Electromin', icon:'⚡',color:'#3A6048'},
   };
   const meta=META[brand];
   const tabs=REF_SHEETS[brand].tabs;
@@ -4806,7 +5200,7 @@ function showRefBrandPage(brand){
     +'<div id="petrominWarrantyDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px"></div>'
     +'<div class="ref-sub-tabs" id="refSubTabs_'+brand+'" style="justify-content:center">'
     +tabs.map((t,i)=>{
-      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📅 Appointment SMS','SMS & Location':'📅 Appointment & Location SMS','BAIC Location':'📅 Appointment & Location SMS','Showrooms':'Showroom','PMS':'PMS - Spare Parts','Location SMS':'SMS Location'};
+      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📅 Appointment SMS','SMS & Location':'📅 Appointment & Location SMS','BAIC Location':'📅 Appointment & Location SMS','Showrooms':'Showroom','PMS':'PMS - Spare Parts','Location SMS':'SMS Location','Emails':'📧 Emails','EV Maintenance Branches':'🔧 Maintenance Branches','EV Charging Stations':'⚡ Charging Stations','FAQ':'❓ FAQ','SMS':'📨 SMS'};
       const BRAND_TAB_LABELS={baic:{'Service':'Service & Spare Parts'}};
       const label=(BRAND_TAB_LABELS[brand]&&BRAND_TAB_LABELS[brand][t])||TAB_LABELS[t]||t;
       return '<button class="ref-sub-tab'+(i===0?' active':'')+'" '
@@ -4821,7 +5215,7 @@ function showRefBrandPage(brand){
 
 function switchRefTab(brand,idx,btn){
   REF_ACTIVE_TABS[brand]=idx;
-  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#f9a825',baicRecall:'#6A5818',petromin:'#DAA520',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
+  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#f9a825',baicRecall:'#6A5818',petromin:'#DAA520',foton:'#546e7a',nos:'#2e7d32',electromin:'#3A6048'}[brand]||'#c0272d';
   const container=btn?btn.parentElement:document.querySelector('#refSubTabs_'+brand);
   if(container){
     container.querySelectorAll('.ref-sub-tab').forEach((t,i)=>{
@@ -5258,6 +5652,24 @@ async function renderRefBrand(brand,tabIdx){
       else if(t==='Franchise Locations') container.innerHTML=renderNosFranchiseTab(arr);
       else if(t==='Price List') container.innerHTML=renderNosPriceTab(arr);
       else if(t==='NOS Complaint') container.innerHTML=renderNosComplaintTab(arr);
+      else container.innerHTML='<div style="text-align:center;padding:24px;color:#aaa">No renderer for '+t+'</div>';
+    }catch(e){
+      container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
+    }
+    return;
+  }
+  if(brand==='electromin'){
+    container.innerHTML='<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading '+sheetName+'...</div>';
+    try{
+      const t=sheetName.trim();
+      const arr=await fetchCSVRaw(cfg.id, sheetName);
+      if(container.dataset.reqId!==__reqId) return;
+      if(t==='Emails') container.innerHTML=renderElectrominEmailsTab(arr);
+      else if(t==='EV Maintenance Branches') container.innerHTML=renderElectrominBranchTab(arr,'branch');
+      else if(t==='EV Charging Stations') container.innerHTML=renderElectrominStationsTab(arr);
+      else if(t==='PAC'){ var __st=await fetchCSVRaw(cfg.id,'EV Charging Stations'); container.innerHTML=renderElectrominPACTab(arr,__st); }
+      else if(t==='FAQ') container.innerHTML=renderElectrominFAQTab(arr);
+      else if(t==='SMS') container.innerHTML=renderElectrominSMSTab(arr);
       else container.innerHTML='<div style="text-align:center;padding:24px;color:#aaa">No renderer for '+t+'</div>';
     }catch(e){
       container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
