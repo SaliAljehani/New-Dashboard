@@ -638,7 +638,7 @@ const TEAM_LOGOS={
   'BAIC':'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gAQTGF2YzU4LjkxLjEwMAD/2wBDAA4KCw0LCQ4NDA0QDw4RFiQXFhQUFiwgIRokNC43NjMuMjI6QVNGOj1OPjIySGJJTlZYXV5dOEVmbWVabFNbXVn/2wBDAQ8QEBYTFioXFypZOzI7WVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVn/wAARCABQAI4DASIAAhEBAxEB/8QAGwABAAMAAwEAAAAAAAAAAAAAAAQFBgECAwf/xAAyEAABBAADBAgGAgMAAAAAAAAAAQIDBAUREgYhMVQTFBUWIlGR0UFhcZOhsSPwUoKU/8QAGgEBAAMBAQEAAAAAAAAAAAAAAAECBAMFBv/EACQRAQACAQMDBAMAAAAAAAAAAAABAgMEERJBUaETFSGRFDFx/9oADAMBAAIRAxEAPwD6SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8JbdaF+iWxDG7jk56Ip07Rpc5X+633C3C09EoEXtGlzlf7rfcdo0ucr/db7g4W7JQIvaNLnK/3W+47Rpc5X+633Bwt2LmIVKCMW3YZDrz06l45EXvFhHPw+pn9prS2r7GwwyzxRs3PjiV7VVd65Km7yKbTJyVn/mX3KzL0cWipakWtM7ty3aDCnORrb0Kqq5IiLxLQwWB1nT4tXa+rMxrXa1V8GlN2/ib0mGbU4qYrRWoACWUAAAAADg5IWL2upYVasZ5LHGqt+vBPzkE1rNpiI6vme0FrruOW5UXNuvS36JuT9EizsziNaCSVzYXdE1HPYyRFc1PPIgYWkTsTrdZkRkKSIr3O4ZJvU0s20UNjGZIY2QQ1ppWtlsqqqr2N/Wafs5vp8lsmPjTFHxEKifZy5Wc1s0tRj3KiaFmRF3/ACO79lr7JYoldWWSVfC1JUzXcq5/TcT9orVXEL0OVqk+F8yZuZGqPazh4nfFPkSO16Xea5f6ePo69fRXT/NcuCfknaHH18/GJ67T0+lHPs5iEL4Gtjjm6dysYsT0cmacUXy4L6HW9gF2lB0zuhljR/RuWJ6O0u8lNLDjlCPEaWieKKotd3gY3dDKuSqq/wB8zyw7q0deHC607b08k62ZnRp4cm70TNfiqo38idkfk5o+bR4/v1s0OFz1qtFlRqqnVYsnrlu3cfye7MTrvaxU1+N2lPD8f6pXsoTpJGisdoWLVJ81zVcvXI82VLTWx/wvzZG5f9lMfrZe3h5c48dpmd1s3Ea7q6zNVytRyNyy35qSylbhskdqujWr0Ko10nkjkLs04bXtvzhnyVrG3GQAHZyAAAAAAqtocOnxXDuq15GR6norlfnvRPhu+eRagL0vNLRaP3DA9xbnN1/Rw7i3ebr+jjfAjjDZ7lqO/hge4t3m6/o4dxbvN1/RxvgOMHuWo7+GB7i3ebr+ji52a2bkwe1NPPLHI5zNDdCLu35rx+iGlA2hTJrs2Ss0tPxIcHIJYwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH//2Q=='
 };
 
-const SHEET_GIDS={'Agent':1123791969,'Agent Performance':810269545,'Attendance Data':1979596727,'Data Call':95246895,'Call Data':95246895,'Call Data ':95246895,'Reference':910779499,'Weekly Calls & Break':1429234410,'Daily Off Schedule':1979894769,'Daily Off Schedule & Weekly Cal':1979894769,'Announcement Board':536403637,'Escalation':1827857824,'Escalation ':1827857824,'Employee of the MONTH':1892899267,'Subject':124854438,'Emails ':124854438,'Emails':124854438,'Contact Number ':124854438,'Contact Number':124854438,'Vacation Schedule 2026':644438759,'Daily Off Schedule & Weekly Calls & Breakk':920710775};
+const SHEET_GIDS={'Agent':1123791969,'Agent Performance':810269545,'Attendance Data':1979596727,'Data Call':95246895,'Call Data':95246895,'Call Data ':95246895,'Reference':910779499,'Weekly Calls & Break':1429234410,'Daily Off Schedule':1979894769,'Daily Off Schedule & Weekly Cal':1979894769,'Announcement Board':536403637,'Escalation':1827857824,'Escalation ':1827857824,'Employee of the MONTH':1892899267,'Subject':124854438,'Emails ':124854438,'Emails':124854438,'Contact Number ':124854438,'Contact Number':124854438,'Vacation Schedule 2026':644438759,'Daily Off Schedule & Weekly Calls & Breakk':920710775,'Campaign Training':700588037};
 // ---------------------------------------------------------------------------
 // Sheet loading
 //
@@ -5768,10 +5768,10 @@ function renderRoster(){
 
   el.innerHTML = '<div style="padding:4px">'
     +'<div style="text-align:center;margin-bottom:16px">'
-    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:rgba(192,39,45,.05);color:#a02030;border:1.5px solid rgba(192,39,45,.12);margin:4px">📋 Attendance</button>'    +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">📅 Daily Off + Weekly Calls & Break</button>'    +'<button onclick="switchScheduleTab(&apos;vacation2026&apos;)" id="stab_vacation2026" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">🌴 Vacation 2026</button>'
+    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:rgba(192,39,45,.05);color:#a02030;border:1.5px solid rgba(192,39,45,.12);margin:4px">📋 Attendance</button>'    +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">📅 Daily Off + Weekly Calls & Break</button>'    +'<button onclick="switchScheduleTab(&apos;vacation2026&apos;)" id="stab_vacation2026" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">🌴 Vacation 2026</button>'    +'<button onclick="switchScheduleTab(&apos;campaigntraining&apos;)" id="stab_campaigntraining" style="padding:8px 20px;border-radius:20px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:#fff;color:#555;margin:4px">🎓 Campaign Training</button>'
     +'</div>'
     
-    +'<div id="schedule_dailyoff" style="display:none"></div>'    +'<div id="schedule_vacation2026" style="display:none"></div>'    +'<div id="schedule_attendance" style="display:block">'
+    +'<div id="schedule_dailyoff" style="display:none"></div>'    +'<div id="schedule_vacation2026" style="display:none"></div>'    +'<div id="schedule_campaigntraining" style="display:none"></div>'    +'<div id="schedule_attendance" style="display:block">'
     +'<div style="background:#fff;border-radius:10px;padding:10px 16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-left:4px solid #A85060">'
     +'<div style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">'
     +'<label style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">📅 Date:</label>'
@@ -6162,10 +6162,109 @@ function filterNewWeek(idx){
   });
 }
 
+async function renderCampaignTraining(){
+  var el = document.getElementById('schedule_campaigntraining');
+  if(!el) return;
+  el.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa">⏳ Loading...</div>';
+
+  try{
+    // No module-level cache on purpose: loadSheet has its own 30s cache and is
+    // cleared by the refresh button, so daily edits show up on refresh.
+    var rows = await loadSheet('Campaign Training');
+    if(!rows || !rows.length){
+      el.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa">No campaign training data</div>';
+      return;
+    }
+
+    // First column = agent name, remaining columns = campaigns
+    var keys = Object.keys(rows[0]).filter(function(k){ return k && !/^__col/.test(k); });
+    var agentKey = keys[0];
+    var campaigns = keys.slice(1).filter(function(k){ return String(k).trim() !== ''; });
+
+    // Soft brand-tinted header colors (fallback = neutral)
+    var COLHUE = {
+      'Nissan':      {bg:'#F6E7E8', fg:'#8A3A3E'},
+      'Stellantis':  {bg:'#E6ECF5', fg:'#3A5A8A'},
+      'Petromin':    {bg:'#F3E9E9', fg:'#A85060'},
+      'NOS':         {bg:'#E7F0EA', fg:'#4A7A5A'},
+      'Foton':       {bg:'#E9EEF5', fg:'#4A6088'},
+      'Electromin':  {bg:'#E6F1EF', fg:'#3A7A6E'}
+    };
+    var AVC = ['#C99','#9AB','#B9A','#9BA','#AAB','#BAA','#9C9','#CB9','#B9B','#9BC','#CA9','#ABB','#BCA','#A9C','#C9B','#9CB','#BB9','#ACB','#C9A','#9AC'];
+
+    function classify(v){
+      var s = String(v===undefined||v===null?'':v).trim();
+      var low = s.toLowerCase();
+      if(v===true || low==='true' || low==='yes' || s==='✓' || s==='✔' || s==='1') return {t:'done'};
+      if(s==='' || low==='false' || low==='no' || s==='0') return {t:'no'};
+      return {t:'sched', text:s};
+    }
+
+    var thead = '<th style="position:sticky;left:0;background:#fff;text-align:left;padding:10px 12px;color:#555;font-weight:600;border-bottom:2px solid #eee;z-index:2">Agent</th>';
+    campaigns.forEach(function(c){
+      var h = COLHUE[c.trim()] || {bg:'#F1EFE8', fg:'#5F5E5A'};
+      thead += '<th style="padding:10px 6px;background:'+h.bg+';color:'+h.fg+';font-weight:600;border-bottom:2px solid #eee">'+c.trim()+'</th>';
+    });
+    thead += '<th style="padding:10px 8px;color:#777;font-weight:600;border-bottom:2px solid #eee">Total</th>';
+
+    var body = '';
+    var totals = campaigns.map(function(){ return 0; });
+    var shown = 0;
+    rows.forEach(function(r){
+      var name = String(r[agentKey]||'').trim();
+      if(!name) return;
+      var init = name.split(/\s+/).map(function(w){return w[0]||'';}).slice(0,2).join('').toUpperCase();
+      var av = AVC[shown % AVC.length];
+      var bg = (shown % 2) ? '#FBFAFA' : '#fff';
+      var done = 0;
+      var cells = '';
+      campaigns.forEach(function(c,ci){
+        var info = classify(r[c]);
+        if(info.t==='done'){
+          done++; totals[ci]++;
+          cells += '<td style="text-align:center;padding:7px 6px;border-bottom:1px solid #f4f4f4"><span style="display:inline-block;width:22px;height:22px;line-height:22px;border-radius:6px;background:#E8F0E6;color:#4A6B4E;border:1px solid #C5DBC0;font-weight:700">✓</span></td>';
+        } else if(info.t==='sched'){
+          cells += '<td style="text-align:center;padding:7px 4px;border-bottom:1px solid #f4f4f4"><span style="display:inline-block;padding:3px 8px;border-radius:8px;background:#F5EDDD;color:#8A7038;border:1px solid #E0CDA0;font-size:10px;font-weight:600;white-space:nowrap">🗓 '+info.text+'</span></td>';
+        } else {
+          cells += '<td style="text-align:center;padding:7px 6px;border-bottom:1px solid #f4f4f4"><span style="color:#ddd">–</span></td>';
+        }
+      });
+      body += '<tr style="background:'+bg+'">'
+        + '<td style="position:sticky;left:0;background:'+bg+';padding:6px 12px;border-bottom:1px solid #f4f4f4;white-space:nowrap"><span style="display:inline-flex;align-items:center;gap:8px"><span style="width:26px;height:26px;border-radius:50%;background:'+av+';color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">'+init+'</span>'+name+'</span></td>'
+        + cells
+        + '<td style="text-align:center;padding:6px 8px;border-bottom:1px solid #f4f4f4;font-weight:700;color:#888">'+done+'/'+campaigns.length+'</td>'
+        + '</tr>';
+      shown++;
+    });
+
+    var foot = '<tr style="background:#FAF7F7"><td style="position:sticky;left:0;background:#FAF7F7;padding:9px 12px;font-weight:700;color:#a02030;border-top:2px solid #eee">Trained</td>';
+    totals.forEach(function(t){ foot += '<td style="text-align:center;padding:9px 6px;font-weight:700;color:#a02030;border-top:2px solid #eee">'+t+'</td>'; });
+    foot += '<td style="border-top:2px solid #eee"></td></tr>';
+
+    el.innerHTML = ''
+      + '<div style="background:#fff;border-radius:12px;padding:12px 16px;margin-bottom:12px;border-left:4px solid #A85060;box-shadow:0 1px 4px rgba(0,0,0,.05);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">'
+      +   '<div><div style="font-size:15px;font-weight:700;color:#3A352B">🎓 Campaign Training</div><div style="font-size:11px;color:#999">'+shown+' agents · live from Google Sheet</div></div>'
+      +   '<div style="display:flex;gap:10px;font-size:11px;color:#666">'
+      +     '<span><span style="display:inline-block;width:14px;height:14px;border-radius:4px;background:#E8F0E6;border:1px solid #B7D0B2;vertical-align:-2px"></span> Trained</span>'
+      +     '<span><span style="display:inline-block;width:14px;height:14px;border-radius:4px;background:#F5EDDD;border:1px solid #E0CDA0;vertical-align:-2px"></span> Scheduled</span>'
+      +     '<span><span style="display:inline-block;width:14px;height:14px;border-radius:4px;background:#F7F7F7;border:1px solid #eee;vertical-align:-2px"></span> Not yet</span>'
+      +   '</div>'
+      + '</div>'
+      + '<div style="overflow-x:auto;background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.05);padding:4px">'
+      +   '<table style="border-collapse:separate;border-spacing:0;width:100%;font-size:12px;min-width:720px"><thead><tr>'+thead+'</tr></thead><tbody>'+body+foot+'</tbody></table>'
+      + '</div>';
+
+  }catch(e){
+    console.warn('Campaign Training load failed:', e);
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:#aaa">⚠️ Could not load — تأكدي من اتصال الشيت</div>';
+  }
+}
+
 function switchScheduleTab(tab){
   if(tab==='dailyoff') renderDailyOff();
   if(tab==='vacation2026') renderVacation2026();
-  var tabIds=['attendance','dailyoff','vacation2026'];
+  if(tab==='campaigntraining') renderCampaignTraining();
+  var tabIds=['attendance','dailyoff','vacation2026','campaigntraining'];
   tabIds.forEach(function(t){
     var el=document.getElementById('schedule_'+t);
     if(el) el.style.display=t===tab?'block':'none';
