@@ -7555,7 +7555,7 @@ async function renderDailyOff(){
   try{
     if(!DAILY_OFF_CACHE){
       try{
-        var raw2d = await fetchCSVRawByGid(SHEET_ID, '920710775');
+        var raw2d = await fetchCSVExportByGid(SHEET_ID, '920710775');
         if(!raw2d||raw2d.length<2) throw new Error('empty');
         DAILY_OFF_CACHE = raw2d.map(function(row){return row.map(function(c){return String(c||'').trim();});});
       }catch(e){
