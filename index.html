@@ -443,6 +443,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <button class="pnav" onclick="showPage(5,this)">📅 Team Schedules</button>
     <button class="pnav" onclick="showPage(8,this)">🏆 Employee of the Month</button>
     <button class="pnav" onclick="showPage(4,this)">📁 Daily Reference</button>
+    <button class="pnav" onclick="showPage(11,this)">📋 Case Handling</button>
   </div>
 
   <!-- PAGE 1 -->
@@ -562,6 +563,9 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 
 <div id="page10" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
   <div id="recallContent"><div style="text-align:center;padding:40px;color:#aaa">Loading...</div></div>
+</div>
+<div id="page11" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
+  <div id="caseHandlingContent"><div style="text-align:center;padding:40px;color:#aaa">Loading...</div></div>
 </div>
 </div>
 <footer style="border-top:2px solid #c0272d;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px 18px">
@@ -1762,6 +1766,134 @@ function showPage(n,btn){CP=n;
   if(n===10) renderRecallPage();
   if(n===7)renderEscalations();
   if(n===8)renderEOM();
+  var _p11=document.getElementById('page11'); if(_p11) _p11.style.display=n===11?'block':'none';
+  if(n===11) renderCaseHandling();
+}
+
+/* ===== CASE HANDLING — reads the "Case Handling" tab dynamically ===== */
+async function renderCaseHandling(){
+  var host=document.getElementById('caseHandlingContent');
+  if(!host) return;
+  if(!host.dataset.loaded){ host.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">Loading...</div>'; }
+  var esc=function(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+  try{
+    var rows=await fetchSheet(SHEET_ID,'Case Handling');
+    // Collect every cell in column A, splitting multi-line cells into lines.
+    var raw=[];
+    if(rows&&rows.length){
+      if(Array.isArray(rows[0])){
+        rows.forEach(function(r){ raw.push(String(r[0]==null?'':r[0])); });
+      }else{
+        var k=Object.keys(rows[0])[0]||''; raw.push(String(k));
+        rows.forEach(function(r){ var v=Object.values(r)[0]; raw.push(String(v==null?'':v)); });
+      }
+    }
+    var lines=[];
+    raw.forEach(function(cell){ cell.split(/\r?\n/).forEach(function(x){ var t=x.trim(); if(t) lines.push(t); }); });
+    if(!lines.length){ host.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">لا يوجد محتوى في تبويب Case Handling</div>'; return; }
+
+    var isNum=function(s){return /^\s*[\d\u0660-\u0669]+\s*[.\u060C\-]/.test(s);};
+    var isItem=function(s){return /^\s*[-\u2013\u2014\u2022]/.test(s);};
+    var strip=function(s){return s.replace(/^\s*[-\u2013\u2014\u2022]\s*/,'').replace(/\s*:\s*$/,'').trim();};
+    var stripNum=function(s){return s.replace(/^\s*[\d\u0660-\u0669]+\s*[.\u060C\-]\s*/,'').replace(/\s*:\s*$/,'').trim();};
+
+    var title=lines[0], goalLabel='', goal='', i=1;
+    for(; i<lines.length; i++){
+      if(isNum(lines[i]) || (/نتائج/.test(lines[i]) && !isItem(lines[i]))) break;
+      if(!goalLabel && /^الهدف/.test(lines[i])) goalLabel=lines[i];
+      else goal += (goal?' ':'')+strip(lines[i]);
+    }
+
+    var colors=['#7fbf9a','#8ab0d6','#e0b878','#b3a0d1','#7fc0bd'];
+    var bgOf={'#7fbf9a':'#eef6f1','#8ab0d6':'#eef3f9','#e0b878':'#faf4e9','#b3a0d1':'#f4f0f9','#7fc0bd':'#eef6f5'};
+    var tOf={'#7fbf9a':'#5a7d68','#8ab0d6':'#5a7089','#e0b878':'#8a6f45','#b3a0d1':'#6d5f85','#7fc0bd':'#4f7d7a'};
+    var slaFor=function(t){
+      if(/request/i.test(t)) return 'الرد خلال 48 ساعة';
+      if(/complaint/i.test(t)) return 'الرد خلال 48 ساعة';
+      if(/escalation/i.test(t)) return 'إلزامي';
+      if(/سريع|المكالمات/.test(t)) return 'فوري';
+      if(/تعامل|الموظفة/.test(t)) return 'دائماً';
+      return '';
+    };
+
+    var secs=[], results=null, cur=null, block=null;
+    for(; i<lines.length; i++){
+      var ln=lines[i];
+      if(!results && !isItem(ln) && /نتائج/.test(ln)){ results={title:strip(ln),items:[]}; cur=null; block=null; continue; }
+      if(results){ results.items.push(strip(ln)); continue; }
+      if(isNum(ln)){
+        var num=(ln.match(/[\d\u0660-\u0669]+/)||['0'])[0];
+        var ttl=stripNum(ln);
+        cur={num:num,title:ttl,color:colors[(parseInt(num,10)-1)%5]||'#7fc0bd',sla:slaFor(ttl),blocks:[]};
+        block={sub:'',items:[],notes:[]}; cur.blocks.push(block); secs.push(cur); continue;
+      }
+      if(!cur) continue;
+      if(isItem(ln)){
+        var txt=strip(ln);
+        if(/القاعدة|48\s*ساعة|^الـ?\s*48/.test(txt)) block.notes.push(txt); else block.items.push(txt);
+      } else { block={sub:strip(ln),items:[],notes:[]}; cur.blocks.push(block); }
+    }
+
+    var style='<style>'
+      +'#caseHandlingContent .ch-wrap{max-width:680px;margin:0 auto;direction:rtl;line-height:1.75}'
+      +'#caseHandlingContent h1{text-align:center;font-size:21px;margin:0 0 4px;color:#3a3f4a}'
+      +'#caseHandlingContent .ch-lbl{text-align:center;font-size:14px;font-weight:700;color:#3a3f4a;margin-bottom:6px}'
+      +'#caseHandlingContent .ch-goal{text-align:center;font-size:12.5px;color:#7a8090;max-width:600px;margin:0 auto 20px}'
+      +'#caseHandlingContent .ch-start{text-align:center;background:#5a6070;color:#fff;padding:12px;border-radius:12px;font-size:15px;font-weight:600}'
+      +'#caseHandlingContent .ch-arrow{text-align:center;color:#c4c9d2;font-size:17px;margin:5px 0}'
+      +'#caseHandlingContent .ch-step{background:#fff;border:1px solid #eef0f4;border-radius:12px;padding:14px 16px;box-shadow:0 1px 6px rgba(60,70,90,.05)}'
+      +'#caseHandlingContent .ch-sh{display:flex;align-items:center;gap:10px;margin-bottom:9px}'
+      +'#caseHandlingContent .ch-num{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700;color:#fff;flex-shrink:0}'
+      +'#caseHandlingContent .ch-tt{font-size:15px;font-weight:700;flex:1;color:#3a3f4a}'
+      +'#caseHandlingContent .ch-sla{font-size:11px;padding:2px 9px;border-radius:20px;white-space:nowrap}'
+      +'#caseHandlingContent .ch-ul{list-style:none;margin:0;padding:0}'
+      +'#caseHandlingContent .ch-ul li{position:relative;padding:4px 17px 4px 0;font-size:13.5px}'
+      +'#caseHandlingContent .ch-dot{position:absolute;right:3px;top:12px;width:6px;height:6px;border-radius:50%}'
+      +'#caseHandlingContent .ch-note{margin-top:9px;font-size:12.5px;padding:8px 11px;border-radius:8px}'
+      +'#caseHandlingContent .ch-sub{margin-top:12px;padding-top:10px;border-top:1px dashed #edeff3}'
+      +'#caseHandlingContent .ch-subt{font-size:13.5px;font-weight:600;margin-bottom:2px}'
+      +'#caseHandlingContent .ch-res{margin-top:16px;background:#fff;border:1px solid #eef0f4;border-radius:12px;padding:16px 18px}'
+      +'#caseHandlingContent .ch-res h3{text-align:center;font-size:14px;margin:0 0 8px;color:#3a3f4a}'
+      +'#caseHandlingContent .ch-res ul{list-style:none;margin:0;padding:0}'
+      +'#caseHandlingContent .ch-res li{position:relative;padding:4px 18px 4px 0;font-size:13.5px;color:#5a6070}'
+      +'#caseHandlingContent .ch-res li:before{content:"\\2713";position:absolute;right:0;top:4px;color:#7fbf9a;font-weight:700;font-size:12px}'
+      +'</style>';
+
+    var html=style+'<div class="ch-wrap">';
+    html+='<h1>'+esc(title)+'</h1>';
+    if(goalLabel) html+='<div class="ch-lbl">'+esc(goalLabel)+'</div>';
+    if(goal) html+='<div class="ch-goal">'+esc(goal)+'</div>';
+    html+='<div class="ch-start">مكالمة واردة</div><div class="ch-arrow">\u25BC</div>';
+
+    secs.forEach(function(s){
+      var c=s.color, bg=bgOf[c]||'#f3f6f6', t=tOf[c]||'#4f7d7a';
+      html+='<div class="ch-step" style="border-right:4px solid '+c+'">';
+      html+='<div class="ch-sh"><span class="ch-num" style="background:'+c+'">'+esc(s.num)+'</span><span class="ch-tt">'+esc(s.title)+'</span>'+(s.sla?'<span class="ch-sla" style="background:'+bg+';color:'+t+'">'+esc(s.sla)+'</span>':'')+'</div>';
+      s.blocks.forEach(function(b){
+        var wrapSub=b.sub && s.blocks.length>1;
+        if(wrapSub) html+='<div class="ch-sub"><div class="ch-subt" style="color:'+t+'">'+esc(b.sub)+'</div>';
+        if(b.items.length){
+          html+='<ul class="ch-ul">';
+          b.items.forEach(function(it){ html+='<li style="color:'+t+'"><span class="ch-dot" style="background:'+c+'"></span>'+esc(it)+'</li>'; });
+          html+='</ul>';
+        }
+        b.notes.forEach(function(n){ html+='<div class="ch-note" style="background:'+bg+';color:'+t+'">'+esc(n)+'</div>'; });
+        if(wrapSub) html+='</div>';
+      });
+      html+='</div><div class="ch-arrow">\u25BC</div>';
+    });
+    html=html.replace(/<div class="ch-arrow">\u25BC<\/div>$/,'');
+
+    if(results){
+      html+='<div class="ch-res"><h3>'+esc(results.title||'النتائج المتوقعة')+'</h3><ul>';
+      results.items.forEach(function(it){ html+='<li>'+esc(it)+'</li>'; });
+      html+='</ul></div>';
+    }
+    html+='</div>';
+    host.innerHTML=html; host.dataset.loaded='1';
+  }catch(e){
+    host.innerHTML='<div style="text-align:center;padding:40px;color:#c0272d;font-size:13px">تعذّر تحميل تبويب Case Handling — '+esc(e.message||e)+'</div>';
+  }
 }
 function selAgent(name){
   var sp1=document.getElementById('agSel_p1');if(sp1)sp1.value=name||'';
