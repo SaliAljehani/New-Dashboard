@@ -2071,7 +2071,7 @@ const REF_SHEETS = {
   },
   petromin: {
     id: '11M28wIA4Ee84ohrIqzXtobK7X-QsrruoL4MwjoGz-6k',
-    tabs: ['Instruction','Autocare','Petromin Tristar','Tire&Battery','Eco Wash','Fuel Station','DIESEL','PE-Emailz','Complaints Emails','Petromin Website']
+    tabs: ['Instruction','Autocare','Petromin Express Stations','Petromin Tristar','Tire&Battery','Eco Wash','Fuel Station','DIESEL','PE-Emailz','Complaints Emails','Petromin Website']
   },
   foton: {
     id: '1PBhYlWtWqGZFZi_wgjDTlUaoN6O0QeS4P1CHcd40H4Y',
@@ -4500,8 +4500,10 @@ function renderPetrominPACTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#DAA520';
 
-  const REGION_ORDER=['West','Central','East','South','North'];
-  const REGION_COLORS={West:'#c0272d',Central:'#1565c0',East:'#2e7d32',South:'#6a1b9a',North:'#e65100'};
+  const REGION_PALETTE=['#c0272d','#1565c0','#2e7d32','#6a1b9a','#e65100','#00838f','#ad1457','#5d4037'];
+  const REGION_COLORS={'West':'#c0272d','Central':'#1565c0','East':'#2e7d32','South':'#6a1b9a','North':'#e65100','WR North':'#c0272d','WR South':'#d84315','CR North':'#1565c0','CR South':'#00838f','Eastern':'#2e7d32','Southern':'#6a1b9a','Northern':'#e65100'};
+  const regionOrder=[];
+  const isRegionName=s=>!!s && /^(WR|CR|ER|SR|NR|Eastern|Western|Central|Northern|Southern|West|East|South|North)\b/i.test(String(s).trim());
 
   const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
   const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
@@ -4513,8 +4515,8 @@ function renderPetrominPACTab(arr){
   arr.forEach((r,idx)=>{
     const vals=Object.values(r).map(v=>String(v||'').trim());
     const v0=vals[0]||'';
-    if(REGION_ORDER.includes(v0)){
-      if(!regions[v0])regions[v0]=[];
+    if(isRegionName(v0)){
+      if(!regions[v0]){regions[v0]=[];regionOrder.push(v0);}
       regions[v0].push(vals);
       return;
     }
@@ -4579,10 +4581,10 @@ function renderPetrominPACTab(arr){
     }).join('')+'</div>'
     ,'petrominPacAM',color):'';
 
-  const regHTML=REGION_ORDER.filter(r=>regions[r]).map(reg=>{
+  const regHTML=regionOrder.map((reg,ri)=>{
     const rows=regions[reg];
-    const rc=REGION_COLORS[reg]||color;
-    const regId='pePac_'+reg;
+    const rc=REGION_COLORS[reg]||REGION_PALETTE[ri%REGION_PALETTE.length];
+    const regId='pePac_'+reg.replace(/\s+/g,'_');
     const hours=rows[0][6]||'';
     return '<div style="margin-bottom:14px">'
       +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px">'
@@ -4617,6 +4619,64 @@ function renderPetrominPACTab(arr){
   }).join('');
 
   return '<div>'+emailHtml+amHTML+regHTML+'</div>';
+}
+
+function renderPetrominExpressStationsTab(arr){
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  const color='#DAA520';
+  const rowsArr=arr.map(r=>Object.values(r).map(v=>String(v==null?'':v).trim()));
+  let hIdx=rowsArr.findIndex(v=>v.some(c=>/station name/i.test(c)));
+  if(hIdx<0)hIdx=0;
+  const H=rowsArr[hIdx].map(c=>c.toLowerCase());
+  const col=(...names)=>H.findIndex(h=>names.some(n=>h.includes(n)));
+  const cBe=col('be#','be '), cCity=col('city'), cStation=col('station name'), cDist=col('district');
+  const cAmName=H.findIndex(h=>h.includes('area manager')&&h.includes('name'));
+  const cMobile=col('mobile');
+  const cStEmail=H.findIndex(h=>h.includes('station')&&h.includes('email'));
+  const cAc=col('ac available','ac avail'), cPms=col('pms'), cBatt=col('batter'), cEco=col('eco');
+
+  const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s.replace(/\.0$/,'');};
+  const yes=v=>/^y/i.test(String(v||'').trim());
+  const badge=(label,v)=>{const y=yes(v);return '<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;color:'+(y?'#2e7d32':'#bbb')+';background:'+(y?'#e8f5e9':'#f5f5f5')+';padding:2px 7px;border-radius:5px;margin:2px">'+label+' '+(y?'✓':'✗')+'</span>';};
+
+  const cities={}; const cityOrder=[];
+  for(let i=hIdx+1;i<rowsArr.length;i++){
+    const v=rowsArr[i];
+    const station=cStation>=0?v[cStation]:'';
+    const be=cBe>=0?v[cBe]:'';
+    if(!station && !be)continue;
+    const city=(cCity>=0?v[cCity]:'')||'Other';
+    if(!cities[city]){cities[city]=[];cityOrder.push(city);}
+    cities[city].push(v);
+  }
+
+  const html=cityOrder.sort((a,b)=>a.localeCompare(b)).map(city=>{
+    const list=cities[city];
+    const cards=list.map(v=>{
+      const be=cBe>=0?v[cBe]:'';
+      const station=cStation>=0?v[cStation]:'';
+      const dist=cDist>=0?v[cDist]:'';
+      const am=cAmName>=0?v[cAmName]:'';
+      const mob=cMobile>=0?v[cMobile].split(',').map(s=>fmtNum(s.trim())).filter(Boolean).join(' / '):'';
+      const stEmail=cStEmail>=0?v[cStEmail]:'';
+      return '<div style="background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);border-top:3px solid '+color+'">'
+        +'<div style="background:'+color+'12;padding:8px 12px;text-align:center">'
+        +'<div style="font-size:12px;font-weight:700;color:#333">'+station+'</div>'
+        +((be||dist)?'<div style="font-size:10px;color:#999;margin-top:2px">'+(be?'BE# '+be:'')+(be&&dist?' · ':'')+(dist||'')+'</div>':'')
+        +'</div>'
+        +'<div style="padding:8px 12px;text-align:center">'
+        +(am?'<div style="font-size:11px;color:#555;margin-bottom:3px">👤 '+am+'</div>':'')
+        +(mob?'<div style="font-size:11px;color:#555;margin-bottom:3px">📞 '+mob+'</div>':'')
+        +(stEmail?'<div style="font-size:10px;margin-bottom:6px"><a href="mailto:'+stEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">✉️ '+stEmail+'</a></div>':'')
+        +'<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2px">'+badge('AC',cAc>=0?v[cAc]:'')+badge('PMS',cPms>=0?v[cPms]:'')+badge('🔋',cBatt>=0?v[cBatt]:'')+badge('💧',cEco>=0?v[cEco]:'')+'</div>'
+        +'</div></div>';
+    }).join('');
+    const cid='peExp_'+city.replace(/\W+/g,'_');
+    return mkCollapsible('🏙️ '+city+' ('+list.length+')','<div class="ref-cards-grid">'+cards+'</div>',cid,color);
+  }).join('');
+
+  const total=cityOrder.reduce((s,c)=>s+cities[c].length,0);
+  return '<div><div style="text-align:center;font-size:12px;color:#888;margin-bottom:12px">📍 '+total+' محطة · '+cityOrder.length+' مدينة</div>'+html+'</div>';
 }
 
 function renderPetrominTristarTab(arr){
@@ -5582,6 +5642,7 @@ async function renderRefBrand(brand,tabIdx){
     return;
   }
       if(t==='Autocare'||t==='New PAC') container.innerHTML=renderPetrominPACTab(arr);
+      else if(t==='Petromin Express Stations') container.innerHTML=renderPetrominExpressStationsTab(arr);
       else if(t==='Warranty') container.innerHTML=renderPetrominWarrantyTab(arr);
       else if(t==='Petromin Tristar') container.innerHTML=renderPetrominTristarTab(arr);
       else if(t==='Eco Wash') container.innerHTML=renderPetrominLocationListTab(arr,'ecowash');
