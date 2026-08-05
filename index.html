@@ -4540,9 +4540,10 @@ function renderPetrominPACTab(arr){
       return;
     }
 
-    // RM mapping rows: col0/1 empty, col2=branch code, col3=RM name, col4=RM mobile, col5=RM email
+    // RM mapping rows: col0/1 empty, col2=Branch Name, col3=RM name, col4=RM mobile, col5=RM email
     if(!v0 && vals[2] && vals[3] && vals[5] && vals[5].includes('@')){
-      rmByBranch[vals[2]] = {name:vals[3], mobile:fmtNum(vals[4]), email:vals[5]};
+      const nk=String(vals[2]).toLowerCase().replace(/[^a-z0-9]/g,'');
+      rmByBranch[nk] = {name:vals[3], mobile:fmtNum(vals[4]), email:vals[5]};
       return;
     }
     // Flat RM list rows (no branch code column, one row per branch): col3=name, col4=mobile, col5=email
@@ -4619,7 +4620,9 @@ function renderPetrominPACTab(arr){
         const gps=vals[7]||'';
         const wh=vals[8]||'';
         const gpsLink=gps?'https://www.google.com/maps?q='+encodeURIComponent(gps):'';
-        const rm=rmByBranch[branch]||rmByBranch[Object.keys(rmByBranch).find(k=>k.startsWith(branchCode))]||null;
+        const branchNameOnly=branch.replace(/^\d+\s*-\s*/,'').trim();
+        const nkBranch=branchNameOnly.toLowerCase().replace(/[^a-z0-9]/g,'');
+        const rm=rmByBranch[nkBranch]||null;
         return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
           +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
           +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
@@ -4721,10 +4724,12 @@ function renderPetrominExpressStationsTab(arr){
 
   // ── Group stations by city ──
   const cities={}; const cityOrder=[];
+  const isJunkStationRow=(station,be)=>/^(for\s+(request|complaint)|TO|CC)$/i.test(station.trim())||/^(TO|CC)$/i.test(be.trim());
   arr.forEach(r=>{
     const station=gv(r,kStation);
     const be=gv(r,kBe);
     if(!station && !be)return;
+    if(isJunkStationRow(station,be))return;
     const city=gv(r,kCity)||'Other';
     if(!cities[city]){cities[city]=[];cityOrder.push(city);}
     cities[city].push(r);
