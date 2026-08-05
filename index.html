@@ -3612,10 +3612,12 @@ function renderBaicServiceTab(arr, apptArr){
     +'</div>';
 
 
-  // Group branches by region
+  // Group branches by region (normalize so "Eastern"→East, "Western"→West, etc.)
+  const REGION_ALIAS={Eastern:'East',Western:'West',Northern:'North',Southern:'South',Center:'Central',Centeral:'Central'};
+  const normReg=r=>REGION_ALIAS[r]||r;
   const regions={};
   branchRows.forEach(r=>{
-    const reg=String(r[regionCol]||'').trim();
+    const reg=normReg(String(r[regionCol]||'').trim());
     if(!regions[reg])regions[reg]=[];
     regions[reg].push(r);
   });
@@ -4586,12 +4588,12 @@ function renderPetrominPACTab(arr){
   // Regional Managers summary (from the flat RM list table) — single row, same style as Express Stations
   const rmFlatList=Object.values(rmFlatCount).sort((a,b)=>b.branches-a.branches);
   const rmFlatHTML=rmFlatList.length?mkCollapsible('🗺️ Regional Managers ('+rmFlatList.length+')',
-    '<div style="display:flex;flex-wrap:nowrap;overflow-x:auto;gap:10px;padding-bottom:4px">'+rmFlatList.map(rm=>
-      '<div style="flex:0 0 auto;background:'+color+'08;border:1px solid '+color+'25;border-radius:10px;padding:10px 14px;text-align:center;min-width:150px">'
-      +'<div style="font-size:13px;font-weight:700;color:#333">'+rm.name+'</div>'
-      +'<div style="font-size:10.5px;color:#999;margin:4px 0">🏢 '+rm.branches+' branches</div>'
-      +(rm.mobile?'<div style="font-size:12px;color:#555;margin-bottom:3px">📞 '+rm.mobile+'</div>':'')
-      +'<a href="mailto:'+rm.email+'" style="font-size:11px;color:'+color+';font-weight:700;text-decoration:none">'+rm.email+'</a>'
+    '<div style="display:flex;flex-wrap:nowrap;overflow-x:auto;gap:8px;padding-bottom:4px;'+(rmFlatList.length<=5?'justify-content:center':'')+'">'+rmFlatList.map(rm=>
+      '<div style="flex:0 0 auto;background:'+color+'08;border:1px solid '+color+'25;border-radius:10px;padding:8px 12px;text-align:center;min-width:130px">'
+      +'<div style="font-size:12px;font-weight:700;color:#333">'+rm.name+'</div>'
+      +'<div style="font-size:10px;color:#999;margin:3px 0">🏢 '+rm.branches+' branches</div>'
+      +(rm.mobile?'<div style="font-size:11px;color:#555;margin-bottom:2px">📞 '+rm.mobile+'</div>':'')
+      +'<a href="mailto:'+rm.email+'" style="font-size:10px;color:'+color+';font-weight:700;text-decoration:none">'+rm.email+'</a>'
       +'</div>'
     ).join('')+'</div>'
     ,'petrominPacRMFlat',color):'';
@@ -4629,7 +4631,7 @@ function renderPetrominPACTab(arr){
           +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
           +(gpsLink?'<div style="margin-bottom:6px"><a href="'+gpsLink+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
           +(rm?'<div style="border-top:1px solid #f0f0f0;padding-top:6px;margin-top:2px">'
-            +'<div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px">مدير المنطقة</div>'
+            +'<div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px">RM</div>'
             +'<div style="font-size:11px;color:#555">👤 '+rm.name+'</div>'
             +(rm.mobile?'<div style="font-size:11px;color:#555;margin-top:2px">📞 '+rm.mobile+'</div>':'')
             +(rm.email?'<div style="font-size:10px;margin-top:2px"><a href="mailto:'+rm.email+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">'+rm.email+'</a></div>':'')
@@ -4638,7 +4640,8 @@ function renderPetrominPACTab(arr){
       }).join('')+'</div></div></div>';
   }).join('');
 
-  return '<div>'+emailHtml+amHTML+rmFlatHTML+regHTML+'</div>';
+  const searchBox='<div style="margin-bottom:14px;text-align:center"><input type="text" id="pacSearch" placeholder="🔍 Search by branch number or name..." oninput="filterExpressStations(this.value)" style="width:100%;max-width:360px;padding:8px 14px;border:1px solid #ddd;border-radius:20px;font-size:13px;text-align:center"></div>';
+  return '<div>'+searchBox+emailHtml+amHTML+rmFlatHTML+regHTML+'</div>';
 }
 
 function filterExpressStations(q){
@@ -4650,7 +4653,7 @@ function filterExpressStations(q){
       card.style.display=match?'':'none';
       if(match)anyVisible=true;
     });
-    const regionBody=grid.closest('[id^="peExpReg_"]');
+    const regionBody=grid.closest('[id^="peExpReg_"], [id^="pePac_"]');
     if(regionBody){regionBody.style.display=(q&&!anyVisible)?'none':'block';const ic=document.getElementById('ico_'+regionBody.id);if(ic&&q)ic.textContent='▼';}
   });
 }
@@ -4737,12 +4740,12 @@ function renderPetrominExpressStationsTab(arr){
 
   const rmList=Object.values(rmMap).sort((a,b)=>b.branches-a.branches);
   const rmHTML=rmList.length?mkCollapsible('🗺️ Regional Managers ('+rmList.length+')',
-    '<div style="display:flex;flex-wrap:nowrap;overflow-x:auto;gap:10px;padding-bottom:4px">'+rmList.map(rm=>
-      '<div style="flex:0 0 auto;background:'+color+'08;border:1px solid '+color+'25;border-radius:10px;padding:10px 16px;text-align:center;min-width:150px">'
-      +'<div style="font-size:13px;font-weight:700;color:#333">'+rm.name+'</div>'
-      +'<div style="font-size:10.5px;color:#999;margin:4px 0">🏢 '+rm.branches+' branches</div>'
-      +(rm.mobile?'<div style="font-size:12px;color:#555;margin-bottom:3px">📞 '+rm.mobile+'</div>':'')
-      +'<a href="mailto:'+rm.email+'" style="font-size:11px;color:'+color+';font-weight:700;text-decoration:none">'+rm.email+'</a>'
+    '<div style="display:flex;flex-wrap:nowrap;overflow-x:auto;gap:8px;padding-bottom:4px;'+(rmList.length<=5?'justify-content:center':'')+'">'+rmList.map(rm=>
+      '<div style="flex:0 0 auto;background:'+color+'08;border:1px solid '+color+'25;border-radius:10px;padding:8px 12px;text-align:center;min-width:130px">'
+      +'<div style="font-size:12px;font-weight:700;color:#333">'+rm.name+'</div>'
+      +'<div style="font-size:10px;color:#999;margin:3px 0">🏢 '+rm.branches+' branches</div>'
+      +(rm.mobile?'<div style="font-size:11px;color:#555;margin-bottom:2px">📞 '+rm.mobile+'</div>':'')
+      +'<a href="mailto:'+rm.email+'" style="font-size:10px;color:'+color+';font-weight:700;text-decoration:none">'+rm.email+'</a>'
       +'</div>'
     ).join('')+'</div>'
     ,'peExpRM',color):'';
@@ -4759,7 +4762,8 @@ function renderPetrominExpressStationsTab(arr){
       if(!regions[reg])regions[reg]=[];
       regions[reg].push(city);
     });
-    const regOrder=ELM_STATION_REGION_ORDER.filter(r=>r!=='Other'&&regions[r]);
+    const regOrder=ELM_STATION_REGION_ORDER.filter(r=>regions[r]);
+    const REG_DISPLAY_LABEL={Other:'غير مصنّفة'};
     return regOrder.map(reg=>{
       const regCities=regions[reg];
       const rc=ELM_STATION_REGION_COLORS[reg]||color;
@@ -4794,7 +4798,7 @@ function renderPetrominExpressStationsTab(arr){
           +(stEmail&&stEmail!==amEmail?'<div style="font-size:10px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:4px"><span style="background:#daeaf8;color:#185fa5;font-weight:800;padding:1px 6px;border-radius:4px;font-size:9px">CC</span><a href="mailto:'+stEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">'+stEmail+'</a></div>':'')
           +'<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2px;margin-bottom:2px">'+badge('AC',gv(v,kAc))+badge('PMS',gv(v,kPms))+badge('BATTERIES',gv(v,kBatt))+badge('ECO WASH',gv(v,kEco))+'</div>'
           +(regName?'<div style="border-top:1px solid #f0e8d0;padding-top:6px;margin-top:6px">'
-            +'<div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px">مدير المنطقة</div>'
+            +'<div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px">RM</div>'
             +'<div style="font-size:11px;color:#555">👤 '+regName+'</div>'
             +(regMob?'<div style="font-size:11px;color:#555;margin-top:2px">📞 '+regMob+'</div>':'')
             +(regEmail?'<div style="font-size:10px;margin-top:2px"><a href="mailto:'+regEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">'+regEmail+'</a></div>':'')
@@ -4802,9 +4806,12 @@ function renderPetrominExpressStationsTab(arr){
           +'</div></div>';
       }).join('');
       const regId='peExpReg_'+reg.replace(/\W+/g,'_');
+      if(reg==='Other'){
+        return '<div id="'+regId+'" style="margin-bottom:16px"><div class="ref-cards-grid">'+cards+'</div></div>';
+      }
       return '<div style="margin-bottom:16px">'
         +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:9px 16px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px">'
-        +'<span style="font-size:14px;font-weight:700;color:'+rc+'">'+reg+'</span>'
+        +'<span style="font-size:14px;font-weight:700;color:'+rc+'">'+(REG_DISPLAY_LABEL[reg]||reg)+'</span>'
         +(regWH?'<span style="font-size:11px;color:'+rc+';margin-left:auto;white-space:pre-line">⏰ '+regWH.replace(/\n/g,' · ')+'</span>':'<span style="margin-left:auto"></span>')
         +'<span id="ico_'+regId+'" style="color:'+rc+'">▼</span>'
         +'</div>'
@@ -4813,7 +4820,7 @@ function renderPetrominExpressStationsTab(arr){
     }).join('');
   })():'';
 
-  const total=cityOrder.filter(c=>cityToRegionLoose(c)!=='Other').reduce((s,c)=>s+cities[c].length,0);
+  const total=cityOrder.reduce((s,c)=>s+cities[c].length,0);
   const searchBoxFinal=searchBox.replace('TOTAL_PLACEHOLDER',total);
   return '<div>'+searchBoxFinal+emailHtml+rmHTML+html+'</div>';
 }
