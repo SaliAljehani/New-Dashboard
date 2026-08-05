@@ -443,6 +443,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <button class="pnav" onclick="showPage(5,this)">📅 Team Schedules</button>
     <button class="pnav" onclick="showPage(8,this)">🏆 Employee of the Month</button>
     <button class="pnav" onclick="showPage(4,this)">📁 Daily Reference</button>
+    <button class="pnav" onclick="showPage(2,this)">📞 Calls & WhatsApp Report</button>
   </div>
 
   <!-- PAGE 1 -->
@@ -519,6 +520,48 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
       </div>
       <div id="aattendance" style="display:none">
         <div class="att-section" id="attContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 2: CALL DATA -->
+  <div id="page2" class="page2">
+    <div class="team-toggle">
+      <button class="ttn nissan active" onclick="toggleTeam('Nissan',this)">🔴 Nissan</button>
+      <button class="ttn petromin active" onclick="toggleTeam('Petromin',this)">🟡 Petromin</button>
+      <button class="ttn stellantis active" onclick="toggleTeam('Stellantis',this)">🔵 Stellantis</button>
+    </div>
+    <div style="background:#fff;border-bottom:1px solid #e8eaed;padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:12px;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+      <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em">From:</label><input type="date" id="df2" onchange="document.getElementById('df').value=this.value;rf()">
+      <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em">To:</label><input type="date" id="dt2" onchange="document.getElementById('dt').value=this.value;rf()">
+      <button class="rbtn" onclick="resetAll()">↺ Reset</button>
+    </div>
+    <div class="call-krow" id="callKpis"></div>
+    <div class="comp-grid" id="compCards"></div>
+    <div id="monthlyBars"></div>
+    <div class="r2">
+      <div class="card">
+        <div class="ctit">📈 Daily Received – All Teams</div>
+        <div class="leg">
+          <span class="li"><span class="ld" style="background:#c0272d"></span>Nissan</span>
+          <span class="li"><span class="ld" style="background:#1565c0"></span>Petromin</span>
+          <span class="li"><span class="ld" style="background:#2e7d32"></span>Stellantis</span>
+        </div>
+        <div style="position:relative;height:220px"><canvas id="callTrend" role="img" aria-label="call trend"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ctit">📊 Monthly Received – All Teams</div>
+        <div style="position:relative;height:220px"><canvas id="callMonth" role="img" aria-label="monthly"></canvas></div>
+      </div>
+    </div>
+    <div class="r2">
+      <div class="card">
+        <div class="ctit">📤 Answered – Monthly</div>
+        <div style="position:relative;height:200px"><canvas id="abanChart" role="img" aria-label="abandoned"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ctit">💬 WhatsApp Volume – Monthly</div>
+        <div style="position:relative;height:200px"><canvas id="waChart" role="img" aria-label="whatsapp"></canvas></div>
       </div>
     </div>
   </div>
@@ -1740,6 +1783,7 @@ function renderCallPage(){
 // ── NAVIGATION ───────────────────────────────────────────────────────────────
 function showPage(n,btn){CP=n;
   document.getElementById('page1').style.display=n===1?'block':'none';
+  document.getElementById('page2').style.display=n===2?'block':'none';
   document.getElementById('page3').style.display=n===3?'block':'none';
   document.getElementById('page4').style.display=n===4?'block':'none';
   document.getElementById('page5').style.display=n===5?'block':'none';
@@ -4632,6 +4676,11 @@ function renderPetrominExpressStationsTab(arr){
   const cBe=col('be#','be '), cCity=col('city'), cStation=col('station name'), cDist=col('district');
   const cAmName=H.findIndex(h=>h.includes('area manager')&&h.includes('name'));
   const cMobile=col('mobile');
+  const cAmEmail=H.findIndex(h=>h.includes('area manager')&&h.includes('email'));
+  const cRegName=H.findIndex(h=>h.includes('regional')&&h.includes('name'));
+  let cRegMobile=H.findIndex(h=>h.includes('regional')&&h.includes('mobile'));
+  if(cRegMobile<0){const mobIdxs=H.map((h,i)=>h.includes('mobile')?i:-1).filter(i=>i>=0);if(mobIdxs.length>1)cRegMobile=mobIdxs[1];}
+  const cRegEmail=H.findIndex(h=>h.includes('regional')&&h.includes('email'));
   const cStEmail=H.findIndex(h=>h.includes('station')&&h.includes('email'));
   const cAc=col('ac available','ac avail'), cPms=col('pms'), cBatt=col('batter'), cEco=col('eco');
 
@@ -4639,7 +4688,28 @@ function renderPetrominExpressStationsTab(arr){
   const yes=v=>/^y/i.test(String(v||'').trim());
   const badge=(label,v)=>{const y=yes(v);return '<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;color:'+(y?'#2e7d32':'#bbb')+';background:'+(y?'#e8f5e9':'#f5f5f5')+';padding:2px 7px;border-radius:5px;margin:2px">'+label+' '+(y?'✓':'✗')+'</span>';};
 
+  // ── Detect Request/Complaint TO/CC email routing rows anywhere in the sheet ──
+  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
+  const emRows={};
+  rowsArr.forEach(v=>{
+    const idxLabel=v.findIndex(c=>/^(?:[\w\s]+\s)?(Request|Complaint)$/i.test(c.trim()));
+    if(idxLabel<0)return;
+    const type=/request/i.test(v[idxLabel])?'Request':'Complaint';
+    const idxTO=v.findIndex(c=>/^TO$/i.test(c.trim()));
+    const idxCC=v.findIndex(c=>/^CC$/i.test(c.trim()));
+    emRows[type]={to:idxTO>=0?(v[idxTO+1]||''):'', cc:idxCC>=0?(v[idxCC+1]||''):''};
+  });
+  const emCard=(label,data)=>'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+    +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 '+label+'</div>'
+    +(data?.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fmtE(data.to)+'</div>':'')
+    +(data?.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(data.cc)+'</div>':'')
+    +'</div>';
+  const emailHtml=(emRows.Request||emRows.Complaint)?'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+    +emCard('Request', emRows.Request)+emCard('Complaint', emRows.Complaint)+'</div>':'';
+
+  // ── Group stations by city + aggregate regional managers ──
   const cities={}; const cityOrder=[];
+  const rmMap={};
   for(let i=hIdx+1;i<rowsArr.length;i++){
     const v=rowsArr[i];
     const station=cStation>=0?v[cStation]:'';
@@ -4648,35 +4718,86 @@ function renderPetrominExpressStationsTab(arr){
     const city=(cCity>=0?v[cCity]:'')||'Other';
     if(!cities[city]){cities[city]=[];cityOrder.push(city);}
     cities[city].push(v);
+    const amEmail=cAmEmail>=0?v[cAmEmail]:'';
+    if(amEmail && amEmail.includes('@')){
+      if(!rmMap[amEmail])rmMap[amEmail]={name:cAmName>=0?v[cAmName]:'',email:amEmail,mobile:cMobile>=0?fmtNum(v[cMobile].split(',')[0]):'',branches:0};
+      rmMap[amEmail].branches++;
+    }
   }
 
-  const html=cityOrder.sort((a,b)=>a.localeCompare(b)).map(city=>{
-    const list=cities[city];
-    const cards=list.map(v=>{
-      const be=cBe>=0?v[cBe]:'';
-      const station=cStation>=0?v[cStation]:'';
-      const dist=cDist>=0?v[cDist]:'';
-      const am=cAmName>=0?v[cAmName]:'';
-      const mob=cMobile>=0?v[cMobile].split(',').map(s=>fmtNum(s.trim())).filter(Boolean).join(' / '):'';
-      const stEmail=cStEmail>=0?v[cStEmail]:'';
-      return '<div style="background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);border-top:3px solid '+color+'">'
-        +'<div style="background:'+color+'12;padding:8px 12px;text-align:center">'
-        +'<div style="font-size:12px;font-weight:700;color:#333">'+station+'</div>'
-        +((be||dist)?'<div style="font-size:10px;color:#999;margin-top:2px">'+(be?'BE# '+be:'')+(be&&dist?' · ':'')+(dist||'')+'</div>':'')
+  const rmList=Object.values(rmMap).sort((a,b)=>b.branches-a.branches);
+  const rmHTML=rmList.length?mkCollapsible('🗺️ مدراء الفروع ('+rmList.length+')',
+    '<div style="display:flex;justify-content:center;flex-wrap:wrap">'+rmList.map((rm,i)=>
+      '<div style="text-align:center;padding:6px 20px;'+(i<rmList.length-1?'border-right:1px solid #eee':'')+'">'
+      +'<div style="font-size:13px;font-weight:700;color:#333">'+rm.name+'</div>'
+      +'<div style="font-size:10.5px;color:#999;margin:4px 0">🏢 فرع '+rm.branches+'</div>'
+      +(rm.mobile?'<div style="font-size:12px;color:#555;margin-bottom:3px">📞 '+rm.mobile+'</div>':'')
+      +'<a href="mailto:'+rm.email+'" style="font-size:11px;color:'+color+';font-weight:700;text-decoration:none">'+rm.email+'</a>'
+      +'</div>'
+    ).join('')+'</div>'
+    ,'peExpRM',color):'';
+
+  const html=Object.keys(cities).length?(()=>{
+    const regions={}; 
+    cityOrder.forEach(city=>{
+      const reg=elmCityToRegion(city);
+      if(!regions[reg])regions[reg]=[];
+      regions[reg].push(city);
+    });
+    const regOrder=ELM_STATION_REGION_ORDER.filter(r=>regions[r]);
+    return regOrder.map(reg=>{
+      const regCities=regions[reg].sort((a,b)=>a.localeCompare(b));
+      const rc=ELM_STATION_REGION_COLORS[reg]||color;
+      const regTotal=regCities.reduce((s,c)=>s+cities[c].length,0);
+      const cityBlocks=regCities.map(city=>{
+        const list=cities[city];
+        const cards=list.map(v=>{
+          const be=cBe>=0?v[cBe]:'';
+          const station=cStation>=0?v[cStation]:'';
+          const dist=cDist>=0?v[cDist]:'';
+          const am=cAmName>=0?v[cAmName]:'';
+          const amEmail=cAmEmail>=0?v[cAmEmail]:'';
+          const mob=cMobile>=0?v[cMobile].split(',').map(s=>fmtNum(s.trim())).filter(Boolean).join(' / '):'';
+          const stEmail=cStEmail>=0?v[cStEmail]:'';
+          const regName=cRegName>=0?v[cRegName]:'';
+          const regMob=cRegMobile>=0?fmtNum(v[cRegMobile]):'';
+          const regEmail=cRegEmail>=0?v[cRegEmail]:'';
+          return '<div style="background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);border-top:3px solid '+color+'">'
+            +'<div style="background:'+color+'18;padding:8px 12px;text-align:center">'
+            +'<div style="font-size:12px;font-weight:700;color:#7a5a10">'+(be?be+' - ':'')+station+'</div>'
+            +(dist?'<div style="font-size:10px;color:#a9821f;margin-top:2px">📍 '+dist+'</div>':'')
+            +'</div>'
+            +'<div style="padding:8px 12px;text-align:center">'
+            +(am?'<div style="font-size:11px;color:#555;margin-bottom:3px">👤 '+am+'</div>':'')
+            +(mob?'<div style="font-size:11px;color:#555;margin-bottom:3px">📞 '+mob+'</div>':'')
+            +(amEmail?'<div style="font-size:10px;margin-bottom:3px"><a href="mailto:'+amEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">✉️ '+amEmail+'</a></div>':'')
+            +(stEmail&&stEmail!==amEmail?'<div style="font-size:10px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:4px"><span style="background:#daeaf8;color:#185fa5;font-weight:800;padding:1px 6px;border-radius:4px;font-size:9px">CC</span><a href="mailto:'+stEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">'+stEmail+'</a></div>':'')
+            +'<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2px;margin-bottom:2px">'+badge('AC',cAc>=0?v[cAc]:'')+badge('PMS',cPms>=0?v[cPms]:'')+badge('🔋',cBatt>=0?v[cBatt]:'')+badge('💧',cEco>=0?v[cEco]:'')+'</div>'
+            +(regName?'<div style="border-top:1px solid #f0e8d0;padding-top:6px;margin-top:6px">'
+              +'<div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px">مدير المنطقة</div>'
+              +'<div style="font-size:11px;color:#555">👤 '+regName+'</div>'
+              +(regMob?'<div style="font-size:11px;color:#555;margin-top:2px">📞 '+regMob+'</div>':'')
+              +(regEmail?'<div style="font-size:10px;margin-top:2px"><a href="mailto:'+regEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">'+regEmail+'</a></div>':'')
+              +'</div>':'')
+            +'</div></div>';
+        }).join('');
+        const cid='peExp_'+reg+'_'+city.replace(/\W+/g,'_');
+        return mkCollapsible('🏙️ '+city+' ('+list.length+')','<div class="ref-cards-grid">'+cards+'</div>',cid,color);
+      }).join('');
+      const regId='peExpReg_'+reg.replace(/\W+/g,'_');
+      return '<div style="margin-bottom:16px">'
+        +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:9px 16px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px">'
+        +'<span style="font-size:14px;font-weight:700;color:'+rc+'">'+reg+'</span>'
+        +'<span style="font-size:11px;color:#aaa">('+regTotal+' محطة)</span>'
+        +'<span id="ico_'+regId+'" style="color:'+rc+';margin-left:auto">▼</span>'
         +'</div>'
-        +'<div style="padding:8px 12px;text-align:center">'
-        +(am?'<div style="font-size:11px;color:#555;margin-bottom:3px">👤 '+am+'</div>':'')
-        +(mob?'<div style="font-size:11px;color:#555;margin-bottom:3px">📞 '+mob+'</div>':'')
-        +(stEmail?'<div style="font-size:10px;margin-bottom:6px"><a href="mailto:'+stEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">✉️ '+stEmail+'</a></div>':'')
-        +'<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2px">'+badge('AC',cAc>=0?v[cAc]:'')+badge('PMS',cPms>=0?v[cPms]:'')+badge('🔋',cBatt>=0?v[cBatt]:'')+badge('💧',cEco>=0?v[cEco]:'')+'</div>'
-        +'</div></div>';
+        +'<div id="'+regId+'">'+cityBlocks+'</div>'
+        +'</div>';
     }).join('');
-    const cid='peExp_'+city.replace(/\W+/g,'_');
-    return mkCollapsible('🏙️ '+city+' ('+list.length+')','<div class="ref-cards-grid">'+cards+'</div>',cid,color);
-  }).join('');
+  })():'';
 
   const total=cityOrder.reduce((s,c)=>s+cities[c].length,0);
-  return '<div><div style="text-align:center;font-size:12px;color:#888;margin-bottom:12px">📍 '+total+' محطة · '+cityOrder.length+' مدينة</div>'+html+'</div>';
+  return '<div>'+emailHtml+rmHTML+'<div style="text-align:center;font-size:12px;color:#888;margin-bottom:12px">📍 '+total+' محطة · '+cityOrder.length+' مدينة</div>'+html+'</div>';
 }
 
 function renderPetrominTristarTab(arr){
