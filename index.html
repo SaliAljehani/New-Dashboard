@@ -4603,7 +4603,6 @@ function renderPetrominPACTab(arr){
           +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
           +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
           +(city?'<div style="font-size:11px;color:#888;margin-top:3px">📌 '+city+'</div>':'')
-          +(wh?'<div style="font-size:9.5px;color:#999;margin-top:3px;white-space:pre-line">⏰ '+wh.replace(/\n/g,'<br>')+'</div>':'')
           +'</div>'
           +'<div style="padding:10px 14px;text-align:center">'
           +(mgr?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+mgr+'</div>':'')
@@ -4656,9 +4655,13 @@ function renderPetrominExpressStationsTab(arr){
   // station-name → regional-manager lookup from those rows.
   const regByStation={};
   arr.forEach(r=>{
-    const isPhantomRow=!gv(r,kCity)&&!gv(r,kBe)&&!gv(r,kStation)&&gv(r,kDist)&&gv(r,kAmName);
+    const distV=gv(r,kDist), amNameV=gv(r,kAmName), amEmailV=gv(r,kAmEmail), mobV=gv(r,kMobile);
+    const isPhantomRow=!gv(r,kCity)&&!gv(r,kBe)&&!gv(r,kStation)&&distV&&amNameV
+      &&!/^(station name|regional manager name)$/i.test(distV)
+      &&!/^(regional manager name)$/i.test(amNameV)
+      &&amEmailV.includes('@')&&mobV&&mobV!=='0';
     if(isPhantomRow){
-      regByStation[gv(r,kDist)]={name:gv(r,kAmName), mobile:gv(r,kMobile), email:gv(r,kAmEmail)};
+      regByStation[distV]={name:amNameV, mobile:mobV, email:amEmailV};
     }
   });
 
@@ -4689,7 +4692,7 @@ function renderPetrominExpressStationsTab(arr){
     +(data?.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fmtE(data.to)+'</div>':'')
     +(data?.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(data.cc)+'</div>':'')
     +'</div>';
-  const searchBox='<div style="margin-bottom:14px;text-align:center"><input type="text" id="peExpSearch" placeholder="🔍 ابحثي برقم الفرع أو اسمه..." oninput="filterExpressStations(this.value)" style="width:100%;max-width:360px;padding:8px 14px;border:1px solid #ddd;border-radius:20px;font-size:13px;text-align:center"></div>';
+  const searchBox='<div style="margin-bottom:14px;text-align:center"><input type="text" id="peExpSearch" placeholder="🔍 Search by branch number or name..." oninput="filterExpressStations(this.value)" style="width:100%;max-width:360px;padding:8px 14px;border:1px solid #ddd;border-radius:20px;font-size:13px;text-align:center"></div>';
 
   const emailHtml=(emRows.Request||emRows.Complaint)?'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
     +emCard('Request', emRows.Request)+emCard('Complaint', emRows.Complaint)+'</div>':'';
@@ -4714,11 +4717,11 @@ function renderPetrominExpressStationsTab(arr){
   });
 
   const rmList=Object.values(rmMap).sort((a,b)=>b.branches-a.branches);
-  const rmHTML=rmList.length?mkCollapsible('🗺️ مدراء المناطق ('+rmList.length+')',
-    '<div style="display:flex;justify-content:center;flex-wrap:wrap">'+rmList.map((rm,i)=>
-      '<div style="text-align:center;padding:6px 20px;'+(i<rmList.length-1?'border-right:1px solid #eee':'')+'">'
+  const rmHTML=rmList.length?mkCollapsible('🗺️ Regional Managers ('+rmList.length+')',
+    '<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:10px">'+rmList.map(rm=>
+      '<div style="background:'+color+'08;border:1px solid '+color+'25;border-radius:10px;padding:10px 16px;text-align:center;min-width:150px">'
       +'<div style="font-size:13px;font-weight:700;color:#333">'+rm.name+'</div>'
-      +'<div style="font-size:10.5px;color:#999;margin:4px 0">🏢 فرع '+rm.branches+'</div>'
+      +'<div style="font-size:10.5px;color:#999;margin:4px 0">🏢 '+rm.branches+' branches</div>'
       +(rm.mobile?'<div style="font-size:12px;color:#555;margin-bottom:3px">📞 '+rm.mobile+'</div>':'')
       +'<a href="mailto:'+rm.email+'" style="font-size:11px;color:'+color+';font-weight:700;text-decoration:none">'+rm.email+'</a>'
       +'</div>'
@@ -4743,6 +4746,8 @@ function renderPetrominExpressStationsTab(arr){
       const rc=ELM_STATION_REGION_COLORS[reg]||color;
       const allStations=regCities.flatMap(city=>cities[city]);
       const regTotal=allStations.length;
+      const regHours=(allStations.find(v=>gv(v,kWH))||{});
+      const regWH=gv(regHours,kWH);
       const cards=allStations.map(v=>{
         const be=gv(v,kBe);
         const station=gv(v,kStation);
@@ -4758,11 +4763,10 @@ function renderPetrominExpressStationsTab(arr){
         const regMob=rmData?fmtNum(rmData.mobile):'';
         const regEmail=rmData?rmData.email:'';
         const locLine=[dist,city].filter(Boolean).join(' - ');
-        return '<div style="background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);border-top:3px solid '+color+'">'
-          +'<div style="background:'+color+'18;padding:8px 12px;text-align:center">'
-          +'<div style="font-size:12px;font-weight:700;color:#7a5a10">'+(be?be+' - ':'')+station+'</div>'
-          +(locLine?'<div style="font-size:10px;color:#a9821f;margin-top:2px">📍 '+locLine+'</div>':'')
-          +(wh?'<div style="font-size:9.5px;color:#b8985a;margin-top:3px;white-space:pre-line">⏰ '+wh.replace(/\n/g,'<br>')+'</div>':'')
+        return '<div style="background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);border-top:3px solid '+rc+'">'
+          +'<div style="background:'+rc+'12;padding:8px 12px;text-align:center">'
+          +'<div style="font-size:12px;font-weight:700;color:'+rc+'">'+(be?be+' - ':'')+station+'</div>'
+          +(locLine?'<div style="font-size:10px;color:'+rc+';opacity:.75;margin-top:2px">📍 '+locLine+'</div>':'')
           +'</div>'
           +'<div style="padding:8px 12px;text-align:center">'
           +(am?'<div style="font-size:11px;color:#555;margin-bottom:3px">👤 '+am+'</div>':'')
@@ -4783,7 +4787,8 @@ function renderPetrominExpressStationsTab(arr){
         +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:9px 16px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px">'
         +'<span style="font-size:14px;font-weight:700;color:'+rc+'">'+reg+'</span>'
         +'<span style="font-size:11px;color:#aaa">('+regTotal+' محطة)</span>'
-        +'<span id="ico_'+regId+'" style="color:'+rc+';margin-left:auto">▼</span>'
+        +(regWH?'<span style="font-size:11px;color:'+rc+';margin-left:auto;white-space:pre-line">⏰ '+regWH.replace(/\n/g,' · ')+'</span>':'<span style="margin-left:auto"></span>')
+        +'<span id="ico_'+regId+'" style="color:'+rc+'">▼</span>'
         +'</div>'
         +'<div id="'+regId+'"><div class="ref-cards-grid">'+cards+'</div></div>'
         +'</div>';
