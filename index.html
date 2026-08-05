@@ -443,7 +443,6 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <button class="pnav" onclick="showPage(5,this)">📅 Team Schedules</button>
     <button class="pnav" onclick="showPage(8,this)">🏆 Employee of the Month</button>
     <button class="pnav" onclick="showPage(4,this)">📁 Daily Reference</button>
-    <button class="pnav" onclick="showPage(2,this)">📞 Calls & WhatsApp Report</button>
   </div>
 
   <!-- PAGE 1 -->
@@ -520,48 +519,6 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
       </div>
       <div id="aattendance" style="display:none">
         <div class="att-section" id="attContent"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- PAGE 2: CALL DATA -->
-  <div id="page2" class="page2">
-    <div class="team-toggle">
-      <button class="ttn nissan active" onclick="toggleTeam('Nissan',this)">🔴 Nissan</button>
-      <button class="ttn petromin active" onclick="toggleTeam('Petromin',this)">🟡 Petromin</button>
-      <button class="ttn stellantis active" onclick="toggleTeam('Stellantis',this)">🔵 Stellantis</button>
-    </div>
-    <div style="background:#fff;border-bottom:1px solid #e8eaed;padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:12px;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
-      <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em">From:</label><input type="date" id="df2" onchange="document.getElementById('df').value=this.value;rf()">
-      <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em">To:</label><input type="date" id="dt2" onchange="document.getElementById('dt').value=this.value;rf()">
-      <button class="rbtn" onclick="resetAll()">↺ Reset</button>
-    </div>
-    <div class="call-krow" id="callKpis"></div>
-    <div class="comp-grid" id="compCards"></div>
-    <div id="monthlyBars"></div>
-    <div class="r2">
-      <div class="card">
-        <div class="ctit">📈 Daily Received – All Teams</div>
-        <div class="leg">
-          <span class="li"><span class="ld" style="background:#c0272d"></span>Nissan</span>
-          <span class="li"><span class="ld" style="background:#1565c0"></span>Petromin</span>
-          <span class="li"><span class="ld" style="background:#2e7d32"></span>Stellantis</span>
-        </div>
-        <div style="position:relative;height:220px"><canvas id="callTrend" role="img" aria-label="call trend"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="ctit">📊 Monthly Received – All Teams</div>
-        <div style="position:relative;height:220px"><canvas id="callMonth" role="img" aria-label="monthly"></canvas></div>
-      </div>
-    </div>
-    <div class="r2">
-      <div class="card">
-        <div class="ctit">📤 Answered – Monthly</div>
-        <div style="position:relative;height:200px"><canvas id="abanChart" role="img" aria-label="abandoned"></canvas></div>
-      </div>
-      <div class="card">
-        <div class="ctit">💬 WhatsApp Volume – Monthly</div>
-        <div style="position:relative;height:200px"><canvas id="waChart" role="img" aria-label="whatsapp"></canvas></div>
       </div>
     </div>
   </div>
@@ -1783,7 +1740,6 @@ function renderCallPage(){
 // ── NAVIGATION ───────────────────────────────────────────────────────────────
 function showPage(n,btn){CP=n;
   document.getElementById('page1').style.display=n===1?'block':'none';
-  document.getElementById('page2').style.display=n===2?'block':'none';
   document.getElementById('page3').style.display=n===3?'block':'none';
   document.getElementById('page4').style.display=n===4?'block':'none';
   document.getElementById('page5').style.display=n===5?'block':'none';
