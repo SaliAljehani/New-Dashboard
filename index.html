@@ -4510,6 +4510,7 @@ function renderPetrominPACTab(arr){
 
   const regions={};
   const rmByBranch={};
+  const rmFlatCount={};
   let emRows={};
   let emMode='';
 
@@ -4537,9 +4538,15 @@ function renderPetrominPACTab(arr){
       return;
     }
 
-    // RM mapping rows: col0/1 empty, col2=branch code, col3=RM, col4=RM email, col5=RM mobile
-    if(!v0 && vals[2] && vals[3] && vals[4] && vals[4].includes('@')){
-      rmByBranch[vals[2]] = {name:vals[3], email:vals[4], mobile:fmtNum(vals[5])};
+    // RM mapping rows: col0/1 empty, col2=branch code, col3=RM name, col4=RM mobile, col5=RM email
+    if(!v0 && vals[2] && vals[3] && vals[5] && vals[5].includes('@')){
+      rmByBranch[vals[2]] = {name:vals[3], mobile:fmtNum(vals[4]), email:vals[5]};
+      return;
+    }
+    // Flat RM list rows (no branch code column, one row per branch): col3=name, col4=mobile, col5=email
+    if(!v0 && !vals[2] && vals[3] && vals[5] && vals[5].includes('@')){
+      if(!rmFlatCount[vals[5]])rmFlatCount[vals[5]]={name:vals[3], mobile:fmtNum(vals[4]), email:vals[5], branches:0};
+      rmFlatCount[vals[5]].branches++;
       return;
     }
   });
@@ -4576,6 +4583,19 @@ function renderPetrominPACTab(arr){
     }).join('')+'</div>'
     ,'petrominPacAM',color):'';
 
+  // Regional Managers summary (from the flat RM list table) — single row, same style as Express Stations
+  const rmFlatList=Object.values(rmFlatCount).sort((a,b)=>b.branches-a.branches);
+  const rmFlatHTML=rmFlatList.length?mkCollapsible('🗺️ Regional Managers ('+rmFlatList.length+')',
+    '<div style="display:flex;flex-wrap:nowrap;overflow-x:auto;gap:10px;padding-bottom:4px">'+rmFlatList.map(rm=>
+      '<div style="flex:0 0 auto;background:'+color+'08;border:1px solid '+color+'25;border-radius:10px;padding:10px 14px;text-align:center;min-width:150px">'
+      +'<div style="font-size:13px;font-weight:700;color:#333">'+rm.name+'</div>'
+      +'<div style="font-size:10.5px;color:#999;margin:4px 0">🏢 '+rm.branches+' branches</div>'
+      +(rm.mobile?'<div style="font-size:12px;color:#555;margin-bottom:3px">📞 '+rm.mobile+'</div>':'')
+      +'<a href="mailto:'+rm.email+'" style="font-size:11px;color:'+color+';font-weight:700;text-decoration:none">'+rm.email+'</a>'
+      +'</div>'
+    ).join('')+'</div>'
+    ,'petrominPacRMFlat',color):'';
+
   const regHTML=regionOrder.map((reg,ri)=>{
     const rows=regions[reg];
     const rc=REGION_COLORS[reg]||REGION_PALETTE[ri%REGION_PALETTE.length];
@@ -4584,7 +4604,6 @@ function renderPetrominPACTab(arr){
     return '<div style="margin-bottom:14px">'
       +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px">'
       +'<span style="font-size:13px;font-weight:700;color:'+rc+'">'+reg+'</span>'
-      +'<span style="font-size:11px;color:#aaa">('+rows.length+')</span>'
       +(hours?'<span style="font-size:11px;color:'+rc+';margin-left:auto">⏰ '+hours+'</span>':'')
       +'<span id="ico_'+regId+'" style="color:'+rc+'">▼</span>'
       +'</div>'
@@ -4619,7 +4638,7 @@ function renderPetrominPACTab(arr){
       }).join('')+'</div></div></div>';
   }).join('');
 
-  return '<div>'+emailHtml+amHTML+regHTML+'</div>';
+  return '<div>'+emailHtml+amHTML+rmFlatHTML+regHTML+'</div>';
 }
 
 function filterExpressStations(q){
@@ -4692,7 +4711,7 @@ function renderPetrominExpressStationsTab(arr){
     +(data?.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fmtE(data.to)+'</div>':'')
     +(data?.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(data.cc)+'</div>':'')
     +'</div>';
-  const searchBox='<div style="margin-bottom:14px;text-align:center"><input type="text" id="peExpSearch" placeholder="🔍 Search by branch number or name..." oninput="filterExpressStations(this.value)" style="width:100%;max-width:360px;padding:8px 14px;border:1px solid #ddd;border-radius:20px;font-size:13px;text-align:center"></div>';
+  const searchBox='<div style="margin-bottom:14px;text-align:center"><input type="text" id="peExpSearch" placeholder="🔍 Search by branch number or name..." oninput="filterExpressStations(this.value)" style="width:100%;max-width:360px;padding:8px 14px;border:1px solid #ddd;border-radius:20px;font-size:13px;text-align:center"><div id="peExpSearchCount" style="font-size:11px;color:#999;margin-top:6px">TOTAL_PLACEHOLDER branches</div></div>';
 
   const emailHtml=(emRows.Request||emRows.Complaint)?'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
     +emCard('Request', emRows.Request)+emCard('Complaint', emRows.Complaint)+'</div>':'';
@@ -4718,8 +4737,8 @@ function renderPetrominExpressStationsTab(arr){
 
   const rmList=Object.values(rmMap).sort((a,b)=>b.branches-a.branches);
   const rmHTML=rmList.length?mkCollapsible('🗺️ Regional Managers ('+rmList.length+')',
-    '<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:10px">'+rmList.map(rm=>
-      '<div style="background:'+color+'08;border:1px solid '+color+'25;border-radius:10px;padding:10px 16px;text-align:center;min-width:150px">'
+    '<div style="display:flex;flex-wrap:nowrap;overflow-x:auto;gap:10px;padding-bottom:4px">'+rmList.map(rm=>
+      '<div style="flex:0 0 auto;background:'+color+'08;border:1px solid '+color+'25;border-radius:10px;padding:10px 16px;text-align:center;min-width:150px">'
       +'<div style="font-size:13px;font-weight:700;color:#333">'+rm.name+'</div>'
       +'<div style="font-size:10.5px;color:#999;margin:4px 0">🏢 '+rm.branches+' branches</div>'
       +(rm.mobile?'<div style="font-size:12px;color:#555;margin-bottom:3px">📞 '+rm.mobile+'</div>':'')
@@ -4786,7 +4805,6 @@ function renderPetrominExpressStationsTab(arr){
       return '<div style="margin-bottom:16px">'
         +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:9px 16px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px">'
         +'<span style="font-size:14px;font-weight:700;color:'+rc+'">'+reg+'</span>'
-        +'<span style="font-size:11px;color:#aaa">('+regTotal+' محطة)</span>'
         +(regWH?'<span style="font-size:11px;color:'+rc+';margin-left:auto;white-space:pre-line">⏰ '+regWH.replace(/\n/g,' · ')+'</span>':'<span style="margin-left:auto"></span>')
         +'<span id="ico_'+regId+'" style="color:'+rc+'">▼</span>'
         +'</div>'
@@ -4796,7 +4814,8 @@ function renderPetrominExpressStationsTab(arr){
   })():'';
 
   const total=cityOrder.filter(c=>cityToRegionLoose(c)!=='Other').reduce((s,c)=>s+cities[c].length,0);
-  return '<div>'+searchBox+emailHtml+rmHTML+html+'</div>';
+  const searchBoxFinal=searchBox.replace('TOTAL_PLACEHOLDER',total);
+  return '<div>'+searchBoxFinal+emailHtml+rmHTML+html+'</div>';
 }
 
 function renderPetrominTristarTab(arr){
