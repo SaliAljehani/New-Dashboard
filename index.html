@@ -2403,8 +2403,8 @@ function renderElectrominBranchTab(rows,mode){
 // EV Charging Stations — grouped by region
 const ELM_CITY_REGION={
   'Jeddah':'West','Makkah':'West','Mecca':'West','Madinah':'West','Medina':'West','Madina':'West','Taif':'West','Yanbu':'West','Rabigh':'West','Khulais':'West','Al Jumum':'West','Al Ula':'West','Al Henakiyah':'West','Khaybar':'West','Abu Arish':'West','Jazan':'West','Jizan':'West','Sabya':'West','Al Wajh':'West','Duba':'West','Tabuk':'West','Sakaka':'West','Al Qurayyat':'West','Arar':'West','Turaif':'West','Najran':'West','Sharorah':'West','Abha':'West','Bisha':'West','Khamis Mushait':'West','Almajaridah':'West','Al Namas':'West','Sabt Al Alayah':'West','Tanomah':'West','Al Bahah':'West','Baljurashi':'West','Al Sharqiyyah':'East',
-  'Riyadh':'Central','Ryiadh':'Central','Al-Kharj':'Central','Kharj':'Central','Bani Tamim':'Central','Al Duwadimi':'Central','Dwadmi':'Central','Al Quwaiiyah':'Central','Shaqra':'Central','Az Zulfi':'Central','Buraydah':'Central','Buraidah':'Central','Unayzah':'Central','Unaizah':'Central','Ar Rass':'Central','Al Mithnab':'Central','Al Bukayriyah':'Central','Hail':'Central',
-  'Dammam':'East','Khobar':'East','Al Khobar':'East','Jubail':'East','Al Jubail':'East','Al Hofuf':'East','Hassa':'East','Safwa':'East','Buqayq':'East','Khafji':'East','Hafar Al Batin':'East','Al Faihaa':'East'
+  'Riyadh':'Central','Ryiadh':'Central','Riyadh Al Khabra':'Central','Al-Kharj':'Central','Kharj':'Central','Bani Tamim':'Central','Al Duwadimi':'Central','Dwadmi':'Central','Al Quwaiiyah':'Central','Shaqra':'Central','Az Zulfi':'Central','Buraydah':'Central','Buraidah':'Central','Unayzah':'Central','Unaizah':'Central','Ar Rass':'Central','Al Mithnab':'Central','Al Bukayriyah':'Central','Hail':'Central',
+  'Dammam':'East','Khobar':'East','Al Khobar':'East','Jubail':'East','Al Jubail':'East','Al Hofuf':'East','Hassa':'East','Al Hasa':'East','Al-Ahsa':'East','Al Ahsa':'East','Ahsa':'East','Hasa':'East','Safwa':'East','Buqayq':'East','Khafji':'East','Hafar Al Batin':'East','Al Faihaa':'East'
 };
 const ELM_STATION_REGION_COLORS={'West':'#c0272d','Central':'#1565c0','East':'#2e7d32','Other':'#546e7a'};
 const ELM_STATION_REGION_ORDER=['West','Central','East','Other'];
@@ -4619,7 +4619,7 @@ function renderPetrominPACTab(arr){
         const email=vals[5]||'';
         const gps=vals[7]||'';
         const wh=vals[8]||'';
-        const gpsLink=gps?'https://www.google.com/maps?q='+encodeURIComponent(gps):'';
+        const gpsLink=gps?(/^https?:\/\//i.test(gps)?gps:'https://www.google.com/maps?q='+encodeURIComponent(gps)):'';
         const branchNameOnly=branch.replace(/^\d+\s*-\s*/,'').trim();
         const nkBranch=branchNameOnly.toLowerCase().replace(/[^a-z0-9]/g,'');
         const rm=rmByBranch[nkBranch]||null;
@@ -4811,9 +4811,6 @@ function renderPetrominExpressStationsTab(arr){
           +'</div></div>';
       }).join('');
       const regId='peExpReg_'+reg.replace(/\W+/g,'_');
-      if(reg==='Other'){
-        return '<div id="'+regId+'" style="margin-bottom:16px"><div class="ref-cards-grid">'+cards+'</div></div>';
-      }
       return '<div style="margin-bottom:16px">'
         +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:9px 16px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px">'
         +'<span style="font-size:14px;font-weight:700;color:'+rc+'">'+(REG_DISPLAY_LABEL[reg]||reg)+'</span>'
