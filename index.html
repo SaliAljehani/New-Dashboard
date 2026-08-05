@@ -681,7 +681,8 @@ function clearSheetCache(){
 }
 // Manual refresh must always hit the network, never the cache.
 let FORCE_FRESH = false;
-function refreshAll(){ clearSheetCache(); try{ REF_CACHE = {}; }catch(e){} FORCE_FRESH = true; loadAllData(); }
+let REF_FRESH = false;
+function refreshAll(){ clearSheetCache(); try{ REF_CACHE = {}; }catch(e){} FORCE_FRESH = true; REF_FRESH = true; loadAllData(); }
 
 // Sheets read from Google's CSV export instead of the Apps Script proxy.
 //
@@ -2158,7 +2159,7 @@ async function fetchSheet(spreadsheetId, sheetName, retries){
   if(REF_CACHE[key]) return REF_CACHE[key];
 
   retries = retries===undefined ? 2 : retries;
-  const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${spreadsheetId}&sheetName=${encodeURIComponent(sheetName)}`;
+  const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${spreadsheetId}&sheetName=${encodeURIComponent(sheetName)}` + ((FORCE_FRESH||REF_FRESH) ? '&fresh=1' : '');
   const controller = new AbortController();
   const timeoutId = setTimeout(()=>controller.abort(), 30000);
   try{
