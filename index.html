@@ -4156,37 +4156,81 @@ function renderPetrominTireBatteryTab(arr){
 function renderPetrominEmailzTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#DAA520';
-  const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
+  const SEC={
+    'Complaint':{icon:'🔴',color:'#c0272d',border:'#c0272d'},
+    'Comment':  {icon:'💬',color:'#5f5e5a',border:'#8a8a86'},
+    'Contract': {icon:'🔵',color:'#1565c0',border:'#1565c0'},
+    'Pirelli':  {icon:'🟠',color:'#DAA520',border:'#DAA520'}
+  };
+  const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
+  const chip=v=>String(v||'').split(/[,;]/).map(x=>{
+    const s=x.trim().replace(/,$/,'');
+    if(!s)return'';
+    if(s.includes('@'))return '<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:#a5771a;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';
+    if(/^\+?\d[\d\s]{4,}$/.test(s))return '<span style="display:inline-flex;background:#eef6ee;color:#2e7d32;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;margin:2px">📞 '+fmtNum(s)+'</span>';
+    return '<span style="display:inline-flex;background:#f0f0f0;color:#666;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;margin:2px">'+s+'</span>';
+  }).filter(Boolean).join('');
+  const emailLine=(to,cc)=>{
+    let h='';
+    if(to)h+='<div style="margin:2px 0"><span style="font-size:9px;font-weight:800;padding:1px 6px;border-radius:3px;background:'+color+'20;color:#a5771a">TO</span> '+chip(to)+'</div>';
+    if(cc)h+='<div style="margin:2px 0"><span style="font-size:9px;font-weight:800;padding:1px 6px;border-radius:3px;background:#eef2f7;color:#1565c0">CC</span> '+chip(cc)+'</div>';
+    return h;
+  };
 
-  const SECTION_COLORS={Complaint:'#c0272d',Contract:'#1565c0'};
-  let sections=[{title:null,rows:[]}];
-
+  let mode='email', current='', curSec=null;
+  const topRows=[], sections=[], pirelli=[];
   arr.forEach(r=>{
-    const v=Object.values(r).map(x=>String(x===undefined||x===null?'':x).trim().replace(/\.0$/,''));
-    const dept=v[0]||'';
-    if(!dept)return;
-    if(!v[1] && !v[2] && !v[3] && (dept==='Complaint'||dept==='Contract')){
-      sections.push({title:dept,rows:[]});
+    const v=Object.values(r).map(x=>String(x===undefined||x===null?'':x).trim());
+    const a=v[0]||'', b=v[1]||'', c=v[2]||'', d=v[3]||'', e=v[4]||'';
+    if(b==='Subjacket'||c==='Department')return;
+    if(b==='Region' && (c==='Manager Name'||d==='Email')){ mode='pirelli'; return; }
+    if(SEC[a]){ current=a; if(a==='Pirelli') mode='pirelli'; }
+    if(!a&&!b&&!c&&!d&&!e)return;
+    if(mode==='pirelli'){
+      if(!b&&!c&&!d)return;
+      pirelli.push({region:b,manager:c,email:d,phone:fmtNum(e)});
       return;
     }
-    sections[sections.length-1].rows.push({dept,to:v[1]||'',cc:v[2]||'',note:v[3]||''});
+    const subj=b, dept=c, to=d, cc=e;
+    if(!dept&&!to&&!cc)return;
+    const rowObj={subj,dept,to,cc};
+    if(!current){ topRows.push(rowObj); return; }
+    if(!curSec || curSec.title!==current){ curSec={title:current,rows:[]}; sections.push(curSec); }
+    curSec.rows.push(rowObj);
   });
 
-  return sections.map(sec=>{
-    const col=SECTION_COLORS[sec.title]||color;
-    const header=sec.title?'<div style="font-size:13px;font-weight:700;color:'+col+';margin:18px 0 10px;text-align:center;padding:6px;background:'+col+'12;border-radius:8px">'+sec.title+'</div>':'';
-    const cards='<div class="ref-cards-grid">'+sec.rows.map(r=>{
-      const toHtml = r.to.includes('@') ? fmtE(r.to) : '<span style="font-size:11px;font-weight:700;color:#444">'+r.to+'</span>';
-      const ccHtml = r.cc.includes('@') ? fmtE(r.cc) : (r.cc?'<span style="font-size:11px;font-weight:700;color:#444">'+r.cc+'</span>':'');
-      return '<div class="ref-card" style="padding:10px 14px">'
-        +'<div style="font-size:12px;font-weight:700;color:'+color+';margin-bottom:6px;text-align:center">'+r.dept+'</div>'
-        +(toHtml?'<div style="margin-bottom:4px"><span style="background:'+color+'15;color:'+color+';font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">TO</span>'+toHtml+'</div>':'')
-        +(ccHtml?'<div style="margin-bottom:4px"><span style="background:#F4F7FA;color:#1565c0;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">CC</span>'+ccHtml+'</div>':'')
-        +(r.note?'<div style="font-size:11px;color:#888;margin-top:6px;direction:rtl;text-align:right;white-space:pre-wrap">📝 '+r.note+'</div>':'')
-        +'</div>';
-    }).join('')+'</div>';
-    return header+cards;
-  }).join('');
+  const secBar=(sc,label)=>'<div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;padding:9px 14px;border-radius:8px;margin:16px 0 0;border-right:4px solid '+sc.border+';background:'+sc.color+'12;color:'+sc.color+'">'+sc.icon+' '+label+'</div>';
+  const rowHtml=(r,i)=>'<div style="display:grid;grid-template-columns:230px 1fr;gap:14px;padding:11px 16px;border-top:1px solid #f2f2f2;align-items:start;background:'+(i%2?'#fafafa':'#fff')+'">'
+    +'<div><div style="font-size:12.5px;font-weight:800;color:'+color+'">'+r.dept+'</div>'
+      +(r.subj?'<div style="font-size:11px;color:#8a6d1a;margin-top:3px;direction:rtl;text-align:right">📝 '+r.subj+'</div>':'')+'</div>'
+    +'<div>'+emailLine(r.to,r.cc)+'</div></div>';
+
+  let html='';
+  if(topRows.length){
+    html+=topRows.map(r=>'<div style="background:'+color+'0d;border:1px solid #f0dca8;border-radius:10px;padding:12px 16px;margin-bottom:8px;display:grid;grid-template-columns:230px 1fr;gap:14px;align-items:start">'
+      +'<div style="font-size:12.5px;font-weight:800;color:'+color+'">📨 '+r.dept+'</div>'
+      +'<div>'+emailLine(r.to,r.cc)+(r.subj?'<div style="font-size:11px;color:#8a6d1a;margin-top:3px;direction:rtl;text-align:right">📝 '+r.subj+'</div>':'')+'</div></div>').join('');
+  }
+  sections.forEach(s=>{
+    const sc=SEC[s.title]||{icon:'📁',color:color,border:color};
+    html+=secBar(sc,s.title)
+      +'<div style="border:1px solid #eee;border-top:0;border-radius:0 0 10px 10px;overflow:hidden">'+s.rows.map((r,i)=>rowHtml(r,i)).join('')+'</div>';
+  });
+  if(pirelli.length){
+    const sc=SEC['Pirelli'];
+    html+=secBar(sc,'Pirelli — Area Managers')
+      +'<div style="background:#fafafa;border:1px solid #eee;border-top:0;border-radius:0 0 10px 10px;overflow:hidden"><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:'+color+'0f">'
+      +'<th style="padding:8px 12px;color:#a5771a;font-weight:800;border-bottom:2px solid #f0dca8;text-align:center">🗺️ Region</th>'
+      +'<th style="padding:8px 12px;color:#a5771a;font-weight:800;border-bottom:2px solid #f0dca8;text-align:center">👤 Manager</th>'
+      +'<th style="padding:8px 12px;color:#a5771a;font-weight:800;border-bottom:2px solid #f0dca8;text-align:center">✉️ Email</th>'
+      +'<th style="padding:8px 12px;color:#a5771a;font-weight:800;border-bottom:2px solid #f0dca8;text-align:center">📞 Phone</th></tr></thead><tbody>'
+      +pirelli.map((p,i)=>{
+        const emailCell=String(p.email||'').split(/[,;]/).map(x=>{const s=x.trim();if(!s)return'';return '<a href="mailto:'+s+'" style="display:inline-flex;background:#f5f5f5;color:#616161;padding:2px 7px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:1px">'+s+'</a>';}).filter(Boolean).join('');
+        return '<tr style="background:'+(i%2?'#fbf6e8':'#fff')+'"><td style="padding:7px 12px;text-align:center;font-weight:700;color:'+color+'">'+p.region+'</td><td style="padding:7px 12px;text-align:center">'+p.manager+'</td><td style="padding:7px 12px;text-align:center">'+emailCell+'</td><td style="padding:7px 12px;text-align:center">'+(p.phone||'')+'</td></tr>';
+      }).join('')
+      +'</tbody></table></div></div>';
+  }
+  return html||'<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 }
 
 function renderPetrominComplaintsTab(arr){
