@@ -4199,7 +4199,7 @@ function renderPetrominEmailzTab(arr){
     curSec.rows.push(rowObj);
   });
 
-  const secBar=(sc,label)=>'<div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;padding:9px 14px;border-radius:8px 8px 0 0;margin:16px 0 0;border-right:4px solid '+sc.border+';background:'+sc.color+'12;color:'+sc.color+'">'+sc.icon+' '+label+'</div>';
+  const secBar=(sc,label,id)=>'<div onclick="toggleRegion(\''+id+'\')" style="position:relative;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:800;padding:9px 14px;border-radius:8px 8px 0 0;margin:16px 0 0;border-right:4px solid '+sc.border+';background:'+sc.color+'12;color:'+sc.color+';cursor:pointer">'+sc.icon+' '+label+'<span id="ico_'+id+'" style="position:absolute;left:14px;color:'+sc.color+'">▼</span></div>';
   const th=t=>'<th style="width:'+(t==='Department'?'230px':'auto')+';padding:9px 12px;font-weight:800;color:#a5771a;background:'+color+'0f;border-bottom:2px solid #f0dca8;text-align:center">'+t+'</th>';
   const sectionTable=rows=>'<table style="width:100%;border-collapse:collapse;font-size:12px;border:1px solid #eee;border-top:0">'
     +'<thead><tr>'+th('Department')+th('TO')+th('CC')+'</tr></thead><tbody>'
@@ -4227,12 +4227,13 @@ function renderPetrominEmailzTab(arr){
   }
   sections.forEach(s=>{
     const sc=SEC[s.title]||{icon:'📁',color:color,border:color};
-    html+=secBar(sc,s.title)+sectionTable(s.rows);
+    const id='peSec_'+s.title.replace(/\W/g,'');
+    html+=secBar(sc,s.title,id)+'<div id="'+id+'">'+sectionTable(s.rows)+'</div>';
   });
   if(pirelli.length){
     const sc=SEC['Pirelli'];
-    html+=secBar(sc,'Pirelli — Area Managers')
-      +'<div style="background:#fafafa;border:1px solid #eee;border-top:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:'+color+'0f">'
+    html+=secBar(sc,'Pirelli — Area Managers','peSec_Pirelli')
+      +'<div id="peSec_Pirelli"><div style="background:#fafafa;border:1px solid #eee;border-top:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:'+color+'0f">'
       +'<th style="padding:8px 12px;color:#a5771a;font-weight:800;border-bottom:2px solid #f0dca8;text-align:center">🗺️ Region</th>'
       +'<th style="padding:8px 12px;color:#a5771a;font-weight:800;border-bottom:2px solid #f0dca8;text-align:center">👤 Manager</th>'
       +'<th style="padding:8px 12px;color:#a5771a;font-weight:800;border-bottom:2px solid #f0dca8;text-align:center">✉️ Email</th>'
@@ -4241,7 +4242,7 @@ function renderPetrominEmailzTab(arr){
         const emailCell=String(p.email||'').split(/[,;]/).map(x=>{const s=x.trim();if(!s)return'';return '<a href="mailto:'+s+'" style="display:inline-flex;background:#f5f5f5;color:#616161;padding:2px 7px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:1px">'+s+'</a>';}).filter(Boolean).join('');
         return '<tr style="background:'+(i%2?'#fbf6e8':'#fff')+'"><td style="padding:7px 12px;text-align:center;font-weight:700;color:'+color+'">'+p.region+'</td><td style="padding:7px 12px;text-align:center">'+p.manager+'</td><td style="padding:7px 12px;text-align:center">'+emailCell+'</td><td style="padding:7px 12px;text-align:center">'+(p.phone||'')+'</td></tr>';
       }).join('')
-      +'</tbody></table></div>';
+      +'</tbody></table></div></div>';
   }
   return html||'<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 }
