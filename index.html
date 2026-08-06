@@ -4164,9 +4164,10 @@ function renderPetrominEmailzTab(arr){
   };
   const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
   const emailChip=s=>'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:#a5771a;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';
-  const chip=v=>String(v||'').split(/[,;]/).map(x=>{
+  const chipArr=v=>String(v||'').split(/[,;]/).map(x=>{
     const s=x.trim().replace(/,$/,'');
     if(!s)return'';
+    if(s==='RM')return'';
     if(s.includes('|')){
       return s.split('|').map(t=>t.trim()).filter(Boolean).map(p=>p.includes('@')
         ? emailChip(p)
@@ -4175,7 +4176,9 @@ function renderPetrominEmailzTab(arr){
     if(s.includes('@'))return emailChip(s);
     if(/^\+?\d[\d\s]{4,}$/.test(s))return '<span style="display:inline-flex;background:#eef6ee;color:#2e7d32;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;margin:2px">📞 '+fmtNum(s)+'</span>';
     return '<span style="display:inline-flex;background:#f0f0f0;color:#666;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;margin:2px">'+s+'</span>';
-  }).filter(Boolean).join('');
+  }).filter(Boolean);
+  const chip=v=>chipArr(v).join('');
+  const chipPairs=v=>{const a=chipArr(v);if(!a.length)return'';let h='';for(let i=0;i<a.length;i+=2){h+='<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin:2px 0">'+a.slice(i,i+2).join('')+'</div>';}return h;};
 
   let mode='email', current='', curSec=null;
   const topRows=[], sections=[], pirelli=[];
@@ -4200,21 +4203,21 @@ function renderPetrominEmailzTab(arr){
   });
 
   const secBar=(sc,label,id)=>'<div onclick="toggleRegion(\''+id+'\')" style="position:relative;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:800;padding:9px 14px;border:1px solid #eee;border-bottom:2px solid '+sc.border+';border-radius:8px 8px 0 0;margin:16px 0 0;background:'+sc.color+'12;color:'+sc.color+';cursor:pointer">'+sc.icon+' '+label+'<span id="ico_'+id+'" style="position:absolute;right:14px;color:'+sc.color+'">▼</span></div>';
-  const th=t=>'<th style="width:'+(t==='Department'?'230px':'auto')+';padding:9px 12px;font-weight:800;color:#a5771a;background:'+color+'0f;border-bottom:2px solid #f0dca8;text-align:center">'+t+'</th>';
-  const sectionTable=rows=>'<table style="width:100%;border-collapse:collapse;font-size:12px;border:1px solid #eee;border-top:0;table-layout:fixed">'
-    +'<thead><tr>'+th('Department')+th('TO')+th('CC')+'</tr></thead><tbody>'
+  const gcols='display:grid;grid-template-columns:230px minmax(0,1fr) minmax(0,1fr)';
+  const hcell='padding:9px 12px;font-weight:800;color:#a5771a;background:'+color+'0f;border-bottom:2px solid #f0dca8;text-align:center;font-size:12px';
+  const sectionTable=rows=>'<div style="border:1px solid #eee;border-top:0;overflow:hidden;font-size:12px">'
+    +'<div style="'+gcols+'"><div style="'+hcell+'">Department</div><div style="'+hcell+'">TO</div><div style="'+hcell+'">CC</div></div>'
     +rows.map((r,i)=>{
-      const td='padding:10px 12px;border-bottom:1px solid #f2f2f2;vertical-align:top;text-align:center;background:'+(i%2?'#fafafa':'#fff');
-      const dash='<span style="color:#ccc">—</span>';
-      const cell=v=>v?'<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2px">'+chip(v)+'</div>':dash;
-      return '<tr>'
-        +'<td style="'+td+'"><div style="max-width:240px;margin:0 auto;word-break:break-word;overflow-wrap:anywhere"><div style="font-size:12.5px;font-weight:800;color:'+color+'">'+r.dept+'</div>'
-          +(r.subj?'<div style="font-size:11px;color:#8a6d1a;direction:rtl;margin-top:3px">'+r.subj+'</div>':'')+'</div></td>'
-        +'<td style="'+td+'">'+cell(r.to)+'</td>'
-        +'<td style="'+td+'">'+cell(r.cc)+'</td>'
-        +'</tr>';
+      const base='padding:10px 12px;border-top:1px solid #f2f2f2;text-align:center;min-width:0;background:'+(i%2?'#fafafa':'#fff');
+      const cell=v=>chipPairs(v)||'<span style="color:#ccc">—</span>';
+      return '<div style="'+gcols+'">'
+        +'<div style="'+base+'"><div style="font-size:12.5px;font-weight:800;color:'+color+';white-space:normal;word-break:break-word">'+r.dept+'</div>'
+          +(r.subj?'<div style="font-size:11px;color:#8a6d1a;direction:rtl;margin-top:3px;white-space:normal;word-break:break-word">'+r.subj+'</div>':'')+'</div>'
+        +'<div style="'+base+'">'+cell(r.to)+'</div>'
+        +'<div style="'+base+'">'+cell(r.cc)+'</div>'
+        +'</div>';
     }).join('')
-    +'</tbody></table>';
+    +'</div>';
 
   let html='';
   if(topRows.length){
