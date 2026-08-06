@@ -4248,7 +4248,7 @@ function renderPetrominEmailzTab(arr){
       }).join('')
       +'</tbody></table></div></div>';
   }
-  return html||'<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  return html?'<div style="max-width:1120px;margin:0 auto">'+html+'</div>':'<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 }
 
 function renderPetrominComplaintsTab(arr){
