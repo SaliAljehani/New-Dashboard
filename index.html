@@ -4203,7 +4203,7 @@ function renderPetrominEmailzTab(arr){
   });
 
   const secBar=(sc,label,id)=>'<div onclick="toggleRegion(\''+id+'\')" style="position:relative;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:800;padding:9px 14px;border:1px solid #eee;border-bottom:2px solid '+sc.border+';border-radius:8px 8px 0 0;margin:16px 0 0;background:'+sc.color+'12;color:'+sc.color+';cursor:pointer">'+sc.icon+' '+label+'<span id="ico_'+id+'" style="position:absolute;right:14px;color:'+sc.color+'">▼</span></div>';
-  const gcols='display:grid;grid-template-columns:230px minmax(0,1fr) minmax(0,1fr)';
+  const gcols='display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)';
   const hcell='padding:9px 12px;font-weight:800;color:#a5771a;background:'+color+'0f;border-bottom:2px solid #f0dca8;text-align:center;font-size:12px';
   const sectionTable=rows=>'<div style="border:1px solid #eee;border-top:0;overflow:hidden;font-size:12px">'
     +'<div style="'+gcols+'"><div style="'+hcell+'">Department</div><div style="'+hcell+'">TO</div><div style="'+hcell+'">CC</div></div>'
@@ -4248,7 +4248,7 @@ function renderPetrominEmailzTab(arr){
       }).join('')
       +'</tbody></table></div></div>';
   }
-  return html?'<div style="max-width:1120px;margin:0 auto">'+html+'</div>':'<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  return html||'<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 }
 
 function renderPetrominComplaintsTab(arr){
