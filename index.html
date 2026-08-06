@@ -4163,19 +4163,19 @@ function renderPetrominEmailzTab(arr){
     'Pirelli':  {icon:'🟠',color:'#DAA520',border:'#DAA520'}
   };
   const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
+  const emailChip=s=>'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:#a5771a;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';
   const chip=v=>String(v||'').split(/[,;]/).map(x=>{
     const s=x.trim().replace(/,$/,'');
     if(!s)return'';
-    if(s.includes('@'))return '<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:#a5771a;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';
+    if(s.includes('|')){
+      return s.split('|').map(t=>t.trim()).filter(Boolean).map(p=>p.includes('@')
+        ? emailChip(p)
+        : '<span style="display:inline-flex;color:#444;font-size:11px;font-weight:700;padding:3px 4px;margin:2px">'+p+'</span>').join('');
+    }
+    if(s.includes('@'))return emailChip(s);
     if(/^\+?\d[\d\s]{4,}$/.test(s))return '<span style="display:inline-flex;background:#eef6ee;color:#2e7d32;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;margin:2px">📞 '+fmtNum(s)+'</span>';
     return '<span style="display:inline-flex;background:#f0f0f0;color:#666;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;margin:2px">'+s+'</span>';
   }).filter(Boolean).join('');
-  const emailLine=(to,cc)=>{
-    let h='';
-    if(to)h+='<div style="margin:2px 0"><span style="font-size:9px;font-weight:800;padding:1px 6px;border-radius:3px;background:'+color+'20;color:#a5771a">TO</span> '+chip(to)+'</div>';
-    if(cc)h+='<div style="margin:2px 0"><span style="font-size:9px;font-weight:800;padding:1px 6px;border-radius:3px;background:#eef2f7;color:#1565c0">CC</span> '+chip(cc)+'</div>';
-    return h;
-  };
 
   let mode='email', current='', curSec=null;
   const topRows=[], sections=[], pirelli=[];
@@ -4199,27 +4199,40 @@ function renderPetrominEmailzTab(arr){
     curSec.rows.push(rowObj);
   });
 
-  const secBar=(sc,label)=>'<div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;padding:9px 14px;border-radius:8px;margin:16px 0 0;border-right:4px solid '+sc.border+';background:'+sc.color+'12;color:'+sc.color+'">'+sc.icon+' '+label+'</div>';
-  const rowHtml=(r,i)=>'<div style="display:grid;grid-template-columns:230px 1fr;gap:14px;padding:11px 16px;border-top:1px solid #f2f2f2;align-items:start;background:'+(i%2?'#fafafa':'#fff')+'">'
-    +'<div><div style="font-size:12.5px;font-weight:800;color:'+color+'">'+r.dept+'</div>'
-      +(r.subj?'<div style="font-size:11px;color:#8a6d1a;margin-top:3px;direction:rtl;text-align:right">📝 '+r.subj+'</div>':'')+'</div>'
-    +'<div>'+emailLine(r.to,r.cc)+'</div></div>';
+  const secBar=(sc,label)=>'<div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;padding:9px 14px;border-radius:8px 8px 0 0;margin:16px 0 0;border-right:4px solid '+sc.border+';background:'+sc.color+'12;color:'+sc.color+'">'+sc.icon+' '+label+'</div>';
+  const th=t=>'<th style="width:'+(t==='Department'?'230px':'auto')+';padding:9px 12px;font-weight:800;color:#a5771a;background:'+color+'0f;border-bottom:2px solid #f0dca8;text-align:center">'+t+'</th>';
+  const sectionTable=rows=>'<table style="width:100%;border-collapse:collapse;font-size:12px;border:1px solid #eee;border-top:0">'
+    +'<thead><tr>'+th('Department')+th('TO')+th('CC')+'</tr></thead><tbody>'
+    +rows.map((r,i)=>{
+      const td='padding:10px 12px;border-bottom:1px solid #f2f2f2;vertical-align:top;text-align:center;background:'+(i%2?'#fafafa':'#fff');
+      const dash='<span style="color:#ccc">—</span>';
+      return '<tr>'
+        +'<td style="'+td+'"><div style="font-size:12.5px;font-weight:800;color:'+color+'">'+r.dept+'</div>'
+          +(r.subj?'<div style="font-size:11px;color:#8a6d1a;direction:rtl;margin-top:3px">'+r.subj+'</div>':'')+'</td>'
+        +'<td style="'+td+'">'+(chip(r.to)||dash)+'</td>'
+        +'<td style="'+td+'">'+(chip(r.cc)||dash)+'</td>'
+        +'</tr>';
+    }).join('')
+    +'</tbody></table>';
 
   let html='';
   if(topRows.length){
     html+=topRows.map(r=>'<div style="background:'+color+'0d;border:1px solid #f0dca8;border-radius:10px;padding:12px 16px;margin-bottom:8px;display:grid;grid-template-columns:230px 1fr;gap:14px;align-items:start">'
       +'<div style="font-size:12.5px;font-weight:800;color:'+color+'">📨 '+r.dept+'</div>'
-      +'<div>'+emailLine(r.to,r.cc)+(r.subj?'<div style="font-size:11px;color:#8a6d1a;margin-top:3px;direction:rtl;text-align:right">📝 '+r.subj+'</div>':'')+'</div></div>').join('');
+      +'<div>'
+        +'<div style="margin:2px 0"><span style="font-size:9px;font-weight:800;padding:1px 6px;border-radius:3px;background:'+color+'20;color:#a5771a">TO</span> '+chip(r.to)+'</div>'
+        +(r.cc?'<div style="margin:2px 0"><span style="font-size:9px;font-weight:800;padding:1px 6px;border-radius:3px;background:#eef2f7;color:#1565c0">CC</span> '+chip(r.cc)+'</div>':'')
+        +(r.subj?'<div style="font-size:11px;color:#8a6d1a;margin-top:3px;direction:rtl;text-align:right">📝 '+r.subj+'</div>':'')
+      +'</div></div>').join('');
   }
   sections.forEach(s=>{
     const sc=SEC[s.title]||{icon:'📁',color:color,border:color};
-    html+=secBar(sc,s.title)
-      +'<div style="border:1px solid #eee;border-top:0;border-radius:0 0 10px 10px;overflow:hidden">'+s.rows.map((r,i)=>rowHtml(r,i)).join('')+'</div>';
+    html+=secBar(sc,s.title)+sectionTable(s.rows);
   });
   if(pirelli.length){
     const sc=SEC['Pirelli'];
     html+=secBar(sc,'Pirelli — Area Managers')
-      +'<div style="background:#fafafa;border:1px solid #eee;border-top:0;border-radius:0 0 10px 10px;overflow:hidden"><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:'+color+'0f">'
+      +'<div style="background:#fafafa;border:1px solid #eee;border-top:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:'+color+'0f">'
       +'<th style="padding:8px 12px;color:#a5771a;font-weight:800;border-bottom:2px solid #f0dca8;text-align:center">🗺️ Region</th>'
       +'<th style="padding:8px 12px;color:#a5771a;font-weight:800;border-bottom:2px solid #f0dca8;text-align:center">👤 Manager</th>'
       +'<th style="padding:8px 12px;color:#a5771a;font-weight:800;border-bottom:2px solid #f0dca8;text-align:center">✉️ Email</th>'
@@ -4228,7 +4241,7 @@ function renderPetrominEmailzTab(arr){
         const emailCell=String(p.email||'').split(/[,;]/).map(x=>{const s=x.trim();if(!s)return'';return '<a href="mailto:'+s+'" style="display:inline-flex;background:#f5f5f5;color:#616161;padding:2px 7px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:1px">'+s+'</a>';}).filter(Boolean).join('');
         return '<tr style="background:'+(i%2?'#fbf6e8':'#fff')+'"><td style="padding:7px 12px;text-align:center;font-weight:700;color:'+color+'">'+p.region+'</td><td style="padding:7px 12px;text-align:center">'+p.manager+'</td><td style="padding:7px 12px;text-align:center">'+emailCell+'</td><td style="padding:7px 12px;text-align:center">'+(p.phone||'')+'</td></tr>';
       }).join('')
-      +'</tbody></table></div></div>';
+      +'</tbody></table></div>';
   }
   return html||'<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 }
