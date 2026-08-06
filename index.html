@@ -3776,15 +3776,28 @@ function renderBaicServiceTab(arr, apptArr){
     regions[reg].push(r);
   });
 
+  const findHrs=r=>{const vals=Object.values(r).map(x=>String(x||'').trim());return vals.find(v=>v && /(AM|PM)\b/i.test(v) && !v.includes('@') && !/^https?:/i.test(v))||'';};
+  const hoursPill=rows=>{
+    const hc={};rows.forEach(r=>{const h=findHrs(r);if(h)hc[h]=(hc[h]||0)+1;});
+    const top=Object.keys(hc).sort((a,b)=>hc[b]-hc[a])[0]||'';
+    if(!top)return'';
+    const raw=top.replace(/\s*\n\s*/g,' ').trim();
+    let main=raw,closed='';const cm=raw.match(/^(.*?)(Friday.*)$/i);
+    if(cm){main=cm[1].replace(/[·\-\s]+$/,'').trim();closed=cm[2].trim();}
+    return '<span style="display:inline-flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:center;background:#fdecec;color:#c0272d;border:1px solid #f3c2c2;border-radius:16px;padding:3px 11px;font-size:10.5px;font-weight:700;line-height:1.4;margin-left:auto">⏰ '+main+(closed?' <span style="opacity:.45">·</span> ❌ '+closed:'')+'</span>';
+  };
+
   const regHTML=REGION_ORDER.filter(r=>regions[r]).map(reg=>{
     const rows=regions[reg];
     const rc=REGION_COLORS[reg]||color;
     const regId='baicSvc_'+reg.replace(/\s/g,'');
+    const hpill=hoursPill(rows);
     return '<div style="margin-bottom:14px">'
       +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px">'
       +'<span style="font-size:13px;font-weight:700;color:'+rc+'">'+reg+'</span>'
       +'<span style="font-size:11px;color:#aaa">('+rows.length+')</span>'
-      +'<span id="ico_'+regId+'" style="margin-left:auto;color:'+rc+'">▼</span>'
+      +hpill
+      +'<span id="ico_'+regId+'" style="'+(hpill?'margin-left:8px':'margin-left:auto')+';color:'+rc+'">▼</span>'
       +'</div>'
       +'<div id="'+regId+'"><div class="ref-cards-grid">'+rows.map(r=>{
         const city=String(r[cityCol]||'').trim();
@@ -3877,11 +3890,49 @@ function renderBaicLocationTab(arr, brand){
       +'<div id="'+id+'"><div class="ref-cards-grid">'+cards+'</div></div>'
       +'</div>';
   }
-  const apptCards=mkCards(sections.appt,'baicAppt',color);
+  const REGIONS=[
+    {key:'West',    ar:'الغربية',  color:'#c0272d'},
+    {key:'Central', ar:'الوسطى',   color:'#1565c0'},
+    {key:'North',   ar:'الشمالية', color:'#e65200'},
+    {key:'Eastern', ar:'الشرقية',  color:'#2e7d32'},
+    {key:'South',   ar:'الجنوبية', color:'#6a1b9a'},
+    {key:'Other',   ar:'أخرى',     color:'#888888'}
+  ];
+  const cityRegion=cv=>{const c=String(cv||'').toLowerCase();const H=(...a)=>a.some(x=>c.includes(x));
+    if(H('riyadh','qassim','buraid','unaiz','kharj','majma','zulfi','dawadmi','رياض','قصيم','بريدة','عنيزة','خرج')) return 'Central';
+    if(H('jeddah','jedah','makk','mecca','madin','medin','taif','yanbu','rabigh','جدة','مكة','مدينة','طائف','ينبع','رابغ')) return 'West';
+    if(H('dammam','khobar','dhahran','jubail','hofuf','ahsa','hasa','qatif','khafji','دمام','خبر','ظهران','جبيل','أحساء','هفوف','قطيف','خفجي')) return 'Eastern';
+    if(H('tabuk','hail','sakaka','jouf','arar','qurayyat','rafha','تبوك','حائل','سكاكا','جوف','عرعر','قريات')) return 'North';
+    if(H('abha','khamis','najran','jazan','jizan','bisha','baha','أبها','خميس','نجران','جازان','بيشة','باحة')) return 'South';
+    return 'Other';};
+  const apptRegionsHtml=()=>{
+    if(!sections.appt.length) return '';
+    const groups={};
+    sections.appt.forEach(r=>{const g=cityRegion(gv(r,k0));(groups[g]=groups[g]||[]).push(r);});
+    const blocks=REGIONS.filter(R=>groups[R.key]&&groups[R.key].length).map(R=>{
+      const cards=mkCards(groups[R.key],'baicAppt_'+R.key,color);
+      if(!cards) return '';
+      const rid='baicReg_'+R.key;
+      return '<div style="margin-bottom:12px">'
+        +'<div onclick="toggleRegion(\''+rid+'\')" style="display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:'+R.color+'12;border-radius:8px;border-left:4px solid '+R.color+';cursor:pointer;margin-bottom:8px">'
+        +'<span style="font-size:13px;font-weight:800;color:'+R.color+'">'+R.key+' · '+R.ar+' <span style="font-size:11px;color:#aaa;font-weight:400">('+groups[R.key].length+')</span></span>'
+        +'<span id="ico_'+rid+'" style="color:'+R.color+'">▼</span>'
+        +'</div>'
+        +'<div id="'+rid+'"><div class="ref-cards-grid">'+cards+'</div></div>'
+        +'</div>';
+    }).join('');
+    return '<div style="margin-bottom:16px">'
+      +'<div onclick="toggleRegion(\'baicApptSec\')" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:'+color+'12;border-radius:8px;border-left:4px solid '+color+';cursor:pointer;margin-bottom:10px">'
+      +'<span style="font-size:13px;font-weight:700;color:'+color+'">📅 Appointment & Location SMS</span>'
+      +'<span id="ico_baicApptSec" style="color:'+color+'">▼</span>'
+      +'</div>'
+      +'<div id="baicApptSec">'+blocks+'</div>'
+      +'</div>';
+  };
   const serviceCards=mkCards(sections.service,'baicSvc',color);
   const recallCards=mkCards(sections.recall,'baicRcl',color);
   return '<div>'
-    +(apptCards?sec('baicApptSec','📅 Appointment & Location SMS',color,apptCards):'')
+    +apptRegionsHtml()
     +(serviceCards?sec('baicSvcSec','📍 Service Location SMS',color,serviceCards):'')
     +(recallCards?sec('baicRclSec','📍 Recall Location SMS',color,recallCards):'')
     +'</div>';
