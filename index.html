@@ -4098,7 +4098,7 @@ function renderPetrominLocationListTab(arr, kind){
   const body=order.map(g=>{
     const its=groups[g];
     const gid='peLoc_'+kind+'_'+g.replace(/[^A-Za-z0-9]/g,'');
-    const table='<div style="overflow-x:auto;background:#fff;border:1px solid #f0e6c8;border-top:0;border-radius:0 0 8px 8px"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:'+color+'0f">'+cols.map(th).join('')+'</tr></thead><tbody>'
+    const table='<div style="overflow-x:auto;background:#fff;border:1px solid #f0e6c8;border-top:0;border-radius:0 0 8px 8px"><table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;word-break:break-word"><thead><tr style="background:'+color+'0f">'+cols.map(th).join('')+'</tr></thead><tbody>'
       +its.map((it,i)=>'<tr style="background:'+(i%2?'#FDFBF4':'#fff')+'">'+rowFor(it)+'</tr>').join('')
       +'</tbody></table></div>';
     return '<div style="margin-bottom:10px">'
@@ -4148,7 +4148,7 @@ function renderPetrominTireBatteryTab(arr){
   // helpers
   const secHead=txt=>'<div style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:800;padding:10px 14px;border-radius:8px 8px 0 0;background:'+color+'12;color:'+color+';border-bottom:2px solid '+color+'66">'+txt+'</div>';
   const th=h=>'<th style="padding:8px 12px;color:#a5771a;font-weight:800;border-bottom:2px solid #f0dca8;text-align:center">'+h+'</th>';
-  const tbl=(headers,rows)=>'<div style="overflow-x:auto;background:#fff;border:1px solid #f0e6c8;border-top:0;border-radius:0 0 8px 8px"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:'+color+'0f">'+headers.map(th).join('')+'</tr></thead><tbody>'+rows+'</tbody></table></div>';
+  const tbl=(headers,rows)=>'<div style="overflow-x:auto;background:#fff;border:1px solid #f0e6c8;border-top:0;border-radius:0 0 8px 8px"><table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;word-break:break-word"><thead><tr style="background:'+color+'0f">'+headers.map(th).join('')+'</tr></thead><tbody>'+rows+'</tbody></table></div>';
   const emailCell=v=>String(v||'').split(/[,;]/).map(x=>{const s=x.trim();if(!s)return'';return '<a href="mailto:'+s+'" style="display:inline-flex;background:#f5f5f5;color:#616161;padding:2px 7px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:1px">'+s+'</a>';}).filter(Boolean).join('');
 
   // Pirelli — OPEN table (Region · Manager · Email · Phone)
@@ -4776,12 +4776,14 @@ function renderPetrominPACTab(arr){
   let emRows={};
   let emMode='';
 
+  const normMainReg=s=>{const u=String(s||'').toUpperCase().trim();if(/^WR|WESTERN|^WEST/.test(u))return'West';if(/^CR|CENTRAL|^CENT/.test(u))return'Central';if(/^ER|EASTERN|^EAST/.test(u))return'East';if(/SOUTH|^SR/.test(u))return'South';if(/NORTH|^NR/.test(u))return'North';return s?String(s).trim():'Other';};
   arr.forEach((r,idx)=>{
     const vals=Object.values(r).map(v=>String(v||'').trim());
     const v0=vals[0]||'';
     if(isRegionName(v0)){
-      if(!regions[v0]){regions[v0]=[];regionOrder.push(v0);}
-      regions[v0].push(vals);
+      const mreg=normMainReg(v0);
+      if(!regions[mreg]){regions[mreg]=[];regionOrder.push(mreg);}
+      regions[mreg].push(vals);
       return;
     }
     // "for Request" / "for Complaint" marks the start of a 3-row email block
@@ -4859,6 +4861,8 @@ function renderPetrominPACTab(arr){
     ).join('')+'</div>'
     ,'petrominPacRMFlat',color):'';
 
+  const MAIN_ORDER={West:0,Central:1,East:2,North:3,South:4,Other:5};
+  regionOrder.sort((a,b)=>(MAIN_ORDER[a]!==undefined?MAIN_ORDER[a]:9)-(MAIN_ORDER[b]!==undefined?MAIN_ORDER[b]:9));
   const regHTML=regionOrder.map((reg,ri)=>{
     const rows=regions[reg];
     const rc=REGION_COLORS[reg]||REGION_PALETTE[ri%REGION_PALETTE.length];
