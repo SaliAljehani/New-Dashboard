@@ -7854,16 +7854,25 @@ async function renderRef(){
     const subC=['PN Sales Complaint','PN Aftersales Complaint','PS Sales Complaint','PS AftesSales Complaint','Body Shop Complaint','PE Complaint','PAC Complaint','BAIC Complaint','TS Complaint','Tire Complaint','Fuel Complaint','Foton Complaint','Electromin Complaint'];
     if(mainC){ mainC.subject='All Complaints'; mainC.status='Open'; mainC._deptTags=DEPT_TAGS; mainC._descText=DESC_TEXT; mainC._catTags=CAT_TAGS; mainC._notesAR=NOTES_AR; }
 
-    const subjItem=(it,isCMain,subTags)=>{
+    const fbox=(name,val,c)=>'<span style="background:#fff;border:1px solid #eadfb8;border-radius:7px;padding:5px 10px;font-size:10.5px;font-weight:600;color:#666;text-align:center;display:inline-block">'+name+'<small style="display:block;font-size:9px;color:#fff;background:'+c+';font-weight:800;margin-top:3px;border-radius:3px;padding:1px 4px">'+val+'</small></span>';
+    const formulaBar=(val,two,c)=>{
+      const plus='<span style="color:#c9a227;font-weight:800;display:flex;align-items:center">+</span>';
+      const boxes=two?[fbox('Invoice Number',val,c),fbox('Description',val,c)]:[fbox('Invoice Number',val,c),fbox('Subject',val,c),fbox('Description',val,c),fbox('Empty Box',val,c)];
+      return'<div style="display:flex;flex-wrap:wrap;align-items:stretch;gap:6px;background:#fff8e1;border:1px dashed #f0c95a;border-radius:9px;padding:9px 10px;direction:ltr;justify-content:center;margin-bottom:10px">'+boxes.join(plus)+'</div>';
+    };
+    const subjItem=(it,isCMain,subTags,twoField)=>{
       // Use enriched hardcoded data if available
       const deptTags = it._deptTags || (it.dept?it.dept.split(/\n/).flatMap(d=>d.split(' - ')).map(s=>s.trim()).filter(Boolean):[]);
       const catTags  = it._catTags  || (it.cat?it.cat.split(/\n/).flatMap(c=>c.split(' - ')).map(s=>s.trim()).filter(Boolean):[]);
       const descText = it._descText || it.desc || '';
       const notesAR  = it._notesAR  || it.notes || '';
+      const fVal = isCMain ? 'Complaint type' : (it.subject||'');
+      const badgeC = isCMain ? '#c0272d' : '#f9a825';
       return'<div class="ref-subj-item">'
         +'<div class="ref-subj-subject">'+it.subject
         +(it.status?'<span class="ref-subj-badge" style="background:'+(it.status==='Open'?'#fde':'#F4F8F5')+';color:'+(it.status==='Open'?'#c0272d':'#2e7d32')+'">'+it.status+'</span>':'')
         +'</div>'
+        +formulaBar(fVal,twoField,badgeC)
         +(deptTags.length?'<div class="ref-subj-row"><span class="ref-subj-ico">📂</span><span>'+deptTags.map(d=>'<span style="display:inline-block;background:#f0f0f0;color:#555;font-size:11px;font-weight:600;padding:2px 9px;border-radius:6px;margin:2px">'+d+'</span>').join('')+'</span></div>':'')
         +(descText?'<div class="ref-subj-row"><span class="ref-subj-ico">✏️</span><span style="font-size:12px;color:#555;direction:rtl">'+descText+'</span></div>':'')
         +(catTags.length?'<div class="ref-subj-row"><span class="ref-subj-ico">🏷️</span><span>'+catTags.map(c=>'<span style="display:inline-block;background:#FDF5F8;color:#9e7700;font-size:11px;font-weight:600;padding:2px 9px;border-radius:6px;margin:2px">'+c+'</span>').join('')+'</span></div>':'')
@@ -7882,9 +7891,10 @@ async function renderRef(){
       const col=Q_COLORS[grp]||'#888';
       const items=sGroups[grp];
       const isC=grp==='Complaint';
+      const two=(grp==='Request'||grp==='Complaint');
       return'<div class="ref-subj-group">'
         +'<div class="ref-subj-group-title" style="border-left:4px solid '+col+';color:'+col+'">'+grp+'</div>'
-        +(isC&&mainC?subjItem(mainC,true,subC):items.map(i=>subjItem(i,false,[])).join(''))
+        +(isC&&mainC?subjItem(mainC,true,subC,two):items.map(i=>subjItem(i,false,[],two)).join(''))
         +'</div>';
     }).join('');
 
