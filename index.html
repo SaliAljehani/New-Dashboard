@@ -204,7 +204,7 @@ tr:last-child td{border-bottom:none}
 .ref-contacts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
 .ref-contact-pill{background:#fafafa;border-radius:10px;padding:11px 14px;border:1px solid #eee;transition:.15s}
 .ref-contact-pill:hover{border-color:#c0272d;background:#fff}
-.ref-contact-pill-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#aaa;margin-bottom:4px}
+.ref-contact-pill-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#444;margin-bottom:4px}
 .ref-contact-pill-val{font-size:15px;font-weight:700;color:#1a1a2e;letter-spacing:.02em}
 
 /* Two-col layout */
@@ -5632,7 +5632,7 @@ function showRefBrandPage(brand){
     +'<div class="ref-sub-tabs" id="refSubTabs_'+brand+'" style="justify-content:center">'
     +tabs.map((t,i)=>{
       const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📅 Appointment SMS','SMS & Location':'📅 Appointment & Location SMS','BAIC Location':'📅 Appointment & Location SMS','Showrooms':'Showroom','PMS':'PMS - Spare Parts','Location SMS':'SMS Location','Emails':'📧 Emails','EV Maintenance Branches':'🔧 Maintenance Branches','EV Charging Stations':'⚡ Charging Stations','FAQ':'❓ FAQ','SMS':'📨 SMS'};
-      const BRAND_TAB_LABELS={baic:{'Service':'Service & Spare Parts'}};
+      const BRAND_TAB_LABELS={baic:{'Service':'Service & Spare Parts'},petromin:{'Autocare':'AutoCare','Petromin Express Stations':'Express Stations','Petromin Tristar':'Tristar','Complaints Emails':'PE Complaints','PE-Emailz':'PE Emails'}};
       const label=(BRAND_TAB_LABELS[brand]&&BRAND_TAB_LABELS[brand][t])||TAB_LABELS[t]||t;
       return '<button class="ref-sub-tab'+(i===0?' active':'')+'" '
         +'style="'+(i===0?'background:'+meta.color+';color:#fff;border-color:'+meta.color:'')+'" '
@@ -7900,7 +7900,6 @@ async function renderRef(){
       const isC=grp==='Complaint';
       const two=(grp==='Request'||grp==='Complaint');
       return'<div class="ref-subj-group">'
-        +'<div class="ref-subj-group-title" style="border-left:4px solid '+col+';color:'+col+'">'+grp+'</div>'
         +(isC&&mainC?subjItem(mainC,true,subC,two,col):items.map(i=>subjItem(i,false,[],two,col)).join(''))
         +'</div>';
     }).join('');
@@ -7933,7 +7932,7 @@ async function renderRef(){
       // SUBJECT 2-COL
       +'<div class="ref-info-panel">'
       +'<div class="ref-panel-header" style="cursor:pointer;justify-content:center" onclick="toggleRefSection(\'refSubjectBody\',\'refSubjectIco\')">'
-      +'📋 Subject Guide<span id="refSubjectIco" style="margin-left:8px;color:#c0272d">▲</span>'
+      +'📋 Ticket Type<span id="refSubjectIco" style="margin-left:8px;color:#c0272d">▲</span>'
       +'</div>'
       +'<div id="refSubjectBody"><div class="ref-panel-body">'
       +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">'
