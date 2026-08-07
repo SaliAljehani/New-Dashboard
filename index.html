@@ -147,7 +147,7 @@ tr:last-child td{border-bottom:none}
 .eom-team-title{font-size:13px;font-weight:700;text-align:center;margin-bottom:16px;padding:8px;border-radius:8px;color:#fff}
 .eom-podium{display:flex;flex-direction:column;gap:10px}
 .eom-rank{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;background:#f9f9f9;border:1px solid #eee}
-.eom-rank.gold{background:linear-gradient(135deg,#fff8e1,#fff3cd);border-color:#DAA520}
+.eom-rank.gold{background:linear-gradient(135deg,#fff8e1,#fff3cd);border-color:#D4AF37}
 .eom-rank.silver{background:linear-gradient(135deg,#f5f5f5,#ececec);border-color:#aaa}
 .eom-rank.bronze{background:linear-gradient(135deg,#fff3e0,#ffe0b2);border-color:#cd7f32}
 .eom-medal{font-size:24px;flex-shrink:0}
@@ -165,14 +165,14 @@ tr:last-child td{border-bottom:none}
 .announce-card{background:#fff;border-radius:12px;padding:16px 18px;box-shadow:0 2px 8px rgba(0,0,0,.08);border-left:5px solid #ddd;transition:.2s}
 .announce-card:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.12)}
 .announce-card.high{border-left-color:#c0272d}
-.announce-card.medium{border-left-color:#DAA520}
+.announce-card.medium{border-left-color:#D4AF37}
 .announce-card.low{border-left-color:#2e7d32}
 .announce-date{font-size:10px;color:#999;margin-bottom:6px;font-weight:500}
 .announce-title{font-size:11px;font-weight:600;color:#1a1a2e;margin-bottom:8px}
 .announce-msg{font-size:12px;color:#555;line-height:1.6}
 .announce-priority{display:inline-block;padding:2px 10px;border-radius:10px;font-size:10px;font-weight:700;margin-top:8px}
 .announce-priority.high{background:#fde;color:#c0272d}
-.announce-priority.medium{background:#FDF5F8;color:#DAA520}
+.announce-priority.medium{background:#FDF5F8;color:#D4AF37}
 .announce-priority.low{background:#F4F8F5;color:#2e7d32}
 .esc-table{width:100%;border-collapse:collapse;font-size:12px;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .esc-table th{background:#f5f5f5;padding:10px 14px;font-weight:700;font-size:11px;color:#555;text-align:center;border-bottom:2px solid #eee}
@@ -180,7 +180,7 @@ tr:last-child td{border-bottom:none}
 .esc-table tr:hover td{background:#fef9f9}
 .status-badge{padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;display:inline-block}
 .status-open{background:#fde;color:#c0272d}
-.status-progress{background:#FDF5F8;color:#DAA520}
+.status-progress{background:#FDF5F8;color:#D4AF37}
 .status-closed{background:#F4F8F5;color:#2e7d32}
 .status-pending{background:#F4F7FA;color:#1565c0}
 
@@ -319,7 +319,7 @@ tr:last-child td{border-bottom:none}
 .team-toggle{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;justify-content:center}
 .ttn{padding:5px 14px;border-radius:20px;border:1.5px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#666}
 .ttn.active{color:#fff;border-color:transparent}
-.ttn.nissan.active{background:#c0272d}.ttn.petromin.active{background:#DAA520;color:#fff}.ttn.stellantis.active{background:#1565c0}
+.ttn.nissan.active{background:#c0272d}.ttn.petromin.active{background:#D4AF37;color:#fff}.ttn.stellantis.active{background:#1565c0}
 footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px solid #eee;margin-top:20px;background:#fff}
 @media(max-width:900px){.krow{grid-template-columns:repeat(3,1fr)}.r2,.comp-grid,.call-krow{grid-template-columns:1fr}}
 
@@ -2411,7 +2411,7 @@ function refGlobalFilter(q){
 
 function switchRefTab(brand, idx, btn){
   REF_ACTIVE_TABS[brand] = idx;
-  const color = {nissan:'#c0272d', stellantis:'#1565c0', baic:'#D2691E', baicRecall:'#6A5818',petromin:'#DAA520',foton:'#546e7a',nos:'#2e7d32'}[brand] || '#c0272d';
+  const color = {nissan:'#c0272d', stellantis:'#1565c0', baic:'#D2691E', baicRecall:'#6A5818',petromin:'#D4AF37',foton:'#546e7a',nos:'#2e7d32'}[brand] || '#c0272d';
   btn.parentElement.querySelectorAll('.ref-sub-tab').forEach((t,i) => {
     t.classList.toggle('active', i===idx);
     t.style.background = i===idx ? color : '';
@@ -2856,7 +2856,7 @@ const BRANCH_REGION_COLORS = {
 
 function renderNissanBranchTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#D2691E',baicRecall:'#6A5818',petromin:'#DAA520',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
+  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#D2691E',baicRecall:'#6A5818',petromin:'#D4AF37',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
   const fmtNum = n => {
     const s=String(n||'').trim();
     if(!s||s==='-') return '';
@@ -3075,9 +3075,11 @@ function toggleRegion(id){
 function showPetrominInstrTab(idx){
   document.querySelectorAll('.piTab').forEach((t,i)=>{
     const on=i===idx;
-    t.style.background=on?'#E8C560':'#fff';
-    t.style.color=on?'#fff':'#a5771a';
-    t.style.borderColor=on?'#E8C560':'#eadfb8';
+    const ac=t.getAttribute('data-ac')||'#D4AF37';
+    const ic=t.getAttribute('data-ic')||'#a5771a';
+    t.style.background=on?ac:'#fff';
+    t.style.color=on?'#fff':ic;
+    t.style.borderColor=on?ac:'#eadfb8';
   });
   document.querySelectorAll('.piPanel').forEach((p,i)=>{p.style.display=i===idx?'block':'none';});
 }
@@ -3949,7 +3951,7 @@ function renderBaicLocationTab(arr, brand){
 
 
 function renderPetrominInstructionTab(arr, warrantyInner){
-  const color='#DAA520';
+  const color='#D4AF37';
   const sections={'Oil Brand':[],'Petromin Oil':[],'Weekly Offers':[],'Extra Information':[]};
   let currentSection=null;
   (arr||[]).forEach((r,idx)=>{
@@ -4000,9 +4002,9 @@ function renderPetrominInstructionTab(arr, warrantyInner){
   if(extraInner) tabs.push({label:'ℹ️ Extra Information',html:extraInner});
   if(!tabs.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 
-  const tabStyle=on=>'display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;padding:9px 18px;border-radius:22px;cursor:pointer;background:'+(on?'#E8C560':'#fff')+';color:'+(on?'#fff':'#a5771a')+';border:1px solid '+(on?'#E8C560':'#eadfb8')+'';
+  const tabStyle=on=>'display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;padding:9px 18px;border-radius:22px;cursor:pointer;background:'+(on?'#D4AF37':'#fff')+';color:'+(on?'#fff':'#a5771a')+';border:1px solid '+(on?'#D4AF37':'#eadfb8')+'';
   const bar='<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px">'
-    +tabs.map((t,i)=>'<span class="piTab" onclick="showPetrominInstrTab('+i+')" style="'+tabStyle(i===0)+'">'+t.label+'</span>').join('')+'</div>';
+    +tabs.map((t,i)=>'<span class="piTab" data-ac="#D4AF37" data-ic="#a5771a" onclick="showPetrominInstrTab('+i+')" style="'+tabStyle(i===0)+'">'+t.label+'</span>').join('')+'</div>';
   const panels=tabs.map((t,i)=>'<div class="piPanel" style="display:'+(i===0?'block':'none')+'">'+t.html+'</div>').join('');
   return '<div>'+bar+panels+'</div>';
 }
@@ -4011,7 +4013,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
 
 function renderPetrominWarrantyTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#DAA520';
+  const color='#D4AF37';
   const items=[];
   arr.forEach((r,idx)=>{
     const v=Object.values(r).map(x=>String(x===undefined||x===null?'':x).trim());
@@ -4033,7 +4035,7 @@ function renderPetrominWarrantyTab(arr){
 
 function renderPetrominLocationListTab(arr, kind){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#DAA520';
+  const color='#D4AF37';
   const ICONS={ecowash:'🧼',fuel:'⛽',diesel:'🛢️'};
   const icon=ICONS[kind]||'📍';
 
@@ -4111,7 +4113,7 @@ function renderPetrominLocationListTab(arr, kind){
 
 function renderPetrominTireBatteryTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#DAA520';
+  const color='#D4AF37';
   const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
 
   const pirelli=[], powertech=[], locations=[];
@@ -4213,12 +4215,12 @@ function renderPetrominTireBatteryTab(arr){
 
 function renderPetrominEmailzTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#DAA520';
+  const color='#D4AF37';
   const SEC={
     'Complaint':{icon:'🔴',color:'#c0272d',border:'#c0272d'},
     'Comment':  {icon:'💬',color:'#5f5e5a',border:'#8a8a86'},
     'Contract': {icon:'🔵',color:'#1565c0',border:'#1565c0'},
-    'Pirelli':  {icon:'🟠',color:'#DAA520',border:'#DAA520'}
+    'Pirelli':  {icon:'🟠',color:'#D4AF37',border:'#D4AF37'}
   };
   const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
   const emailChip=s=>'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:#a5771a;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';
@@ -4297,7 +4299,7 @@ function renderPetrominEmailzTab(arr){
 
 function renderPetrominComplaintsTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#DAA520';
+  const color='#D4AF37';
   const rows=arr.filter(r=>{
     const v=Object.values(r);
     return v[0] && v[1];
@@ -4760,10 +4762,10 @@ function renderFotonSMSLocationTab(arr){
 
 function renderPetrominPACTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#DAA520';
+  const color='#D4AF37';
 
   const REGION_PALETTE=['#c0272d','#1565c0','#2e7d32','#6a1b9a','#e65100','#00838f','#ad1457','#5d4037'];
-  const REGION_COLORS=new Proxy({}, {get:()=>'#DAA520'});
+  const REGION_COLORS=new Proxy({}, {get:()=>'#D4AF37'});
   const regionOrder=[];
   const isRegionName=s=>!!s && /^(WR|CR|ER|SR|NR|Eastern|Western|Central|Northern|Southern|West|East|South|North)\b/i.test(String(s).trim());
 
@@ -4926,7 +4928,7 @@ function filterExpressStations(q){
 }
 function renderPetrominExpressStationsTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#DAA520';
+  const color='#D4AF37';
   const rowsArr=arr.map(r=>Object.values(r).map(v=>String(v==null?'':v).trim()));
   const keys=Object.keys(arr[0]||{});
   const kFind=(...names)=>keys.find(k=>{const kl=k.toLowerCase();return names.some(n=>kl.includes(n));})||'';
@@ -5035,7 +5037,7 @@ function renderPetrominExpressStationsTab(arr){
     const REG_DISPLAY_LABEL={Other:'غير مصنّفة'};
     return regOrder.map(reg=>{
       const regCities=regions[reg];
-      const rc='#DAA520';
+      const rc='#D4AF37';
       const allStations=regCities.flatMap(city=>cities[city]);
       const regTotal=allStations.length;
       const regHours=(allStations.find(v=>gv(v,kWH))||{});
@@ -5093,7 +5095,7 @@ function renderPetrominExpressStationsTab(arr){
 
 function renderPetrominTristarTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#DAA520';
+  const color='#D4AF37';
   const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s.replace(/\.0$/,'');};
 
   const branchRows=[];
@@ -5125,7 +5127,7 @@ function renderPetrominTristarTab(arr){
     +(emCc.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.complaint)+'</div>':'')
     +'</div></div>';
 
-  const REGION_COLORS=new Proxy({}, {get:()=>'#DAA520'});
+  const REGION_COLORS=new Proxy({}, {get:()=>'#D4AF37'});
 
   const branchHtml='<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:14px">'+branchRows.map(vals=>{
     const reg=vals[0]||'';
@@ -5387,7 +5389,7 @@ function copyNissanAppForm(){
 
 function renderSMSTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#D2691E',baicRecall:'#6A5818',petromin:'#DAA520',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
+  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#D2691E',baicRecall:'#6A5818',petromin:'#D4AF37',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
   // All data comes under 3S keys — sections separated by header rows
   // Header rows: values equal their key names (e.g. "PAC Appointment SMS EN" == key "3S Appointment SMS EN")
   var sections = {s3:[], pac:[], body:[]};
@@ -5589,14 +5591,14 @@ function showRefBrandPage(brand){
     bodyshop:  {label:'Body Shop', icon:'🔧',color:'#7b0000'},
     baic:      {label:'BAIC',      icon:'🚙',color:'#D2691E'},
     baicRecall:{label:'BAIC Recall — VIN Search',icon:'🔎',color:'#6A5818'},
-    petromin:  {label:'Petromin',  icon:'<svg viewBox="0 0 36 36" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="14" width="20" height="16" rx="3" fill="#c0272d"/><rect x="8" y="10" width="12" height="6" rx="2" fill="#1a1a2e"/><rect x="24" y="16" width="8" height="4" rx="2" fill="#1a1a2e"/><rect x="13" y="6" width="4" height="6" rx="1" fill="#c0272d"/><circle cx="10" cy="20" r="2" fill="#fff" opacity=".4"/></svg>',color:'#DAA520'},
+    petromin:  {label:'Petromin',  icon:'<svg viewBox="0 0 36 36" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="14" width="20" height="16" rx="3" fill="#c0272d"/><rect x="8" y="10" width="12" height="6" rx="2" fill="#1a1a2e"/><rect x="24" y="16" width="8" height="4" rx="2" fill="#1a1a2e"/><rect x="13" y="6" width="4" height="6" rx="1" fill="#c0272d"/><circle cx="10" cy="20" r="2" fill="#fff" opacity=".4"/></svg>',color:'#D4AF37'},
     foton:     {label:'Foton',     icon:'🚛',color:'#546e7a'},
     nos:       {label:'National Oil', icon:'🟢',color:'#2e7d32'},
     electromin:{label:'Electromin', icon:'⚡',color:'#3A6048'},
   };
   const meta=META[brand];
-  const bannerBg = brand==='petromin' ? 'linear-gradient(135deg,#E8C560,#F5E4A8)' : 'linear-gradient(135deg,'+meta.color+','+meta.color+'99)';
-  const tabActive = brand==='petromin' ? '#E8C560' : meta.color;
+  const bannerBg = brand==='petromin' ? 'linear-gradient(135deg,#D4AF37,#E6CC70)' : 'linear-gradient(135deg,'+meta.color+','+meta.color+'99)';
+  const tabActive = brand==='petromin' ? '#D4AF37' : meta.color;
   const tabs=REF_SHEETS[brand].tabs;
   const container=document.getElementById('refContent');
   container.innerHTML=
@@ -5646,7 +5648,7 @@ function showRefBrandPage(brand){
 
 function switchRefTab(brand,idx,btn){
   REF_ACTIVE_TABS[brand]=idx;
-  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#D2691E',baicRecall:'#6A5818',petromin:'#E8C560',foton:'#546e7a',nos:'#2e7d32',electromin:'#3A6048'}[brand]||'#c0272d';
+  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#D2691E',baicRecall:'#6A5818',petromin:'#D4AF37',foton:'#546e7a',nos:'#2e7d32',electromin:'#3A6048'}[brand]||'#c0272d';
   const container=btn?btn.parentElement:document.querySelector('#refSubTabs_'+brand);
   if(container){
     container.querySelectorAll('.ref-sub-tab').forEach((t,i)=>{
@@ -5691,7 +5693,7 @@ async function togglePetrominWarranty(){
     el.innerHTML='<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading...</div>';
     try{
       const arr=await fetchCSVRaw(REF_SHEETS.petromin.id,'Warranty');
-      const color='#DAA520';
+      const color='#D4AF37';
       const items=[];
       arr.forEach((r,idx)=>{
         const v=r.map(x=>String(x===undefined||x===null?'':x).trim());
@@ -5973,13 +5975,25 @@ async function renderInstructionTab(brand, cfg){
   const extraBody = emailHtml + noteHtml;
   const extraHtml = extraBody ? mkCollapsible('📋 Extra Information', extraBody, 'instr_'+brand+'_extra', color) : '';
 
+  if(brand==='baic'){
+    const tabs=[];
+    if(warrantyBody) tabs.push({label:'🛡️ Warranty',html:warrantyBody});
+    if(pmsBody) tabs.push({label:'🔧 PMS Services',html:pmsBody});
+    if(apptBody) tabs.push({label:'📋 Appointment Script',html:apptBody});
+    if(extraBody) tabs.push({label:'ℹ️ Extra Information',html:extraBody});
+    if(!tabs.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+    const inC='#b0561a';
+    const tabStyle=on=>'display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;padding:9px 18px;border-radius:22px;cursor:pointer;background:'+(on?color:'#fff')+';color:'+(on?'#fff':inC)+';border:1px solid '+(on?color:'#f0d0b8')+'';
+    const bar='<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px">'
+      +tabs.map((t,i)=>'<span class="piTab" data-ac="'+color+'" data-ic="'+inC+'" onclick="showPetrominInstrTab('+i+')" style="'+tabStyle(i===0)+'">'+t.label+'</span>').join('')+'</div>';
+    const panels=tabs.map((t,i)=>'<div class="piPanel" style="display:'+(i===0?'block':'none')+'">'+t.html+'</div>').join('');
+    return '<div style="max-width:760px;margin:0 auto">'+bar+panels+'</div>';
+  }
+
   const result= (warrantyHtml && pmsHtml)
     ? '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px">'+warrantyHtml+pmsHtml+'</div>' + apptHtml + extraHtml
     : warrantyHtml + pmsHtml + apptHtml + extraHtml;
 
-  if(brand==='baic'){
-    return '<div style="max-width:700px;margin:0 auto">'+result+'</div>';
-  }
   return result;
 }
 
@@ -6010,7 +6024,7 @@ async function renderRefBrand(brand,tabIdx){
         +'<div style="font-size:48px;margin-bottom:12px">🌐</div>'
         +'<div style="font-size:16px;font-weight:700;color:#1a1a2e">Petromin Websites</div>'
         +'</div>'
-        +'<a href="https://petromin.com/ar/" target="_blank" style="display:flex;align-items:center;gap:10px;padding:14px 32px;background:#DAA520;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(218,165,32,.3);width:280px;justify-content:center">🔗 الصفحة الرئيسية - Petromin</a>'
+        +'<a href="https://petromin.com/ar/" target="_blank" style="display:flex;align-items:center;gap:10px;padding:14px 32px;background:#D4AF37;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(218,165,32,.3);width:280px;justify-content:center">🔗 الصفحة الرئيسية - Petromin</a>'
         +'<a href="https://www.petrominexpress.com/" target="_blank" style="display:flex;align-items:center;gap:10px;padding:14px 32px;background:#c0272d;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(192,39,45,.3);width:280px;justify-content:center">🔗 بترومين إكسبرس - 650 محطة</a>'
         +'</div>';
       return;
@@ -6033,7 +6047,7 @@ async function renderRefBrand(brand,tabIdx){
         fetchCSVRaw(cfg.id,'Instruction'),
         fetchCSVRaw(cfg.id,'Warranty')
       ]);
-      const color='#DAA520';
+      const color='#D4AF37';
       // Build Warranty section first
       const warItems=[];
       warArr.forEach((r,idx)=>{
@@ -6248,7 +6262,7 @@ async function renderRefBrand(brand,tabIdx){
         +'<div style="font-size:48px;margin-bottom:12px">🌐</div>'
         +'<div style="font-size:16px;font-weight:700;color:#1a1a2e">Petromin Websites</div>'
         +'</div>'
-        +'<a href="https://petromin.com/ar/" target="_blank" style="display:flex;align-items:center;gap:10px;padding:14px 32px;background:#DAA520;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(218,165,32,.3);width:280px;justify-content:center">🔗 الصفحة الرئيسية - Petromin</a>'
+        +'<a href="https://petromin.com/ar/" target="_blank" style="display:flex;align-items:center;gap:10px;padding:14px 32px;background:#D4AF37;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(218,165,32,.3);width:280px;justify-content:center">🔗 الصفحة الرئيسية - Petromin</a>'
         +'<a href="https://www.petrominexpress.com/" target="_blank" style="display:flex;align-items:center;gap:10px;padding:14px 32px;background:#c0272d;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(192,39,45,.3);width:280px;justify-content:center">🔗 بترومين إكسبرس - 650 محطة</a>'
         +'</div>';
       return;
@@ -7236,7 +7250,7 @@ function toggleLinksPanel(){
 const RECALL_BRANDS = {
   'Nissan Search':    {key:'recallNissan',    color:'#c0272d', icon:'🔍'},
   'Stellantis Search':{key:'recallStellantis',color:'#1565c0', icon:'🔍'},
-  'BAIC Search':      {key:'recallBAIC',      color:'#DAA520', icon:'🔍'},
+  'BAIC Search':      {key:'recallBAIC',      color:'#D4AF37', icon:'🔍'},
   'Remote Areas':     {key:'recallRemote',    color:'#2e7d32', icon:'🌍', link:'https://docs.google.com/spreadsheets/d/1qOIoWAGNl3-0cha12rjNksUsEapffeZ20Ioz7vm7Rbk/edit?gid=330566659#gid=330566659'},
   'Outbound Recall':  {key:'outboundRecall',  color:'#546e7a', icon:'📞', link:'https://docs.google.com/spreadsheets/d/1qOIoWAGNl3-0cha12rjNksUsEapffeZ20Ioz7vm7Rbk/edit?gid=330566659#gid=330566659'}
 };
@@ -7771,8 +7785,8 @@ async function renderRef(){
     const emailData = linksData;
 
     const BRAND_CONFIGS=[
-      {key:'petromin',   label:'Petromin',         icon:'<svg viewBox="0 0 36 36" width="26" height="26" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="14" width="20" height="16" rx="3" fill="#c0272d"/><rect x="8" y="10" width="12" height="6" rx="2" fill="#1a1a2e"/><rect x="24" y="16" width="8" height="4" rx="2" fill="#1a1a2e"/><rect x="13" y="6" width="4" height="6" rx="1" fill="#c0272d"/><circle cx="10" cy="20" r="2" fill="#fff" opacity=".4"/></svg>', color:'#DAA520'},
-      {key:'baic',       label:'BAIC',             icon:'🟡', color:'#D2691E'},
+      {key:'petromin',   label:'Petromin',         icon:'<svg viewBox="0 0 36 36" width="26" height="26" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="14" width="20" height="16" rx="3" fill="#c0272d"/><rect x="8" y="10" width="12" height="6" rx="2" fill="#1a1a2e"/><rect x="24" y="16" width="8" height="4" rx="2" fill="#1a1a2e"/><rect x="13" y="6" width="4" height="6" rx="1" fill="#c0272d"/><circle cx="10" cy="20" r="2" fill="#fff" opacity=".4"/></svg>', color:'#D4AF37'},
+      {key:'baic',       label:'BAIC',             icon:'🚙', color:'#D2691E'},
       {key:'nissan',     label:'Nissan',           icon:'🚗', color:'#c0272d'},
       {key:'stellantis', label:'Stellantis',       icon:'🚙', color:'#1565c0'},
       {key:'bodyshop',   label:'Body Shop',        icon:'🔧', color:'#6A3030'},
@@ -8533,7 +8547,7 @@ function renderNotifPanel(){
     return { i, tag: String(r[keys[0]]||'').trim(), text: String(r[keys[1]]||'').trim() };
   });
   if(!items.length){ list.innerHTML = '<div style="padding:20px;text-align:center;color:#aaa;font-size:12px">📭 No announcements</div>'; return; }
-  const PC = { high:'#c0272d', urgent:'#c0272d', medium:'#DAA520', low:'#2e7d32' };
+  const PC = { high:'#c0272d', urgent:'#c0272d', medium:'#D4AF37', low:'#2e7d32' };
   list.innerHTML = items.map(it => {
     const isRead = NOTIF_READ_IDS.includes(it.i);
     const tc = PC[(it.tag||'').toLowerCase()] || '#c0272d';
