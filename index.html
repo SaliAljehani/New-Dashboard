@@ -4037,8 +4037,6 @@ function renderPetrominLocationListTab(arr, kind){
   const ICONS={ecowash:'🧼',fuel:'⛽',diesel:'🛢️'};
   const icon=ICONS[kind]||'📍';
 
-  const REGION_COLORS=new Proxy({}, {get:()=>'#DAA520'});
-
   const CITY_REGION={
     'JEDDAH':'West','MAKKAH':'West','TAIF':'West','MADINA':'West','YANBU':'West','AL ULA':'West','RABIGH':'West',
     'RIYADH':'Central','AL KHARJ':'Central','BURAYDAH':'Central','BUKAYRIYAH':'Central','UNAYZAH':'Central','QUWAIIYAH':'Central','DAWADMI':'Central','WADY DAWASIR':'Central','HAIL':'Central',
@@ -4047,63 +4045,65 @@ function renderPetrominLocationListTab(arr, kind){
     'TABUK':'North','ARAR':'North','SAKAKA':'North','TURAIF':'North','HAFER BATIN':'North','AL LITH':'West','BADAR':'West','UMAL SAHEK':'South'
   };
   const cityToRegion=(city)=>CITY_REGION[String(city||'').toUpperCase().trim()]||'';
+  const normReg=r=>{r=String(r||'').trim();const u=r.toUpperCase();if(/^WR\b|^WEST|WESTERN/.test(u))return'West';if(/^CR\b|^CENT|CENTRAL/.test(u))return'Central';if(/^ER\b|^EAST|EASTERN/.test(u))return'East';if(/SOUTH/.test(u))return'South';if(/NORTH/.test(u))return'North';return r||'Other';};
+  const splitCode=s=>{const m=String(s||'').split(' - ');if(m.length>1)return[m[0].trim(),m.slice(1).join(' - ').trim()];return['',String(s||'').trim()];};
 
   const items=[];
   arr.forEach(r=>{
     const v=Object.values(r).map(x=>String(x===undefined||x===null?'':x).trim());
     const v0=v[0]||'';
-    if(!v0||v0==='Regions'||v0==='Region'||/Station Name/i.test(v0))return;
+    if(!v0||v0==='Regions'||v0==='Region'||/Station Name|Site Code/i.test(v0))return;
 
     if(kind==='ecowash'){
-      // Regions|City|Code-Station Name|Area Manager|COORDINATES
+      // Regions | City | Code-Station Name | Area Manager | CORDINATES
       const [region,city,station,mgr,coord]=v;
       if(!station)return;
-      items.push({region:cityToRegion(city)||region,city,station,mgr,coord,type:''});
+      const [code,name]=splitCode(station);
+      items.push({region:normReg(cityToRegion(city)||region),code,name,city,mgr,coord});
     }else if(kind==='fuel'){
-      // Region|City|Station|Gas or Diesel|GPS|Region Manager
-      const [region,city,station,type,gps,mgr]=v;
+      // Site Code | Stations | City | AM Name | Mobile | Region | RM | GPS
+      const [siteCode,station,city,am,mobile,region,rm,gps]=v;
       if(!station)return;
-      items.push({region,city,station,mgr,coord:gps,type});
+      items.push({region:normReg(region||cityToRegion(city)),code:siteCode,name:station,city,am,mobile,rm,coord:gps});
     }else if(kind==='diesel'){
-      // Station Name - Number|City|Coordinates|Location
+      // Station Name-Number | City | Coordinates | Location
       const [station,city,coord,link]=v;
       if(!station)return;
-      items.push({region:cityToRegion(city),city,station,mgr:'',coord,type:'',link});
+      const [code,name]=splitCode(station);
+      items.push({region:normReg(cityToRegion(city)),code,name,city,coord,link});
     }
   });
 
   const groups={};
-  items.forEach(it=>{
-    const g=it.region||'Other';
-    if(!groups[g])groups[g]=[];
-    groups[g].push(it);
-  });
+  items.forEach(it=>{const g=it.region||'Other';(groups[g]=groups[g]||[]).push(it);});
   const REGION_ORDER=['West','Central','East','South','North','Other'];
   const order=REGION_ORDER.filter(r=>groups[r]).concat(Object.keys(groups).filter(g=>!REGION_ORDER.includes(g)));
 
-  const mapLink=(coord)=>{
-    if(!coord)return'';
-    if(coord.startsWith('http'))return coord;
-    // Convert DMS to decimal if needed, else pass through as lat,lng
-    return 'https://www.google.com/maps?q='+encodeURIComponent(coord);
+  const mapLink=(coord,link)=>{if(link&&/^https?:/.test(link))return link;if(!coord)return'';if(/^https?:/.test(coord))return coord;return 'https://www.google.com/maps?q='+encodeURIComponent(coord);};
+
+  const cols = kind==='fuel' ? ['Code','Station','City','AM','Mobile','RM','Location']
+    : kind==='ecowash' ? ['Code','Station','City','Area Manager','Location']
+    : ['Code','Station','City','Coordinates','Location'];
+  const th=h=>'<th style="padding:8px 10px;color:#a5771a;font-weight:800;border-bottom:2px solid #f0dca8;text-align:center;white-space:nowrap">'+h+'</th>';
+  const cell=v=>'<td style="padding:7px 10px;text-align:center">'+(v||'—')+'</td>';
+  const rowFor=it=>{
+    const locHref = kind==='diesel' ? (it.link&&/^https?:/.test(it.link)?it.link:'') : mapLink(it.coord,it.link);
+    const locCell='<td style="padding:7px 10px;text-align:center">'+(locHref?'<a href="'+locHref+'" target="_blank" style="color:'+color+';font-weight:700;text-decoration:none">🗺️ Location</a>':'—')+'</td>';
+    const codeCell='<td style="padding:7px 10px;text-align:center;font-weight:800;color:'+color+';white-space:nowrap">'+(it.code||'—')+'</td>';
+    if(kind==='fuel') return codeCell+cell(it.name)+cell(it.city)+cell(it.am)+cell(it.mobile)+cell(it.rm)+locCell;
+    if(kind==='ecowash') return codeCell+cell(it.name)+cell(it.city)+cell(it.mgr)+locCell;
+    return codeCell+cell(it.name)+cell(it.city)+cell(it.coord)+locCell; // diesel
   };
 
   const body=order.map(g=>{
-    const rc=REGION_COLORS[g]||color;
     const its=groups[g];
-    const gid='peLoc_'+kind+'_'+g.replace(/\W/g,'');
+    const gid='peLoc_'+kind+'_'+g.replace(/[^A-Za-z0-9]/g,'');
+    const table='<div style="overflow-x:auto;background:#fff;border:1px solid #f0e6c8;border-top:0;border-radius:0 0 8px 8px"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:'+color+'0f">'+cols.map(th).join('')+'</tr></thead><tbody>'
+      +its.map((it,i)=>'<tr style="background:'+(i%2?'#FDFBF4':'#fff')+'">'+rowFor(it)+'</tr>').join('')
+      +'</tbody></table></div>';
     return '<div style="margin-bottom:10px">'
-      +'<div onclick="toggleRegion(\''+gid+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px"><span style="font-size:13px;font-weight:700;color:'+rc+'">'+g+'</span><span style="font-size:11px;color:#aaa">('+its.length+')</span><span id="ico_'+gid+'" style="margin-left:auto;color:'+rc+'">▼</span></div>'
-      +'<div id="'+gid+'"><div class="ref-cards-grid">'+its.map(it=>{
-        const link=it.link&&it.link.startsWith('http')?it.link:mapLink(it.coord);
-        return '<div style="background:#fff;border-radius:10px;padding:9px 12px;text-align:center;border-top:3px solid '+rc+';box-shadow:0 1px 4px rgba(0,0,0,.06);direction:ltr">'
-          +'<div style="font-size:12px;font-weight:700;color:'+rc+'">'+icon+' '+it.station+'</div>'
-          +(it.city?'<div style="font-size:10px;color:#888;margin:3px 0">📌 '+it.city+'</div>':'')
-          +(it.type?'<div style="font-size:10px;color:'+rc+';font-weight:700">'+it.type+'</div>':'')
-          +(it.mgr?'<div style="font-size:11px;color:#666;margin-top:3px">👤 '+it.mgr+'</div>':'')
-          +(link?'<div style="margin-top:4px"><a href="'+link+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
-          +'</div>';
-      }).join('')+'</div></div></div>';
+      +'<div onclick="toggleRegion(\''+gid+'\')" style="display:flex;align-items:center;gap:10px;padding:9px 14px;background:'+color+'12;border-radius:8px;border-right:4px solid '+color+';cursor:pointer;margin-bottom:6px"><span style="font-size:13px;font-weight:800;color:'+color+'">'+icon+' '+g+'</span><span style="font-size:11px;color:#aaa">('+its.length+')</span><span id="ico_'+gid+'" style="margin-left:auto;color:'+color+'">▼</span></div>'
+      +'<div id="'+gid+'">'+table+'</div></div>';
   }).join('');
 
   return '<div style="font-size:11px;color:#999;margin-bottom:10px;text-align:center">Total: '+items.length+' locations</div>'+body;
@@ -4153,12 +4153,12 @@ function renderPetrominTireBatteryTab(arr){
 
   // Pirelli — OPEN table (Region · Manager · Email · Phone)
   const pirelliHTML=pirelli.length?'<div style="margin-bottom:18px">'+secHead('🛞 Pirelli Tire — Sales Supervisors')
-    +tbl(['🗺️ Region','👤 Manager','✉️ Email','📞 Phone'],
+    +tbl(['🗺️ Region','👤 Manager','📞 Phone','✉️ Email'],
       pirelli.map((p,i)=>'<tr style="background:'+(i%2?'#FDFBF4':'#fff')+'">'
         +'<td style="padding:7px 12px;text-align:center;font-weight:700;color:'+color+'">'+p.region+'</td>'
         +'<td style="padding:7px 12px;text-align:center">'+p.manager+'</td>'
-        +'<td style="padding:7px 12px;text-align:center">'+emailCell(p.email)+'</td>'
-        +'<td style="padding:7px 12px;text-align:center">'+(p.phone||'')+'</td></tr>').join(''))
+        +'<td style="padding:7px 12px;text-align:center">'+(p.phone||'')+'</td>'
+        +'<td style="padding:7px 12px;text-align:center">'+emailCell(p.email)+'</td></tr>').join(''))
     +'</div>':'';
 
   // Powertech Battery — table (Area · Employee · Mobile · Email)
@@ -4171,10 +4171,22 @@ function renderPetrominTireBatteryTab(arr){
         +'<td style="padding:7px 12px;text-align:center">'+emailCell(p.email)+'</td></tr>').join(''))
     +'</div>':'';
 
-  // Tire locations — tables grouped by region (collapsible gold headers)
+  // Tire locations — tables grouped by 5 main regions
+  const normMainReg=r=>{
+    r=String(r||'').trim();
+    const u=r.toUpperCase();
+    if(/^WR\b|WESTERN|^WEST/.test(u))return'West';
+    if(/^CR\b|CENTRAL|^CENT/.test(u))return'Central';
+    if(/^ER\b|EASTERN|^EAST/.test(u))return'East';
+    if(/SOUTH/.test(u))return'South';
+    if(/NORTH/.test(u))return'North';
+    return r?'Other':'Other';
+  };
   const locGroups={};
-  locations.forEach(l=>{const reg=l.region||'Other';(locGroups[reg]=locGroups[reg]||[]).push(l);});
-  const locBody=Object.keys(locGroups).map(reg=>{
+  locations.forEach(l=>{const reg=normMainReg(l.region);(locGroups[reg]=locGroups[reg]||[]).push(l);});
+  const LOC_ORDER=['West','Central','East','North','South','Other'];
+  const locOrder=LOC_ORDER.filter(r=>locGroups[r]);
+  const locBody=locOrder.map(reg=>{
     const items=locGroups[reg];
     const rid='tbLoc_'+reg.replace(/[^A-Za-z0-9]/g,'');
     const rows=items.map((l,i)=>{
