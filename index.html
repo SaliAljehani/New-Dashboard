@@ -4037,10 +4037,7 @@ function renderPetrominLocationListTab(arr, kind){
   const ICONS={ecowash:'🧼',fuel:'⛽',diesel:'🛢️'};
   const icon=ICONS[kind]||'📍';
 
-  const REGION_COLORS={
-    'SOUTHERN REGION':'#6a1b9a','Northwest':'#1565c0','Southwest':'#c0272d','Northeast':'#2e7d32','Southeast':'#e65100',
-    'North':'#e65100','South':'#6a1b9a','East':'#2e7d32','West':'#c0272d','Central':'#1565c0'
-  };
+  const REGION_COLORS=new Proxy({}, {get:()=>'#DAA520'});
 
   const CITY_REGION={
     'JEDDAH':'West','MAKKAH':'West','TAIF':'West','MADINA':'West','YANBU':'West','AL ULA':'West','RABIGH':'West',
@@ -4178,7 +4175,7 @@ function renderPetrominTireBatteryTab(arr){
     ,'instr_tb_tireservice',color);
 
   // Section 4: Tire locations grouped by region
-  const REGION_COLORS={'CR East':'#1565c0','CR North':'#1565c0','CR SOUTH':'#1565c0','ER NORTH':'#2e7d32','ER SOUTH':'#2e7d32','SOUTHERN REGION':'#6a1b9a','WR NORTH':'#c0272d','WR SOUTH':'#c0272d',West:'#c0272d',Western:'#c0272d',Central:'#1565c0',Center:'#1565c0',East:'#2e7d32',Eastern:'#2e7d32',South:'#6a1b9a',Southern:'#6a1b9a',North:'#e65100',Northern:'#e65100'};
+  const REGION_COLORS=new Proxy({}, {get:()=>'#DAA520'});
   const locGroups={};
   locations.forEach(l=>{
     const reg=l.region||'Other';
@@ -4284,20 +4281,6 @@ function renderPetrominEmailzTab(arr){
     const id='peSec_'+s.title.replace(/\W/g,'');
     html+=secBar(sc,s.title,id)+'<div id="'+id+'">'+sectionTable(s.rows)+'</div>';
   });
-  if(pirelli.length){
-    const sc=SEC['Pirelli'];
-    html+=secBar(sc,'Pirelli — Area Managers','peSec_Pirelli')
-      +'<div id="peSec_Pirelli"><div style="background:#fafafa;border:1px solid #eee;border-top:0;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:'+color+'0f">'
-      +'<th style="padding:8px 12px;color:#a5771a;font-weight:800;border-bottom:2px solid #f0dca8;text-align:center">🗺️ Region</th>'
-      +'<th style="padding:8px 12px;color:#a5771a;font-weight:800;border-bottom:2px solid #f0dca8;text-align:center">👤 Manager</th>'
-      +'<th style="padding:8px 12px;color:#a5771a;font-weight:800;border-bottom:2px solid #f0dca8;text-align:center">✉️ Email</th>'
-      +'<th style="padding:8px 12px;color:#a5771a;font-weight:800;border-bottom:2px solid #f0dca8;text-align:center">📞 Phone</th></tr></thead><tbody>'
-      +pirelli.map((p,i)=>{
-        const emailCell=String(p.email||'').split(/[,;]/).map(x=>{const s=x.trim();if(!s)return'';return '<a href="mailto:'+s+'" style="display:inline-flex;background:#f5f5f5;color:#616161;padding:2px 7px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:1px">'+s+'</a>';}).filter(Boolean).join('');
-        return '<tr style="background:'+(i%2?'#fbf6e8':'#fff')+'"><td style="padding:7px 12px;text-align:center;font-weight:700;color:'+color+'">'+p.region+'</td><td style="padding:7px 12px;text-align:center">'+p.manager+'</td><td style="padding:7px 12px;text-align:center">'+emailCell+'</td><td style="padding:7px 12px;text-align:center">'+(p.phone||'')+'</td></tr>';
-      }).join('')
-      +'</tbody></table></div></div>';
-  }
   return html||'<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 }
 
@@ -4769,7 +4752,7 @@ function renderPetrominPACTab(arr){
   const color='#DAA520';
 
   const REGION_PALETTE=['#c0272d','#1565c0','#2e7d32','#6a1b9a','#e65100','#00838f','#ad1457','#5d4037'];
-  const REGION_COLORS={'West':'#c0272d','Central':'#1565c0','East':'#2e7d32','South':'#6a1b9a','North':'#e65100','WR North':'#c0272d','WR South':'#d84315','CR North':'#1565c0','CR South':'#00838f','Eastern':'#2e7d32','Southern':'#6a1b9a','Northern':'#e65100'};
+  const REGION_COLORS=new Proxy({}, {get:()=>'#DAA520'});
   const regionOrder=[];
   const isRegionName=s=>!!s && /^(WR|CR|ER|SR|NR|Eastern|Western|Central|Northern|Southern|West|East|South|North)\b/i.test(String(s).trim());
 
@@ -5127,7 +5110,7 @@ function renderPetrominTristarTab(arr){
     +(emCc.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.complaint)+'</div>':'')
     +'</div></div>';
 
-  const REGION_COLORS={Central:'#1565c0',Eastern:'#2e7d32',East:'#2e7d32',West:'#c0272d',South:'#6a1b9a',North:'#e65100'};
+  const REGION_COLORS=new Proxy({}, {get:()=>'#DAA520'});
 
   const branchHtml='<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:14px">'+branchRows.map(vals=>{
     const reg=vals[0]||'';
@@ -7869,8 +7852,8 @@ async function renderRef(){
       const fVal = isCMain ? 'Complaint type' : (it.subject||'');
       const badge = isCMain ? {t:'#fff',b:'#d98a8f'} : {t:'#7a5f18',b:'#ecd699'};
       const isOpen = it.status && /open/i.test(it.status);
-      const stColor = isOpen?'#c0272d':'#3f9152';
-      const stBg = isOpen?'#fbeeee':'#eef6ee';
+      const stColor = gColor;
+      const stBg = gColor+'18';
       const catKey=c=>{const l=c.toLowerCase();let bg='#f1f2f4',cl='#666';if(l==='parts'){bg='#eef5fb';cl='#3f7fbf';}else if(l==='service'){bg='#fbf3e9';cl='#c9812f';}else if(l==='sales'){bg='#eef6ef';cl='#4a9a5e';}return'<span style="display:inline-block;background:'+bg+';color:'+cl+';font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;margin:2px">'+c+'</span>';};
       let rows='',i=0;
       if(deptTags.length) rows+=fieldRow('📁','Departments','<span>'+deptTags.map(d=>'<span style="display:inline-block;background:#f2f3f5;color:#606670;font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;margin:2px">'+d+'</span>').join('')+'</span>',i++);
