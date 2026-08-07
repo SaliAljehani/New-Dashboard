@@ -4114,90 +4114,89 @@ function renderPetrominTireBatteryTab(arr){
   const color='#DAA520';
   const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
 
-  const supervisors=[], locations=[], battery=[], tireService=[];
+  const pirelli=[], powertech=[], locations=[];
   let mode='';
-
   arr.forEach(r=>{
     const v=Object.values(r).map(x=>String(x===undefined||x===null?'':x).trim());
-    const v0=v[0]||'', v1=v[1]||'', v2=v[2]||'';
+    const a=v[0]||'',b=v[1]||'',c=v[2]||'',d=v[3]||'',e=v[4]||'';
 
-    if(/The Sales supervisor for Pirelli Tire/.test(v1)){ mode='sup'; return; }
-    if(v0==='Region'&&v1==='Area'&&v2==='Employ'){ return; } // header
-    if(v0==='Region'&&v1==='location'){ mode='loc'; return; }
-    if(v0==='Battery Part'){ mode='battery'; return; }
-    if(v0==='Tire Service'){ mode='tireservice'; return; }
+    if(/The Sales supervisor for Pirelli Tire/i.test(b)){ mode='pirelli'; return; }
+    // Powertech Battery (label repeated on each row)
+    if(a==='Powertech Battery'){
+      if(b==='Area') return; // header row
+      if(b||c||d||e) powertech.push({area:b,employee:c,mobile:fmtNum(d),email:e});
+      return;
+    }
+    // Tire locations header
+    if(a==='Region'&&b==='location'){ mode='loc'; return; }
 
-    if(mode==='sup'){
-      if(v2 && v[4]){ supervisors.push({region:v0,area:v1,name:v2,mobile:fmtNum(v[3]),email:v[4]}); }
+    if(mode==='pirelli'){
+      if(b==='Region'&&(c==='Manager Name'||/email/i.test(d))) return; // header
+      if(b){ // data row (Region present)
+        let email='',phone='';
+        [d,e].forEach(x=>{ if(x.includes('@')) email=x; else if(/\d/.test(x)) phone=fmtNum(x); });
+        pirelli.push({region:b,manager:c,email,phone});
+      }
       return;
     }
     if(mode==='loc'){
-      if(v2){ locations.push({region:v0,area:v1,station:v2,supervisor:v[3]||'',link:v[4]||''}); }
-      return;
-    }
-    if(mode==='battery'){
-      if(v0){ battery.push({part:v0,total:v1,comment:v2}); }
-      return;
-    }
-    if(mode==='tireservice'){
-      if(v0){ tireService.push({item:v0,total:v1,comment:v2}); }
+      if(c){ locations.push({region:a,area:b,station:c,supervisor:d,link:e}); }
       return;
     }
   });
 
-  // Section 1: Pirelli Sales Supervisors
-  const supHTML=mkCollapsible('🛞 Pirelli Tire — Sales Supervisors',
-    '<div class="ref-cards-grid">'+supervisors.map(s=>{
-      return '<div style="background:#fff;border-radius:10px;padding:10px 14px;text-align:center;border-top:3px solid '+color+';box-shadow:0 1px 4px rgba(0,0,0,.06);direction:ltr">'
-        +(s.region?'<div style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase">'+s.region+'</div>':'')
-        +'<div style="font-size:13px;font-weight:700;color:'+color+';margin:4px 0">'+s.name+'</div>'
-        +(s.area?'<div style="font-size:11px;color:#888;margin-bottom:5px">📍 '+s.area+'</div>':'')
-        +(s.mobile?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+s.mobile+'</div>':'')
-        +(s.email?'<div style="font-size:11px"><a href="mailto:'+s.email.trim()+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+s.email.trim()+'</a></div>':'')
-        +'</div>';
-    }).join('')+'</div>'
-    ,'instr_tb_sup',color);
+  // helpers
+  const secHead=txt=>'<div style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:800;padding:10px 14px;border-radius:8px 8px 0 0;background:'+color+'12;color:'+color+';border-bottom:2px solid '+color+'66">'+txt+'</div>';
+  const th=h=>'<th style="padding:8px 12px;color:#a5771a;font-weight:800;border-bottom:2px solid #f0dca8;text-align:center">'+h+'</th>';
+  const tbl=(headers,rows)=>'<div style="overflow-x:auto;background:#fff;border:1px solid #f0e6c8;border-top:0;border-radius:0 0 8px 8px"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:'+color+'0f">'+headers.map(th).join('')+'</tr></thead><tbody>'+rows+'</tbody></table></div>';
+  const emailCell=v=>String(v||'').split(/[,;]/).map(x=>{const s=x.trim();if(!s)return'';return '<a href="mailto:'+s+'" style="display:inline-flex;background:#f5f5f5;color:#616161;padding:2px 7px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:1px">'+s+'</a>';}).filter(Boolean).join('');
 
-  // Section 2: Battery Part pricing
-  const batteryHTML=mkCollapsible('🔋 Battery Part Pricing (AC Delco)',
-    '<div style="overflow-x:auto;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:12px">'
-    +'<thead><tr style="background:'+color+'12"><th style="padding:9px 14px;color:'+color+';font-weight:700;text-align:right;border-bottom:2px solid '+color+'22">Battery Part</th><th style="padding:9px 14px;color:'+color+';font-weight:700;text-align:center;border-bottom:2px solid '+color+'22">Total (SAR)</th><th style="padding:9px 14px;color:'+color+';font-weight:700;text-align:center;border-bottom:2px solid '+color+'22">Comment</th></tr></thead><tbody>'
-    +battery.map((b,i)=>'<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'"><td style="padding:7px 14px;text-align:right">'+b.part+'</td><td style="padding:7px 14px;text-align:center;font-weight:700;color:'+color+'">'+(b.total||'')+'</td><td style="padding:7px 14px;text-align:center">'+(b.comment||'')+'</td></tr>').join('')
-    +'</tbody></table></div>'
-    ,'instr_tb_battery',color);
+  // Pirelli — OPEN table (Region · Manager · Email · Phone)
+  const pirelliHTML=pirelli.length?'<div style="margin-bottom:18px">'+secHead('🛞 Pirelli Tire — Sales Supervisors')
+    +tbl(['🗺️ Region','👤 Manager','✉️ Email','📞 Phone'],
+      pirelli.map((p,i)=>'<tr style="background:'+(i%2?'#FDFBF4':'#fff')+'">'
+        +'<td style="padding:7px 12px;text-align:center;font-weight:700;color:'+color+'">'+p.region+'</td>'
+        +'<td style="padding:7px 12px;text-align:center">'+p.manager+'</td>'
+        +'<td style="padding:7px 12px;text-align:center">'+emailCell(p.email)+'</td>'
+        +'<td style="padding:7px 12px;text-align:center">'+(p.phone||'')+'</td></tr>').join(''))
+    +'</div>':'';
 
-  // Section 3: Tire Service pricing
-  const tireServiceHTML=mkCollapsible('🛠️ Tire Service Pricing',
-    '<div style="overflow-x:auto;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:12px">'
-    +'<thead><tr style="background:'+color+'12"><th style="padding:9px 14px;color:'+color+';font-weight:700;text-align:right;border-bottom:2px solid '+color+'22">Service</th><th style="padding:9px 14px;color:'+color+';font-weight:700;text-align:center;border-bottom:2px solid '+color+'22">Total (SAR)</th><th style="padding:9px 14px;color:'+color+';font-weight:700;text-align:center;border-bottom:2px solid '+color+'22">Comment</th></tr></thead><tbody>'
-    +tireService.map((t,i)=>'<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'"><td style="padding:7px 14px;text-align:right">'+t.item+'</td><td style="padding:7px 14px;text-align:center;font-weight:700;color:'+color+'">'+(t.total||'')+'</td><td style="padding:7px 14px;text-align:center">'+(t.comment||'')+'</td></tr>').join('')
-    +'</tbody></table></div>'
-    ,'instr_tb_tireservice',color);
+  // Powertech Battery — table (Area · Employee · Mobile · Email)
+  const powertechHTML=powertech.length?'<div style="margin-bottom:18px">'+secHead('🔋 Powertech Battery')
+    +tbl(['📍 Area','👤 Employee','📞 Mobile','✉️ Email'],
+      powertech.map((p,i)=>'<tr style="background:'+(i%2?'#FDFBF4':'#fff')+'">'
+        +'<td style="padding:7px 12px;text-align:center;direction:rtl">'+(p.area||'')+'</td>'
+        +'<td style="padding:7px 12px;text-align:center">'+(p.employee||'')+'</td>'
+        +'<td style="padding:7px 12px;text-align:center">'+(p.mobile||'')+'</td>'
+        +'<td style="padding:7px 12px;text-align:center">'+emailCell(p.email)+'</td></tr>').join(''))
+    +'</div>':'';
 
-  // Section 4: Tire locations grouped by region
-  const REGION_COLORS=new Proxy({}, {get:()=>'#DAA520'});
+  // Tire locations — tables grouped by region (collapsible gold headers)
   const locGroups={};
-  locations.forEach(l=>{
-    const reg=l.region||'Other';
-    if(!locGroups[reg])locGroups[reg]=[];
-    locGroups[reg].push(l);
-  });
+  locations.forEach(l=>{const reg=l.region||'Other';(locGroups[reg]=locGroups[reg]||[]).push(l);});
   const locBody=Object.keys(locGroups).map(reg=>{
-    const rc=REGION_COLORS[reg]||color;
     const items=locGroups[reg];
-    return '<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:'+rc+';margin-bottom:6px">'+reg+' ('+items.length+')</div>'
-      +'<div class="ref-cards-grid">'+items.map(l=>{
-        return '<div style="background:#fff;border-radius:10px;padding:8px 12px;text-align:center;border-top:3px solid '+rc+';box-shadow:0 1px 4px rgba(0,0,0,.06);direction:ltr">'
-          +'<div style="font-size:12px;font-weight:700;color:'+rc+'">'+l.station+'</div>'
-          +(l.area?'<div style="font-size:10px;color:#888;margin:3px 0">📍 '+l.area+'</div>':'')
-          +(l.supervisor?'<div style="font-size:11px;color:#666">👤 '+l.supervisor+'</div>':'')
-          +(l.link&&l.link.startsWith('http')?'<div style="margin-top:4px"><a href="'+l.link+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':(l.link?'<div style="font-size:11px;color:#666;margin-top:4px">📞 '+fmtNum(l.link)+'</div>':''))
-          +'</div>';
-      }).join('')+'</div></div>';
+    const rid='tbLoc_'+reg.replace(/[^A-Za-z0-9]/g,'');
+    const rows=items.map((l,i)=>{
+      const parts=String(l.station||'').split(' - ');
+      const code=parts[0]||'', name=parts.slice(1).join(' - ')||l.station;
+      const map=(l.link&&/^https?:/.test(l.link))?'<a href="'+l.link+'" target="_blank" style="color:'+color+';font-weight:700;text-decoration:none">🗺️ Location</a>':'—';
+      return '<tr style="background:'+(i%2?'#FDFBF4':'#fff')+'">'
+        +'<td style="padding:7px 10px;text-align:center;font-weight:800;color:'+color+'">'+code+'</td>'
+        +'<td style="padding:7px 10px;text-align:center">'+name+'</td>'
+        +'<td style="padding:7px 10px;text-align:center;direction:rtl">'+(l.area||'')+'</td>'
+        +'<td style="padding:7px 10px;text-align:center">'+(l.supervisor||'')+'</td>'
+        +'<td style="padding:7px 10px;text-align:center">'+map+'</td></tr>';
+    }).join('');
+    return '<div style="margin-bottom:10px">'
+      +'<div onclick="toggleRegion(\''+rid+'\')" style="display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:'+color+'12;border-radius:8px;border-right:4px solid '+color+';cursor:pointer;margin-bottom:6px">'
+      +'<span style="font-size:13px;font-weight:800;color:'+color+'">'+reg+' ('+items.length+')</span>'
+      +'<span id="ico_'+rid+'" style="color:'+color+'">▼</span></div>'
+      +'<div id="'+rid+'">'+tbl(['Code','Station','Location','Supervisor','Map'],rows)+'</div></div>';
   }).join('');
-  const locHTML=mkCollapsible('📍 Tire Service Locations ('+locations.length+')', locBody, 'instr_tb_loc', color);
+  const locHTML=locations.length?'<div><div style="font-size:14px;font-weight:800;color:'+color+';text-align:center;margin-bottom:12px">📍 Tire Service Locations ('+locations.length+')</div>'+locBody+'</div>':'';
 
-  return supHTML+locHTML;
+  return pirelliHTML+powertechHTML+locHTML || '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 }
 
 function renderPetrominEmailzTab(arr){
