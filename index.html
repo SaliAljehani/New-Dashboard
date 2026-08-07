@@ -2882,12 +2882,12 @@ function renderNissanBranchTab(arr, sheetName, brand){
 
   const emailHdr =
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">'
-    +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+    +'<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
     +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+pills(emCfg.req.to,color)+'</div>'
     +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+pills(emCfg.req.cc,color)+'</div>'
     +'</div>'
-    +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+    +'<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
     +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+pills(emCfg.com.to,color)+'</div>'
     +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+pills(emCfg.com.cc,color)+'</div>'
@@ -2921,20 +2921,22 @@ function renderNissanBranchTab(arr, sheetName, brand){
   const arCity = c => CITY_AR[c] || CITY_AR[c.trim()] || c;
   const gv = (r,c) => c ? String(r[c]||'').trim() : '';
 
-  // Group by region — skip invalid rows
+  // Group by region — skip invalid rows, normalize to 5 main regions
+  const normMainReg=s=>{const u=String(s||'').toUpperCase().trim();if(/^WR|WESTERN|^WEST/.test(u))return'West';if(/^CR|CENTRAL|^CENT/.test(u))return'Central';if(/^ER|EASTERN|^EAST/.test(u))return'East';if(/SOUTH|^SR/.test(u))return'South';if(/NORTH|^NR/.test(u))return'North';return s?String(s).trim():'Other';};
   const regions = {};
   arr.forEach(r => {
-    const reg = gv(r, regionCol);
-    if(!reg || !BRANCH_VALID_REGIONS.has(reg)) return;
+    const rawReg = gv(r, regionCol);
+    if(!rawReg || !BRANCH_VALID_REGIONS.has(rawReg)) return;
     const branch = gv(r, branchCol);
     if(!branch) return;
+    const reg = normMainReg(rawReg);
     if(!regions[reg]) regions[reg] = [];
     regions[reg].push(r);
   });
 
+  const MAIN_ORDER={West:0,Central:1,East:2,North:3,South:4,Other:5};
   const sortedRegs = Object.keys(regions).sort((a,b) =>
-    (BRANCH_REGION_ORDER.indexOf(a)===-1?99:BRANCH_REGION_ORDER.indexOf(a)) -
-    (BRANCH_REGION_ORDER.indexOf(b)===-1?99:BRANCH_REGION_ORDER.indexOf(b))
+    (MAIN_ORDER[a]!==undefined?MAIN_ORDER[a]:99) - (MAIN_ORDER[b]!==undefined?MAIN_ORDER[b]:99)
   );
 
   const makeCard = (b, col_color) => {
@@ -2959,7 +2961,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
         +'</div>'
       : '';
 
-    return '<div style="background:#fff;border-radius:10px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+col_color+';direction:ltr">'
+    return '<div style="background:#fff;border-radius:10px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
       // Branch name — colored header box
       +'<div style="background:'+col_color+'18;border-bottom:2px solid '+col_color+'22;padding:10px 14px;margin-bottom:0;text-align:center">'
       +'<div style="font-size:13px;font-weight:700;color:'+col_color+'">'+b.name.replace(/\s*\(.*?\)\s*/g,'').replace(/\n/g,' ').trim()+'</div>'
@@ -2977,7 +2979,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
 
   const regionsHTML = sortedRegs.map((reg, ri) => {
     const rows = regions[reg];
-    const col_color = BRANCH_REGION_COLORS[reg]||'#888';
+    const col_color = color;
     // Use most common hours for region header
     const allHours = rows.map(r=>gv(r,hoursCol)).filter(Boolean);
     const hoursCounts = {};
@@ -3349,11 +3351,11 @@ function renderStellantisSparePartsTab(arr){
 
   // Email header — matches reference image (TO + CC rows, two cards)
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+    +'<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
     +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;background:#f0f6fc;color:#1565c0;padding:3px 9px;border-radius:5px;font-weight:700;margin:2px">Manager Branch</span></div>'
     +'</div>'
-    +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+    +'<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
     +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;background:#f0f6fc;color:#1565c0;padding:3px 9px;border-radius:5px;font-weight:700;margin:2px">Manager Branch +</span> <a href="mailto:CRTeam@petromin.com" style="background:#f0f6fc;color:#1565c0;font-size:11px;font-weight:700;text-decoration:none;padding:3px 9px;border-radius:5px;margin:2px">CRTeam@petromin.com</a></span></div>'
     +'</div></div>';
@@ -3412,12 +3414,12 @@ function renderStellantisPMSTab(arr, sheetName){
 
   const emailHtml=(complaint.to||complaint.cc||request.to||request.cc)?
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+    +'<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
     +(request.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fmtE(request.to)+'</div>':'')
     +(request.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(request.cc)+'</div>':'')
     +'</div>'
-    +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+    +'<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
     +(complaint.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fmtE(complaint.to)+'</div>':'')
     +(complaint.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(complaint.cc)+'</div>':'')
@@ -3519,12 +3521,12 @@ function renderStellantisPACTab(arr){
 
   // Email header — read from sheet (with fallback)
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+    +'<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
     +(emTo.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;font-weight:700;color:#444">'+linkifyTo(emTo.request)+'</span></div>':'')
     +(emCc.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.request)+'</div>':'')
     +'</div>'
-    +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+    +'<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
     +(emTo.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;font-weight:700;color:#444">'+linkifyTo(emTo.complaint)+'</span></div>':'')
     +(emCc.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.complaint)+'</div>':'')
@@ -3763,7 +3765,7 @@ function renderBaicServiceTab(arr, apptArr){
 
   // Email header — Request / Complaint / Spare Parts
   const linkTo=v=>chipTo(v,color);
-  const emCard=(icon,title,to,cc)=>'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+  const emCard=(icon,title,to,cc)=>'<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">'+icon+' '+title+'</div>'
     +(to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;font-weight:700;color:#444">'+linkTo(to)+'</span></div>':'')
     +(cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(cc)+'</div>':'')
@@ -4448,12 +4450,12 @@ function chipTo(v, color){
 
 function mkReqCompCards(color, emTo, emCc, fmtE){
   return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+    +'<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
     +(emTo.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fmtE(emTo.request)+'</div>':'')
     +(emCc.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.request)+'</div>':'')
     +'</div>'
-    +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+    +'<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
     +(emTo.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fmtE(emTo.complaint)+'</div>':'')
     +(emCc.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.complaint)+'</div>':'')
@@ -4509,7 +4511,7 @@ function fotonEmailHdr(blocks, color){
   const cols = blocks.length===1 ? '1fr' : '1fr 1fr';
   return '<div style="display:grid;grid-template-columns:'+cols+';gap:12px;margin-bottom:20px">'
     + blocks.map(b=>
-        '<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+        '<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center">'
         +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 '+b.label+'</div>'
         +(b.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fotonFmtE(b.to,color)+'</div>':'')
         +(b.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fotonFmtE(b.cc,color)+'</div>':'')
@@ -4821,7 +4823,7 @@ function renderPetrominPACTab(arr){
   // Email cards (2 boxes: Request, Complaint)
   const fmtTo=v=>chipTo(v,color);
 
-  const emCard=(label,data)=>'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+  const emCard=(label,data)=>'<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 '+label+'</div>'
     +(data?.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fmtTo(data.to)+'</div>':'')
     +(data?.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(data.cc)+'</div>':'')
@@ -4978,7 +4980,7 @@ function renderPetrominExpressStationsTab(arr){
       if(idxCC>=0){const v2=v.slice(idxCC+1).find(c=>c.trim()!=='')||'';emRows[emMode].cc=v2;}
     }
   });
-  const emCard=(label,data)=>'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+  const emCard=(label,data)=>'<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 '+label+'</div>'
     +(data?.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fmtE(data.to)+'</div>':'')
     +(data?.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(data.cc)+'</div>':'')
@@ -5116,12 +5118,12 @@ function renderPetrominTristarTab(arr){
   const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
 
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+    +'<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
     +(emTo.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+chipTo(emTo.request,color)+'</div>':'')
     +(emCc.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.request)+'</div>':'')
     +'</div>'
-    +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+    +'<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
     +(emTo.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+chipTo(emTo.complaint,color)+'</div>':'')
     +(emCc.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.complaint)+'</div>':'')
@@ -5244,12 +5246,12 @@ function renderBodyShopTab(arr){
 
   // Email header — read from sheet (with fallback)
   const emailHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+    +'<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
     +(emTo.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;font-weight:700;color:#444">'+linkifyTo(emTo.request)+'</span></div>':'')
     +(emCc.request?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.request)+'</div>':'')
     +'</div>'
-    +'<div class="ref-email-card" style="border-left:4px solid '+color+';text-align:center">'
+    +'<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
     +(emTo.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span><span style="font-size:11px;font-weight:700;color:#444">'+linkifyTo(emTo.complaint)+'</span></div>':'')
     +(emCc.complaint?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(emCc.complaint)+'</div>':'')
@@ -5846,7 +5848,7 @@ async function renderInstructionTab(brand, cfg){
           return '<div style="background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden">'
             +'<div style="padding:10px 14px;font-size:13px;font-weight:700;color:'+c+';direction:rtl;text-align:center;border-bottom:1px solid #f0f0f0">'+w.title+'</div>'
             +'<div style="display:grid;grid-template-columns:1fr 1fr">'
-            +'<div style="padding:12px 14px;border-left:4px solid '+c+';direction:rtl;text-align:center">'
+            +'<div style="padding:12px 14px;border-left:1px solid #f0f0f0;direction:rtl;text-align:center">'
             +'<div style="font-size:11px;font-weight:700;color:'+c+';margin-bottom:6px">'+col1Header+'</div>'
             +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+w.c1+'</div>'
             +'</div>'
@@ -5867,7 +5869,7 @@ async function renderInstructionTab(brand, cfg){
       warrantyBody='<div style="'+wWrapStyle+'">'
         +orderedRows.map((w,i)=>{
           const c=WARRANTY_COLORS[i%WARRANTY_COLORS.length];
-          return '<div style="'+wCardWidth+'background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid '+c+';direction:rtl;text-align:center">'
+          return '<div style="'+wCardWidth+'background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);direction:rtl;text-align:center">'
             +'<div style="font-size:13px;font-weight:700;color:'+c+';margin-bottom:8px">'+w.title+'</div>'
             +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+w.c1+'</div>'
             +'</div>';
@@ -5889,7 +5891,7 @@ async function renderInstructionTab(brand, cfg){
     pmsBody='<div style="'+wrapStyle+'">'
       +pmsRows.map((r,i)=>{
         const c=WARRANTY_COLORS[i%WARRANTY_COLORS.length];
-        return '<div style="'+cardWidth+'background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid '+c+';direction:rtl;text-align:center">'
+        return '<div style="'+cardWidth+'background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);direction:rtl;text-align:center">'
           +(r.title?'<div style="font-size:13px;font-weight:700;color:'+c+';margin-bottom:8px">'+r.title+'</div>':'')
           +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+r.content+'</div>'
           +'</div>';
@@ -5912,7 +5914,7 @@ async function renderInstructionTab(brand, cfg){
       apptBody='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
         +apptRows.map((r,i)=>{
           const c=WARRANTY_COLORS[i%WARRANTY_COLORS.length];
-          return '<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid '+c+';direction:rtl;text-align:center">'
+          return '<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);direction:rtl;text-align:center">'
             +'<div style="font-size:13px;font-weight:700;color:'+c+';margin-bottom:8px">'+r.svc+'</div>'
             +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+r.b+'</div>'
             +'</div>';
@@ -5965,7 +5967,7 @@ async function renderInstructionTab(brand, cfg){
   // ===== Notes section =====
   let noteHtml='';
   if(noteRows.length){
-    noteHtml='<div style="background:'+color+'0d;border-radius:12px;padding:14px 18px;border-right:4px solid '+color+';direction:rtl;text-align:right;box-shadow:0 2px 8px rgba(0,0,0,.05)">'
+    noteHtml='<div style="background:'+color+'0d;border-radius:12px;padding:14px 18px;direction:rtl;text-align:right;box-shadow:0 2px 8px rgba(0,0,0,.05)">'
       +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:8px">📝 ملاحظات هامة</div>'
       +noteRows.map(n=>'<div style="font-size:12px;color:#555;line-height:2;white-space:pre-wrap;margin-bottom:8px">'+n+'</div>').join('')
       +'</div>';
@@ -5975,15 +5977,18 @@ async function renderInstructionTab(brand, cfg){
   const extraBody = emailHtml + noteHtml;
   const extraHtml = extraBody ? mkCollapsible('📋 Extra Information', extraBody, 'instr_'+brand+'_extra', color) : '';
 
-  if(brand==='baic'){
+  if(brand==='baic'||brand==='nissan'){
     const tabs=[];
     if(warrantyBody) tabs.push({label:'🛡️ Warranty',html:warrantyBody});
     if(pmsBody) tabs.push({label:'🔧 PMS Services',html:pmsBody});
-    if(apptBody) tabs.push({label:'📋 Appointment Script',html:apptBody});
-    if(extraBody) tabs.push({label:'ℹ️ Extra Information',html:extraBody});
+    // Nissan: only Warranty + PMS (Appointment Script & Extra removed). BAIC: keep all.
+    if(brand==='baic'){
+      if(apptBody) tabs.push({label:'📋 Appointment Script',html:apptBody});
+      if(extraBody) tabs.push({label:'ℹ️ Extra Information',html:extraBody});
+    }
     if(!tabs.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-    const inC='#b0561a';
-    const tabStyle=on=>'display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;padding:9px 18px;border-radius:22px;cursor:pointer;background:'+(on?color:'#fff')+';color:'+(on?'#fff':inC)+';border:1px solid '+(on?color:'#f0d0b8')+'';
+    const inC = brand==='nissan' ? '#a33' : '#b0561a';
+    const tabStyle=on=>'display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;padding:9px 18px;border-radius:22px;cursor:pointer;background:'+(on?color:'#fff')+';color:'+(on?'#fff':inC)+';border:1px solid '+(on?color:(brand==='nissan'?'#f0cccc':'#f0d0b8'))+'';
     const bar='<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px">'
       +tabs.map((t,i)=>'<span class="piTab" data-ac="'+color+'" data-ic="'+inC+'" onclick="showPetrominInstrTab('+i+')" style="'+tabStyle(i===0)+'">'+t.label+'</span>').join('')+'</div>';
     const panels=tabs.map((t,i)=>'<div class="piPanel" style="display:'+(i===0?'block':'none')+'">'+t.html+'</div>').join('');
