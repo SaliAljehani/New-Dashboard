@@ -2770,7 +2770,7 @@ function renderElectrominSMSTab(rows){
     if(lc==='templates'||lc==='template') continue;
     if((en.toLowerCase()==='english')||(ar.toLowerCase()==='arabic')) continue;
     if(!en && !ar) continue;
-    cards.push('<div style="background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+color+'">'
+    cards.push('<div style="background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
       +'<div style="background:'+color+'18;border-bottom:2px solid '+color+'22;padding:10px 14px;text-align:center">'
       +'<span style="font-size:13px;font-weight:700;color:'+color+'">\ud83d\udce8 '+(label||'Template')+'</span>'
       +'</div>'
@@ -3114,7 +3114,7 @@ function renderTristarTab(arr){
     const phone=fmtNum(String(r[phoneKey]||'').trim());
     const cc=String(r[ccKey]||'').trim();
     const gps=String(r[gpsKey]||'').trim();
-    return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
+    return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
       +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
       +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+name+'</div>'
       +(arName?'<div style="font-size:12px;color:#888;margin-top:2px">'+arName+'</div>':'')
@@ -3371,7 +3371,7 @@ function renderStellantisSparePartsTab(arr){
     const gps=String(r[gpsKey]||'').trim();
     const cc=ccMap[branch]||'';
     if(!branch||branch===branchKey) return '';
-    return '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+color+'">'
+    return '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
       +'<div style="background:'+color+'12;padding:10px 16px;text-align:center">'
       +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+branch+'</div>'
       +(city?'<div style="font-size:11px;color:#666;margin-top:4px">📌 '+city+'</div>':'')
@@ -3454,7 +3454,7 @@ function renderStellantisPMSTab(arr, sheetName){
         const em=String(r[keys[6]]||'').trim();
         const h=String(r[keys[7]]||'').trim();
         const gps=String(r[keys[8]]||'').trim();
-        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
+        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
           +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
           +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+b+'</div>'
           +(addr?'<div style="font-size:11px;color:#888;margin-top:4px">📍 '+addr+'</div>':'')
@@ -3550,7 +3550,7 @@ function renderStellantisPACTab(arr){
     const email=String(r[emailKey]||'').trim();
     const gps=String(r[gpsKey]||'').trim();
     const rm=rmByBranch[branch]||null;
-    return '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+color+'">'
+    return '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
       +'<div style="background:'+color+'12;padding:10px 14px;text-align:center">'
       +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+branch+'</div>'
       +(city?'<div style="font-size:11px;color:#666;margin-top:2px">📌 '+city+'</div>':'')
@@ -3825,7 +3825,7 @@ function renderBaicServiceTab(arr, apptArr){
         const phone=String(r[phoneCol]||'').split(',').map(s=>fmtNum(s.trim())).filter(Boolean).join(' / ');
         const email=String(r[emailCol]||'').trim();
         const gps=String(r[gpsLinkCol]||'').trim();
-        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
+        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
           +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
           +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
           +(city?'<div style="font-size:11px;color:#888;margin-top:3px">📌 '+city+'</div>':'')
@@ -3989,7 +3989,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
   const extraInner=sections['Extra Information'].length?
     '<div style="display:flex;flex-direction:column;gap:10px">'
     +sections['Extra Information'].map(r=>{const title=r.col0||'';const text=(r.col1||'').replace(/^"|"$/g,'').trim();if(!title&&!text)return'';
-      return '<div style="background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-top:3px solid '+color+';text-align:center">'
+      return '<div style="background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);text-align:center">'
         +(title?'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">'+title+'</div>':'')
         +(text?'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+text+'</div>':'')
         +'</div>';}).join('')
@@ -4371,7 +4371,7 @@ function renderNosFranchiseTab(arr){
       +'<span style="font-size:11px;color:#aaa">('+items.length+')</span>'
       +'<span id="ico_'+gid+'" style="margin-left:auto;color:'+color+'">▼</span></div>'
       +'<div id="'+gid+'"><div class="ref-cards-grid">'+items.map(it=>{
-        return '<div style="background:#fff;border-radius:10px;padding:10px 14px;text-align:center;border-top:3px solid '+color+';box-shadow:0 1px 4px rgba(0,0,0,.06);direction:ltr">'
+        return '<div style="background:#fff;border-radius:10px;padding:10px 14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.06);direction:ltr">'
           +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+it.branch+'</div>'
           +(it.district?'<div style="font-size:11px;color:#888;margin:3px 0">📌 '+it.district+'</div>':'')
           +(it.owner?'<div style="font-size:12px;color:#555;margin-bottom:3px">👤 '+it.owner+'</div>':'')
@@ -4714,15 +4714,15 @@ function renderFotonSparePartsTab(arr){
 
   const contactHtml=contacts.length?contacts.map(c=>{
     return '<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:14px;margin-bottom:16px">'
-      +'<div class="ref-card" style="padding:14px;text-align:center;border-top:3px solid '+color+';width:200px;max-width:100%">'
+      +'<div class="ref-card" style="padding:14px;text-align:center;width:200px;max-width:100%">'
       +'<div style="font-size:11px;color:#999;text-transform:uppercase;margin-bottom:6px">👤 Name</div>'
       +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+c.name+'</div>'
       +'</div>'
-      +'<div class="ref-card" style="padding:14px;text-align:center;border-top:3px solid '+color+';width:200px;max-width:100%">'
+      +'<div class="ref-card" style="padding:14px;text-align:center;width:200px;max-width:100%">'
       +'<div style="font-size:11px;color:#999;text-transform:uppercase;margin-bottom:6px">📞 Mobile</div>'
       +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+(c.mobile||'—')+'</div>'
       +'</div>'
-      +'<div class="ref-card" style="padding:14px;text-align:center;border-top:3px solid '+color+';width:200px;max-width:100%">'
+      +'<div class="ref-card" style="padding:14px;text-align:center;width:200px;max-width:100%">'
       +'<div style="font-size:11px;color:#999;text-transform:uppercase;margin-bottom:6px">🗺️ Coverage</div>'
       +'<div style="font-size:13px;font-weight:700;color:'+color+';direction:rtl">'+(c.note||'—')+'</div>'
       +'</div>'
@@ -4754,7 +4754,7 @@ function renderFotonSMSLocationTab(arr){
     const en=v[0]||'', ar=v[1]||'';
     const m=en.match(/\(([^)\n]+)/);
     const branch=m?m[1].trim():('Branch '+(i+1));
-    return '<div class="ref-card" style="padding:10px 14px;border-top:3px solid '+color+'">'
+    return '<div class="ref-card" style="padding:10px 14px;">'
       +'<div style="text-align:center;margin-bottom:8px"><span style="font-size:13px;font-weight:700;color:'+color+'">📍 '+branch+'</span></div>'
       +mkBox(en,'fotonSms_en_'+i,'EN')
       +mkBox(ar,'fotonSms_ar_'+i,'AR')
@@ -4891,7 +4891,7 @@ function renderPetrominPACTab(arr){
         const branchNameOnly=branch.replace(/^\d+\s*-\s*/,'').trim();
         const nkBranch=branchNameOnly.toLowerCase().replace(/[^a-z0-9]/g,'');
         const rm=rmByBranch[nkBranch]||null;
-        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
+        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
           +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
           +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
           +(city?'<div style="font-size:11px;color:#888;margin-top:3px">📌 '+city+'</div>':'')
@@ -5059,7 +5059,7 @@ function renderPetrominExpressStationsTab(arr){
         const regMob=rmData?fmtNum(rmData.mobile):'';
         const regEmail=rmData?rmData.email:'';
         const locLine=[dist,city].filter(Boolean).join(' - ');
-        return '<div style="background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);border-top:3px solid '+rc+'">'
+        return '<div style="background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);">'
           +'<div style="background:'+rc+'12;padding:8px 12px;text-align:center">'
           +'<div style="font-size:12px;font-weight:700;color:'+rc+'">'+(be?be+' - ':'')+station+'</div>'
           +(locLine?'<div style="font-size:10px;color:'+rc+';opacity:.75;margin-top:2px">📍 '+locLine+'</div>':'')
@@ -5140,7 +5140,7 @@ function renderPetrominTristarTab(arr){
     const phone=fmtNum(vals[5]||'');
     const email=vals[6]||'';
     const rc=REGION_COLORS[reg]||color;
-    return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+';width:280px;max-width:100%">'
+    return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);width:280px;max-width:100%">'
       +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
       +'<div style="font-size:10px;color:'+rc+';font-weight:700;text-transform:uppercase">'+reg+'</div>'
       +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
@@ -5186,7 +5186,7 @@ function renderBodyShopLocationTab(arr){
     const en=String(r[enCol]||'').trim();
     const ar=String(r[arCol]||'').trim();
     const rc=REGION_COLORS[region]||color;
-    return '<div class="ref-card" style="padding:10px 14px;border-top:3px solid '+rc+'">'
+    return '<div class="ref-card" style="padding:10px 14px;">'
       +'<div style="text-align:center;margin-bottom:8px">'
       +(region?'<span style="font-size:10px;font-weight:700;color:'+rc+';text-transform:uppercase">'+region+'</span> · ':'')
       +'<span style="font-size:13px;font-weight:700;color:#333">'+city+'</span>'
@@ -5309,7 +5309,7 @@ function renderBodyShopTab(arr){
             +(p.email?'<div style="font-size:11px"><a href="mailto:'+p.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+p.email+'</a></div>':'')
             +'</div>'
           ).join('');
-          return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid '+rc+'">'
+          return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
             +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
             +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+b.name+'</div>'
             +(b.dist?'<div style="font-size:11px;color:#888;margin-top:3px">📍 '+b.dist+'</div>':'')
@@ -6063,7 +6063,7 @@ async function renderRefBrand(brand,tabIdx){
       });
       const warInner=warItems.length?
         '<div style="display:flex;flex-direction:column;gap:10px">'+warItems.map(it=>
-          '<div style="background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-top:3px solid '+color+';text-align:center">'
+          '<div style="background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);text-align:center">'
           +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">'+it.title+'</div>'
           +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+it.text+'</div>'
           +'</div>').join('')+'</div>':'';
