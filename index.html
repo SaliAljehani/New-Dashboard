@@ -7854,30 +7854,37 @@ async function renderRef(){
     const subC=['PN Sales Complaint','PN Aftersales Complaint','PS Sales Complaint','PS AftesSales Complaint','Body Shop Complaint','PE Complaint','PAC Complaint','BAIC Complaint','TS Complaint','Tire Complaint','Fuel Complaint','Foton Complaint','Electromin Complaint'];
     if(mainC){ mainC.subject='All Complaints'; mainC.status='Open'; mainC._deptTags=DEPT_TAGS; mainC._descText=DESC_TEXT; mainC._catTags=CAT_TAGS; mainC._notesAR=NOTES_AR; }
 
-    const fbox=(name,val,c)=>'<span style="background:#fff;border:1px solid #eadfb8;border-radius:7px;padding:5px 10px;font-size:10.5px;font-weight:600;color:#666;text-align:center;display:inline-block">'+name+'<small style="display:block;font-size:9px;color:#fff;background:'+c+';font-weight:800;margin-top:3px;border-radius:3px;padding:1px 4px">'+val+'</small></span>';
+    const fbox=(name,val,c)=>'<span style="background:#fff;border:1px solid #efe6cc;border-radius:7px;padding:5px 11px;font-size:10.5px;font-weight:600;color:#777;text-align:center;display:inline-block">'+name+'<small style="display:block;font-size:9.5px;color:'+c.t+';background:'+c.b+';font-weight:800;margin-top:4px;border-radius:4px;padding:1px 5px">'+val+'</small></span>';
     const formulaBar=(val,two,c)=>{
-      const plus='<span style="color:#c9a227;font-weight:800;display:flex;align-items:center">+</span>';
+      const plus='<span style="color:#d8c48a;font-weight:800;display:flex;align-items:center">+</span>';
       const boxes=two?[fbox('Invoice Number',val,c),fbox('Description',val,c)]:[fbox('Invoice Number',val,c),fbox('Subject',val,c),fbox('Description',val,c),fbox('Empty Box',val,c)];
-      return'<div style="display:flex;flex-wrap:wrap;align-items:stretch;gap:6px;background:#fff8e1;border:1px dashed #f0c95a;border-radius:9px;padding:9px 10px;direction:ltr;justify-content:center;margin-bottom:10px">'+boxes.join(plus)+'</div>';
+      return'<div style="display:flex;flex-wrap:wrap;align-items:stretch;gap:7px;background:#fffdf5;border:1px dashed #f2e3b4;border-radius:10px;padding:11px 12px;direction:ltr;justify-content:center;margin:12px 14px">'+boxes.join(plus)+'</div>';
     };
-    const subjItem=(it,isCMain,subTags,twoField)=>{
-      // Use enriched hardcoded data if available
+    const fieldRow=(icon,label,content,i)=>'<div style="display:grid;grid-template-columns:118px 1fr;gap:10px;padding:11px 16px;border-top:1px solid #f4f4f6;align-items:start;'+(i%2?'background:#fbfbfc':'background:#fff')+'"><div style="font-size:10.5px;font-weight:800;color:#9aa0a8;letter-spacing:.3px;padding-top:2px">'+icon+' '+label+'</div><div>'+content+'</div></div>';
+    const subjItem=(it,isCMain,subTags,twoField,gColor)=>{
       const deptTags = it._deptTags || (it.dept?it.dept.split(/\n/).flatMap(d=>d.split(' - ')).map(s=>s.trim()).filter(Boolean):[]);
       const catTags  = it._catTags  || (it.cat?it.cat.split(/\n/).flatMap(c=>c.split(' - ')).map(s=>s.trim()).filter(Boolean):[]);
       const descText = it._descText || it.desc || '';
       const notesAR  = it._notesAR  || it.notes || '';
       const fVal = isCMain ? 'Complaint type' : (it.subject||'');
-      const badgeC = isCMain ? '#c0272d' : '#f9a825';
-      return'<div class="ref-subj-item">'
-        +'<div class="ref-subj-subject">'+it.subject
-        +(it.status?'<span class="ref-subj-badge" style="background:'+(it.status==='Open'?'#fde':'#F4F8F5')+';color:'+(it.status==='Open'?'#c0272d':'#2e7d32')+'">'+it.status+'</span>':'')
+      const badge = isCMain ? {t:'#fff',b:'#d98a8f'} : {t:'#7a5f18',b:'#ecd699'};
+      const isOpen = it.status && /open/i.test(it.status);
+      const stColor = isOpen?'#c0272d':'#3f9152';
+      const stBg = isOpen?'#fbeeee':'#eef6ee';
+      const catKey=c=>{const l=c.toLowerCase();let bg='#f1f2f4',cl='#666';if(l==='parts'){bg='#eef5fb';cl='#3f7fbf';}else if(l==='service'){bg='#fbf3e9';cl='#c9812f';}else if(l==='sales'){bg='#eef6ef';cl='#4a9a5e';}return'<span style="display:inline-block;background:'+bg+';color:'+cl+';font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;margin:2px">'+c+'</span>';};
+      let rows='',i=0;
+      if(deptTags.length) rows+=fieldRow('📁','Departments','<span>'+deptTags.map(d=>'<span style="display:inline-block;background:#f2f3f5;color:#606670;font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;margin:2px">'+d+'</span>').join('')+'</span>',i++);
+      if(catTags.length) rows+=fieldRow('🏷️','Category','<span>'+catTags.map(catKey).join('')+'</span>',i++);
+      if(descText) rows+=fieldRow('✏️','Description','<span style="background:#f7f7f9;border-radius:8px;padding:7px 11px;font-size:12px;color:#555;display:inline-block;direction:rtl">'+descText+'</span>',i++);
+      if(notesAR) rows+=fieldRow('💡','Example','<span style="font-size:12px;color:#888;direction:rtl">'+notesAR+'</span>',i++);
+      if(isCMain&&subTags&&subTags.length) rows+=fieldRow('🔻','Complaint Type','<span>'+subTags.map(s=>'<span style="display:inline-block;background:#fdf1f1;color:#c0272d;border:1px solid #f1cfcf;font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;margin:2px">'+s+'</span>').join('')+'</span>',i++);
+      return'<div class="ref-subj-item" style="padding:0;border:0;border-radius:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05);margin-bottom:12px">'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:'+gColor+'0f;border-bottom:2px solid '+gColor+'66">'
+        +'<span class="ref-subj-subject" style="margin:0;font-size:14px;font-weight:800;color:'+gColor+'">'+it.subject+'</span>'
+        +(it.status?'<span class="ref-subj-badge" style="background:'+stBg+';color:'+stColor+';font-size:10px;font-weight:700;padding:3px 10px;border-radius:14px">'+it.status+'</span>':'')
         +'</div>'
-        +formulaBar(fVal,twoField,badgeC)
-        +(deptTags.length?'<div class="ref-subj-row"><span class="ref-subj-ico">📂</span><span>'+deptTags.map(d=>'<span style="display:inline-block;background:#f0f0f0;color:#555;font-size:11px;font-weight:600;padding:2px 9px;border-radius:6px;margin:2px">'+d+'</span>').join('')+'</span></div>':'')
-        +(descText?'<div class="ref-subj-row"><span class="ref-subj-ico">✏️</span><span style="font-size:12px;color:#555;direction:rtl">'+descText+'</span></div>':'')
-        +(catTags.length?'<div class="ref-subj-row"><span class="ref-subj-ico">🏷️</span><span>'+catTags.map(c=>'<span style="display:inline-block;background:#FDF5F8;color:#9e7700;font-size:11px;font-weight:600;padding:2px 9px;border-radius:6px;margin:2px">'+c+'</span>').join('')+'</span></div>':'')
-        +(notesAR?'<div class="ref-subj-row"><span class="ref-subj-ico">💡</span><span style="font-size:12px;color:#888;direction:rtl">'+notesAR+'</span></div>':'')
-        +(isCMain&&subTags&&subTags.length?'<div class="ref-subj-complaints">'+subTags.map(s=>'<span class="ref-subj-complaint-tag">'+s+'</span>').join('')+'</div>':'')
+        +formulaBar(fVal,twoField,badge)
+        +rows
         +'</div>';
     };
 
@@ -7894,7 +7901,7 @@ async function renderRef(){
       const two=(grp==='Request'||grp==='Complaint');
       return'<div class="ref-subj-group">'
         +'<div class="ref-subj-group-title" style="border-left:4px solid '+col+';color:'+col+'">'+grp+'</div>'
-        +(isC&&mainC?subjItem(mainC,true,subC,two):items.map(i=>subjItem(i,false,[],two)).join(''))
+        +(isC&&mainC?subjItem(mainC,true,subC,two,col):items.map(i=>subjItem(i,false,[],two,col)).join(''))
         +'</div>';
     }).join('');
 
