@@ -266,11 +266,11 @@ tr:last-child td{border-bottom:none}
 .ref-email-tag.cc{background:#1565c0;color:#fff}
 
 /* Brand circles */
-.ref-brand-circles{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.ref-brand-circle{width:104px;background:#fff;border:1px solid #eee;border-radius:14px;overflow:hidden;box-shadow:0 1px 5px rgba(0,0,0,.05);cursor:pointer;transition:.2s;display:flex;flex-direction:column}
-.ref-brand-circle:hover{transform:translateY(-3px);box-shadow:0 4px 12px rgba(0,0,0,.12)}
-.ref-brand-circle-icon{width:100%;height:46px;border-radius:0;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff}
-.ref-brand-circle-label{font-size:11.5px;font-weight:800;text-align:center;padding:9px 4px}
+.ref-brand-circles{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.ref-brand-circle{display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;transition:.2s}
+.ref-brand-circle:hover{transform:translateY(-3px)}
+.ref-brand-circle-icon{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 2px 6px rgba(0,0,0,.08);filter:brightness(1.12) saturate(.9)}
+.ref-brand-circle-label{font-size:11px;font-weight:700;text-align:center}
 
 /* VIN */
 .vin-search-box{display:flex;gap:8px;margin:10px 0}
@@ -7826,8 +7826,8 @@ async function renderRef(){
       const isWa = name.toLowerCase().includes('whatsapp');
       (isWa?waNums:(curGrp==='wa'?waNums:tollFree)).push({name,num:numVal});
     });
-    const makePills=(arr,col,icon)=>arr.length
-      ?arr.map(e=>'<div class="ref-contact-pill"><div class="ref-contact-icon" style="background:'+col+'">'+icon+'</div><div><div class="ref-contact-pill-label">'+e.name+'</div><div class="ref-contact-pill-val">'+e.num+'</div></div></div>').join('')
+    const makePills=(arr,col,icon,fw)=>arr.length
+      ?arr.map(e=>'<div class="ref-contact-pill"'+(fw?' style="width:220px"':'')+'><div class="ref-contact-icon" style="background:'+col+'">'+icon+'</div><div><div class="ref-contact-pill-label">'+e.name+'</div><div class="ref-contact-pill-val">'+e.num+'</div></div></div>').join('')
       :'<div style="color:#aaa;font-size:12px;padding:8px">—</div>';
 
     // LINKS
@@ -7948,7 +7948,9 @@ async function renderRef(){
       +'<div class="ref-panel-header">📞 Contact Numbers</div>'
       +'<div class="ref-panel-body"><div class="ref-contacts-grid">'
       +makePills(tollFree,'#c0272d','📞')
-      +makePills(waNums,'#2e7d32','💬')
+      +'</div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px">'
+      +makePills(waNums,'#2e7d32','💬',true)
       +'</div></div>'
       +'</div>'
 
