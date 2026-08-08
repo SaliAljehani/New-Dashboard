@@ -202,10 +202,11 @@ tr:last-child td{border-bottom:none}
 
 /* Contact pills */
 .ref-contacts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
-.ref-contact-pill{background:#fafafa;border-radius:10px;padding:11px 14px;border:1px solid #eee;transition:.15s}
-.ref-contact-pill:hover{border-color:#c0272d;background:#fff}
-.ref-contact-pill-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#444;margin-bottom:4px}
-.ref-contact-pill-val{font-size:15px;font-weight:700;color:#1a1a2e;letter-spacing:.02em}
+.ref-contact-pill{display:flex;align-items:center;gap:11px;background:#fff;border-radius:12px;padding:10px 13px;border:1px solid #eee;box-shadow:0 1px 4px rgba(0,0,0,.04);transition:.15s}
+.ref-contact-pill:hover{box-shadow:0 3px 10px rgba(0,0,0,.09)}
+.ref-contact-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;color:#fff}
+.ref-contact-pill-label{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#8a8a8a;margin-bottom:2px}
+.ref-contact-pill-val{font-size:15px;font-weight:800;color:#1a1a2e;letter-spacing:.02em}
 
 /* Two-col layout */
 .ref-top-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -265,11 +266,11 @@ tr:last-child td{border-bottom:none}
 .ref-email-tag.cc{background:#1565c0;color:#fff}
 
 /* Brand circles */
-.ref-brand-circles{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.ref-brand-circle{display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;transition:.2s}
-.ref-brand-circle:hover{transform:translateY(-3px)}
-.ref-brand-circle-icon{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 2px 6px rgba(0,0,0,.08)}
-.ref-brand-circle-label{font-size:11px;font-weight:700;text-align:center}
+.ref-brand-circles{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.ref-brand-circle{width:104px;background:#fff;border:1px solid #eee;border-radius:14px;overflow:hidden;box-shadow:0 1px 5px rgba(0,0,0,.05);cursor:pointer;transition:.2s;display:flex;flex-direction:column}
+.ref-brand-circle:hover{transform:translateY(-3px);box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.ref-brand-circle-icon{width:100%;height:46px;border-radius:0;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff}
+.ref-brand-circle-label{font-size:11.5px;font-weight:800;text-align:center;padding:9px 4px}
 
 /* VIN */
 .vin-search-box{display:flex;gap:8px;margin:10px 0}
@@ -7795,7 +7796,7 @@ async function renderRef(){
       {key:'petromin',   label:'Petromin',         icon:'<svg viewBox="0 0 36 36" width="26" height="26" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="14" width="20" height="16" rx="3" fill="#c0272d"/><rect x="8" y="10" width="12" height="6" rx="2" fill="#1a1a2e"/><rect x="24" y="16" width="8" height="4" rx="2" fill="#1a1a2e"/><rect x="13" y="6" width="4" height="6" rx="1" fill="#c0272d"/><circle cx="10" cy="20" r="2" fill="#fff" opacity=".4"/></svg>', color:'#D4AF37'},
       {key:'baic',       label:'BAIC',             icon:'🚙', color:'#D2691E'},
       {key:'nissan',     label:'Nissan',           icon:'🚗', color:'#c0272d'},
-      {key:'stellantis', label:'Stellantis',       icon:'🚙', color:'#1565c0'},
+      {key:'stellantis', label:'Stellantis',       icon:'🚐', color:'#1565c0'},
       {key:'bodyshop',   label:'Body Shop',        icon:'🔧', color:'#6A3030'},
       {key:'foton',      label:'Foton',            icon:'🚛', color:'#546e7a'},
       {key:'nos',        label:'National Oil', icon:'🟢', color:'#2e7d32'},
@@ -7825,8 +7826,8 @@ async function renderRef(){
       const isWa = name.toLowerCase().includes('whatsapp');
       (isWa?waNums:(curGrp==='wa'?waNums:tollFree)).push({name,num:numVal});
     });
-    const makePills=(arr,col)=>arr.length
-      ?arr.map(e=>'<div class="ref-contact-pill" style="border-left:3px solid '+col+'"><div class="ref-contact-pill-label">'+e.name+'</div><div class="ref-contact-pill-val">'+e.num+'</div></div>').join('')
+    const makePills=(arr,col,icon)=>arr.length
+      ?arr.map(e=>'<div class="ref-contact-pill"><div class="ref-contact-icon" style="background:'+col+'">'+icon+'</div><div><div class="ref-contact-pill-label">'+e.name+'</div><div class="ref-contact-pill-val">'+e.num+'</div></div></div>').join('')
       :'<div style="color:#aaa;font-size:12px;padding:8px">—</div>';
 
     // LINKS
@@ -7946,8 +7947,8 @@ async function renderRef(){
       +'<div class="ref-info-panel">'
       +'<div class="ref-panel-header">📞 Contact Numbers</div>'
       +'<div class="ref-panel-body"><div class="ref-contacts-grid">'
-      +makePills(tollFree,'#c0272d')
-      +makePills(waNums,'#2e7d32')
+      +makePills(tollFree,'#c0272d','📞')
+      +makePills(waNums,'#2e7d32','💬')
       +'</div></div>'
       +'</div>'
 
