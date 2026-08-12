@@ -729,6 +729,22 @@ async function loadSheet(name, retries){
   const cached = sheetCacheGet(ckey);
   if(cached) return cached;
 
+  // ---- Fast path: Google's own gviz endpoint (served directly by Sheets) --
+  // No Apps Script cold start, no concurrent-execution cap — the whole reason
+  // the morning load used to crawl. This is the SAME gviz endpoint the Call
+  // Data load and the old last-resort fallback already use successfully, so it
+  // is safe to try first. gviz reads live from the sheet, so it is always
+  // fresh (no need for the proxy's &fresh=1). On ANY failure or empty result
+  // we fall straight through to the Apps Script proxy below, which still reads
+  // with the owner's permissions for anything gviz cannot see. The decision is
+  // per-sheet: one sheet failing here never disables the fast path for others.
+  try{
+    const gvizRows = await fetchGvizSheet(SHEET_ID, gid, name);
+    if(gvizRows && gvizRows.length){ sheetCacheSet(ckey, gvizRows); return gvizRows; }
+  }catch(e){
+    console.warn('gviz fast path failed for', name, '— falling back to proxy:', e.message);
+  }
+
   // ---- Fast path (opt-in via FAST_SHEETS, currently empty) ----------------
   // Reads straight from Google's CSV export, bypassing the Apps Script proxy
   // and its concurrent-execution cap. Only usable if the sheet is public.
@@ -788,7 +804,7 @@ async function loadSheet(name, retries){
   retries = retries===undefined ? 1 : retries;
   const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${SHEET_ID}&gid=${gid}` + (FORCE_FRESH ? '&fresh=1' : '');
   const controller = new AbortController();
-  const timeoutId = setTimeout(()=>controller.abort(), 45000);
+  const timeoutId = setTimeout(()=>controller.abort(), 15000);
   try{
     const res = await fetch(url, {signal: controller.signal});
     clearTimeout(timeoutId);
@@ -800,7 +816,7 @@ async function loadSheet(name, retries){
     clearTimeout(timeoutId);
     if(retries>0){
       console.warn('loadSheet retry for', name, '— attempts left:', retries, err.message);
-      await new Promise(r=>setTimeout(r,2000));
+      await new Promise(r=>setTimeout(r,1200));
       return loadSheet(name, retries-1);
     }
     // Last resort: gviz. Column detection can be off on some sheets, but a
