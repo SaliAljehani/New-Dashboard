@@ -621,7 +621,7 @@ const SHEET_GIDS={'Agent':1123791969,'Agent Performance':810269545,'Attendance D
 // a row (sessionStorage is per-browser, so it does nothing for the Apps Script
 // concurrency limit across agents). Sheet edits must show up quickly, so this
 // is kept low and the manual refresh button clears it outright.
-const SHEET_CACHE_TTL = 600000; // 10 min — cache longer so reloads don't re-hammer the proxy
+const SHEET_CACHE_TTL = 30000; // 30s
 
 function sheetCacheGet(key){
   try{
@@ -718,57 +718,16 @@ async function fetchGvizSheet(sheetId, gid, name){
   }
 }
 
-// Raw positional 2D read via gviz with headers=0. Keeps row 1 as data (needed
-// for sheets whose first row is real content, e.g. the Vacation "January 2026"
-// title row) and preserves every column by index instead of collapsing blank
-// headers. Returns array-of-arrays.
-async function fetchGvizRaw2D(sheetId, gid){
-  const url = 'https://docs.google.com/spreadsheets/d/'+sheetId+'/gviz/tq?tqx=out:json&headers=0&gid='+gid+'&range=A1:Z50000';
-  const controller = new AbortController();
-  const timeoutId = setTimeout(()=>controller.abort(), 30000);
-  try{
-    const res = await fetch(url, {signal: controller.signal});
-    clearTimeout(timeoutId);
-    const text = await res.text();
-    const json = JSON.parse(text.substring(text.indexOf('{'), text.lastIndexOf('}')+1));
-    if(!json.table || !json.table.rows) throw new Error('gviz raw2d: no rows');
-    return json.table.rows.map(r=>(r.c||[]).map(c=>c?(c.f!==undefined?c.f:c.v):''));
-  }catch(err){
-    clearTimeout(timeoutId);
-    throw err;
-  }
-}
-
 // Use preloaded data if available (Apps Script), otherwise fetch
 async function loadSheet(name, retries){
   if(window.__PRELOADED_DATA__ && window.__PRELOADED_DATA__[name]){
     return window.__PRELOADED_DATA__[name];
-  }
-  // Served from the single all=1 bundle fetched at the start of loadAllData.
-  // This is what turns the 6 separate proxy requests into one, so the server's
-  // lock + shared cache can stop the every-5-minutes stampede across agents.
-  if(window.__BUNDLE_ROWS__ && window.__BUNDLE_ROWS__[name]){
-    return window.__BUNDLE_ROWS__[name];
   }
   const gid = SHEET_GIDS[name] || '';
   const ckey = 'sheet:' + name;
 
   const cached = sheetCacheGet(ckey);
   if(cached) return cached;
-
-  // ---- gviz first ---------------------------------------------------------
-  // The Apps Script proxy (script.googleusercontent.com) returns intermittent
-  // 404s and depends on a redirect that Edge's Tracking Prevention breaks,
-  // which is what made the page hang. Google's own gviz endpoint is served
-  // directly by Sheets: no cold start, no concurrency cap, no redirect, and it
-  // already works reliably here (Call Data and EOM use it in production). So we
-  // read from gviz first and keep the proxy below only as a fallback.
-  if(gid){
-    try{
-      const rows = await fetchGvizSheet(SHEET_ID, gid, name);
-      if(Array.isArray(rows) && rows.length){ sheetCacheSet(ckey, rows); return rows; }
-    }catch(e){ console.warn('gviz-first failed for', name, '— trying proxy:', e.message); }
-  }
 
   // ---- Fast path (opt-in via FAST_SHEETS, currently empty) ----------------
   // Reads straight from Google's CSV export, bypassing the Apps Script proxy
@@ -999,8 +958,8 @@ function initPresence(){
   // this was 18 Apps Script executions per minute, running all day — the main
   // steady pressure behind the "800 of 1,000 concurrent executions" warning.
   // Three minutes still keeps the online list current enough to be useful.
-  setInterval(()=>{ if(currentAgentName) sendHeartbeat(); }, 600000);
-  setInterval(()=>{ const p=document.getElementById('onlinePanel'); if(p && p.style.display!=='none') loadOnlineUsers(); }, 300000);
+  setInterval(()=>{ if(currentAgentName) sendHeartbeat(); }, 180000);
+  setInterval(()=>{ const p=document.getElementById('onlinePanel'); if(p && p.style.display!=='none') loadOnlineUsers(); }, 90000);
   loadOnlineUsers();
 }
 
@@ -1094,69 +1053,6 @@ function renderAttendanceTab(){
   container.innerHTML=html;
 }
 
-// Run tasks with a max number in flight at once. The old code fired all 9
-// sheet requests simultaneously per agent; with 18 agents that's ~160 hits on
-// the single Apps Script proxy at the same instant, which blows past its
-// concurrent-execution cap and makes every request queue and time out. Capping
-// each agent to 3 in flight keeps the proxy breathing. Results come back in the
-// same order as the tasks array.
-async function runPool(tasks, limit){
-  const results = new Array(tasks.length);
-  let next = 0;
-  async function worker(){
-    while(next < tasks.length){
-      const idx = next++;
-      try{ results[idx] = await tasks[idx](); }
-      catch(e){ results[idx] = undefined; }
-    }
-  }
-  const workers = [];
-  const n = Math.min(limit, tasks.length);
-  for(let w=0; w<n; w++) workers.push(worker());
-  await Promise.all(workers);
-  return results;
-}
-
-// The six sheets that are read through the Apps Script proxy. Everything else
-// (Call Data, EOM) already reads from Google directly and doesn't touch the
-// proxy, so it's left out of the bundle.
-const BUNDLE_SHEETS = [
-  {name:'Agent Performance', gid:'810269545'},
-  {name:'Attendance Data',   gid:'1979596727'},
-  {name:'Agent',             gid:'1123791969'},
-  {name:'Daily Off Schedule & Weekly Calls & Breakk', gid:'920710775'},
-  {name:'Announcement Board', gid:'536403637'},
-  {name:'Escalation',        gid:'1827857824'}
-];
-
-// Fetch all six proxy sheets in ONE request via the server's all=1 endpoint.
-// The server takes a short lock so only the first agent actually opens the
-// sheet; the other agents get it from the shared 5-minute cache in a few
-// seconds. That's what stops the stampede that made the dashboard hang when
-// many agents opened at the same moment. Fully non-fatal: on any failure we
-// simply leave __BUNDLE_ROWS__ empty and the old per-sheet path runs as before.
-async function prefetchBundle(){
-  try{
-    const gids = BUNDLE_SHEETS.map(s=>s.gid).join(',');
-    const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${SHEET_ID}&all=1&gids=${gids}` + (FORCE_FRESH ? '&fresh=1' : '');
-    const controller = new AbortController();
-    const tid = setTimeout(()=>controller.abort(), 45000);
-    const res = await fetch(url, {signal: controller.signal});
-    clearTimeout(tid);
-    if(!res.ok) throw new Error('bundle ' + res.status);
-    const data = await res.json();
-    window.__BUNDLE_ROWS__ = {};
-    BUNDLE_SHEETS.forEach(s=>{
-      if(Array.isArray(data[s.gid])) window.__BUNDLE_ROWS__[s.name] = data[s.gid];
-    });
-    const got = Object.keys(window.__BUNDLE_ROWS__).length;
-    console.log('prefetchBundle: got', got, 'of', BUNDLE_SHEETS.length, 'sheets in one request');
-  }catch(e){
-    window.__BUNDLE_ROWS__ = null;
-    console.warn('prefetchBundle failed — falling back to per-sheet:', e.message);
-  }
-}
-
 async function loadAllData(silent){
   if(!silent){
     document.getElementById('loadingDiv').style.display='flex';
@@ -1172,28 +1068,26 @@ async function loadAllData(silent){
     // gets busy. Running them together cuts total load time dramatically and
     // makes a single slow sheet no longer block everything else.
     setProgress(15,'Loading dashboard data...');
-    const __results = await runPool([
-      ()=>loadSheet('Agent Performance').catch(e=>{ console.warn('AP failed:',e); return []; }),
-      ()=>loadSheet('Attendance Data').catch(e=>{ console.warn('Att failed:',e); return []; }),
-      ()=>fetchCSVRawByGid(SHEET_ID, '95246895').then(raw=>{
+    const [apRows, attRows, callRows] = await Promise.all([
+      loadSheet('Agent Performance').catch(e=>{ console.warn('AP failed:',e); return []; }),
+      loadSheet('Attendance Data').catch(e=>{ console.warn('Att failed:',e); return []; }),
+      fetchCSVRawByGid(SHEET_ID, '95246895').then(raw=>{
         if(!raw||raw.length<2) return loadSheet('Call Data');
         const cols=raw[0]; return raw.slice(1).map(r=>{const o={};cols.forEach((c,i)=>o[c]=r[i]||'');return o;});
       }).catch(()=>loadSheet('Call Data')).catch(e=>{ console.warn('Call failed:',e); return []; }),
-      ()=>loadAgentDir().catch(e=>{ console.warn('Dir failed:',e); }),
-      ()=>loadSchedule().catch(e=>{ console.warn('Schedule failed:', e); }),
-      ()=>loadRoster().catch(e=>{ console.warn('Roster failed:', e); }),
-      ()=>loadAnnouncements().catch(e=>{ console.warn('Announcements failed:', e); }),
-      ()=>loadEscalations().catch(e=>{ console.warn('Escalations failed:', e); }),
-      ()=>loadEOM().catch(e=>{ console.warn('EOM failed:', e); })
-    ], 3);
-    const apRows = __results[0]||[], attRows = __results[1]||[], callRows = __results[2]||[];
+      loadAgentDir().catch(e=>{ console.warn('Dir failed:',e); }),
+      loadSchedule().catch(e=>{ console.warn('Schedule failed:', e); }),
+      loadRoster().catch(e=>{ console.warn('Roster failed:', e); }),
+      loadAnnouncements().catch(e=>{ console.warn('Announcements failed:', e); }),
+      loadEscalations().catch(e=>{ console.warn('Escalations failed:', e); }),
+      loadEOM().catch(e=>{ console.warn('EOM failed:', e); })
+    ]);
     // Preloaded data (if this page was served from Apps Script with data embedded)
     // is meant for the very first paint only. Clear it now so the "Refresh" button
     // and the 5-minute background auto-refresh fetch genuinely fresh data afterwards
     // instead of replaying the same snapshot forever.
     FORCE_FRESH = false;
     window.__PRELOADED_DATA__ = null;
-    window.__BUNDLE_ROWS__ = null;
     window.__PRELOADED_RAW__ = null;
     window.__ATT_RAW__ = attRows;
 
@@ -1376,8 +1270,7 @@ async function loadAllData(silent){
     document.getElementById('lupd').textContent='🔄';
     const footerEl=document.getElementById('lupd_footer');
     if(footerEl) footerEl.innerHTML='📅 <b>'+niceDate+'</b>';
-    // Presence / "who's online" removed — it added a name-selection popup on every
-    // open and constant heartbeat/poll traffic to the same proxy. initPresence();
+    // "من متصل" / who's online removed. initPresence();
 
   }catch(err){
     console.error('loadAllData fatal error:', err);
@@ -2375,14 +2268,6 @@ let VIN_FILTERS = {};
 async function fetchSheet(spreadsheetId, sheetName, retries){
   const key = `${spreadsheetId}__${sheetName}`;
   if(REF_CACHE[key]) return REF_CACHE[key];
-
-  // gviz first (by sheet name) — served directly by Sheets, so it skips the
-  // Apps Script proxy that returns intermittent 404s / HTML sign-in pages for
-  // these reference sheets. Proxy stays below only as a fallback.
-  try{
-    const gvRows = await fetchGvizSheet(spreadsheetId, '', sheetName);
-    if(Array.isArray(gvRows) && gvRows.length){ REF_CACHE[key] = gvRows; return gvRows; }
-  }catch(e){ console.warn('gviz-first fetchSheet failed for', sheetName, '— trying proxy:', e.message); }
 
   retries = retries===undefined ? 2 : retries;
   const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${spreadsheetId}&sheetName=${encodeURIComponent(sheetName)}` + ((FORCE_FRESH||REF_FRESH) ? '&fresh=1' : '');
@@ -6576,16 +6461,7 @@ function toggleRefSection(bodyId,iconId){
 function renderRoster(){
   const el = document.getElementById('page5');
   if(!el) return;
-  if(!SCHEDULE_DATA.length){
-    if(!window.__SCHED_TRIED__){
-      window.__SCHED_TRIED__ = true;
-      el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">⏳ Loading schedule...</div>';
-      loadSchedule().catch(function(e){ console.warn('schedule retry failed', e); renderRoster(); });
-    } else {
-      el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">⚠️ تعذّر تحميل الجدول — اضغطي زر التحديث 🔄 في الأعلى</div>';
-    }
-    return;
-  }
+  if(!SCHEDULE_DATA.length){ el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">⏳ Loading schedule...</div>'; return; }
 
   const keys = Object.keys(SCHEDULE_DATA[0]||{});
   const dateKey = keys[0];
@@ -6826,14 +6702,23 @@ let VACATION_DATA = [];
 
 async function loadVacationData(){
   try{
-    // Read positionally via gviz headers=0 so the "January 2026" title row is
-    // kept and no blank-header columns are lost. The old object-based read
-    // collapsed those columns and produced 0 months.
-    const raw2d = await fetchGvizRaw2D(SHEET_ID, '644438759');
-    if(!raw2d || raw2d.length < 3){ console.warn('Vacation: no data'); return; }
+    const rows = await loadSheet('Vacation Schedule 2026');
+    if(!rows || rows.length < 3){ console.warn('Vacation: no data'); return; }
     
     const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
     const months = [];
+    
+    // loadSheet returns array of objects with headers as keys
+    // The sheet structure: row1=month name (col A), row2=# Agent Name Sun Mon...
+    // row3=blank blank 4 5 6..., row4+=agents
+    // Since loadSheet uses row1 as headers, we need raw approach
+    // Let's use the keys from first row
+    
+    // Actually rows from loadSheet are objects. Let's get all values
+    const allKeys = rows.length > 0 ? Object.keys(rows[0]) : [];
+    
+    // Build raw 2D from objects
+    const raw2d = rows.map(r => allKeys.map(k => r[k]||''));
     
     let i = 0;
     while(i < raw2d.length){
@@ -8436,14 +8321,26 @@ async function renderVacation2026(){
   try{
     if(!VAC2026_CACHE){
       try{
-        // gviz headers=0: reliable, direct from Sheets, keeps every column and
-        // row 1. Replaces the /export?format=csv endpoint, which returned a
-        // sign-in page here and always failed.
-        VAC2026_CACHE = await fetchGvizRaw2D(SHEET_ID, '644438759');
-        if(!VAC2026_CACHE || VAC2026_CACHE.length < 2) throw new Error('empty');
-        console.log('VAC loaded via gviz:', VAC2026_CACHE.length, 'rows x', (VAC2026_CACHE[0]||[]).length, 'cols');
+        // نستخدم gviz مع tqx=out:csv عشان يجيب كل الأعمدة
+        var _vacUrl='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/export?format=csv&gid=644438759';
+        var _vacRes=await fetch(_vacUrl);
+        var _vacText=await _vacRes.text();
+        // parse CSV
+        var _vacRows=_vacText.split('\n').map(function(line){
+          var cols=[], cur='', inQ=false;
+          for(var ci=0;ci<line.length;ci++){
+            if(line[ci]==='"'){inQ=!inQ;}
+            else if(line[ci]===','&&!inQ){cols.push(cur.trim());cur='';}
+            else{cur+=line[ci];}
+          }
+          cols.push(cur.trim());
+          return cols;
+        }).filter(function(r){return r.some(function(c){return c;});});
+        if(_vacRows.length<2) throw new Error('CSV empty');
+        VAC2026_CACHE=_vacRows;
+        console.log('VAC loaded via CSV export:', VAC2026_CACHE.length, 'rows x', VAC2026_CACHE[0].length, 'cols');
       }catch(e){
-        console.warn('Vacation gviz failed:', e);
+        console.warn('Vacation CSV failed:', e);
         el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">⚠️ فشل تحميل الاجازات: '+e.message+'</div>';
         return;
       }
