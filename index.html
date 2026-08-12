@@ -5503,6 +5503,55 @@ function copySMS(id){
   });
 }
 
+// No Answer SMS — copy by exact element id with brief button feedback
+function copyNoAns(id){
+  var el=document.getElementById(id);
+  if(!el)return;
+  navigator.clipboard.writeText(el.textContent.trim()).then(function(){
+    var btn=(window.event&&window.event.target)?window.event.target:null;
+    if(btn){var t=btn.textContent;btn.textContent='\u2713 Copied';setTimeout(function(){btn.textContent=t;},1500);}
+  });
+}
+
+// No Answer SMS — collapsible header (default closed) prepended above SMS tabs
+var NO_ANSWER_SMS={
+  nissan:{color:'#c0272d',dark:'#c0272d',
+    ar:'عميلنا العزيز، حاولنا التواصل معك ولم يتم الرد . للمزيد من التفاصيل يرجى التواصل مع مركز خدمة عملاء بترومين نيسان على الرقم الموحد التالي 8004420010 او عبر محادثة الواتساب 920011795 . نتمنى لك قياده امنه.',
+    en:'Dear customer, We tried to contact you but there was no response. For more details, please contact Petromin Nissan Customer Service at the unified number 8004420010 or via WhatsApp chat at 920011795. We wish you a safe drive.'},
+  stellantis:{color:'#1565c0',dark:'#0d47a1',
+    ar:'عميلنا العزيز، حاولنا التواصل معك ولم يتم الرد . للمزيد من التفاصيل يرجى التواصل مع مركز خدمة عملاء بترومين ستيلانتيس على الرقم الموحد التالي 8003030040 او عبر محادثة الواتساب 0558627733 . نتمنى لك قياده امنه.',
+    en:'Dear customer, We tried to contact you but there was no response. For more details, please contact Petromin Stellantis Customer Service at the unified number 8003030040 or via WhatsApp chat at 0558627733. We wish you a safe drive.'},
+  electromin:{color:'#3A6048',dark:'#2e4a38',
+    ar:'عميلنا العزيز، حاولنا التواصل معك ولم يتم الرد . للمزيد من التفاصيل يرجى التواصل مع مركز خدمة عملاء إلكترومين على الرقم الموحد التالي 8002440331 . نتمنى لك قياده امنه.',
+    en:'Dear customer, We tried to contact you but there was no response. For more details, please contact Electromin Customer Service at the unified number 8002440331. We wish you a safe drive.'}
+};
+function noAnsHeader(brand){
+  var d=NO_ANSWER_SMS[brand];
+  if(!d)return '';
+  var arId='noAnsTxt_'+brand+'_ar', enId='noAnsTxt_'+brand+'_en';
+  var bodyId='noAns_'+brand+'_body', icoId='noAns_'+brand+'_ico';
+  function box(id,label,text,isAR){
+    return '<div style="border:1px solid #eee;border-radius:8px;padding:10px;margin-bottom:10px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
+      +'<span style="font-size:10px;font-weight:700;color:'+d.dark+'">'+label+'</span>'
+      +'<button onclick="copyNoAns(\''+id+'\')" style="padding:2px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer">\uD83D\uDCCB Copy</button>'
+      +'</div>'
+      +'<div id="'+id+'" style="font-size:12px;color:#444;line-height:1.9;direction:'+(isAR?'rtl':'ltr')+';text-align:'+(isAR?'right':'left')+';white-space:pre-wrap">'+text+'</div>'
+      +'</div>';
+  }
+  return '<div style="margin-bottom:16px">'
+    +'<div onclick="var b=document.getElementById(\''+bodyId+'\');var i=document.getElementById(\''+icoId+'\');var o=b.style.display!==\'none\';b.style.display=o?\'none\':\'block\';i.textContent=o?\'\u25B6\':\'\u25BC\';" '
+    +'style="cursor:pointer;border-left:4px solid '+d.color+';background:'+d.color+'12;padding:11px 16px;display:flex;justify-content:space-between;align-items:center;user-select:none">'
+    +'<span style="font-size:13px;font-weight:700;color:'+d.dark+'">\uD83D\uDCE8 No Answer SMS</span>'
+    +'<span id="'+icoId+'" style="color:'+d.dark+';font-size:12px">\u25B6</span>'
+    +'</div>'
+    +'<div id="'+bodyId+'" style="display:none;background:#fff;border:1px solid #eee;border-top:none;border-radius:0 0 10px 10px;padding:12px">'
+    +box(arId,'AR',d.ar,true)
+    +box(enId,'EN',d.en,false)
+    +'</div>'
+    +'</div>';
+}
+
 function renderApptSMSTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#1565c0';
@@ -5602,6 +5651,22 @@ let REF_CURRENT_BRAND=null;
 
 function showRefBrandPage(brand){
   REF_CURRENT_BRAND=brand;
+  if(brand==='volvo'){
+    const c=document.getElementById('refContent');
+    c.innerHTML=
+      '<div style="margin-bottom:14px"><button onclick="renderRef()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:#f5f5f5;border:1.5px solid #ddd;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;color:#555">← Back to References</button></div>'
+      +'<div class="ref-brand-section">'
+      +'<div style="padding:14px 20px;min-height:53px;background:linear-gradient(135deg,#003057,#00305799);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:10px">'
+      +'<span style="font-size:22px"><svg viewBox="0 0 36 36" width="22" height="22" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="21" r="8.5" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M21 15 L29 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M23.5 7 H29 V12.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>'
+      +'<span style="font-size:15px;font-weight:700">Volvo</span>'
+      +'</div>'
+      +'<div style="background:#fff;border-radius:0 0 12px 12px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:48px 20px;text-align:center">'
+      +'<div style="font-size:40px;margin-bottom:14px">📭</div>'
+      +'<div style="font-size:15px;font-weight:700;color:#003057;margin-bottom:6px">لا توجد بيانات بعد</div>'
+      +'<div style="font-size:13px;color:#888">سيتم ربط بيانات Volvo لاحقاً</div>'
+      +'</div></div>';
+    return;
+  }
   const META={
     nissan:    {label:'Nissan',    icon:'🔴',color:'#c0272d'},
     stellantis:{label:'Stellantis',icon:'🚙',color:'#1565c0'},
@@ -5635,6 +5700,7 @@ function showRefBrandPage(brand){
     +(brand==='baic'?'<button onclick="loadVehicleModels(\'baic\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.92);color:'+tabActive+';border:1px solid rgba(255,255,255,.5);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Vehicles <span id="ico_baicModels">▼</span></button>':'')
     +(brand==='baic'?'<button onclick="toggleRegion(\'baicAreaMgrGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.92);color:'+tabActive+';border:1px solid rgba(255,255,255,.5);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🗺️ Area Manager <span id="ico_baicAreaMgrGlobal">▼</span></button>':'')
     +(brand==='nissan'?'<button onclick="toggleRegion(\'nissanWebsite\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.92);color:'+tabActive+';border:1px solid rgba(255,255,255,.5);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🌐 Website <span id="ico_nissanWebsite">▼</span></button>':'')
+    +(brand==='petromin'?'<button onclick="toggleRegion(\'petrominNoAnswer\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.92);color:'+tabActive+';border:1px solid rgba(255,255,255,.5);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">📨 No Answer SMS <span id="ico_petrominNoAnswer">▶</span></button>':'')
     +(brand==='petromin'?'<button onclick="toggleRegion(\'petrominWebsite\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.92);color:'+tabActive+';border:1px solid rgba(255,255,255,.5);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🌐 Website <span id="ico_petrominWebsite">▼</span></button>':'')
     +(brand==='baic'?'<button onclick="toggleRegion(\'baicWebsite\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.92);color:'+tabActive+';border:1px solid rgba(255,255,255,.5);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🌐 Website <span id="ico_baicWebsite">▼</span></button>':'')
     
@@ -5648,7 +5714,8 @@ function showRefBrandPage(brand){
 
     +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:14px 16px"><div style="background:#fafafa;border-radius:12px;overflow:hidden;border:1px solid #eee;box-shadow:0 2px 8px rgba(0,0,0,.05)"><div style="background:#c0272d18;padding:10px 16px;font-size:13px;font-weight:700;color:#c0272d;border-bottom:1px solid #e8cbb8">🗺️ Area Manager</div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#FBF0F0"><th style="padding:8px 12px;color:#c0272d;font-weight:700;border-bottom:2px solid #e8cbb8;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#c0272d;font-weight:700;border-bottom:2px solid #e8cbb8;text-align:center">✉️ Email</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#c0272d">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">ahmed.ateeq@petromin.com</a></td></tr><tr style="background:#FBF0F0"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#c0272d">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">simon.white@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#c0272d">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">z.bakhurji@petromin.com</a></td></tr></tbody></table></div></div></div>':'')
     +(brand==='nissan'?'<div id="nissanWebsite" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:20px;text-align:center"><div style="font-size:13px;color:#888;margin-bottom:14px">Nissan Saudi Arabia — Petromin</div><a href="https://www.petromin-nissan.com/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;padding:12px 30px;background:#c0272d;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(192,39,45,.3)">🔗 petromin-nissan.com</a></div>':'')
-    +(brand==='petromin'?'<div id="petrominWebsite" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:20px"><div style="display:flex;flex-direction:column;gap:12px;align-items:center"><a href="https://petromin.com/ar/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:12px 28px;background:#D98E45;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;width:290px;justify-content:center;box-shadow:0 4px 14px rgba(218,165,32,.3)">🔗 الصفحة الرئيسية - Petromin</a><a href="https://www.petrominexpress.com/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:12px 28px;background:#c0272d;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;width:290px;justify-content:center;box-shadow:0 4px 14px rgba(192,39,45,.3)">🔗 بترومين إكسبرس - 650 محطة</a></div></div>':'')
+    +(brand==='petromin'?'<div id="petrominWebsite" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:20px"><div style="display:flex;flex-direction:column;gap:12px;align-items:center"><a href="https://petromin.com/ar/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:12px 28px;background:#D98E45;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;width:290px;justify-content:center;box-shadow:0 4px 14px rgba(218,165,32,.3)">🔗 الصفحة الرئيسية - Petromin</a><a href="https://www.petrominexpress.com/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:12px 28px;background:#c0272d;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;width:290px;justify-content:center;box-shadow:0 4px 14px rgba(192,39,45,.3)">🔗 بترومين إكسبرس - 650 محطة</a><a href="https://mac.petromin.com/Services/KSAPE/MiAutoCare/Account/login?returnUrl=%2FServices%2FKSAPE%2FMiAutoCare%2FHome%2Findex" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:12px 28px;background:#1a1a2e;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;width:290px;justify-content:center;box-shadow:0 4px 14px rgba(26,26,46,.3)">🔗 MiAutoCare - Public Site</a></div></div>':'')
+    +(brand==='petromin'?'<div id="petrominNoAnswer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px"><div style="max-width:440px;margin:0 auto;border:1px solid #eee;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.05)"><div style="background:#D98E4514;border-bottom:1px solid #D98E4522;padding:10px;text-align:center;font-size:13px;font-weight:700;color:#a86a28">📨 No Answer SMS</div><div style="padding:12px"><div style="border:1px solid #eee;border-radius:8px;padding:10px;margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:10px;font-weight:700;color:#a86a28">AR</span><button onclick="copyNoAns(\'petNoAnsAR\')" style="padding:2px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer">📋 Copy</button></div><div id="petNoAnsAR" style="font-size:12px;color:#444;line-height:1.9;direction:rtl;text-align:right;white-space:pre-wrap">عميلنا العزيز، حاولنا التواصل معك ولم يتم الرد. للمزيد من التفاصيل يرجى التواصل مع مركز خدمة عملاء بترومين على الرقم الموحد 8004420020 او عبر محادثة الواتساب 920022776 . نتمنى لك قياده امنه.</div></div><div style="border:1px solid #eee;border-radius:8px;padding:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-size:10px;font-weight:700;color:#a86a28">EN</span><button onclick="copyNoAns(\'petNoAnsEN\')" style="padding:2px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer">📋 Copy</button></div><div id="petNoAnsEN" style="font-size:12px;color:#444;line-height:1.9;direction:ltr;text-align:left;white-space:pre-wrap">Dear customer, We tried to contact you but there was no response. For more details, please contact Petromin Customer Service at the unified number 8004420020 or via WhatsApp chat at 920022776 . We wish you a safe drive.</div></div></div></div></div>':'')
     +(brand==='baic'?'<div id="baicWebsite" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:20px;text-align:center"><div style="font-size:13px;color:#888;margin-bottom:14px">BAIC Saudi Arabia — Petromin</div><a href="https://www.petromin-baic.com/ar/models" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;padding:12px 30px;background:#C86E35;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(210,105,30,.35)">🔗 petromin-baic.com</a></div>':'')
     +'<div id="petrominWarrantyDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px"></div>'
     +'<div class="ref-sub-tabs" id="refSubTabs_'+brand+'" style="justify-content:center;border-bottom:2px solid '+tabActive+'55">'
@@ -6148,7 +6215,7 @@ async function renderRefBrand(brand,tabIdx){
       else if(t==='EV Charging Stations') container.innerHTML=renderElectrominStationsTab(arr);
       else if(t==='PAC'){ var __st=await fetchCSVRaw(cfg.id,'EV Charging Stations'); container.innerHTML=renderElectrominPACTab(arr,__st); }
       else if(t==='FAQ') container.innerHTML=renderElectrominFAQTab(arr);
-      else if(t==='SMS') container.innerHTML=renderElectrominSMSTab(arr);
+      else if(t==='SMS') container.innerHTML=noAnsHeader('electromin')+renderElectrominSMSTab(arr);
       else container.innerHTML='<div style="text-align:center;padding:24px;color:#aaa">No renderer for '+t+'</div>';
     }catch(e){
       container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
@@ -6326,11 +6393,11 @@ async function renderRefBrand(brand,tabIdx){
       return;
     }
     if(brand==='nissan' && sheetName.trim()==='SMS & Location'){
-      container.innerHTML=renderSMSTab(arr, sheetName, brand);
+      container.innerHTML=noAnsHeader('nissan')+renderSMSTab(arr, sheetName, brand);
       return;
     }
     if(brand==='stellantis' && sheetName.trim()==='SMS Appointment'){
-      container.innerHTML=renderApptSMSTab(arr);
+      container.innerHTML=noAnsHeader('stellantis')+renderApptSMSTab(arr);
       return;
     }
     if(brand==='nissan' && (sheetName.trim()==='Nissan App 25-26'||sheetName.trim()==='Nissan APP 25-26')){
@@ -7260,7 +7327,7 @@ function renderRecallInRef(){
   refContent.innerHTML =
     '<div style="margin-bottom:12px;text-align:left"><button onclick="renderRef()" style="background:#f5f5f5;border:1.5px solid #ddd;padding:8px 22px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;color:#555">← Back to References</button></div>'
     +'<div id="recallContent"></div>';
-  RECALL_ACTIVE_BRAND = 'BAIC';
+  RECALL_ACTIVE_BRAND = 'BAIC Search';
   RECALL_ACTIVE_TAB = 0;
   renderRecallPage();
 }
@@ -7825,6 +7892,7 @@ async function renderRef(){
       {key:'foton',      label:'Foton',            icon:'🚛', color:'#546e7a'},
       {key:'nos',        label:'National Oil', icon:'🟢', color:'#2e7d32'},
       {key:'electromin', label:'Electromin',       icon:'⚡', color:'#3A6048'},
+      {key:'volvo',      label:'Volvo',            icon:'<svg viewBox="0 0 36 36" width="22" height="22" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="21" r="8.5" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M21 15 L29 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M23.5 7 H29 V12.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>', color:'#003057'},
       {key:'baicRecall', label:'Recall', icon:'⚠️', color:'#6A5818', onclick:'renderRecallInRef()'},
     ];
 
@@ -7957,7 +8025,7 @@ async function renderRef(){
 
       // BRAND CIRCLES — Order: Petromin, BAIC, Nissan, Stellantis, Body Shop, Foton, National Oil, Electromin, Recall, Links
       +'<div class="ref-brand-circles" style="justify-content:center">'
-      +['petromin','baic','nissan','stellantis','bodyshop','foton','nos','electromin','baicRecall'].map(k=>{const c=BRAND_CONFIGS.find(b=>b.key===k);if(!c)return'';return'<div class="ref-brand-circle" onclick="'+(c.onclick||'showRefBrandPage(\''+c.key+'\')')+'"><div class="ref-brand-circle-icon" style="background:'+c.color+'">'+c.icon+'</div><div class="ref-brand-circle-label" style="color:'+c.color+'">'+c.label+'</div></div>';}).join('')
+      +['petromin','baic','nissan','stellantis','bodyshop','foton','nos','electromin','volvo','baicRecall'].map(k=>{const c=BRAND_CONFIGS.find(b=>b.key===k);if(!c)return'';return'<div class="ref-brand-circle" onclick="'+(c.onclick||'showRefBrandPage(\''+c.key+'\')')+'"><div class="ref-brand-circle-icon" style="background:'+c.color+'">'+c.icon+'</div><div class="ref-brand-circle-label" style="color:'+c.color+'">'+c.label+'</div></div>';}).join('')
       +(linkCards?'<div class="ref-brand-circle" onclick="toggleLinksPanel()">'
         +'<div class="ref-brand-circle-icon" style="background:#1565c0">🔗</div>'
         +'<div class="ref-brand-circle-label" style="color:#1565c0">Links</div>'
