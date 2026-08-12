@@ -729,6 +729,17 @@ async function loadSheet(name, retries){
   const cached = sheetCacheGet(ckey);
   if(cached) return cached;
 
+  // Read straight from Google's gviz endpoint first. The Apps Script proxy
+  // returns intermittent 404s and stalls under load, which is what made the
+  // dashboard hang. gviz is served directly by Sheets — no cold start, no
+  // concurrency cap — and the proxy stays below only as a fallback.
+  if(gid){
+    try{
+      const gvRows = await fetchGvizSheet(SHEET_ID, gid, name);
+      if(Array.isArray(gvRows) && gvRows.length){ sheetCacheSet(ckey, gvRows); return gvRows; }
+    }catch(e){ console.warn('gviz-first failed for', name, '— trying proxy:', e.message); }
+  }
+
   // ---- Fast path (opt-in via FAST_SHEETS, currently empty) ----------------
   // Reads straight from Google's CSV export, bypassing the Apps Script proxy
   // and its concurrent-execution cap. Only usable if the sheet is public.
@@ -2268,6 +2279,12 @@ let VIN_FILTERS = {};
 async function fetchSheet(spreadsheetId, sheetName, retries){
   const key = `${spreadsheetId}__${sheetName}`;
   if(REF_CACHE[key]) return REF_CACHE[key];
+
+  // gviz first (by sheet name) — direct from Sheets, skips the flaky proxy.
+  try{
+    const gvRows = await fetchGvizSheet(spreadsheetId, '', sheetName);
+    if(Array.isArray(gvRows) && gvRows.length){ REF_CACHE[key] = gvRows; return gvRows; }
+  }catch(e){ console.warn('gviz-first fetchSheet failed for', sheetName, '— trying proxy:', e.message); }
 
   retries = retries===undefined ? 2 : retries;
   const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${spreadsheetId}&sheetName=${encodeURIComponent(sheetName)}` + ((FORCE_FRESH||REF_FRESH) ? '&fresh=1' : '');
