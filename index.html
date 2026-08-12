@@ -696,7 +696,8 @@ function gvizToObjects(json){
   })));
 }
 
-async function fetchGvizSheet(sheetId, gid, name){
+async function fetchGvizSheet(sheetId, gid, name, retries){
+  retries = retries===undefined ? 1 : retries;
   const url = gid
     ? `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&gid=${gid}`
     : `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(name)}`;
@@ -714,6 +715,7 @@ async function fetchGvizSheet(sheetId, gid, name){
     return gvizToObjects(json);
   }catch(err){
     clearTimeout(timeoutId);
+    if(retries>0){ await new Promise(r=>setTimeout(r,700)); return fetchGvizSheet(sheetId, gid, name, retries-1); }
     throw err;
   }
 }
@@ -2090,18 +2092,26 @@ async function loadSchedule(){
   // column has unique header text). We only keep the first 8 entries of
   // each row (Agent Name + 7 days); the remaining keys belong to the
   // right-side table and would otherwise leak in as bogus extra columns.
-  const raw = await loadSheet('Daily Off Schedule & Weekly Calls & Breakk');
-  const arr = Array.isArray(raw) ? raw : (raw.rows||[]);
+  // Read the left table positionally via gviz JSON (fetchCSVRawByGid). The
+  // right-hand "Weekly Calls & Break" table ALSO has an "Agent Name" column, so
+  // a label-keyed read collapses the two and picks up the (empty) right value —
+  // which left the schedule blank. Column 0 = agent, 1..7 = the seven days.
   const schedRows = [];
-  arr.forEach(function(r){
-    const vals = Object.values(r);
-    const agentName = String(vals[0]||'').trim();
-    if(!agentName) return;
-    const dailyKeys = Object.keys(r).slice(0, 8);
-    const row = {};
-    dailyKeys.forEach(function(k, ki){ row[k] = vals[ki]; });
-    schedRows.push(row);
-  });
+  try{
+    const arr2dS = await fetchCSVRawByGid(SHEET_ID, '920710775');
+    if(arr2dS && arr2dS.length > 1){
+      const hdrS = arr2dS[0] || [];
+      const keys8 = [];
+      for(let k=0;k<8;k++){ const h=String(hdrS[k]===undefined?'':hdrS[k]).trim(); keys8.push(h||('col'+k)); }
+      arr2dS.slice(1).forEach(function(r){
+        const agentName = String(r[0]||'').trim();
+        if(!agentName) return;
+        const row = {};
+        keys8.forEach(function(kk, ki){ row[kk] = (r[ki]!==undefined ? r[ki] : ''); });
+        schedRows.push(row);
+      });
+    }
+  }catch(e){ console.warn('schedule left-table read failed', e); }
   SCHEDULE_DATA = schedRows;
 
   // Right table: read positionally via fetchCSVRaw (gviz), because columns
@@ -7897,15 +7907,36 @@ async function renderRef(){
     const subjectArr=Array.isArray(subjectData)?subjectData:(subjectData.rows||[]);
     const Q_COLORS={'Inquiry':'#2e7d32','Appointment':'#1565c0','FollowUp-Complaints':'#e65100','Comment':'#6a1b9a','Request':'#00695c','Complaint':'#c0272d','NA Complaint':'#555'};
     const sGroups={};
-    subjectArr.forEach(r=>{
-      const v=Object.values(r).map(x=>String(x||'').trim());
-      const queue=v[0]||'',status=v[1]||'',subject=v[2]||'';
-      const dept=v[3]||'',desc=v[4]||'',cat=v[5]||'',notes=v[6]||'';
-      if(!subject)return;
-      const g=queue||'General';
-      if(!sGroups[g])sGroups[g]=[];
-      sGroups[g].push({status,subject,dept,desc,cat,notes});
-    });
+    // Read the Subject sheet positionally (gviz JSON by gid) for the ticket-type
+    // groups. This section relies on exact column positions (0=queue, 1=status,
+    // 2=subject ...), and a label-keyed read collapses the sheet's blank-header
+    // columns and shifts those positions — which dropped every row (empty
+    // subject) and left the whole section blank.
+    let subjectRows2d = [];
+    try{ subjectRows2d = await fetchCSVRawByGid(REF_SHEETS.main.id, '124854438'); }catch(e){ console.warn('subject 2d read failed', e); }
+    const subjBody = (subjectRows2d && subjectRows2d.length>1) ? subjectRows2d.slice(1) : [];
+    if(subjBody.length){
+      subjBody.forEach(r=>{
+        const v=(r||[]).map(x=>String(x||'').trim());
+        const queue=v[0]||'',status=v[1]||'',subject=v[2]||'';
+        const dept=v[3]||'',desc=v[4]||'',cat=v[5]||'',notes=v[6]||'';
+        if(!subject)return;
+        const g=queue||'General';
+        if(!sGroups[g])sGroups[g]=[];
+        sGroups[g].push({status,subject,dept,desc,cat,notes});
+      });
+    } else {
+      // Fallback to the label-keyed rows if the positional read is unavailable.
+      subjectArr.forEach(r=>{
+        const v=Object.values(r).map(x=>String(x||'').trim());
+        const queue=v[0]||'',status=v[1]||'',subject=v[2]||'';
+        const dept=v[3]||'',desc=v[4]||'',cat=v[5]||'',notes=v[6]||'';
+        if(!subject)return;
+        const g=queue||'General';
+        if(!sGroups[g])sGroups[g]=[];
+        sGroups[g].push({status,subject,dept,desc,cat,notes});
+      });
+    }
 
     const cItems=sGroups['Complaint']||[];
     const mainC=cItems[0]||null;
