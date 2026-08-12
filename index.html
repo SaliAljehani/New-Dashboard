@@ -1358,21 +1358,20 @@ function renderAll(){
   const am={};agents.forEach(a=>am[a]=ag(data[a]));
   const sorted=[...agents].sort((a,b)=>am[b].I-am[a].I);
   if(CV==='grid'){
-    const cols='44px 1fr repeat(5,90px)';
+    const cols='44px 1.3fr repeat(5,1fr)';
     const rkCol=(i)=>{ if(i===0)return'#C6A94A'; if(i===1)return'#B8A67E'; if(i===2)return'#C58A5A'; const t=Math.min(1,(i-3)/14); const r=Math.round(203+(224-203)*t),g=Math.round(190+(218-190)*t),b=Math.round(158+(200-158)*t); return`rgb(${r},${g},${b})`; };
-    const head=`<div style="min-width:560px;display:grid;grid-template-columns:${cols};gap:8px;padding:0 18px 4px;font-size:9px;color:#bbb;text-align:center"><div></div><div></div><div>Inbound</div><div>Tickets</div><div>WhatsApp</div><div>Avg Talk</div><div>Avg Handling</div></div>`;
-    document.getElementById('agrid').innerHTML=head+sorted.map((nm,i)=>{
+    document.getElementById('agrid').innerHTML=sorted.map((nm,i)=>{
       const a=am[nm];
       const ag=AGENTS_DIR.find(x=>x.name===nm)||{};
       const badgeHtml=ag.badge?'<span style="font-size:9px;background:#FCEAEA;color:#C0272D;padding:1px 8px;border-radius:10px;flex-shrink:0">Badge '+ag.badge+'</span>':'';
-      return`<div style="min-width:560px;background:#fff;border-radius:12px;border:0.5px solid #eee;padding:13px 18px;display:grid;grid-template-columns:${cols};align-items:center;gap:8px;cursor:pointer;transition:.15s" onclick="selAgent('${nm}')" onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,.06)'" onmouseout="this.style.boxShadow=''">
+      return`<div style="min-width:620px;background:#fff;border-radius:12px;border:0.5px solid #eee;padding:13px 18px;display:grid;grid-template-columns:${cols};align-items:center;gap:10px;cursor:pointer;transition:.15s" onclick="selAgent('${nm}')" onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,.06)'" onmouseout="this.style.boxShadow=''">
         <div style="font-size:19px;font-weight:700;color:${rkCol(i)};text-align:center">${i+1}</div>
         <div style="min-width:0"><div style="font-size:14px;font-weight:600;color:#1a1a2e;white-space:nowrap">${nm}</div><div style="margin-top:2px;white-space:nowrap">${badgeHtml} <span style="font-size:10px;color:#bbb">${a.days} Day</span></div></div>
-        <div style="text-align:center;background:rgba(192,39,45,.08);border-radius:9px;padding:8px 4px"><div style="font-size:14px;font-weight:700;color:#9a2a2f">${N(a.I)}</div></div>
-        <div style="text-align:center;background:rgba(192,39,45,.08);border-radius:9px;padding:8px 4px"><div style="font-size:14px;font-weight:700;color:#9a2a2f">${N(a.T)}</div></div>
-        <div style="text-align:center;background:rgba(58,90,106,.08);border-radius:9px;padding:8px 4px"><div style="font-size:14px;font-weight:700;color:#3a5a6a">${N(a.W)}</div></div>
-        <div style="text-align:center;background:rgba(176,146,96,.10);border-radius:9px;padding:8px 4px"><div style="font-size:13px;font-weight:700;color:#7a6335">${a.avgTalk?fmtS(a.avgTalk):'—'}</div></div>
-        <div style="text-align:center;background:rgba(176,146,96,.10);border-radius:9px;padding:8px 4px"><div style="font-size:13px;font-weight:700;color:#7a6335">${a.avgAHT?fmtS(a.avgAHT):'—'}</div></div>
+        <div style="text-align:center;background:rgba(192,39,45,.08);border-radius:10px;padding:11px 4px"><div style="font-size:9px;color:#b06a6d">Inbound</div><div style="font-size:15px;font-weight:700;color:#9a2a2f">${N(a.I)}</div></div>
+        <div style="text-align:center;background:rgba(192,39,45,.08);border-radius:10px;padding:11px 4px"><div style="font-size:9px;color:#b06a6d">Tickets</div><div style="font-size:15px;font-weight:700;color:#9a2a2f">${N(a.T)}</div></div>
+        <div style="text-align:center;background:rgba(58,90,106,.08);border-radius:10px;padding:11px 4px"><div style="font-size:9px;color:#6a8a9a">WhatsApp</div><div style="font-size:15px;font-weight:700;color:#3a5a6a">${N(a.W)}</div></div>
+        <div style="text-align:center;background:rgba(176,146,96,.10);border-radius:10px;padding:11px 4px"><div style="font-size:9px;color:#a89370">Avg Talk</div><div style="font-size:14px;font-weight:700;color:#7a6335">${a.avgTalk?fmtS(a.avgTalk):'—'}</div></div>
+        <div style="text-align:center;background:rgba(176,146,96,.10);border-radius:10px;padding:11px 4px"><div style="font-size:9px;color:#a89370">Avg Handling</div><div style="font-size:14px;font-weight:700;color:#7a6335">${a.avgAHT?fmtS(a.avgAHT):'—'}</div></div>
       </div>`;
     }).join('');
 
