@@ -7,10 +7,15 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 <title>Inbound Daily Dashboard · Petromin Group</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<link rel="preconnect" href="https://script.google.com">
+<link rel="preconnect" href="https://docs.google.com">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" defer></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter',system-ui,sans-serif;font-size:12px;background:#f5f5f5;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column}
 #loadingDiv,#errDiv,#mainContent{flex:1 0 auto}
@@ -440,11 +445,11 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 
   <div class="page-nav">
     <button class="pnav" onclick="showPage(6,this)">📢 Announcements</button>
-    <button class="pnav active" onclick="showPage(3,this)">👥 Team Directory</button>
+    <button class="pnav" onclick="showPage(3,this)">👥 Team Directory</button>
     <button class="pnav" onclick="showPage(1,this)">📊 Team Performance</button>
     <button class="pnav" onclick="showPage(5,this)">📅 Team Schedules</button>
     <button class="pnav" onclick="showPage(8,this)">🏆 Employee of the Month</button>
-    <button class="pnav" onclick="showPage(4,this)">📁 Daily Reference</button>
+    <button class="pnav active" onclick="showPage(4,this)">📁 Daily Reference</button>
     <button class="pnav" onclick="showPage(11,this)">📋 Case Handling</button>
   </div>
 
@@ -8688,7 +8693,20 @@ function markAllNotifRead(){
 }
 
 // Auto-start on page load
-window.addEventListener('DOMContentLoaded', () => { loadAllData(); showMotivation(); });
+// Paint the shell immediately on Daily Reference (which loads its own data,
+// independent of the 9 dashboard sheets) so agents never wait on data they
+// aren't looking at. The dashboard sheets then load in the background (silent),
+// filling the other tabs without hiding the UI.
+window.addEventListener('DOMContentLoaded', () => {
+  try{
+    document.getElementById('loadingDiv').style.display='none';
+    document.getElementById('mainContent').style.display='block';
+    var _dr=null; document.querySelectorAll('.pnav').forEach(function(b){ if(b.textContent.indexOf('Daily Reference')>=0) _dr=b; });
+    if(_dr) showPage(4,_dr); else renderRef();
+  }catch(e){ console.warn('initial paint:', e); }
+  loadAllData(true);
+  showMotivation();
+});
 
 // تحديث تلقائي متوقف — الموظفات يحدّثن يدوياً بزر Refresh
 // setInterval(() => { loadAllData(true); }, 300000);
