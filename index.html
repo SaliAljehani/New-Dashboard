@@ -3691,7 +3691,22 @@ function renderPACTab(arr){
   // Static RM table
   var staticRM='';
 
+  // Request / Complaint email cards (PAC has no email columns in the sheet,
+  // so these are fixed per the reference: Manager Branch + CR Team).
+  var pacEmailCards='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">'
+    +'<div class="ref-email-card" style="border:1.5px solid #c0272d55;text-align:center">'
+    +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+chipTo('Manager Branch','#c0272d')+'</div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+chipTo('cs.agent@petromin.com','#c0272d')+'</div>'
+    +'</div>'
+    +'<div class="ref-email-card" style="border:1.5px solid #c0272d55;text-align:center">'
+    +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+chipTo('Manager Branch + CRTeam@petromin.com','#c0272d')+'</div>'
+    +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+chipTo('cs.agent@petromin.com','#c0272d')+'</div>'
+    +'</div></div>';
+
   return '<div style="margin-bottom:12px">'
+    +pacEmailCards
     // Top bar: title + RM button on right
     +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px">'
     +'<div style="font-size:14px;font-weight:700;color:#c0272d;padding:10px;background:#fef2f2;border-radius:8px;flex:1;text-align:center">&#128295; Petromin Auto Care (PAC) &mdash; '+workshopRows.length+' workshops</div>'
@@ -4155,36 +4170,32 @@ function renderVolvoAftersalesTab(arr){
   branchRows.forEach(r=>{const reg=regClean(r[keys[1]]);(regions[reg]=regions[reg]||[]).push(r);});
   const order=VREG.filter(r=>regions[r]);
 
-  const regHTML=order.map(reg=>{
-    const rows=regions[reg];
-    const regId='volAf_'+reg.replace(/\s/g,'');
-    return '<div style="margin-bottom:16px">'
-      +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+color+'12;border-radius:8px;border-left:4px solid '+color+';margin-bottom:10px;cursor:pointer">'
-      +'<span style="font-size:13px;font-weight:700;color:'+color+'">'+reg+'</span><span style="font-size:11px;color:#aaa">('+rows.length+')</span>'
-      +'<span id="ico_'+regId+'" style="margin-left:auto;color:'+color+'">▼</span></div>'
-      +'<div id="'+regId+'"><div class="ref-cards-grid">'+rows.map(r=>{
-        const city=String(r[keys[2]]||'').trim();
-        const b=String(r[keys[3]]||'').trim();
-        const bm=String(r[keys[4]]||'').trim();
-        const ph=fmtNum(String(r[keys[5]]||'').trim());
-        const em=String(r[keys[6]]||'').trim();
-        const gps=String(r[keys[7]]||'').trim();
-        const map=String(r[keys[8]]||'').trim();
-        const loc=(map&&/^https?:/.test(map))?map:(gps?(/^https?:/.test(gps)?gps:'https://www.google.com/maps?q='+encodeURIComponent(gps)):'');
-        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07)">'
-          +'<div style="background:'+color+'12;padding:10px 14px;text-align:center">'
-          +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+b+'</div>'
-          +(city?'<div style="font-size:11px;color:#888;margin-top:4px">📍 '+city+'</div>':'')
-          +'</div><div style="padding:10px 14px;text-align:center">'
-          +(bm?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+bm+'</div>':'')
-          +(ph?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+ph+'</div>':'')
-          +(em?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+em+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+em+'</a></div>':'')
-          +(loc?'<div style="margin-top:8px"><a href="'+loc+'" target="_blank" style="color:'+color+';font-size:11px;font-weight:600;text-decoration:none">🗺️ Location</a></div>':'')
-          +'</div></div>';
-      }).join('')+'</div></div></div>';
-  }).join('');
+  // Compact layout: all branches flow in one responsive card grid (region shown
+  // as a small badge) instead of one full-width collapsible section per region,
+  // which wasted horizontal space when a region held only a single branch.
+  const cardHTML=order.flatMap(reg=>regions[reg].map(r=>{
+    const city=String(r[keys[2]]||'').trim();
+    const b=String(r[keys[3]]||'').trim();
+    const bm=String(r[keys[4]]||'').trim();
+    const ph=fmtNum(String(r[keys[5]]||'').trim());
+    const em=String(r[keys[6]]||'').trim();
+    const gps=String(r[keys[7]]||'').trim();
+    const map=String(r[keys[8]]||'').trim();
+    const loc=(map&&/^https?:/.test(map))?map:(gps?(/^https?:/.test(gps)?gps:'https://www.google.com/maps?q='+encodeURIComponent(gps)):'');
+    return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07)">'
+      +'<div style="background:'+color+'12;padding:10px 14px;text-align:center;border-bottom:2px solid '+color+'22">'
+      +'<div style="display:inline-block;font-size:9px;font-weight:800;color:'+color+';background:'+color+'1a;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">'+reg+'</div>'
+      +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+b+'</div>'
+      +(city?'<div style="font-size:11px;color:#888;margin-top:4px">📍 '+city+'</div>':'')
+      +'</div><div style="padding:10px 14px;text-align:center">'
+      +(bm?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+bm+'</div>':'')
+      +(ph?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+ph+'</div>':'')
+      +(em?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+em+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+em+'</a></div>':'')
+      +(loc?'<div style="margin-top:8px"><a href="'+loc+'" target="_blank" style="color:'+color+';font-size:11px;font-weight:600;text-decoration:none">🗺️ Location</a></div>':'')
+      +'</div></div>';
+  })).join('');
 
-  return '<div>'+emailHtml+regHTML+'</div>';
+  return '<div>'+emailHtml+'<div class="ref-cards-grid">'+cardHTML+'</div></div>';
 }
 
 function renderPetrominTireBatteryTab(arr){
@@ -4450,15 +4461,18 @@ function renderNosFranchiseTab(arr){
       +'<span style="font-size:11px;color:#aaa">('+items.length+')</span>'
       +'<span id="ico_'+gid+'" style="margin-left:auto;color:'+color+'">▼</span></div>'
       +'<div id="'+gid+'"><div class="ref-cards-grid">'+items.map(it=>{
-        return '<div style="background:#fff;border-radius:10px;padding:10px 14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.06);direction:ltr">'
+        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
+          +'<div style="background:'+color+'12;padding:10px 14px;text-align:center;border-bottom:2px solid '+color+'22">'
           +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+it.branch+'</div>'
-          +'<div style="font-size:10px;color:#aaa;margin:2px 0 4px;font-weight:700;text-transform:uppercase;letter-spacing:.03em">📍 '+it.city+'</div>'
-          +(it.district?'<div style="font-size:11px;color:#888;margin:3px 0">📌 '+it.district+'</div>':'')
-          +(it.owner?'<div style="font-size:12px;color:#555;margin-bottom:3px">👤 '+it.owner+'</div>':'')
-          +(it.supervisor?'<div style="font-size:11px;color:#666;margin-bottom:3px">🧑‍💼 '+it.supervisor+(it.mobile?' · '+it.mobile:'')+'</div>':'')
-          +(it.company?'<div style="font-size:10px;color:#999;margin-top:4px">🏢 '+it.company+'</div>':'')
+          +'<div style="font-size:10px;color:#888;margin-top:3px;font-weight:700;text-transform:uppercase;letter-spacing:.03em">📍 '+it.city+'</div>'
+          +'</div>'
+          +'<div style="padding:10px 14px;text-align:center">'
+          +(it.district?'<div style="font-size:11px;color:#888;margin-bottom:5px">📌 '+it.district+'</div>':'')
+          +(it.owner?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+it.owner+'</div>':'')
+          +(it.supervisor?'<div style="font-size:11px;color:#666;margin-bottom:5px">🧑‍💼 '+it.supervisor+(it.mobile?' · '+it.mobile:'')+'</div>':'')
+          +(it.company?'<div style="font-size:10px;color:#999;margin-bottom:5px">🏢 '+it.company+'</div>':'')
           +(it.email?'<div style="font-size:11px;margin-top:4px"><a href="mailto:'+it.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+it.email+'</a></div>':'')
-          +'</div>';
+          +'</div></div>';
       }).join('')+'</div></div></div>';
   }).join('');
 }
@@ -4589,10 +4603,15 @@ function fotonFmtE(v, color){
 // a single row.
 function fotonEmailHdr(blocks, color){
   if(!blocks.length) return '';
-  const cw = blocks.length===1 ? '420px' : 'calc(50% - 6px)';
-  return '<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-bottom:20px">'
+  // Single card → centred. Otherwise a strict 2-column grid so pairs stack:
+  // e.g. PMS tab shows Service Request/Complaint on row 1, Spare Parts on row 2.
+  const wrapStyle = blocks.length===1
+    ? 'display:flex;justify-content:center;margin-bottom:20px'
+    : 'display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px';
+  const cw = blocks.length===1 ? '420px' : 'none';
+  return '<div style="'+wrapStyle+'">'
     + blocks.map(b=>
-        '<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center;flex:1 1 300px;max-width:'+cw+'">'
+        '<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center;max-width:'+cw+'">'
         +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 '+b.label+'</div>'
         +(b.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fotonFmtE(b.to,color)+'</div>':'')
         +(b.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fotonFmtE(b.cc,color)+'</div>':'')
@@ -6177,9 +6196,9 @@ async function renderRefBrand(brand,tabIdx){
     container.innerHTML=
       '<div style="padding:8px 4px 4px;direction:rtl;text-align:right">'
       +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">'
-      +'<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #7b000055;text-align:center"><div style="font-size:13px;font-weight:700;color:#7b0000;margin-bottom:8px">📋 الإجراءات (قبل)</div><div style="font-size:11px;color:#555;line-height:1.8">يلزم توفير المستندات التالية:<br>1- استمارة المركبة<br>2- تقرير الجهة المباشرة للحادث (نجم أو المرور)<br>3- الرقم المرجعي لمطالبة التأمين<br><br>يُشترط حضور وتسليم المركبة من مالكها أو المفوّض رسميًا.<br>في حال تعذّر الحضور يجب تقديم تفويض خطي.</div></div>'
-      +'<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #7b000055;text-align:center"><div style="font-size:13px;font-weight:700;color:#e65100;margin-bottom:8px">💰 التسعيرة</div><div style="font-size:11px;color:#555;line-height:1.8">يستغرق فحص المركبة وإرسال التسعيرة لشركة التأمين من 7 إلى 14 يوم عمل.<br><br>• قابلة للقيادة: تُسلَّم بعد الفحص<br>• غير قابلة للقيادة: تُحجز بالفرع لحين الإصلاح</div></div>'
-      +'<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #7b000055;text-align:center"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 الإصلاح</div><div style="font-size:11px;color:#555;line-height:1.8">يبدأ الإصلاح بعد موافقة التأمين، بحد أقصى 90 يوم عمل.<br><br>سيتم توفير قطع الغيار خلال هذه الفترة، وإشعاركم برسالة نصية عند توفرها.</div></div>'
+      +'<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #7b000055;text-align:center"><div style="font-size:13px;font-weight:700;color:#7b0000;margin-bottom:8px">📋 Before Repair Service</div><div style="font-size:11px;color:#555;line-height:1.8">يلزم توفير المستندات التالية:<br>1- استمارة المركبة<br>2- تقرير الجهة المباشرة للحادث (نجم أو المرور)<br>3- الرقم المرجعي لمطالبة التأمين<br><br>يُشترط حضور وتسليم المركبة من مالكها أو المفوّض رسميًا.<br>في حال تعذّر الحضور يجب تقديم تفويض خطي.</div></div>'
+      +'<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #7b000055;text-align:center"><div style="font-size:13px;font-weight:700;color:#e65100;margin-bottom:8px">💰 Repair Quotation</div><div style="font-size:11px;color:#555;line-height:1.8">يستغرق فحص المركبة وإرسال التسعيرة لشركة التأمين من 7 إلى 14 يوم عمل.<br><br>• قابلة للقيادة: تُسلَّم بعد الفحص<br>• غير قابلة للقيادة: تُحجز بالفرع لحين الإصلاح</div></div>'
+      +'<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #7b000055;text-align:center"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 Repair Service</div><div style="font-size:11px;color:#555;line-height:1.8">يبدأ الإصلاح بعد موافقة التأمين، بحد أقصى 90 يوم عمل.<br><br>سيتم توفير قطع الغيار خلال هذه الفترة، وإشعاركم برسالة نصية عند توفرها.</div></div>'
       +'</div></div>';
     return;
   }
@@ -6293,7 +6312,19 @@ async function renderRefBrand(brand,tabIdx){
       if(t==='Emails') container.innerHTML=renderElectrominEmailsTab(arr);
       else if(t==='EV Maintenance Branches') container.innerHTML=renderElectrominBranchTab(arr,'branch');
       else if(t==='EV Charging Stations') container.innerHTML=renderElectrominStationsTab(arr);
-      else if(t==='Fuel Station'){ var __fuel=await fetchCSVExportByGid(cfg.id,'1768605692'); if(container.dataset.reqId!==__reqId) return; container.innerHTML=renderPetrominLocationListTab(__fuel,'fuel','#3A6048'); }
+      else if(t==='Fuel Station'){ var __fuel=await fetchCSVExportByGid(cfg.id,'1768605692'); if(container.dataset.reqId!==__reqId) return;
+        var __fuelEmails='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+          +'<div class="ref-email-card" style="border:1.5px solid #3A604855;text-align:center">'
+          +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Request</div>'
+          +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+chipTo('h.aljahdali@petromin.com','#3A6048')+'</div>'
+          +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+chipTo('cs.agent@petromin.com','#3A6048')+'</div>'
+          +'</div>'
+          +'<div class="ref-email-card" style="border:1.5px solid #3A604855;text-align:center">'
+          +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 Complaint</div>'
+          +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+chipTo('h.aljahdali@petromin.com, CRTeam@petromin.com','#3A6048')+'</div>'
+          +'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+chipTo('cs.agent@petromin.com','#3A6048')+'</div>'
+          +'</div></div>';
+        container.innerHTML=__fuelEmails+renderPetrominLocationListTab(__fuel,'fuel','#3A6048'); }
       else if(t==='PAC'){ var __st=await fetchCSVRaw(cfg.id,'EV Charging Stations'); container.innerHTML=renderElectrominPACTab(arr,__st); }
       else if(t==='FAQ') container.innerHTML=renderElectrominFAQTab(arr);
       else if(t==='SMS') container.innerHTML=noAnsHeader('electromin')+renderElectrominSMSTab(arr);
