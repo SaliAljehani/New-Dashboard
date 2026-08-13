@@ -2214,7 +2214,7 @@ const REF_SHEETS = {
   },
   petromin: {
     id: '11M28wIA4Ee84ohrIqzXtobK7X-QsrruoL4MwjoGz-6k',
-    tabs: ['Instruction','Autocare','Petromin Express Stations','Tire&Battery','Eco Wash','Fuel Station','DIESEL','PE-Emailz','Complaints Emails']
+    tabs: ['Instruction','Autocare','Petromin Express Stations','Tire&Battery','Eco Wash','DIESEL','PE-Emailz','Complaints Emails']
   },
   foton: {
     id: '1PBhYlWtWqGZFZi_wgjDTlUaoN6O0QeS4P1CHcd40H4Y',
@@ -2226,7 +2226,11 @@ const REF_SHEETS = {
   },
   electromin: {
     id: '1Rr37Ojft0hnRjjSv8KF6Dmt4ywA0P7ObApKTMOHgmOc',
-    tabs: ['Emails','EV Maintenance Branches','EV Charging Stations','PAC','FAQ','SMS']
+    tabs: ['Emails','EV Charging Stations','Fuel Station','FAQ','SMS']
+  },
+  volvo: {
+    id: '1gk4iGJ8Xs6QesKKSzT3bhfRu2qkLeb5VpiR09hptYE0',
+    tabs: ['Instruction','Aftersales']
   },
   baicRecall: {
     id: '1FuHyS6n5BxKpSMy2jShFzd0gaq9s8pElFfnwjNfOGf0',
@@ -5648,22 +5652,6 @@ let REF_CURRENT_BRAND=null;
 
 function showRefBrandPage(brand){
   REF_CURRENT_BRAND=brand;
-  if(brand==='volvo'){
-    const c=document.getElementById('refContent');
-    c.innerHTML=
-      '<div style="margin-bottom:14px"><button onclick="renderRef()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:#f5f5f5;border:1.5px solid #ddd;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;color:#555">← Back to References</button></div>'
-      +'<div class="ref-brand-section">'
-      +'<div style="padding:14px 20px;min-height:53px;background:linear-gradient(135deg,#003057,#00305799);color:#fff;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;gap:10px">'
-      +'<span style="font-size:22px"><svg viewBox="0 0 36 36" width="22" height="22" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="21" r="8.5" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M21 15 L29 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M23.5 7 H29 V12.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>'
-      +'<span style="font-size:15px;font-weight:700">Volvo</span>'
-      +'</div>'
-      +'<div style="background:#fff;border-radius:0 0 12px 12px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:48px 20px;text-align:center">'
-      +'<div style="font-size:40px;margin-bottom:14px">📭</div>'
-      +'<div style="font-size:15px;font-weight:700;color:#003057;margin-bottom:6px">لا توجد بيانات بعد</div>'
-      +'<div style="font-size:13px;color:#888">سيتم ربط بيانات Volvo لاحقاً</div>'
-      +'</div></div>';
-    return;
-  }
   const META={
     nissan:    {label:'Nissan',    icon:'🔴',color:'#c0272d'},
     stellantis:{label:'Stellantis',icon:'🚙',color:'#1565c0'},
@@ -5673,7 +5661,8 @@ function showRefBrandPage(brand){
     petromin:  {label:'Petromin',  icon:'<svg viewBox="0 0 36 36" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="14" width="20" height="16" rx="3" fill="#c0272d"/><rect x="8" y="10" width="12" height="6" rx="2" fill="#1a1a2e"/><rect x="24" y="16" width="8" height="4" rx="2" fill="#1a1a2e"/><rect x="13" y="6" width="4" height="6" rx="1" fill="#c0272d"/><circle cx="10" cy="20" r="2" fill="#fff" opacity=".4"/></svg>',color:'#D98E45'},
     foton:     {label:'Foton',     icon:'🚛',color:'#546e7a'},
     nos:       {label:'National Oil', icon:'🟢',color:'#2e7d32'},
-    electromin:{label:'Electromin', icon:'⚡',color:'#3A6048'},
+    electromin:{label:'Energy', icon:'⚡',color:'#3A6048'},
+    volvo:     {label:'Volvo', icon:'<svg viewBox="0 0 36 36" width="22" height="22" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="21" r="8.5" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M21 15 L29 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M23.5 7 H29 V12.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',color:'#003057'},
   };
   const meta=META[brand];
   const bannerBg = brand==='petromin' ? 'linear-gradient(135deg,#D98E45,#E0A055)' : 'linear-gradient(135deg,'+meta.color+','+meta.color+'99)';
@@ -5732,7 +5721,7 @@ function showRefBrandPage(brand){
 
 function switchRefTab(brand,idx,btn){
   REF_ACTIVE_TABS[brand]=idx;
-  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#C86E35',baicRecall:'#6A5818',petromin:'#D98E45',foton:'#546e7a',nos:'#2e7d32',electromin:'#3A6048'}[brand]||'#c0272d';
+  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#C86E35',baicRecall:'#6A5818',petromin:'#D98E45',foton:'#546e7a',nos:'#2e7d32',electromin:'#3A6048',volvo:'#003057'}[brand]||'#c0272d';
   const container=btn?btn.parentElement:document.querySelector('#refSubTabs_'+brand);
   if(container){
     container.querySelectorAll('.ref-sub-tab').forEach((t,i)=>{
@@ -5837,7 +5826,7 @@ function mkCollapsibleOpen(title, bodyHtml, id, color){
 }
 
 async function renderInstructionTab(brand, cfg){
-  const BRAND_COLORS={nissan:'#c0272d',stellantis:'#1565c0',baic:'#C86E35'};
+  const BRAND_COLORS={nissan:'#c0272d',stellantis:'#1565c0',baic:'#C86E35',volvo:'#003057'};
   const color=BRAND_COLORS[brand]||'#333';
 
   const data=await fetchSheet(cfg.id,'Instruction');
@@ -5876,8 +5865,7 @@ async function renderInstructionTab(brand, cfg){
 
     if(mode==='warranty'){
       if(!sec) return;
-      if(sec.toLowerCase().includes('pms')) return; // تجاهل header PMS
-      const isPMSText = /maintenance|schedule|صيانة|زيت|oil|gear/i.test(sec);
+      const isPMSText = /maintenance|schedule|صيانة|زيت|oil|gear|pms/i.test(sec);
 
       // Some sheets (e.g. BAIC) put the PMS schedule text only in the
       // Section column, leaving Title/Content empty — pair up a short
@@ -5889,6 +5877,15 @@ async function renderInstructionTab(brand, cfg){
           pmsRows.push({title: pendingPMSTitle||'', content: sec});
           pendingPMSTitle = null;
         }
+        return;
+      }
+
+      // Section label itself denotes PMS/Maintenance (e.g. BAIC "PMS Services",
+      // Stellantis "Maintenance Schedule"). Content may sit in Title (single-col)
+      // or in the first data column (dual-col) — grab it wherever it is.
+      if(isPMSText){
+        const pmsContent = c1 ? (c2 ? c1+' — '+c2 : c1) : title;
+        if(pmsContent) pmsRows.push({title: sec, content: pmsContent});
         return;
       }
 
@@ -6062,7 +6059,7 @@ async function renderInstructionTab(brand, cfg){
   if(brand==='baic'||brand==='nissan'||brand==='stellantis'){
     const tabs=[];
     if(warrantyBody) tabs.push({label:'🛡️ Warranty',html:warrantyBody});
-    if(pmsBody && brand!=='stellantis') tabs.push({label:'🔧 PMS Services',html:pmsBody});
+    if(pmsBody) tabs.push({label:'🔧 PMS Services',html:pmsBody});
     // Nissan: only Warranty + PMS. BAIC/Stellantis: keep Appointment + Extra.
     if(brand==='baic'||brand==='stellantis'){
       if(apptBody) tabs.push({label:'📋 Appointment Script',html:apptBody});
@@ -6210,6 +6207,7 @@ async function renderRefBrand(brand,tabIdx){
       if(t==='Emails') container.innerHTML=renderElectrominEmailsTab(arr);
       else if(t==='EV Maintenance Branches') container.innerHTML=renderElectrominBranchTab(arr,'branch');
       else if(t==='EV Charging Stations') container.innerHTML=renderElectrominStationsTab(arr);
+      else if(t==='Fuel Station') container.innerHTML=renderPetrominLocationListTab(arr,'fuel');
       else if(t==='PAC'){ var __st=await fetchCSVRaw(cfg.id,'EV Charging Stations'); container.innerHTML=renderElectrominPACTab(arr,__st); }
       else if(t==='FAQ') container.innerHTML=renderElectrominFAQTab(arr);
       else if(t==='SMS') container.innerHTML=noAnsHeader('electromin')+renderElectrominSMSTab(arr);
@@ -7888,7 +7886,7 @@ async function renderRef(){
       {key:'bodyshop',   label:'Body Shop',        icon:'🔧', color:'#6A3030'},
       {key:'foton',      label:'Foton',            icon:'🚛', color:'#546e7a'},
       {key:'nos',        label:'National Oil', icon:'🟢', color:'#2e7d32'},
-      {key:'electromin', label:'Electromin',       icon:'⚡', color:'#3A6048'},
+      {key:'electromin', label:'Energy',           icon:'⚡', color:'#3A6048'},
       {key:'volvo',      label:'Volvo',            icon:'<svg viewBox="0 0 36 36" width="22" height="22" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="21" r="8.5" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M21 15 L29 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M23.5 7 H29 V12.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>', color:'#003057'},
       {key:'baicRecall', label:'Recall', icon:'⚠️', color:'#6A5818', onclick:'renderRecallInRef()'},
     ];
