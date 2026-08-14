@@ -4364,31 +4364,29 @@ function renderPetrominEmailzTab(arr){
     }).join('')
     +'</div>';
 
-  // Grouped by category with light header bands + column gridlines, reversed
-  // columns (CC · TO · Department), single tab-orange colour, dept names orange.
-  const groups=[];
-  if(topRows.length) groups.push({title:'General',rows:topRows});
-  sections.forEach(s=>groups.push({title:s.title,rows:s.rows}));
-  if(!groups.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  // Columns: Department · TO · CC (Department first). General rows (topRows)
+  // are shown at the top WITHOUT a band label; only the real categories
+  // (Complaint / Contract …) keep their light band. Single tab-orange colour.
+  if(!topRows.length && !sections.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 
   const cellC=v=>chipPairs(v)||'<span style="color:#ccc">—</span>';
   const td='padding:9px 10px;text-align:center;border:1px solid #f0e7d6;vertical-align:middle';
   const hd='background:#faf3e9;color:#bd7530;font-weight:800;padding:8px 10px;text-align:center;border:1px solid #eadfce';
+  const rowHTML=r=>'<tr>'
+    +'<td style="'+td+';width:32%"><div style="font-size:12.5px;font-weight:800;color:#bd7530;word-break:break-word">'+r.dept+'</div>'
+      +(r.subj?'<div style="font-size:11px;color:#8a6d1a;direction:rtl;margin-top:3px;word-break:break-word">'+r.subj+'</div>':'')+'</td>'
+    +'<td style="'+td+'">'+cellC(r.to)+'</td>'
+    +'<td style="'+td+'">'+cellC(r.cc)+'</td>'
+    +'</tr>';
   let body='';
-  groups.forEach(g=>{
-    body+='<tr><td colspan="3" style="background:'+color+'14;color:#bd7530;font-weight:800;letter-spacing:.04em;text-align:center;padding:8px 10px;border:1px solid #eadfce">'+g.title+'</td></tr>';
-    g.rows.forEach(r=>{
-      body+='<tr>'
-        +'<td style="'+td+'">'+cellC(r.cc)+'</td>'
-        +'<td style="'+td+'">'+cellC(r.to)+'</td>'
-        +'<td style="'+td+'"><div style="font-size:12.5px;font-weight:800;color:#bd7530;word-break:break-word">'+r.dept+'</div>'
-          +(r.subj?'<div style="font-size:11px;color:#8a6d1a;direction:rtl;margin-top:3px;word-break:break-word">'+r.subj+'</div>':'')+'</td>'
-        +'</tr>';
-    });
+  topRows.forEach(r=>{ body+=rowHTML(r); });
+  sections.forEach(s=>{
+    body+='<tr><td colspan="3" style="background:'+color+'14;color:#bd7530;font-weight:800;letter-spacing:.04em;text-align:center;padding:8px 10px;border:1px solid #eadfce">'+s.title+'</td></tr>';
+    s.rows.forEach(r=>{ body+=rowHTML(r); });
   });
   return '<table style="width:100%;border-collapse:collapse;font-size:12px;border:1px solid #eadfce;border-radius:10px;overflow:hidden">'
-    +'<thead><tr><th style="'+hd+'">CC</th><th style="'+hd+'">TO</th><th style="'+hd+';width:32%">Department</th></tr></thead>'
-    +'<tbody>'+body+'</tbody></table>';
+    +'<thead><tr><th style="'+hd+';width:32%">Department</th><th style="'+hd+'">TO</th><th style="'+hd+'">CC</th></tr></thead>'
+    +'<tbody><tr><td colspan="3" style="height:12px;border:none;padding:0"></td></tr>'+body+'</tbody></table>';
 }
 
 function renderPetrominComplaintsTab(arr){
