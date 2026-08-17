@@ -2969,13 +2969,13 @@ function renderNissanBranchTab(arr, sheetName, brand){
       +'<div style="background:'+col_color+'18;border-bottom:2px solid '+col_color+'22;padding:10px 14px;margin-bottom:0;text-align:center">'
       +'<div style="font-size:13px;font-weight:700;color:'+col_color+'">'+b.name.replace(/\s*\(.*?\)\s*/g,'').replace(/\n/g,' ').trim()+'</div>'
       +'<div style="font-size:11px;color:#666;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">'+(b.city?'<span>📌 '+arCity(b.city)+'</span>':'')+(b.district?'<span>📍 '+b.district+'</span>':'')+'</div>'
+      +(b.gps&&b.gps.startsWith('http')?'<div style="margin-top:5px"><a href="'+b.gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
       +'</div>'
       +'<div style="padding:10px 14px;text-align:center">'
       +(b.service?'<div style="display:inline-block;background:'+col_color+'15;color:'+col_color+';padding:2px 10px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px">'+b.service+'</div>':'')
       +persHTML
       +govHTML
       +(b.phone&&!b.persons.some(p=>p.phone===b.phone)?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+b.phone+'</div>':'')
-      +(b.gps&&b.gps.startsWith('http')?'<div style="margin-top:8px"><a href="'+b.gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
       +(b.hours&&b.regHours&&b.hours.trim()!==b.regHours.trim()?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+b.hours+'</div>':'')
       +'</div></div>';
   };
@@ -3379,12 +3379,12 @@ function renderStellantisSparePartsTab(arr){
       +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+branch+'</div>'
       +(city?'<div style="font-size:11px;color:#666;margin-top:4px">📌 '+city+'</div>':'')
       +(street?'<div style="font-size:11px;color:#555;margin-top:2px">📍 '+street+'</div>':'')
+      +(gps&&gps.startsWith('http')?'<div style="margin-top:5px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px">🗺️ Location</a></div>':'')
       +'</div>'
       +'<div style="padding:10px 16px;text-align:center">'
       +(advisor?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+advisor+'</div>':'')
       +(email?'<div style="margin-bottom:5px"><span style="background:#f0f6fc;color:#1565c0;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">TO</span>'+fmtEmails(email,'#f0f6fc','#1565c0')+'</div>':'')
       +(cc?'<div style="margin-bottom:5px"><span style="background:#f0f6fc;color:#1565c0;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-right:4px">CC</span>'+fmtEmails(cc,'#f0f6fc','#1565c0')+'</div>':'')
-      +(gps&&gps.startsWith('http')?'<div style="margin-top:5px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px">🗺️ Location</a></div>':'')
       +(hours?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+hours+'</div>':'')
       +'</div></div>';
   }).filter(Boolean).join('');
@@ -3557,12 +3557,12 @@ function renderStellantisPACTab(arr){
       +'<div style="background:'+color+'12;padding:10px 14px;text-align:center">'
       +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+branch+'</div>'
       +(city?'<div style="font-size:11px;color:#666;margin-top:2px">📌 '+city+'</div>':'')
+      +(gps&&gps.startsWith('http')?'<div style="margin-top:5px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px">🗺️ Location</a></div>':'')
       +'</div>'
       +'<div style="padding:10px 14px;text-align:center">'
       +(mgr?'<div style="font-size:12px;color:#555;margin-bottom:4px">👤 '+mgr+'</div>':'')
       +(mobile?'<div style="font-size:12px;color:#555;margin-bottom:4px">📞 '+mobile+'</div>':'')
       +(email?'<div style="font-size:11px;margin-bottom:4px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
-      +(gps&&gps.startsWith('http')?'<div style="margin-top:4px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px">🗺️ Location</a></div>':'')
       +(rm?'<div style="font-size:10px;color:#999;margin-top:6px;padding-top:6px;border-top:1px solid #f5f5f5">🗺️ RM: '+rm.name+(rm.mobile?' · '+rm.mobile:'')+'</div>':'')
       +(hours?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+hours+'</div>':'')
       +'</div></div>';
@@ -3643,12 +3643,12 @@ function renderPACTab(arr){
       +'<div style="background:#c0272d18;border-bottom:2px solid rgba(192,39,45,.5)22;padding:10px 14px;border-radius:10px 10px 0 0">'
       +'<div style="font-size:13px;font-weight:700;color:#c0272d">'+branch+'</div>'
       +(city?'<div style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:12px;color:#333;font-weight:600;margin-top:3px;direction:ltr"><span>&#128204;</span><span>'+city+'</span></div>':'')
+      +mkRow('&#128205;',loc)
       +'</div>'
       +'<div style="padding:10px 14px">'
       +mkRow('&#128100;',bm)
       +mkRow('&#128222;',phone)
       +mkRow('&#9993;',email)
-      +mkRow('&#128205;',loc)
       +(hoursClean?'<div style="font-size:10px;color:#555;margin-top:8px;padding-top:6px;border-top:1px solid #f0f0f0">&#128336; '+hoursClean+'</div>':'')
       +'</div></div>';
   }).filter(Boolean).join('');
@@ -3837,12 +3837,12 @@ function renderBaicServiceTab(arr, apptArr){
           +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
           +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
           +(city?'<div style="font-size:11px;color:#888;margin-top:3px">📌 '+city+'</div>':'')
+          +(gps&&gps.startsWith('http')?'<div style="margin-top:5px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
           +'</div>'
           +'<div style="padding:10px 14px;text-align:center">'
           +(mgr?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+mgr+'</div>':'')
           +(phone?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+phone+'</div>':'')
           +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
-          +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
           +'</div></div>';
       }).join('')+'</div></div></div>';
   }).join('');
@@ -4179,11 +4179,11 @@ function renderVolvoAftersalesTab(arr){
       +'<div style="background:'+color+'12;padding:10px 14px;text-align:center;border-bottom:2px solid '+color+'22">'
       +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+b+'</div>'
       +(city?'<div style="font-size:11px;color:#888;margin-top:4px">📍 '+city+'</div>':'')
+      +(loc?'<div style="margin-top:5px"><a href="'+loc+'" target="_blank" style="color:'+color+';font-size:11px;font-weight:600;text-decoration:none">🗺️ Location</a></div>':'')
       +'</div><div style="padding:10px 14px;text-align:center">'
       +(bm?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+bm+'</div>':'')
       +(ph?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+ph+'</div>':'')
       +(em?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+em+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+em+'</a></div>':'')
-      +(loc?'<div style="margin-top:8px"><a href="'+loc+'" target="_blank" style="color:'+color+';font-size:11px;font-weight:600;text-decoration:none">🗺️ Location</a></div>':'')
       +'</div></div>';
   };
   const cardsHTML=order.flatMap(reg=>regions[reg].map(r=>
@@ -4686,16 +4686,17 @@ function fotonBranchCard(b, regColor){
     b.district?'<span>📍 '+b.district+'</span>':'',
     b.street?'<span>🛣️ '+b.street+'</span>':''
   ].filter(Boolean).join('');
+  const locHTML = /^https?:/i.test(b.gps||'')?'<div style="margin-top:5px"><a href="'+b.gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'';
   const body = [
     b.contact&&b.contact!=='N/A'?'<div style="font-size:12px;font-weight:600;color:#555;margin-bottom:2px">👤 '+b.contact+'</div>':'',
     b.mobile&&b.mobile!=='N/A'?'<div style="font-size:12px;color:#555;margin-bottom:2px">📞 '+b.mobile+'</div>':'',
-    b.email?'<div style="font-size:11px;margin-bottom:2px"><a href="mailto:'+b.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+b.email+'</a></div>':'',
-    /^https?:/i.test(b.gps||'')?'<div style="margin-top:6px"><a href="'+b.gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':''
+    b.email?'<div style="font-size:11px;margin-bottom:2px"><a href="mailto:'+b.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+b.email+'</a></div>':''
   ].filter(Boolean).join('');
   return '<div style="background:#fff;border-radius:10px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
     +'<div style="background:'+regColor+'18;border-bottom:2px solid '+regColor+'22;padding:10px 14px;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:'+regColor+'">'+b.name+'</div>'
     +(sub?'<div style="font-size:11px;color:#666;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">'+sub+'</div>':'')
+    +locHTML
     +'</div>'
     +(body?'<div style="padding:10px 14px;text-align:center">'+body+'</div>':'')
     +'</div>';
@@ -5034,16 +5035,15 @@ function renderPetrominPACTab(arr){
           +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
           +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
           +(city?'<div style="font-size:11px;color:#888;margin-top:3px">📌 '+city+'</div>':'')
+          +(gpsLink?'<div style="margin-top:5px"><a href="'+gpsLink+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
           +'</div>'
           +'<div style="padding:10px 14px;text-align:center">'
           +(mgr?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+mgr+'</div>':'')
           +(phone?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+phone+'</div>':'')
           +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
-          +(gpsLink?'<div style="margin-bottom:6px"><a href="'+gpsLink+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
           +(rm?'<div style="border-top:1px solid #f0f0f0;padding-top:6px;margin-top:2px">'
             +'<div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px">RM</div>'
-            +'<div style="font-size:11px;color:#555">👤 '+rm.name+'</div>'
-            +(rm.mobile?'<div style="font-size:11px;color:#555;margin-top:2px">📞 '+rm.mobile+'</div>':'')
+            +'<div style="font-size:11px;color:#555">👤 '+rm.name+(rm.mobile?' - 📞 '+rm.mobile:'')+'</div>'
             +(rm.email?'<div style="font-size:10px;margin-top:2px"><a href="mailto:'+rm.email+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">'+rm.email+'</a></div>':'')
             +'</div>':'')
           +'</div></div>';
@@ -5079,6 +5079,7 @@ function renderPetrominExpressStationsTab(arr){
   const kMobile=kFind('mobile');
   const kStEmail=keys.find(k=>{const kl=k.toLowerCase();return kl.includes('station')&&kl.includes('email');})||'';
   const kAc=kFind('ac available','ac avail'), kPms=kFind('pms'), kBatt=kFind('batter'), kEco=kFind('eco');
+  const kCoord=kFind('coordinate','coordinates','gps','lat');
   const kWH=kFind('working hours','working hour');
   const gv=(r,k)=>k?String(r[k]==null?'':r[k]).trim():'';
   // ── Second table (rows ~727+) reuses the same header keys but shifted one
@@ -5198,21 +5199,24 @@ function renderPetrominExpressStationsTab(arr){
         const regMob=rmData?fmtNum(rmData.mobile):'';
         const regEmail=rmData?rmData.email:'';
         const locLine=[dist,city].filter(Boolean).join(' - ');
+        const coord=gv(v,kCoord);
+        const coordLink=coord?(/^https?:\/\//i.test(coord)?coord:'https://www.google.com/maps?q='+encodeURIComponent(coord)):'';
+        const coordHTML=coord?'<a href="'+coordLink+'" target="_blank" style="display:inline-block;font-size:10px;color:'+rc+';opacity:.9;margin-top:3px;text-decoration:none;border-bottom:1px dotted '+rc+'">🗺️ '+coord+'</a>':'';
         return '<div style="background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);">'
           +'<div style="background:'+rc+'12;padding:8px 12px;text-align:center">'
           +'<div style="font-size:12px;font-weight:700;color:'+rc+'">'+(be?be+' - ':'')+station+'</div>'
           +(locLine?'<div style="font-size:10px;color:'+rc+';opacity:.75;margin-top:2px">📍 '+locLine+'</div>':'')
+          +coordHTML
           +'</div>'
           +'<div style="padding:8px 12px;text-align:center">'
           +(am?'<div style="font-size:11px;color:#555;margin-bottom:3px">👤 '+am+'</div>':'')
           +(mob?'<div style="font-size:11px;color:#555;margin-bottom:3px">📞 '+mob+'</div>':'')
           +(amEmail?'<div style="font-size:10px;margin-bottom:3px"><a href="mailto:'+amEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">✉️ '+amEmail+'</a></div>':'')
-          +(stEmail&&stEmail!==amEmail?'<div style="font-size:10px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:4px"><span style="background:#daeaf8;color:#185fa5;font-weight:800;padding:1px 6px;border-radius:4px;font-size:9px">CC</span><a href="mailto:'+stEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">'+stEmail+'</a></div>':'')
+          +(stEmail&&stEmail!==amEmail?'<div style="font-size:10px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:4px"><span style="background:#daeaf8;color:#185fa5;font-weight:800;padding:1px 6px;border-radius:4px;font-size:9px;white-space:nowrap">Station Email</span><a href="mailto:'+stEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">'+stEmail+'</a></div>':'')
           +'<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2px;margin-bottom:2px">'+badge('AC',gv(v,kAc))+badge('PMS',gv(v,kPms))+badge('BATTERIES',gv(v,kBatt))+badge('ECO WASH',gv(v,kEco))+'</div>'
           +(regName?'<div style="border-top:1px solid #f0e8d0;padding-top:6px;margin-top:6px">'
             +'<div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px">RM</div>'
-            +'<div style="font-size:11px;color:#555">👤 '+regName+'</div>'
-            +(regMob?'<div style="font-size:11px;color:#555;margin-top:2px">📞 '+regMob+'</div>':'')
+            +'<div style="font-size:11px;color:#555">👤 '+regName+(regMob?' - 📞 '+regMob:'')+'</div>'
             +(regEmail?'<div style="font-size:10px;margin-top:2px"><a href="mailto:'+regEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">'+regEmail+'</a></div>':'')
             +'</div>':'')
           +'</div></div>';
