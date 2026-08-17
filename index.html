@@ -665,10 +665,16 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <div class="card">
       <div class="ctit">New Time-Off Request</div>
       <div id="toSubmitNote"></div>
-      <div class="to-field">
-        <label>Employee Name</label>
-        <input list="toEmpList" id="toName" placeholder="Type or pick a name">
-        <datalist id="toEmpList"></datalist>
+      <div class="to-row2">
+        <div class="to-field">
+          <label>Employee Name</label>
+          <input list="toEmpList" id="toName" placeholder="Type or pick a name">
+          <datalist id="toEmpList"></datalist>
+        </div>
+        <div class="to-field">
+          <label>Badge #</label>
+          <input id="toBadge" placeholder="e.g. 4521">
+        </div>
       </div>
       <div class="to-row2">
         <div class="to-field">
@@ -9148,6 +9154,11 @@ function toRenderEmpDatalist(){
 function toRenderSubmitNote(){
   const name = document.getElementById('toName').value.trim();
   const box = document.getElementById('toSubmitNote');
+  const badgeEl = document.getElementById('toBadge');
+  if(name && badgeEl && !badgeEl.value){
+    const prior = TO_ROWS.find(r=>r.Employee===name && r.Badge);
+    if(prior) badgeEl.value = prior.Badge;
+  }
   if(!name){ box.innerHTML=''; return; }
   const used = toApprovedHours(name, toCurrentMonthKey());
   const remaining = TO_MONTHLY_LIMIT - used;
@@ -9171,7 +9182,7 @@ function toReqRow(r, withActions){
     actions = `<span class="to-badge ${cls}">${label}</span>`;
   }
   return `<div class="to-req">
-    <div><div class="rn">${toEsc(r.Employee)}</div><div class="rm">${toEsc(r.Reason)} · ${toEsc(r.Hours)} hrs · ${toEsc(r.Date)}${r.Notes?' · '+toEsc(r.Notes):''}</div></div>
+    <div><div class="rn">${toEsc(r.Employee)}${r.Badge?` <span style="font-weight:400;color:#999;font-size:11px">· Badge ${toEsc(r.Badge)}</span>`:''}</div><div class="rm">${toEsc(r.Reason)} · ${toEsc(r.Hours)} hrs · ${toEsc(r.Date)}${r.Notes?' · '+toEsc(r.Notes):''}</div></div>
     ${actions}
   </div>`;
 }
@@ -9220,6 +9231,7 @@ function toRenderSummary(){
 
 async function toSubmitRequest(){
   const name = document.getElementById('toName').value.trim();
+  const badge = document.getElementById('toBadge').value.trim();
   const reason = document.getElementById('toReason').value;
   const hours = parseFloat(document.getElementById('toHours').value);
   const date = document.getElementById('toDate').value;
@@ -9232,9 +9244,10 @@ async function toSubmitRequest(){
   const btn = document.getElementById('toSubmitBtn');
   btn.disabled = true; btn.textContent = 'Submitting…';
   try{
-    const result = await toPost({ action:'submit', employee:name, reason, hours, date, notes });
+    const result = await toPost({ action:'submit', employee:name, badge, reason, hours, date, notes });
     if(!result.ok){ toToast(result.error || 'Failed to submit'); return; }
     document.getElementById('toName').value='';
+    document.getElementById('toBadge').value='';
     document.getElementById('toHours').value='';
     document.getElementById('toNotes').value='';
     document.getElementById('toDate').value=toTodayISO();
