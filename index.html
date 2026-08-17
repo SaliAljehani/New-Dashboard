@@ -330,7 +330,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 @media(max-width:900px){.krow{grid-template-columns:repeat(3,1fr)}.r2,.comp-grid,.call-krow{grid-template-columns:1fr}}
 
 /* ── Time-Off tab ─────────────────────────────────────────────────────── */
-.to-wrap{direction:rtl}
+.to-wrap{direction:ltr;text-align:left}
 .to-hero{background:#fff;border-radius:14px;padding:16px 22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:space-between;gap:18px;border:0.5px solid #eee;flex-wrap:wrap}
 .to-hero .hi2{font-size:17px;font-weight:700;color:#1a1a2e}
 .to-hero .hi3{font-size:12px;color:#666;margin-top:2px}
@@ -379,7 +379,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .to-es.over{color:#c0272d;font-weight:700}
 .to-modal-overlay{display:none;position:fixed;inset:0;background:rgba(20,20,20,.4);z-index:200;align-items:center;justify-content:center;padding:16px}
 .to-modal-overlay.show{display:flex}
-.to-modal-box{background:#fff;border-radius:14px;padding:20px;max-width:320px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.25);direction:rtl;text-align:right}
+.to-modal-box{background:#fff;border-radius:14px;padding:20px;max-width:320px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.25);direction:ltr;text-align:left}
 .to-modal-box h3{margin:0 0 6px;font-size:15px;color:#1a1a2e;font-weight:700}
 .to-modal-box p{margin:0 0 12px;font-size:12px;color:#888}
 .to-modal-box input{width:100%;padding:9px 11px;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;background:#fafafa;outline:none;margin-bottom:9px}
@@ -514,7 +514,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <button class="pnav" onclick="showPage(1,this)">📊 Team Performance</button>
     <button class="pnav" onclick="showPage(5,this)">📅 Team Schedules</button>
     <button class="pnav" onclick="showPage(8,this)">🏆 Employee of the Month</button>
-    <button class="pnav" onclick="showPage(12,this)">🕐 Time-Off</button>
+    <button class="pnav" onclick="showPage(12,this)" style="position:relative">🕐 Time-Off<span id="toNavBadge" style="display:none;position:absolute;top:-6px;right:-6px;min-width:16px;height:16px;background:#c0272d;border-radius:8px;font-size:10px;font-weight:700;color:#fff;text-align:center;line-height:16px;padding:0 4px;box-sizing:border-box"></span></button>
   </div>
 
   <!-- PAGE 1 -->
@@ -9082,6 +9082,14 @@ function toSwitchTab(tab){
   document.querySelectorAll('.to-panel').forEach(p=>p.classList.toggle('active', p.id==='toPanel-'+tab));
 }
 
+function toUpdateNavBadge(){
+  const badge = document.getElementById('toNavBadge');
+  if(!badge) return;
+  const pending = TO_ROWS.filter(r=>r.Status==='Pending').length;
+  if(pending > 0){ badge.textContent = pending > 9 ? '9+' : pending; badge.style.display='block'; }
+  else{ badge.style.display='none'; }
+}
+
 async function renderTimeOff(forceFresh){
   if(TO_LOADING) return;
   TO_LOADING = true;
@@ -9105,6 +9113,7 @@ async function renderTimeOff(forceFresh){
   toRenderApprovals();
   toRenderSummary();
   toRenderSubmitNote();
+  toUpdateNavBadge();
   if(!document.getElementById('toDate').value) document.getElementById('toDate').value = toTodayISO();
 }
 
@@ -9289,6 +9298,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if(nameEl) nameEl.addEventListener('input', toRenderSubmitNote);
   const pwInput = document.getElementById('toPwInput');
   if(pwInput) pwInput.addEventListener('keydown', e=>{ if(e.key==='Enter') toConfirmDecide(); });
+  // Quiet background load just for the nav badge count, doesn't touch the tab UI
+  toFetchRows(false).then(rows=>{ TO_ROWS = rows; TO_LOADED = true; toUpdateNavBadge(); }).catch(()=>{});
 });
 
 // Auto-start on page load
