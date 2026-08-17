@@ -328,6 +328,70 @@ tr:last-child td{border-bottom:none}
 .ttn.nissan.active{background:#c0272d}.ttn.petromin.active{background:#D98E45;color:#fff}.ttn.stellantis.active{background:#1565c0}
 footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px solid #eee;margin-top:20px;background:#fff}
 @media(max-width:900px){.krow{grid-template-columns:repeat(3,1fr)}.r2,.comp-grid,.call-krow{grid-template-columns:1fr}}
+
+/* ── Time-Off tab ─────────────────────────────────────────────────────── */
+.to-wrap{direction:rtl}
+.to-hero{background:#fff;border-radius:14px;padding:16px 22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:space-between;gap:18px;border:0.5px solid #eee;flex-wrap:wrap}
+.to-hero .hi2{font-size:17px;font-weight:700;color:#1a1a2e}
+.to-hero .hi3{font-size:12px;color:#666;margin-top:2px}
+.to-chip{font-size:12px;color:#c0272d;background:rgba(192,39,45,.08);padding:6px 14px;border-radius:20px;border:1px solid rgba(192,39,45,.2);font-weight:700;cursor:pointer}
+.to-krow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.to-tabs{display:flex;gap:5px;margin-bottom:14px;justify-content:center}
+.to-tab{padding:6px 16px;border-radius:8px;border:1.5px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#666}
+.to-tab.active{background:rgba(192,39,45,.05);color:#a02030;border-color:rgba(192,39,45,.12);font-weight:700}
+.to-panel{display:none}
+.to-panel.active{display:block}
+.to-field{margin-bottom:12px}
+.to-field label{display:block;font-size:11.5px;font-weight:600;color:#555;margin-bottom:5px}
+.to-field input,.to-field select,.to-field textarea{width:100%;padding:8px 10px;border-radius:8px;border:1.5px solid #ddd;background:#fafafa;font-family:inherit;font-size:12.5px;color:#333;outline:none}
+.to-field input:focus,.to-field select:focus,.to-field textarea:focus{border-color:#c0272d}
+.to-row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.to-note{display:flex;align-items:center;gap:8px;padding:9px 13px;border-radius:9px;background:#e6f4ea;color:#1e7d3c;font-size:12.5px;font-weight:700;margin-bottom:14px}
+.to-note.warn{background:#fde8e6;color:#c0272d}
+.to-submitbtn{padding:10px 22px;border-radius:8px;border:none;background:#c0272d;color:#fff;font-size:13px;cursor:pointer;font-weight:700}
+.to-submitbtn:hover{background:#a02030}
+.to-submitbtn:disabled{opacity:.5;cursor:not-allowed}
+.to-cardhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.to-linkbtn{background:none;border:none;color:#888;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer}
+.to-linkbtn:hover{color:#c0272d}
+.to-req{border:1px solid #eee;border-radius:8px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;background:#fefefe;margin-bottom:8px}
+.to-req:last-child{margin-bottom:0}
+.to-req .rn{font-weight:700;font-size:13px;color:#1a1a2e}
+.to-req .rm{font-size:11px;color:#888;margin-top:2px}
+.to-badge{font-size:10.5px;font-weight:700;padding:4px 11px;border-radius:20px;white-space:nowrap}
+.to-badge.pend{background:#fff3cd;color:#8a6300}
+.to-badge.appr{background:#e6f4ea;color:#1e7d3c}
+.to-badge.rej{background:#fde8e6;color:#c0272d}
+.to-btnrow{display:flex;gap:7px}
+.to-bsm{padding:6px 13px;border-radius:7px;font-size:11px;font-weight:700;border:none;cursor:pointer}
+.to-b-appr{background:#c0272d;color:#fff}
+.to-b-appr:hover{background:#a02030}
+.to-b-rej{background:#fff;color:#c0272d;border:1.5px solid #c0272d}
+.to-b-rej:hover{background:#fde8e6}
+.to-empty{text-align:center;padding:36px 16px;color:#aaa;font-size:12.5px}
+.to-emp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.to-emp{background:#fff;border:1px solid #eee;border-radius:10px;padding:14px;text-align:center}
+.to-emp .en{font-weight:700;font-size:12.5px;margin-bottom:8px}
+.to-ring{width:78px;height:78px;margin:0 auto 6px;position:relative}
+.to-ring svg{transform:rotate(-90deg)}
+.to-ring .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#1a1a2e}
+.to-es{font-size:10.5px;color:#888}
+.to-es.over{color:#c0272d;font-weight:700}
+.to-modal-overlay{display:none;position:fixed;inset:0;background:rgba(20,20,20,.4);z-index:200;align-items:center;justify-content:center;padding:16px}
+.to-modal-overlay.show{display:flex}
+.to-modal-box{background:#fff;border-radius:14px;padding:20px;max-width:320px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.25);direction:rtl;text-align:right}
+.to-modal-box h3{margin:0 0 6px;font-size:15px;color:#1a1a2e;font-weight:700}
+.to-modal-box p{margin:0 0 12px;font-size:12px;color:#888}
+.to-modal-box input{width:100%;padding:9px 11px;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;background:#fafafa;outline:none;margin-bottom:9px}
+.to-modal-box input:focus{border-color:#c0272d}
+.to-modal-err{color:#c0272d;font-size:11.5px;font-weight:700;margin:-3px 0 9px;display:none}
+.to-modal-err.show{display:block}
+.to-modal-actions{display:flex;gap:8px;margin-top:4px}
+.to-modal-actions button{flex:1;padding:9px;border-radius:8px;font-family:inherit;font-weight:700;font-size:12.5px;cursor:pointer;border:none}
+.to-modal-cancel{background:#eee;color:#333}
+.to-modal-confirm{background:#c0272d;color:#fff}
+.to-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a2e;color:#fff;padding:11px 20px;border-radius:9px;font-size:12.5px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:250}
+.to-toast.show{opacity:1;transform:translateX(-50%) translateY(-6px)}
 @media(max-width:760px){.noAnsGrid{grid-template-columns:1fr!important}.noAnsCol{border-right:none!important}.noAnsCol+.noAnsCol{border-top:1px solid #eee}}
 
 /* ── ATTENDANCE TAB STYLES ── */
@@ -450,6 +514,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <button class="pnav" onclick="showPage(1,this)">📊 Team Performance</button>
     <button class="pnav" onclick="showPage(5,this)">📅 Team Schedules</button>
     <button class="pnav" onclick="showPage(8,this)">🏆 Employee of the Month</button>
+    <button class="pnav" onclick="showPage(12,this)">🕐 Time-Off</button>
   </div>
 
   <!-- PAGE 1 -->
@@ -572,6 +637,87 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 </div>
 <div id="page11" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
   <div id="caseHandlingContent"><div style="text-align:center;padding:40px;color:#aaa">Loading...</div></div>
+</div>
+<div id="page12" style="display:none;max-width:1100px;margin:0 auto;padding:18px 24px" class="to-wrap">
+
+  <div class="to-hero">
+    <div>
+      <div class="hi2">Employee Time-Off Requests</div>
+      <div class="hi3">Monthly allowance: 4 hours per employee — calculated from approved requests only</div>
+    </div>
+    <div class="to-chip" id="toMonthChip">📅 Loading…</div>
+  </div>
+
+  <div class="to-krow" id="toKrow">
+    <div class="kc c1"><div class="klbl">Pending</div><div class="kval" id="toKpiPending">–</div></div>
+    <div class="kc c2"><div class="klbl">Approved This Month</div><div class="kval" id="toKpiApproved">–</div></div>
+    <div class="kc c3"><div class="klbl">Total Approved Hours</div><div class="kval" id="toKpiHours">–</div></div>
+    <div class="kc c4"><div class="klbl">Over Limit</div><div class="kval" id="toKpiOver">–</div></div>
+  </div>
+
+  <div class="to-tabs">
+    <div class="to-tab active" data-totab="submit" onclick="toSwitchTab('submit')">Submit Request</div>
+    <div class="to-tab" data-totab="approvals" onclick="toSwitchTab('approvals')">Approvals <span id="toPendingCount"></span></div>
+    <div class="to-tab" data-totab="summary" onclick="toSwitchTab('summary')">Employee Summary</div>
+  </div>
+
+  <div class="to-panel active" id="toPanel-submit">
+    <div class="card">
+      <div class="ctit">New Time-Off Request</div>
+      <div id="toSubmitNote"></div>
+      <div class="to-field">
+        <label>Employee Name</label>
+        <input list="toEmpList" id="toName" placeholder="Type or pick a name">
+        <datalist id="toEmpList"></datalist>
+      </div>
+      <div class="to-row2">
+        <div class="to-field">
+          <label>Reason</label>
+          <select id="toReason">
+            <option value="Has an appointment">Has an appointment</option>
+            <option value="Sick">Sick</option>
+            <option value="Family emergency">Family emergency</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="to-field">
+          <label>Hours</label>
+          <input type="number" id="toHours" min="0.5" max="8" step="0.5" placeholder="e.g. 1.5">
+        </div>
+      </div>
+      <div class="to-field">
+        <label>Date</label>
+        <input type="date" id="toDate">
+      </div>
+      <div class="to-field">
+        <label>Notes (optional)</label>
+        <textarea id="toNotes" rows="2" placeholder="Any extra details..."></textarea>
+      </div>
+      <button class="to-submitbtn" id="toSubmitBtn" onclick="toSubmitRequest()">Submit for Shahad's Approval</button>
+    </div>
+  </div>
+
+  <div class="to-panel" id="toPanel-approvals">
+    <div class="card">
+      <div class="to-cardhead">
+        <div class="ctit" style="margin:0">Awaiting Shahad's Approval</div>
+        <button class="to-linkbtn" onclick="toOpenChangePassword()">🔒 Change password</button>
+      </div>
+      <div id="toPendingList"></div>
+    </div>
+    <div class="card">
+      <div class="ctit">Decision History</div>
+      <div id="toDecidedList"></div>
+    </div>
+  </div>
+
+  <div class="to-panel" id="toPanel-summary">
+    <div class="card">
+      <div class="ctit">Employee Balance Summary — selected month</div>
+      <div class="to-emp-grid" id="toEmpGrid"></div>
+    </div>
+  </div>
+
 </div>
 </div>
 <footer style="border-top:2px solid #c0272d;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px 18px">
@@ -1757,6 +1903,8 @@ function showPage(n,btn){CP=n;
   if(n===8)renderEOM();
   var _p11=document.getElementById('page11'); if(_p11) _p11.style.display=n===11?'block':'none';
   if(n===11) renderCaseHandling();
+  var _p12=document.getElementById('page12'); if(_p12) _p12.style.display=n===12?'block':'none';
+  if(n===12) renderTimeOff();
 }
 
 /* ===== CASE HANDLING — reads the "Case Handling" tab dynamically ===== */
@@ -8865,6 +9013,284 @@ function markAllNotifRead(){
   updateNotifBadge(); renderNotifPanel();
 }
 
+/* ===== TIME-OFF TAB — reads/writes the "Time-Off" sheet via Apps Script ===== */
+const TO_SHEET = 'Time-Off';
+const TO_MONTHLY_LIMIT = 4;
+const TO_API_URL = 'https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec';
+
+let TO_ROWS = [];
+let TO_LOADED = false;
+let TO_LOADING = false;
+let TO_PENDING_DECIDE = null; // {id, status, employee}
+let TO_SELECTED_MONTH = null; // 'YYYY-MM'
+
+function toEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function toToast(msg){
+  const t=document.getElementById('toToast'); if(!t) return;
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2400);
+}
+function toOpenModal(id){ document.getElementById(id).classList.add('show'); const f=document.querySelector('#'+id+' input'); if(f) setTimeout(()=>f.focus(),50); }
+function toCloseModal(id){
+  document.getElementById(id).classList.remove('show');
+  document.querySelectorAll('#'+id+' .to-modal-err').forEach(e=>e.classList.remove('show'));
+  document.querySelectorAll('#'+id+' input').forEach(i=>i.value='');
+}
+
+async function toFetchRows(fresh){
+  const url = `${TO_API_URL}?id=${SHEET_ID}&sheetName=${encodeURIComponent(TO_SHEET)}${fresh?'&fresh=1':''}`;
+  const res = await fetch(url);
+  const rows = await res.json();
+  return Array.isArray(rows) ? rows : [];
+}
+
+async function toPost(payload){
+  const res = await fetch(TO_API_URL, {
+    method:'POST',
+    headers:{'Content-Type':'text/plain;charset=utf-8'}, // avoids CORS preflight against Apps Script
+    body: JSON.stringify(payload)
+  });
+  return res.json();
+}
+
+function toMonthKeyOf(dateStr){ return dateStr ? String(dateStr).slice(0,7) : ''; }
+function toTodayISO(){ return new Date().toISOString().slice(0,10); }
+function toCurrentMonthKey(){ return toTodayISO().slice(0,7); }
+function toMonthLabel(key){
+  const [y,m]=key.split('-').map(Number);
+  const names=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  return `${names[m-1]} ${y}`;
+}
+function toAllMonthKeys(){
+  const set=new Set([toCurrentMonthKey()]);
+  TO_ROWS.forEach(r=>{ const k=toMonthKeyOf(r.Date); if(k) set.add(k); });
+  return Array.from(set).sort().reverse();
+}
+function toApprovedHours(name, monthKey){
+  return TO_ROWS
+    .filter(r=>r.Employee===name && r.Status==='Approved' && toMonthKeyOf(r.Date)===monthKey)
+    .reduce((sum,r)=>sum+(Number(r.Hours)||0),0);
+}
+function toAllEmployeeNames(){
+  const set=new Set();
+  TO_ROWS.forEach(r=>{ if(r.Employee) set.add(r.Employee); });
+  return Array.from(set).sort((a,b)=>a.localeCompare(b));
+}
+
+function toSwitchTab(tab){
+  document.querySelectorAll('.to-tab').forEach(t=>t.classList.toggle('active', t.dataset.totab===tab));
+  document.querySelectorAll('.to-panel').forEach(p=>p.classList.toggle('active', p.id==='toPanel-'+tab));
+}
+
+async function renderTimeOff(forceFresh){
+  if(TO_LOADING) return;
+  TO_LOADING = true;
+  if(!TO_LOADED){
+    document.getElementById('toEmpGrid').innerHTML = '<div class="to-empty">Loading…</div>';
+    document.getElementById('toPendingList').innerHTML = '<div class="to-empty">Loading…</div>';
+  }
+  try{
+    TO_ROWS = await toFetchRows(forceFresh || !TO_LOADED);
+    TO_LOADED = true;
+  }catch(err){
+    toToast('Failed to load Time-Off data');
+    TO_LOADING = false;
+    return;
+  }
+  TO_LOADING = false;
+  if(!TO_SELECTED_MONTH) TO_SELECTED_MONTH = toCurrentMonthKey();
+  toRenderMonthChip();
+  toRenderKpis();
+  toRenderEmpDatalist();
+  toRenderApprovals();
+  toRenderSummary();
+  toRenderSubmitNote();
+  if(!document.getElementById('toDate').value) document.getElementById('toDate').value = toTodayISO();
+}
+
+function toRenderMonthChip(){
+  const chip=document.getElementById('toMonthChip');
+  chip.textContent = '📅 ' + toMonthLabel(TO_SELECTED_MONTH);
+  chip.onclick = () => {
+    const keys=toAllMonthKeys();
+    const idx=keys.indexOf(TO_SELECTED_MONTH);
+    TO_SELECTED_MONTH = keys[(idx+1)%keys.length] || toCurrentMonthKey();
+    toRenderMonthChip(); toRenderSummary(); toRenderKpis();
+  };
+}
+
+function toRenderKpis(){
+  const mk = TO_SELECTED_MONTH;
+  const pending = TO_ROWS.filter(r=>r.Status==='Pending').length;
+  const approvedThisMonth = TO_ROWS.filter(r=>r.Status==='Approved' && toMonthKeyOf(r.Date)===mk).length;
+  const totalHours = TO_ROWS.filter(r=>r.Status==='Approved' && toMonthKeyOf(r.Date)===mk).reduce((s,r)=>s+(Number(r.Hours)||0),0);
+  const names = toAllEmployeeNames();
+  const over = names.filter(n=>toApprovedHours(n,mk) > TO_MONTHLY_LIMIT).length;
+  document.getElementById('toKpiPending').textContent = pending;
+  document.getElementById('toKpiApproved').textContent = approvedThisMonth;
+  document.getElementById('toKpiHours').textContent = totalHours;
+  document.getElementById('toKpiOver').textContent = over;
+}
+
+function toRenderEmpDatalist(){
+  document.getElementById('toEmpList').innerHTML = toAllEmployeeNames().map(n=>`<option value="${toEsc(n)}">`).join('');
+}
+
+function toRenderSubmitNote(){
+  const name = document.getElementById('toName').value.trim();
+  const box = document.getElementById('toSubmitNote');
+  if(!name){ box.innerHTML=''; return; }
+  const used = toApprovedHours(name, toCurrentMonthKey());
+  const remaining = TO_MONTHLY_LIMIT - used;
+  if(remaining > 0){
+    box.innerHTML = `<div class="to-note">✅ ${toEsc(name)}'s remaining balance this month: <b>${remaining}</b> of ${TO_MONTHLY_LIMIT} hrs</div>`;
+  }else{
+    box.innerHTML = `<div class="to-note warn">⚠️ ${toEsc(name)} has used all monthly hours (${used} of ${TO_MONTHLY_LIMIT}) — this request would go over the limit</div>`;
+  }
+}
+
+function toReqRow(r, withActions){
+  const map={Pending:['pend','Pending'],Approved:['appr','Approved'],Rejected:['rej','Rejected']};
+  const [cls,label]=map[r.Status]||['pend','Pending'];
+  let actions;
+  if(withActions){
+    actions = `<div class="to-btnrow">
+      <button class="to-bsm to-b-appr" onclick="toDecide('${toEsc(r.ID)}','Approved','${toEsc(r.Employee)}')">Approve</button>
+      <button class="to-bsm to-b-rej" onclick="toDecide('${toEsc(r.ID)}','Rejected','${toEsc(r.Employee)}')">Reject</button>
+    </div>`;
+  }else{
+    actions = `<span class="to-badge ${cls}">${label}</span>`;
+  }
+  return `<div class="to-req">
+    <div><div class="rn">${toEsc(r.Employee)}</div><div class="rm">${toEsc(r.Reason)} · ${toEsc(r.Hours)} hrs · ${toEsc(r.Date)}${r.Notes?' · '+toEsc(r.Notes):''}</div></div>
+    ${actions}
+  </div>`;
+}
+
+function toRenderApprovals(){
+  const pending = TO_ROWS.filter(r=>r.Status==='Pending').sort((a,b)=>String(a.Date).localeCompare(String(b.Date)));
+  const decided = TO_ROWS.filter(r=>r.Status!=='Pending').sort((a,b)=>String(b.Date).localeCompare(String(a.Date))).slice(0,30);
+
+  document.getElementById('toPendingCount').textContent = pending.length ? `(${pending.length})` : '';
+  document.getElementById('toPendingList').innerHTML = pending.length
+    ? pending.map(r=>toReqRow(r,true)).join('')
+    : '<div class="to-empty">📭 No pending requests</div>';
+  document.getElementById('toDecidedList').innerHTML = decided.length
+    ? decided.map(r=>toReqRow(r,false)).join('')
+    : '<div class="to-empty">No history yet</div>';
+}
+
+function toGaugeSVG(remaining, used){
+  const pct=Math.max(0,Math.min(1,remaining/TO_MONTHLY_LIMIT));
+  const over=used>TO_MONTHLY_LIMIT;
+  const color=over?'#c0272d':(remaining<=1?'#c98a2e':'#1e7d3c');
+  const r=33, c=2*Math.PI*r;
+  const dash=over?0:c*pct;
+  return `<svg width="78" height="78" viewBox="0 0 78 78">
+    <circle cx="39" cy="39" r="${r}" fill="none" stroke="#f0e8e8" stroke-width="8"/>
+    <circle cx="39" cy="39" r="${r}" fill="none" stroke="${color}" stroke-width="8" stroke-dasharray="${c}" stroke-dashoffset="${c-dash}" stroke-linecap="round"/>
+  </svg>`;
+}
+
+function toRenderSummary(){
+  const mk = TO_SELECTED_MONTH;
+  const names = toAllEmployeeNames();
+  const grid = document.getElementById('toEmpGrid');
+  if(!names.length){ grid.innerHTML='<div class="to-empty">👤 No employee data yet</div>'; return; }
+  grid.innerHTML = names.map(name=>{
+    const used = toApprovedHours(name, mk);
+    const remaining = Math.max(0, TO_MONTHLY_LIMIT - used);
+    const over = used > TO_MONTHLY_LIMIT;
+    return `<div class="to-emp">
+      <div class="en">${toEsc(name)}</div>
+      <div class="to-ring">${toGaugeSVG(remaining,used)}<div class="num" style="color:${over?'#c0272d':'#1a1a2e'}">${over?used:remaining}</div></div>
+      <div class="to-es ${over?'over':''}">${over?`Over limit by ${(used-TO_MONTHLY_LIMIT).toFixed(1)} hrs`:`Used ${used} of ${TO_MONTHLY_LIMIT}`}</div>
+    </div>`;
+  }).join('');
+}
+
+async function toSubmitRequest(){
+  const name = document.getElementById('toName').value.trim();
+  const reason = document.getElementById('toReason').value;
+  const hours = parseFloat(document.getElementById('toHours').value);
+  const date = document.getElementById('toDate').value;
+  const notes = document.getElementById('toNotes').value.trim();
+
+  if(!name){ toToast('Please enter the employee name'); return; }
+  if(!hours || hours<=0){ toToast('Please enter a valid number of hours'); return; }
+  if(!date){ toToast('Please pick a date'); return; }
+
+  const btn = document.getElementById('toSubmitBtn');
+  btn.disabled = true; btn.textContent = 'Submitting…';
+  try{
+    const result = await toPost({ action:'submit', employee:name, reason, hours, date, notes });
+    if(!result.ok){ toToast(result.error || 'Failed to submit'); return; }
+    document.getElementById('toName').value='';
+    document.getElementById('toHours').value='';
+    document.getElementById('toNotes').value='';
+    document.getElementById('toDate').value=toTodayISO();
+    toToast("Request sent, awaiting Shahad's approval ✅");
+    await renderTimeOff(true);
+  }catch(err){
+    toToast('Network error — please try again');
+  }finally{
+    btn.disabled = false; btn.textContent = "Submit for Shahad's Approval";
+  }
+}
+
+function toDecide(id, status, employee){
+  TO_PENDING_DECIDE = { id, status, employee };
+  document.getElementById('toPwTitle').textContent = status==='Approved' ? 'Confirm Approval' : 'Confirm Rejection';
+  document.getElementById('toPwMsg').textContent = `Enter the password to ${status==='Approved'?'approve':'reject'} ${employee}'s request`;
+  toOpenModal('toPwOverlay');
+}
+
+async function toConfirmDecide(){
+  const input = document.getElementById('toPwInput');
+  const err = document.getElementById('toPwErr');
+  if(!TO_PENDING_DECIDE) return;
+  const { id, status } = TO_PENDING_DECIDE;
+  try{
+    const result = await toPost({ action:'decide', id, status, password: input.value });
+    if(!result.ok){
+      err.textContent = result.error === 'Wrong password' ? 'Incorrect password' : (result.error || 'Failed');
+      err.classList.add('show');
+      return;
+    }
+    toCloseModal('toPwOverlay');
+    TO_PENDING_DECIDE = null;
+    toToast(status==='Approved' ? "Approved — hours deducted from the employee's balance" : 'Request rejected');
+    await renderTimeOff(true);
+  }catch(e){
+    err.textContent = 'Network error — please try again';
+    err.classList.add('show');
+  }
+}
+
+function toOpenChangePassword(){ toOpenModal('toCpOverlay'); }
+
+async function toConfirmChangePassword(){
+  const oldEl=document.getElementById('toCpOld'), n1=document.getElementById('toCpNew'), n2=document.getElementById('toCpNew2');
+  const err=document.getElementById('toCpErr');
+  if(!n1.value || n1.value.length<4){ err.textContent='New password must be at least 4 characters'; err.classList.add('show'); return; }
+  if(n1.value!==n2.value){ err.textContent='Passwords do not match'; err.classList.add('show'); return; }
+  try{
+    const result = await toPost({ action:'changePassword', oldPassword: oldEl.value, newPassword: n1.value });
+    if(!result.ok){ err.textContent = result.error || 'Failed'; err.classList.add('show'); return; }
+    toCloseModal('toCpOverlay');
+    toToast('Password updated');
+  }catch(e){
+    err.textContent='Network error — please try again'; err.classList.add('show');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const nameEl = document.getElementById('toName');
+  if(nameEl) nameEl.addEventListener('input', toRenderSubmitNote);
+  const pwInput = document.getElementById('toPwInput');
+  if(pwInput) pwInput.addEventListener('keydown', e=>{ if(e.key==='Enter') toConfirmDecide(); });
+});
+
 // Auto-start on page load
 // Paint the shell immediately on Daily Reference (which loads its own data,
 // independent of the 9 dashboard sheets) so agents never wait on data they
@@ -8885,5 +9311,37 @@ window.addEventListener('DOMContentLoaded', () => {
 // setInterval(() => { loadAllData(true); }, 300000);
 // setInterval(() => { loadAllData(true); }, 900000);
 </script>
+
+<!-- Time-Off: password confirm modal -->
+<div class="to-modal-overlay" id="toPwOverlay">
+  <div class="to-modal-box">
+    <h3 id="toPwTitle">Confirm</h3>
+    <p id="toPwMsg">Enter the password to continue</p>
+    <div class="to-modal-err" id="toPwErr">Incorrect password</div>
+    <input type="password" id="toPwInput" placeholder="Password">
+    <div class="to-modal-actions">
+      <button class="to-modal-cancel" onclick="toCloseModal('toPwOverlay')">Cancel</button>
+      <button class="to-modal-confirm" onclick="toConfirmDecide()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Time-Off: change password modal -->
+<div class="to-modal-overlay" id="toCpOverlay">
+  <div class="to-modal-box">
+    <h3>Change Password</h3>
+    <p>Enter current and new password</p>
+    <div class="to-modal-err" id="toCpErr">Check the fields</div>
+    <input type="password" id="toCpOld" placeholder="Current password">
+    <input type="password" id="toCpNew" placeholder="New password">
+    <input type="password" id="toCpNew2" placeholder="Confirm new password">
+    <div class="to-modal-actions">
+      <button class="to-modal-cancel" onclick="toCloseModal('toCpOverlay')">Cancel</button>
+      <button class="to-modal-confirm" onclick="toConfirmChangePassword()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="to-toast" id="toToast"></div>
 </body>
 </html>
