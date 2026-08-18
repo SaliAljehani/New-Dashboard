@@ -6208,12 +6208,16 @@ async function renderInstructionTab(brand, cfg){
   let mode='warranty';
   let apptHeaders=null;
   let pendingPMSTitle=null;
+  let _vmJustSeen=false;
 
   arr.forEach(r=>{
     const sec=String(r[secKey]||'').trim();
     const title=String(r[titleKey]||'').trim();
     const c1=String(r[col1Key]||'').trim();
     const c2=col2Key?String(r[col2Key]||'').trim():'';
+
+    if(/vehicle\s*model/i.test(sec)){ _vmJustSeen=true; return; } // صف الموديلات — يظهر في زر Vehicles فقط
+    if(_vmJustSeen){ _vmJustSeen=false; if(sec.indexOf('/')>=0) return; } // تجاهل صف الموديلات اللي تحته
 
     if(sec==='Appointment Script'){ mode='appt'; apptHeaders=null; return; }
     if(!sec && title==='Email to'){ mode='email'; return; }
@@ -8379,16 +8383,15 @@ async function renderRef(){
         +'</div>';
     };
 
-    // 2-column subject layout
-    const groupOrder=['Inquiry','Appointment','FollowUp-Complaints','Comment','Request','NA Complaint','Complaint'];
-    const orderedGroups=groupOrder.filter(g=>sGroups[g]).concat(Object.keys(sGroups).filter(g=>!groupOrder.includes(g)));
-    // Request + All Complaints go side-by-side in a dedicated bottom row
-    const bottomPair=['Request','Complaint'].filter(g=>sGroups[g]);
-    const zigzagGroups=orderedGroups.filter(g=>g!=='Request'&&g!=='Complaint');
-    const col1=[],col2=[];
-    zigzagGroups.forEach((g,i)=>(i%2===0?col1:col2).push(g));
+    // 2-column subject layout — كل زوج جنب بعض بالترتيب المطلوب
+    const wantedOrder=['Inquiry','Appointment','Invoice','Comment','FollowUp-Complaints','NA Complaint','Request - Contract','Request','Complaint'];
+    const _normG=s=>String(s).toLowerCase().replace(/[\s\-]+/g,'');
+    const _gkeys=Object.keys(sGroups);
+    const orderedGroups=[];
+    wantedOrder.forEach(w=>{ const wn=_normG(w); const k=_gkeys.find(k=>orderedGroups.indexOf(k)<0&&_normG(k)===wn); if(k)orderedGroups.push(k); });
+    _gkeys.forEach(k=>{ if(orderedGroups.indexOf(k)<0)orderedGroups.push(k); });
 
-    const buildCol=list=>list.map(grp=>{
+    const buildCard=grp=>{
       const col='#c0272d';
       const items=sGroups[grp];
       const isC=grp==='Complaint';
@@ -8396,7 +8399,7 @@ async function renderRef(){
       return'<div class="ref-subj-group">'
         +(isC&&mainC?subjItem(mainC,true,subC,two,col):items.map(i=>subjItem(i,false,[],two,col)).join(''))
         +'</div>';
-    }).join('');
+    };
 
     // RENDER
     container.innerHTML='<div class="ref-page">'
@@ -8432,10 +8435,8 @@ async function renderRef(){
       +'</div>'
       +'<div id="refSubjectBody"><div class="ref-panel-body">'
       +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">'
-      +'<div>'+buildCol(col1)+'</div>'
-      +'<div>'+buildCol(col2)+'</div>'
+      +orderedGroups.map(g=>'<div>'+buildCard(g)+'</div>').join('')
       +'</div>'
-      +(bottomPair.length?'<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;margin-top:16px">'+bottomPair.map(g=>'<div>'+buildCol([g])+'</div>').join('')+'</div>':'')
       +'</div></div></div>'
 
 
@@ -8464,18 +8465,39 @@ async function loadVehicleModels(brand){
   if(isOpen||VEHICLE_CACHE[brand])return;
   try{
     const cfg=REF_SHEETS[brand];
-    const tabName=VEHICLE_TABS_MAP[brand];
-    const data=await fetchSheet(cfg.id,tabName);
+    // الموديلات صارت داخل تبويب Instruction، في صف أول خانته "Vehicle Model"
+    const data=await fetchSheet(cfg.id,'Instruction');
     const arr=Array.isArray(data)?data:(data.rows||[]);
     if(!arr.length){document.getElementById(contentId).innerHTML='<div style="text-align:center;color:#aaa;font-size:12px">No data</div>';return;}
     const keys=Object.keys(arr[0]);
-    // Collect all model names (split on '/') across all rows/cells
+    // نلقى صف "Vehicle Model" ونجمع الموديلات: سواء بنفس الصف أو الصف اللي تحته
     const models=[];
-    arr.forEach(r=>keys.forEach(k=>{
-      const v=String(r[k]||'').trim();
-      if(!v) return;
-      v.split('/').forEach(m=>{const t=m.trim();if(t)models.push(t);});
-    }));
+    const pushModels=v=>{ String(v||'').split('/').forEach(m=>{const t=m.trim();if(t)models.push(t);}); };
+    for(let ri=0; ri<arr.length; ri++){
+      const r=arr[ri];
+      const first=String(r[keys[0]]||'').trim();
+      const anyCell=keys.map(k=>String(r[k]||'').trim());
+      const markerHere=/vehicle\s*model/i.test(first);
+      if(!markerHere) continue;
+      // (أ) موديلات بنفس الصف (لو مكتوبة جنب/تحت التسمية في نفس السطر)
+      keys.forEach((k,idx)=>{
+        let v=String(r[k]||'').trim();
+        if(!v) return;
+        if(idx===0) v=v.replace(/^.*?vehicle\s*model\s*[:：]?\s*/i,'');
+        if(v && v.indexOf('/')>=0) pushModels(v);
+      });
+      // (ب) لو ما فيه موديلات بنفس الصف، خذها من الصف اللي تحته
+      if(!models.length && arr[ri+1]){
+        keys.forEach(k=>{ const v=String(arr[ri+1][k]||'').trim(); if(v && v.indexOf('/')>=0) pushModels(v); });
+      }
+      if(models.length) break;
+    }
+    // مطابقة العنوان في مفاتيح الأعمدة (لو حطّتها كعمود بعنوان Vehicle Model)
+    if(!models.length){
+      const vk=keys.find(k=>/vehicle\s*model/i.test(k));
+      if(vk) arr.forEach(r=>{ String(r[vk]||'').split('/').forEach(m=>{const t=m.trim();if(t)models.push(t);}); });
+    }
+    if(!models.length){document.getElementById(contentId).innerHTML='<div style="text-align:center;color:#aaa;font-size:12px">No models — أضيفي صف "Vehicle Model" في تبويب Instruction</div>';return;}
     const PALETTE=['#c0272d','#1565c0','#2e7d32','#6a1b9a','#e65100','#00695c','#ad1457','#37474f','#558b2f','#4527a0','#d84315','#0277bd'];
     let html='<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">'
       +models.map((m,i)=>{
