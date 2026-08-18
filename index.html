@@ -3885,12 +3885,12 @@ function renderBaicShowroomTab(arr){
   const keys=Object.keys(arr[0]||{});
   // Columns: Region, City, Name, Locations, Working Hours, GPS
   const regionCol=keys[0], cityCol=keys[1], nameCol=keys[2], locCol=keys[3], hoursCol=keys[4], gpsCol=keys[5];
-  const VALID_REGIONS=new Set(['West','Western','Central','Center','East','Eastern','South','Southern','North','Northern']);
+  const CANON_REGIONS=new Set(['West','Central','East','South','North']);
 
   const rows=[]; let sharedHours='';
   arr.forEach(r=>{
-    const reg=String(r[regionCol]||'').trim();
-    if(!reg||reg==='Region'||!VALID_REGIONS.has(reg)) return;
+    const reg=regClean(r[regionCol]); // tolerant: handles casing, spacing & hidden direction marks
+    if(!CANON_REGIONS.has(reg)) return;
     if(!sharedHours){ const h=String(r[hoursCol]||'').trim(); if(h) sharedHours=h; }
     rows.push(r);
   });
