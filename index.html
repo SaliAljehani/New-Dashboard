@@ -331,8 +331,8 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 
 /* ── Time-Off tab ─────────────────────────────────────────────────────── */
 .to-wrap{direction:ltr;text-align:left}
-.to-hero{background:#fff;border-radius:14px;padding:16px 22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:space-between;gap:18px;border:0.5px solid #eee;flex-wrap:wrap}
-.to-hero .hi2{font-size:17px;font-weight:700;color:#1a1a2e}
+.to-hero{background:#fff;border-radius:14px;padding:18px 22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;flex-direction:column;align-items:center;text-align:center;gap:9px;border:0.5px solid #eee;flex-wrap:wrap}
+.to-hero .hi2{font-size:18px;font-weight:800;color:#c0272d;background:linear-gradient(180deg,rgba(192,39,45,.12),rgba(192,39,45,.04));padding:9px 26px;border-radius:11px;border:1px solid rgba(192,39,45,.16);display:inline-block}
 .to-hero .hi3{font-size:12px;color:#666;margin-top:2px}
 .to-chip{font-size:12px;color:#c0272d;background:rgba(192,39,45,.08);padding:6px 14px;border-radius:20px;border:1px solid rgba(192,39,45,.2);font-weight:700;cursor:pointer}
 .to-krow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
@@ -526,7 +526,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <button class="pnav" onclick="showPage(1,this)">📊 Team Performance</button>
     <button class="pnav" onclick="showPage(5,this)">📅 Team Schedules</button>
     <button class="pnav" onclick="showPage(8,this)">🏆 Employee of the Month</button>
-    <button class="pnav" onclick="showPage(12,this)" style="position:relative">🕐 Time-Off<span id="toNavBadge" style="display:none;position:absolute;top:-6px;right:-6px;min-width:16px;height:16px;background:#c0272d;border-radius:8px;font-size:10px;font-weight:700;color:#fff;text-align:center;line-height:16px;padding:0 4px;box-sizing:border-box"></span></button>
+    <button class="pnav" onclick="showPage(12,this)" style="position:relative">🕐 Permissions<span id="toNavBadge" style="display:none;position:absolute;top:-6px;right:-6px;min-width:16px;height:16px;background:#c0272d;border-radius:8px;font-size:10px;font-weight:700;color:#fff;text-align:center;line-height:16px;padding:0 4px;box-sizing:border-box"></span></button>
   </div>
 
   <!-- PAGE 1 -->
@@ -654,7 +654,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 
   <div class="to-hero">
     <div>
-      <div class="hi2">Employee Time-Off Requests</div>
+      <div class="hi2">Employee Permission Requests</div>
       <div class="hi3">Monthly allowance: 4 hours per employee — calculated from approved requests only</div>
     </div>
     <div class="to-chip" id="toMonthChip">📅 Loading…</div>
@@ -669,6 +669,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 
   <div class="to-tabs">
     <div class="to-tab active" data-totab="submit" onclick="toSwitchTab('submit')">Submit Request</div>
+    <div class="to-tab" data-totab="approvals" onclick="toSwitchTab('approvals')">Approvals <span id="toPendingCount"></span></div>
     <div class="to-tab" data-totab="summary" onclick="toSwitchTab('summary')">Employee Summary</div>
   </div>
 
@@ -717,7 +718,23 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
         <label>Notes (optional)</label>
         <textarea id="toNotes" rows="2" placeholder="Any extra details..."></textarea>
       </div>
-      <button class="to-submitbtn" id="toSubmitBtn" onclick="toSubmitRequest()">Submit for Shahad's Approval</button>
+      <div style="text-align:center;margin-top:6px">
+        <button class="to-submitbtn" id="toSubmitBtn" onclick="toSubmitRequest()">Submit for Shahad's Approval</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="to-panel" id="toPanel-approvals">
+    <div class="card">
+      <div class="to-cardhead">
+        <div class="ctit" style="margin:0">Awaiting Shahad's Approval</div>
+        <button class="to-linkbtn" onclick="toOpenChangePassword()">🔒 Change password</button>
+      </div>
+      <div id="toPendingList"></div>
+    </div>
+    <div class="card">
+      <div class="ctit">Decision History</div>
+      <div id="toDecidedList"></div>
     </div>
   </div>
 
@@ -9223,7 +9240,6 @@ function toReqRow(r, withActions){
 }
 
 function toRenderApprovals(){
-  if(!document.getElementById('toPendingList')) return; // Approvals tab removed
   const pending = TO_ROWS.filter(r=>r.Status==='Pending').sort((a,b)=>String(a.Date).localeCompare(String(b.Date)));
   const decided = TO_ROWS.filter(r=>r.Status!=='Pending').sort((a,b)=>String(b.Date).localeCompare(String(a.Date))).slice(0,30);
 
