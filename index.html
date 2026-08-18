@@ -377,6 +377,18 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .to-ring .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#1a1a2e}
 .to-es{font-size:10.5px;color:#888}
 .to-es.over{color:#c0272d;font-weight:700}
+.to-hours-hint{font-size:12.5px;font-weight:700;padding:8px 12px;border-radius:9px;margin:-4px 0 4px;display:none}
+.to-hours-hint.ok{display:block;background:#e6f4ea;color:#1e7d3c}
+.to-hours-hint.warn{display:block;background:#fde8e6;color:#c0272d}
+.to-sum-list{display:flex;flex-direction:column;gap:12px}
+.to-sum-card{border:1px solid #eee;border-radius:11px;padding:13px 16px;background:#fff}
+.to-sum-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px;padding-bottom:8px;border-bottom:1px dashed #eee}
+.to-sum-name{font-size:13.5px;font-weight:800;color:#1a1a2e}
+.to-sum-total{font-size:11px;font-weight:800;background:#f3f0f0;color:#7a5050;padding:4px 11px;border-radius:20px;white-space:nowrap}
+.to-sum-total.over{background:#fde8e6;color:#c0272d}
+.to-sum-item{display:flex;align-items:center;gap:10px;font-size:12px;padding:5px 0;flex-wrap:wrap}
+.to-sum-date{color:#555;font-weight:700;min-width:112px}
+.to-sum-mid{color:#333;font-weight:600;flex:1;min-width:120px}
 .to-modal-overlay{display:none;position:fixed;inset:0;background:rgba(20,20,20,.4);z-index:200;align-items:center;justify-content:center;padding:16px}
 .to-modal-overlay.show{display:flex}
 .to-modal-box{background:#fff;border-radius:14px;padding:20px;max-width:320px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.25);direction:ltr;text-align:left}
@@ -687,14 +699,21 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
           </select>
         </div>
         <div class="to-field">
-          <label>Hours</label>
-          <input type="number" id="toHours" min="0.5" max="8" step="0.5" placeholder="e.g. 1.5">
+          <label>Date</label>
+          <input type="date" id="toDate">
         </div>
       </div>
-      <div class="to-field">
-        <label>Date</label>
-        <input type="date" id="toDate">
+      <div class="to-row2">
+        <div class="to-field">
+          <label>From</label>
+          <input type="time" id="toFrom" onchange="toCalcHours()" oninput="toCalcHours()">
+        </div>
+        <div class="to-field">
+          <label>To</label>
+          <input type="time" id="toTo" onchange="toCalcHours()" oninput="toCalcHours()">
+        </div>
       </div>
+      <div id="toHoursCalc" class="to-hours-hint"></div>
       <div class="to-field">
         <label>Notes (optional)</label>
         <textarea id="toNotes" rows="2" placeholder="Any extra details..."></textarea>
@@ -9072,6 +9091,23 @@ function toAllMonthKeys(){
   TO_ROWS.forEach(r=>{ const k=toMonthKeyOf(r.Date); if(k) set.add(k); });
   return Array.from(set).sort().reverse();
 }
+function toFmtHrs(h){ const n=Number(h); return isNaN(n)?String(h==null?'':h):String(parseFloat(n.toFixed(2))); }
+function toHoursFromRange(from,to){
+  if(!from||!to) return 0;
+  const a=String(from).split(':').map(Number), b=String(to).split(':').map(Number);
+  if(a.length<2||b.length<2||isNaN(a[0])||isNaN(b[0])) return 0;
+  const mins=(b[0]*60+b[1])-(a[0]*60+a[1]);
+  return mins>0 ? mins/60 : 0;
+}
+function toCalcHours(){
+  const fEl=document.getElementById('toFrom'), tEl=document.getElementById('toTo'), el=document.getElementById('toHoursCalc');
+  if(!el) return;
+  const from=fEl?fEl.value:'', to=tEl?tEl.value:'';
+  if(!from||!to){ el.className='to-hours-hint'; el.textContent=''; return; }
+  const h=toHoursFromRange(from,to);
+  if(h<=0){ el.className='to-hours-hint warn'; el.textContent='⚠️ "To" must be after "From"'; return; }
+  el.className='to-hours-hint ok'; el.textContent='⏱️ Duration: '+toFmtHrs(h)+' hrs';
+}
 function toApprovedHours(name, monthKey){
   return TO_ROWS
     .filter(r=>r.Employee===name && r.Status==='Approved' && toMonthKeyOf(r.Date)===monthKey)
@@ -9182,7 +9218,7 @@ function toReqRow(r, withActions){
     actions = `<span class="to-badge ${cls}">${label}</span>`;
   }
   return `<div class="to-req">
-    <div><div class="rn">${toEsc(r.Employee)}${r.Badge?` <span style="font-weight:400;color:#999;font-size:11px">· Badge ${toEsc(r.Badge)}</span>`:''}</div><div class="rm">${toEsc(r.Reason)} · ${toEsc(r.Hours)} hrs · ${toEsc(r.Date)}${r.Notes?' · '+toEsc(r.Notes):''}</div></div>
+    <div><div class="rn">${toEsc(r.Employee)}${r.Badge?` <span style="font-weight:400;color:#999;font-size:11px">· Badge ${toEsc(r.Badge)}</span>`:''}</div><div class="rm">${toEsc(r.Reason)} · ${(r.From&&r.To)?toEsc(r.From)+'–'+toEsc(r.To)+' · ':''}${toEsc(toFmtHrs(r.Hours))} hrs · ${toEsc(r.Date)}${r.Notes?' · '+toEsc(r.Notes):''}</div></div>
     ${actions}
   </div>`;
 }
@@ -9214,41 +9250,65 @@ function toGaugeSVG(remaining, used){
 
 function toRenderSummary(){
   const mk = TO_SELECTED_MONTH;
-  const names = toAllEmployeeNames();
   const grid = document.getElementById('toEmpGrid');
-  if(!names.length){ grid.innerHTML='<div class="to-empty">👤 No employee data yet</div>'; return; }
-  grid.innerHTML = names.map(name=>{
+  // نجمع طلبات الشهر المختار حسب اسم الموظفة
+  const byEmp = {};
+  TO_ROWS.forEach(r=>{
+    if(!r.Employee) return;
+    if(toMonthKeyOf(r.Date)!==mk) return;
+    (byEmp[r.Employee]=byEmp[r.Employee]||[]).push(r);
+  });
+  const names = Object.keys(byEmp).sort((a,b)=>a.localeCompare(b));
+  if(!names.length){ grid.innerHTML='<div class="to-empty">📭 No time-off requests this month</div>'; return; }
+  grid.innerHTML = '<div class="to-sum-list">'+names.map(name=>{
+    const reqs = byEmp[name].sort((a,b)=>String(a.Date).localeCompare(String(b.Date)));
     const used = toApprovedHours(name, mk);
-    const remaining = Math.max(0, TO_MONTHLY_LIMIT - used);
     const over = used > TO_MONTHLY_LIMIT;
-    return `<div class="to-emp">
-      <div class="en">${toEsc(name)}</div>
-      <div class="to-ring">${toGaugeSVG(remaining,used)}<div class="num" style="color:${over?'#c0272d':'#1a1a2e'}">${over?used:remaining}</div></div>
-      <div class="to-es ${over?'over':''}">${over?`Over limit by ${(used-TO_MONTHLY_LIMIT).toFixed(1)} hrs`:`Used ${used} of ${TO_MONTHLY_LIMIT}`}</div>
+    const items = reqs.map(r=>{
+      const st = r.Status || 'Pending';
+      const cls = st==='Approved'?'appr':(st==='Rejected'?'rej':'pend');
+      const ft = (r.From&&r.To)?`${toEsc(r.From)}–${toEsc(r.To)} · `:'';
+      return `<div class="to-sum-item">
+        <span class="to-sum-date">📅 ${toEsc(r.Date)}</span>
+        <span class="to-sum-mid">${ft}${toEsc(toFmtHrs(r.Hours))} hrs</span>
+        <span class="to-badge ${cls}">${toEsc(st)}</span>
+      </div>`;
+    }).join('');
+    return `<div class="to-sum-card">
+      <div class="to-sum-head">
+        <span class="to-sum-name">${toEsc(name)}</span>
+        <span class="to-sum-total ${over?'over':''}">${toFmtHrs(used)} of ${TO_MONTHLY_LIMIT} hrs${over?' · over':''}</span>
+      </div>
+      ${items}
     </div>`;
-  }).join('');
+  }).join('')+'</div>';
 }
 
 async function toSubmitRequest(){
   const name = document.getElementById('toName').value.trim();
   const badge = document.getElementById('toBadge').value.trim();
   const reason = document.getElementById('toReason').value;
-  const hours = parseFloat(document.getElementById('toHours').value);
+  const from = document.getElementById('toFrom').value;
+  const to = document.getElementById('toTo').value;
+  const hours = toHoursFromRange(from, to);
   const date = document.getElementById('toDate').value;
   const notes = document.getElementById('toNotes').value.trim();
 
   if(!name){ toToast('Please enter the employee name'); return; }
-  if(!hours || hours<=0){ toToast('Please enter a valid number of hours'); return; }
+  if(!from || !to){ toToast('Please pick From and To times'); return; }
+  if(hours<=0){ toToast('"To" must be after "From"'); return; }
   if(!date){ toToast('Please pick a date'); return; }
 
   const btn = document.getElementById('toSubmitBtn');
   btn.disabled = true; btn.textContent = 'Submitting…';
   try{
-    const result = await toPost({ action:'submit', employee:name, badge, reason, hours, date, notes });
+    const result = await toPost({ action:'submit', employee:name, badge, reason, hours:parseFloat(hours.toFixed(2)), from, to, date, notes });
     if(!result.ok){ toToast(result.error || 'Failed to submit'); return; }
     document.getElementById('toName').value='';
     document.getElementById('toBadge').value='';
-    document.getElementById('toHours').value='';
+    document.getElementById('toFrom').value='';
+    document.getElementById('toTo').value='';
+    const _hc=document.getElementById('toHoursCalc'); if(_hc){ _hc.className='to-hours-hint'; _hc.textContent=''; }
     document.getElementById('toNotes').value='';
     document.getElementById('toDate').value=toTodayISO();
     toToast("Request sent, awaiting Shahad's approval ✅");
