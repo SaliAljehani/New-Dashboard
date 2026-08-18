@@ -8373,7 +8373,7 @@ async function renderRef(){
       if(descText) rows+=fieldRow('✏️','Description','<span style="background:#f7f7f9;border-radius:8px;padding:7px 11px;font-size:12px;color:#555;display:inline-block;direction:rtl">'+descText+'</span>',i++);
       if(notesAR) rows+=fieldRow('💡','Example','<span style="font-size:12px;color:#888;direction:rtl">'+notesAR+'</span>',i++);
       if(isCMain&&subTags&&subTags.length) rows+=fieldRow('🔻','Complaint Type','<span>'+subTags.map(s=>'<span style="display:inline-block;background:#fdf1f1;color:#c0272d;border:1px solid #f1cfcf;font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;margin:2px">'+s+'</span>').join('')+'</span>',i++);
-      return'<div class="ref-subj-item" style="padding:0;border:0;border-radius:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05);margin-bottom:12px">'
+      return'<div class="ref-subj-item" style="padding:0;border:0;border-radius:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05);margin-bottom:0;flex:1;display:flex;flex-direction:column">'
         +'<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:#f5f6f7;border-bottom:2px solid '+gColor+'55">'
         +'<span class="ref-subj-subject" style="margin:0;font-size:14px;font-weight:800;color:'+gColor+'">'+it.subject+'</span>'
         +(it.status?'<span class="ref-subj-badge" style="background:'+stBg+';color:'+stColor+';font-size:10px;font-weight:700;padding:3px 10px;border-radius:14px">'+it.status+'</span>':'')
@@ -8396,7 +8396,7 @@ async function renderRef(){
       const items=sGroups[grp];
       const isC=grp==='Complaint';
       const two=(grp==='Request'||grp==='Complaint');
-      return'<div class="ref-subj-group">'
+      return'<div class="ref-subj-group" style="height:100%;margin:0;display:flex;flex-direction:column">'
         +(isC&&mainC?subjItem(mainC,true,subC,two,col):items.map(i=>subjItem(i,false,[],two,col)).join(''))
         +'</div>';
     };
@@ -8434,7 +8434,7 @@ async function renderRef(){
       +'📋 Ticket Type<span id="refSubjectIco" style="margin-left:8px;color:#c0272d">▲</span>'
       +'</div>'
       +'<div id="refSubjectBody"><div class="ref-panel-body">'
-      +(function(){var h='';for(var i=0;i<orderedGroups.length;i+=2){var a=orderedGroups[i],b=orderedGroups[i+1];h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;margin-bottom:16px"><div>'+buildCard(a)+'</div>'+(b?'<div>'+buildCard(b)+'</div>':'<div></div>')+'</div>';}return h;})()
+      +(function(){var h='';for(var i=0;i<orderedGroups.length;i+=2){var a=orderedGroups[i],b=orderedGroups[i+1];h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch;margin-bottom:16px"><div style="height:100%">'+buildCard(a)+'</div>'+(b?'<div style="height:100%">'+buildCard(b)+'</div>':'<div></div>')+'</div>';}return h;})()
       +'</div></div></div>'
 
 
