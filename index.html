@@ -680,12 +680,13 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
       <div class="to-row2">
         <div class="to-field">
           <label>Employee Name</label>
-          <input list="toEmpList" id="toName" placeholder="Type or pick a name">
-          <datalist id="toEmpList"></datalist>
+          <select id="toName" onchange="toFillBadge()">
+            <option value="">— Select name —</option>
+          </select>
         </div>
         <div class="to-field">
           <label>Badge #</label>
-          <input id="toBadge" placeholder="e.g. 4521">
+          <input id="toBadge" placeholder="Auto-filled from name" readonly style="background:#f4f4f5;cursor:not-allowed">
         </div>
       </div>
       <div class="to-row2">
@@ -9199,8 +9200,46 @@ function toRenderKpis(){
   document.getElementById('toKpiOver').textContent = over;
 }
 
+// قائمة البنات (اسم → Badge) — عدّليها من هنا لو تغيّر أحد
+const TO_ROSTER = [
+  ['Asmaa M. Bawayan','20533'],
+  ['Bayan Jazzar','24129'],
+  ['Ghadeer Motadares','23929'],
+  ['Ghofran Hussain Rafie','21587'],
+  ['Hanin Yajizi','24819'],
+  ['Hibah Almuwallad','36039'],
+  ['Jehan Alharbi','36106'],
+  ['Manar Alshehri','25612'],
+  ['Mashael Alshehri','25701'],
+  ['Mawadah Essam','23138'],
+  ['Nedaa Shorbaji','19564'],
+  ['Nesreen Mansoor','18713'],
+  ['Reham Hakami','36029'],
+  ['Sara Sami','23041'],
+  ['Shatha Bawayan','19426'],
+  ['Tahani Alshmmrani','25254'],
+  ['Walaa Meezi','36056'],
+  ['Wejdan Mustafa','25033'],
+  ['Yosra Alsalami','19528']
+];
+const TO_BADGE_BY_NAME = {};
+TO_ROSTER.forEach(function(p){ TO_BADGE_BY_NAME[p[0]] = p[1]; });
+
+// أول ما تُختار الموظفة، يتعبّى الـ Badge تلقائياً
+function toFillBadge(){
+  const sel = document.getElementById('toName');
+  const badge = document.getElementById('toBadge');
+  if(!sel || !badge) return;
+  badge.value = TO_BADGE_BY_NAME[sel.value] || '';
+}
+
 function toRenderEmpDatalist(){
-  document.getElementById('toEmpList').innerHTML = toAllEmployeeNames().map(n=>`<option value="${toEsc(n)}">`).join('');
+  const sel = document.getElementById('toName');
+  if(!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">— Select name —</option>' +
+    TO_ROSTER.map(function(p){ return '<option value="'+toEsc(p[0])+'">'+toEsc(p[0])+'</option>'; }).join('');
+  if(cur) sel.value = cur;
 }
 
 function toRenderSubmitNote(){
