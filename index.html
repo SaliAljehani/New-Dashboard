@@ -4354,6 +4354,24 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
   return dieselBanner+'<div style="font-size:11px;color:#999;margin-bottom:10px;text-align:center">Total: '+items.length+' locations</div>'+body;
 }
 
+const VOLVO_SALES_FALLBACK=[
+['Model Year','Model','Type','Variant','Bank Price','Cash Discount','Cash Invoice Price'],
+['2025','EX40 Single Motor','EV','Plus','196000','16000','180000'],
+['2025','EC40 Single Motor','EV','Plus','202000','17000','185000'],
+['2025','EC40 Twin Motor','EV','Plus','223000','18000','205000'],
+['2025','EX40 Twin Motor','EV','Plus','223000','18000','205000'],
+['2027','XC60','ICE','Plus','250000','20000','230000'],
+['2027','XC60','ICE','Ultra','278000','23000','255000'],
+['2026','XC60','PHEV','Plus','278000','23000','255000'],
+['2026','XC60','PHEV','Ultra','294000','24000','270000'],
+['2027','XC90','ICE','Core','289000','24000','265000'],
+['2027','XC90','ICE','Plus','310000','25000','285000'],
+['2027','XC90','ICE','Ultra','327000','27000','300000'],
+['2026','XC90','PHEV','Plus','327000','27000','300000'],
+['2027','XC90','ICE','Ultra Black Edition','330000','27000','303000'],
+['2026','XC90','PHEV','Ultra','348000','28000','320000'],
+['2026','XC90','PHEV','Ultra Black Edition','358000','35000','323000']
+];
 function renderVolvoSalesPricesTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#003057';
@@ -6639,15 +6657,21 @@ async function renderRefBrand(brand,tabIdx){
   }
   if(brand==='volvo' && sheetName.trim()==='Sales Prices'){
     container.innerHTML='<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading '+sheetName+'...</div>';
-    try{
-      const data=await fetchSheet(cfg.id, sheetName);
-      let arr=Array.isArray(data)?data:(data.rows||[]);
-      if(!arr.length || Object.keys(arr[0]||{}).length<3){ arr=await fetchCSVRaw(cfg.id, sheetName); }
-      if(container.dataset.reqId!==__reqId) return;
-      container.innerHTML=renderVolvoSalesPricesTab(arr);
-    }catch(e){
-      container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
+    const VOLVO_SALES_GID='2008193375';
+    const dbg=[];
+    let arr=[];
+    try{ arr=await fetchCSVExportByGid(cfg.id, VOLVO_SALES_GID); dbg.push('exportGid='+(arr?arr.length:'null')); }catch(e1){ dbg.push('exportGid ERR:'+e1.message); }
+    if(!arr||!arr.length){ try{ arr=await fetchCSVRawByGid(cfg.id, VOLVO_SALES_GID); dbg.push('gvizGid='+(arr?arr.length:'null')); }catch(e2){ dbg.push('gvizGid ERR:'+e2.message); } }
+    if(!arr||!arr.length){ try{ const d=await fetchSheet(cfg.id, sheetName); arr=Array.isArray(d)?d:((d&&d.rows)||[]); dbg.push('proxyName='+arr.length); }catch(e3){ dbg.push('proxyName ERR:'+e3.message); } }
+    if(!arr||!arr.length){ try{ arr=await fetchCSVRaw(cfg.id, sheetName); dbg.push('csvName='+(arr?arr.length:'null')); }catch(e4){ dbg.push('csvName ERR:'+e4.message); } }
+    if(container.dataset.reqId!==__reqId) return;
+    let usedFallback=false;
+    if(!arr||!arr.length){ arr=VOLVO_SALES_FALLBACK; usedFallback=true; }
+    let html=renderVolvoSalesPricesTab(arr);
+    if(usedFallback){
+      html+='<div style="margin:12px auto 0;max-width:640px;padding:8px 12px;background:#fff8e1;border:1px solid #ffe082;border-radius:8px;font-size:11px;color:#8a6d00;text-align:center;direction:rtl">ℹ️ عرض احتياطي مدمج — تعذّر قراءة الشيت مباشرة <span style="direction:ltr;display:inline-block;color:#b08900">('+dbg.join(' | ')+')</span></div>';
     }
+    container.innerHTML=html;
     return;
   }
   if(brand==='volvo' && sheetName.trim()==='Aftersales'){
