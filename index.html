@@ -8877,10 +8877,23 @@ async function renderDailyOff(){
       var bg,col;
       if(vl==='off'){bg='#FACDD0';col='#7A2A2E';}
       else if(vl==='vacation'||vl==='v'||vl==='vaction'){bg='#FFF3D0';col='#8A6000';}
-      else if(vl==='live chat'||vl==='livechat'){bg='#EEF0EC';col='#4A5A42';}
+      else if(vl.indexOf('live')===0||vl==='livechat'){bg='#FAECE7';col='#993C1D';}
       else if(vl.includes('multi')){bg='#F5F0E8';col='#6B5A3A';}
       else{bg='#F2F3F4';col='#555';}
       return '<span class="bdg" data-bg="'+bg+'" style="display:block;width:100%;background:'+bg+';color:'+col+';font-size:10px;font-weight:600;padding:4px 3px;text-align:center;white-space:nowrap;border-radius:5px">'+v+'</span>';
+    }
+
+    // Break cell tint = the agent's dominant shift type across the week
+    function breakTint(ag){
+      var live=0, multi=0;
+      DAY_COLS.forEach(function(d){
+        var vl=String(ag[d]||'').toLowerCase().trim();
+        if(vl.indexOf('live')===0||vl==='livechat') live++;
+        else if(vl.includes('multi')) multi++;
+      });
+      if(live===0&&multi===0) return null;
+      if(live>=multi) return {bg:'#FAECE7',col:'#B4491F'};
+      return {bg:'#F5F0E8',col:'#7A6848'};
     }
 
     function buildTable(w){
@@ -8889,7 +8902,7 @@ async function renderDailyOff(){
       t+='<th style="padding:6px 12px;text-align:left;border-bottom:2px solid #EDE0D4;min-width:140px;font-weight:700;color:#5D4037;background:#F5F0E8;font-size:10px">Agent Name</th>';
       DAY_COLS.forEach(function(d){
         var wknd=d==='Friday';
-        var dateStr=w.dates&&w.dates[d]?'<div style="font-size:8px;font-weight:400;opacity:.7;margin-top:1px">'+w.dates[d]+'</div>':'';
+        var dateStr=w.dates&&w.dates[d]?'<div style="font-size:8px;font-weight:600;color:'+(wknd?'#6D4C41':'#4A3528')+';margin-top:1px">'+w.dates[d]+'</div>':'';
         t+='<th style="padding:4px 3px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:80px;font-weight:700;font-size:10px;color:'+(wknd?'#8D6E63':'#5D4037')+';background:'+(wknd?'#EDE0D4':'#F5F0E8')+'">'+d+dateStr+'</th>';
       });
       t+='<th style="padding:4px 3px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:60px;font-weight:700;font-size:10px;color:#c0272d;background:rgba(192,39,45,.05)">⏰ Break</th>';
@@ -8908,7 +8921,10 @@ async function renderDailyOff(){
         });
         var brk=(ag[BREAK_COL]||'').trim();
         brk=brk.replace(/^(\d{1,2}):(\d{2}):\d{2}\s*(AM|PM)$/i,'$1:$2 $3');
-        t+='<td style="padding:10px 4px;text-align:center;background:rgba(192,39,45,.03);font-size:11px;font-weight:600;color:#555">'+(brk||'—')+'</td>';
+        var _bt=breakTint(ag);
+        var _bBg=_bt?_bt.bg:'rgba(192,39,45,.03)';
+        var _bCol=_bt?_bt.col:'#555';
+        t+='<td style="padding:10px 4px;text-align:center;background:'+_bBg+';font-size:11px;font-weight:600;color:'+_bCol+'">'+(brk||'—')+'</td>';
         t+='</tr>';
       });
       t+='</tbody></table></div>';
