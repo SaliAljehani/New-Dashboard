@@ -8911,8 +8911,8 @@ async function renderDailyOff(){
         var rowBg='#FFFFFF';
         t+='<tr data-bg="'+rowBg+'" style="background:'+rowBg+';cursor:pointer" '
           +'onmouseover="if(this.getAttribute(\'data-sel\')!==\'1\'){this.querySelectorAll(\'td\').forEach(function(td){td.style.background=\'#FFF0F0\';});this.querySelectorAll(\'span.bdg\').forEach(function(s){s.style.background=\'#FFD0D0\';});}" '
-          +'onmouseout="if(this.getAttribute(\'data-sel\')!==\'1\'){this.querySelectorAll(\'td\').forEach(function(td){td.style.background=td.classList.contains(\'brkcell\')?td.getAttribute(\'data-bg\'):\'\';});this.querySelectorAll(\'span.bdg\').forEach(function(s){s.style.background=s.getAttribute(\'data-bg\');});}" '
-          +'onclick="(function(row){var tbl=row.closest(\'table\');tbl.querySelectorAll(\'tr[data-sel=\\\"1\\\"]\').forEach(function(r){r.setAttribute(\'data-sel\',\'0\');r.style.outline=\'\';r.querySelectorAll(\'td\').forEach(function(td){td.style.background=td.classList.contains(\'brkcell\')?td.getAttribute(\'data-bg\'):\'\';td.style.fontWeight=\'\';});r.querySelectorAll(\'span.bdg\').forEach(function(s){s.style.background=s.getAttribute(\'data-bg\');});});row.setAttribute(\'data-sel\',\'1\');row.style.outline=\'2px solid #c0272d\';row.querySelectorAll(\'td\').forEach(function(td){td.style.background=\'#FCCCCF\';td.style.fontWeight=\'700\';});row.querySelectorAll(\'span.bdg\').forEach(function(s){s.style.background=\'#F5A0A5\';});})(this)">';
+          +'onmouseout="if(this.getAttribute(\'data-sel\')!==\'1\'){this.querySelectorAll(\'td\').forEach(function(td){td.style.background=\'\';});this.querySelectorAll(\'span.bdg\').forEach(function(s){s.style.background=s.getAttribute(\'data-bg\');});}" '
+          +'onclick="(function(row){var tbl=row.closest(\'table\');tbl.querySelectorAll(\'tr[data-sel=\\\"1\\\"]\').forEach(function(r){r.setAttribute(\'data-sel\',\'0\');r.style.outline=\'\';r.querySelectorAll(\'td\').forEach(function(td){td.style.background=\'\';td.style.fontWeight=\'\';});r.querySelectorAll(\'span.bdg\').forEach(function(s){s.style.background=s.getAttribute(\'data-bg\');});});row.setAttribute(\'data-sel\',\'1\');row.style.outline=\'2px solid #c0272d\';row.querySelectorAll(\'td\').forEach(function(td){td.style.background=\'#FCCCCF\';td.style.fontWeight=\'700\';});row.querySelectorAll(\'span.bdg\').forEach(function(s){s.style.background=\'#F5A0A5\';});})(this)">';
         var _nc=getAvatarColor(ag.name);
         t+='<td style="padding:7px 12px;text-align:left;font-size:11px;font-weight:500;color:#1a1a2e">'+ag.name+'</td>';
         DAY_COLS.forEach(function(d){
@@ -8922,9 +8922,9 @@ async function renderDailyOff(){
         var brk=(ag[BREAK_COL]||'').trim();
         brk=brk.replace(/^(\d{1,2}):(\d{2}):\d{2}\s*(AM|PM)$/i,'$1:$2 $3');
         var _bt=breakTint(ag);
-        var _bBg=_bt?_bt.bg:'rgba(192,39,45,.03)';
-        var _bCol=_bt?_bt.col:'#555';
-        t+='<td class="brkcell" data-bg="'+_bBg+'" style="padding:10px 4px;text-align:center;background:'+_bBg+';font-size:11px;font-weight:600;color:'+_bCol+'">'+(brk||'—')+'</td>';
+        var _bBg=_bt?_bt.bg:'#F6F4F0';
+        var _bCol=_bt?_bt.col:'#8A857C';
+        t+='<td style="padding:3px 4px;text-align:center;background:rgba(192,39,45,.03)"><span class="bdg" data-bg="'+_bBg+'" style="display:block;width:100%;background:'+_bBg+';color:'+_bCol+';font-size:11px;font-weight:600;padding:4px 3px;text-align:center;white-space:nowrap;border-radius:5px">'+(brk||'—')+'</span></td>';
         t+='</tr>';
       });
       t+='</tbody></table></div>';
