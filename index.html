@@ -7234,10 +7234,10 @@ function renderRoster(){
 
   el.innerHTML = '<div style="padding:4px">'
     +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;max-width:720px;margin-left:auto;margin-right:auto">'
-    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#c0272d;color:#fff;border:1.5px solid #c0272d"><i class="ti ti-clipboard-check" style="font-size:15px"></i>Attendance</button>'
-    +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;color:#6A5A4A;border:1.5px solid #EDE4DA"><i class="ti ti-calendar" style="font-size:15px"></i>Weekly Schedule</button>'
-    +'<button onclick="switchScheduleTab(&apos;campaigntraining&apos;)" id="stab_campaigntraining" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;color:#6A5A4A;border:1.5px solid #EDE4DA"><i class="ti ti-school" style="font-size:15px"></i>Training</button>'
-    +'<button onclick="switchScheduleTab(&apos;vacation2026&apos;)" id="stab_vacation2026" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;color:#6A5A4A;border:1.5px solid #EDE4DA"><i class="ti ti-plane" style="font-size:15px"></i>Vacation</button>'
+    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#c0272d;color:#fff;border:1.5px solid #c0272d">\uD83D\uDCCB Attendance</button>'
+    +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;color:#6A5A4A;border:1.5px solid #EDE4DA">\uD83D\uDCC5 Weekly Schedule</button>'
+    +'<button onclick="switchScheduleTab(&apos;campaigntraining&apos;)" id="stab_campaigntraining" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;color:#6A5A4A;border:1.5px solid #EDE4DA">\uD83C\uDF93 Training</button>'
+    +'<button onclick="switchScheduleTab(&apos;vacation2026&apos;)" id="stab_vacation2026" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;color:#6A5A4A;border:1.5px solid #EDE4DA">\uD83C\uDF34 Vacation</button>'
     +'</div>'
     
     +'<div id="schedule_dailyoff" style="display:none"></div>'    +'<div id="schedule_vacation2026" style="display:none"></div>'    +'<div id="schedule_campaigntraining" style="display:none"></div>'    +'<div id="schedule_attendance" style="display:block">'
@@ -8939,14 +8939,11 @@ async function renderDailyOff(){
     html+='<button type="button" onclick="stepDailyOffWeek(-1)" id="dow_prev" aria-label="Previous week" style="'
       +'width:36px;height:36px;flex:none;border-radius:8px;border:1px solid #E2D6C8;background:#fff;'
       +'color:#8A6D5A;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center">\u2039</button>';
-    html+='<select onchange="showDailyOffWeek(this.value)" id="dow_select" style="'
+    html+='<div id="dow_label" data-idx="'+activeIdx+'" style="'
       +'padding:9px 24px;border-radius:8px;border:2px solid rgba(192,39,45,.25);'
-      +'background:#fff;color:#c0272d;font-size:13px;font-weight:700;cursor:pointer;outline:none;'
-      +'box-shadow:0 2px 6px rgba(192,39,45,.08);min-width:220px;text-align:center;text-align-last:center">';
-    weeks.forEach(function(w,wi){
-      html+='<option value="'+wi+'"'+(wi===activeIdx?' selected':'')+'>'+w.label+'</option>';
-    });
-    html+='</select>';
+      +'background:#fff;color:#c0272d;font-size:13px;font-weight:700;'
+      +'box-shadow:0 2px 6px rgba(192,39,45,.08);min-width:220px;text-align:center">'
+      +(weeks[activeIdx]?weeks[activeIdx].label:'')+'</div>';
     html+='<button type="button" onclick="stepDailyOffWeek(1)" id="dow_next" aria-label="Next week" style="'
       +'width:36px;height:36px;flex:none;border-radius:8px;border:1px solid #E2D6C8;background:#fff;'
       +'color:#8A6D5A;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center">\u203a</button>';
@@ -8958,6 +8955,8 @@ async function renderDailyOff(){
       html+='<div id="dowt_'+wi+'" style="display:'+(wi===activeIdx?'block':'none')+'">'+buildTable(w)+'</div>';
     });
     html+='</div></div>';
+    window.DOW_LABELS = weeks.map(function(w){return w.label;});
+    window.DOW_COUNT = weeks.length;
     el.innerHTML = html;
   }catch(e){
     el.innerHTML='<div style="text-align:center;padding:40px;color:#c0272d">⚠️ '+e.message+'</div>';
@@ -8970,13 +8969,14 @@ function showDailyOffWeek(idx){
 }
 
 function stepDailyOffWeek(dir){
-  var sel=document.getElementById('dow_select');
-  if(!sel) return;
-  var n=sel.options.length;
-  var idx=parseInt(sel.value)+dir;
+  var lbl=document.getElementById('dow_label');
+  if(!lbl) return;
+  var n=window.DOW_COUNT||1;
+  var idx=parseInt(lbl.getAttribute('data-idx')||'0',10)+dir;
   if(idx<0) idx=0;
   if(idx>n-1) idx=n-1;
-  sel.value=idx;
+  lbl.setAttribute('data-idx',idx);
+  if(window.DOW_LABELS && window.DOW_LABELS[idx]) lbl.textContent=window.DOW_LABELS[idx];
   showDailyOffWeek(idx);
 }
 
