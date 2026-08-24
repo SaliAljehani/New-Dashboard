@@ -5054,7 +5054,7 @@ function renderFotonShowroomTab(arr){
 }
 
 function renderFotonPMSTab(arr){
-  if(!arr||!arr.length) return '<div style="margin:0 auto 18px">'+FOTON_SERVICE_PRICE_HTML+'</div><div style="text-align:center;padding:24px;color:#aaa">No branch data</div>';
+  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No branch data</div>';
   const color=FOTON_COLOR;
   const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
 
@@ -5096,7 +5096,7 @@ function renderFotonPMSTab(arr){
   const spareHTML = spare.length
     ? '<div style="margin-bottom:14px">'
       +'<button onclick="toggleRegion(\'fotonSpareSec\')" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:'+color+';color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;margin:4px;box-shadow:0 1px 4px rgba(84,110,122,.25)">🔧 Spare Parts Contact <span id="ico_fotonSpareSec">▼</span></button>'
-      +'<div id="fotonSpareSec" style="display:none;margin-top:10px">'
+      +'<div id="fotonSpareSec" style="display:block;margin-top:10px">'
       +'<div style="overflow-x:auto;border-radius:10px;border:1px solid '+color+'33;background:'+color+'08">'
       +'<table style="width:100%;border-collapse:collapse;font-size:12px">'
       +'<thead><tr style="background:'+color+'12">'
@@ -5137,7 +5137,7 @@ function renderFotonPMSTab(arr){
       groups[reg].map(b=>fotonBranchCard(b,rc)).join(''));
   }).join('');
 
-  return '<div style="text-align:center"><div style="margin:0 auto 18px">'+FOTON_SERVICE_PRICE_HTML+'</div>'+fotonEmailHdr(emailBlocks,color)+spareHTML+regionsHTML+'</div>';
+  return '<div style="text-align:center">'+fotonEmailHdr(emailBlocks,color)+spareHTML+regionsHTML+'</div>';
 }
 
 
