@@ -4177,38 +4177,122 @@ function renderBaicLocationTab(arr, brand){
 
 function renderPetrominInstructionTab(arr, warrantyInner){
   const color='#D98E45';
-  const sections={'Oil Brand':[],'Petromin Oil':[],'Weekly Offers':[],'Extra Information':[]};
+  const sections={'Type of Oil':[],'Oil Brand':[],'PMS at Petromin Express':[],'Petromin Oil':[],'Package':[],'Weekly Offers':[],'Extra Information':[]};
   let currentSection=null;
-  (arr||[]).forEach((r,idx)=>{
+  (arr||[]).forEach((r)=>{
     const v=Object.values(r).map(x=>String(x===undefined||x===null?'':x).trim());
-    const v0=v[0]||'', v1=v[1]||'', v2=v[2]||'';
-    if(idx===0||idx===1) return;
+    const v0=v[0]||'';
     if(sections.hasOwnProperty(v0)){ currentSection=v0; return; }
     if(!currentSection) return;
-    if(v0||v1||v2) sections[currentSection].push({col0:v0,col1:v1,col2:v2});
+    if(v.some(x=>x)) sections[currentSection].push({cells:v, col0:v[0]||'', col1:v[1]||'', col2:v[2]||''});
   });
 
-  // Oil Brand — centered pills
-  const oilBrandInner=sections['Oil Brand'].length?
-    '<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:8px">'
-    +sections['Oil Brand'].map(r=>r.col0.split(/\/|,/).map(b=>b.trim()).filter(Boolean).map(b=>'<span style="background:'+color+'0D;color:'+color+';font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;border:1px solid '+color+'30">'+b+'</span>').join('')).join('')
-    +'</div>':'';
+  const H=t=>'<div style="text-align:center;font-size:13px;font-weight:800;color:'+color+';letter-spacing:.3px;margin:20px 0 10px">'+t+'</div>';
+  const chip=b=>'<span style="background:'+color+'0D;color:'+color+';font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;border:1px solid '+color+'30;margin:3px">'+b+'</span>';
+  const chipsFrom=rows=>'<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">'
+    +rows.map(r=>String(r.col0||'').split(/\s+-\s+|\//).map(b=>b.trim()).filter(Boolean).map(chip).join('')).join('')
+    +'</div>';
 
-  // Petromin Oil — table
-  const oilDataRows=sections['Petromin Oil'].filter(r=>r.col0!=='Type of oil'&&r.col0&&r.col1);
-  const petrominOilInner=oilDataRows.length?
-    '<div style="overflow-x:auto;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:13px">'
-    +'<thead><tr style="background:'+color+'15"><th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">نوع الزيت</th><th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">الاسم</th><th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">السعر</th></tr></thead><tbody>'
-    +oilDataRows.map((r,i)=>'<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'"><td style="padding:9px 16px;font-weight:600;text-align:center">'+r.col0+'</td><td style="padding:9px 16px;text-align:center">'+r.col1+'</td><td style="padding:9px 16px;text-align:center;font-weight:700;color:'+color+'">'+r.col2+'</td></tr>').join('')
-    +'</tbody></table></div>':'';
+  /* ---- Petromin Oil tab: Oil Types & Agencies + Prices + Packages ---- */
+  const typeOilRows=(sections['Type of Oil'].length?sections['Type of Oil']:sections['Oil Brand']);
+  const pmsRows=sections['PMS at Petromin Express'];
+  let oilTypesInner='';
+  if(typeOilRows.length||pmsRows.length){
+    oilTypesInner+=H('\uD83D\uDEE2\uFE0F Oil Types &amp; Agencies');
+    if(typeOilRows.length)
+      oilTypesInner+='<div style="margin-bottom:10px"><div style="text-align:center;font-size:12px;font-weight:700;color:#6A5A4A;margin-bottom:8px">Type of Oil</div>'+chipsFrom(typeOilRows)+'</div>';
+    if(pmsRows.length)
+      oilTypesInner+='<div style="margin-top:12px"><div style="text-align:center;font-size:12px;font-weight:700;color:#6A5A4A;margin-bottom:8px">PMS at Petromin Express</div>'+chipsFrom(pmsRows)+'</div>';
+  }
 
-  // Weekly Offers — centered card
-  const weeklyInner=sections['Weekly Offers'].length?
-    '<div style="background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border:1.5px solid #D98E4555;text-align:center">'
-    +sections['Weekly Offers'].map(r=>{const text=(r.col0||r.col1||'').replace(/^"|"$/g,'').trim();return '<div style="font-size:13px;color:#333;line-height:2;white-space:pre-wrap">'+text+'</div>';}).join('<hr style="border:none;border-top:1px dashed #eee;margin:10px 0">')
-    +'</div>':'';
+  const oilDataRows=sections['Petromin Oil'].filter(r=>r.col0&&r.col1&&r.col0!=='Type of oil');
+  let pricesInner='';
+  if(oilDataRows.length){
+    pricesInner+=H('\uD83E\uDDF4 Petromin Oil Prices');
+    pricesInner+='<div style="overflow-x:auto;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:13px">'
+      +'<thead><tr style="background:'+color+'15">'
+      +'<th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">Type of Oil</th>'
+      +'<th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">Name</th>'
+      +'<th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">Price</th></tr></thead><tbody>'
+      +oilDataRows.map((r,i)=>'<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'">'
+        +'<td style="padding:9px 16px;font-weight:600;text-align:center">'+r.col0+'</td>'
+        +'<td style="padding:9px 16px;text-align:center">'+r.col1+'</td>'
+        +'<td style="padding:9px 16px;text-align:center;font-weight:700;color:'+color+'">'+r.col2+'</td></tr>').join('')
+      +'</tbody></table></div>';
+  }
 
-  // Extra Information — centered cards
+  const pkgRows=sections['Package'].filter(r=>{const n=(r.col0||'').toLowerCase();return r.col0&&n!=='package'&&!/mineral|synthetic|\u0639\u062F\u062F/.test(n);});
+  let packagesInner='';
+  if(pkgRows.length){
+    packagesInner+=H('\uD83D\uDCE6 Packages');
+    packagesInner+='<div style="overflow-x:auto;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:13px">'
+      +'<thead><tr style="background:'+color+'15">'
+      +'<th style="padding:10px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">Package</th>'
+      +'<th style="padding:10px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">\u0639\u062F\u062F \u0627\u0644\u0644\u062A\u0631\u0627\u062A</th>'
+      +'<th style="padding:10px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">Mineral New ( \u0645\u0639\u062F\u0646\u064A )</th>'
+      +'<th style="padding:10px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">Synthetic ( \u0635\u0646\u0627\u0639\u064A \u2013 \u062A\u062E\u0644\u064A\u0642\u064A )</th></tr></thead><tbody>'
+      +pkgRows.map((r,i)=>{const c=r.cells||[];const liters=c[1]||'';const mineral=c[2]||'';const synthetic=c[4]||c[3]||'';
+        return '<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'">'
+        +'<td style="padding:9px 14px;font-weight:700;text-align:center">'+(c[0]||'')+'</td>'
+        +'<td style="padding:9px 14px;text-align:center;color:#6A5A4A">'+liters+'</td>'
+        +'<td style="padding:9px 14px;text-align:center;font-weight:700;color:'+color+'">'+mineral+'</td>'
+        +'<td style="padding:9px 14px;text-align:center;font-weight:700;color:'+color+'">'+synthetic+'</td></tr>';}).join('')
+      +'</tbody></table></div>';
+  }
+
+  const petrominTabInner=(oilTypesInner||pricesInner||packagesInner)?'<div>'+oilTypesInner+pricesInner+packagesInner+'</div>':'';
+
+  /* ---- Weekly Offers — coupon ticket (parsed from sheet text) ---- */
+  let weeklyInner='';
+  const wkRows=sections['Weekly Offers'];
+  if(wkRows.length){
+    const lines=[];
+    wkRows.forEach(r=>{
+      const raw=(r.col0||r.col1||'');
+      String(raw).split(/\r?\n/).forEach(l=>{
+        const t=l.replace(/^["']|["']$/g,'').replace(/^[\u2022\u25CF\-\*]\s*/,'').trim();
+        if(t) lines.push(t);
+      });
+    });
+    const priceRe=/([\d\u0660-\u0669][\d\u0660-\u0669,\.]*)\s*(?:\u0631\u064A\u0627\u0644|SR|SAR|\u0631\.?\s*\u0633)/i;
+    const items=[]; const notes=[]; let title='';
+    lines.forEach(l=>{
+      if(/\u0639\u0631\u0636/.test(l) && /(\u0627\u0644\u062C\u0645\u0639\u0629|\u0627\u0644\u0633\u0628\u062A|weekly)/i.test(l)){ title=l.trim(); return; }
+      const parts=l.split(/\u0628\u0633\u0639\u0631/); // "بسعر"
+      if(parts.length>1 && priceRe.test(parts.slice(1).join(''))){
+        const kind=parts[0].trim();
+        const after=parts.slice(1).join('');
+        const pm=after.match(priceRe); const price=pm?pm[1]:'';
+        const pIdx=after.indexOf('+'); const plus=pIdx>=0?after.slice(pIdx).trim():'';
+        items.push({kind,price,plus});
+      } else if(priceRe.test(l) && /\+/.test(l)){
+        const pm=l.match(priceRe); const price=pm?pm[1]:'';
+        const pIdx=l.indexOf('+'); const plus=pIdx>=0?l.slice(pIdx).trim():'';
+        const kind=l.slice(0, l.search(priceRe)).replace(/\u0628\u0633\u0639\u0631/,'').replace(/[\-\u2013]\s*$/,'').trim();
+        items.push({kind,price,plus});
+      } else { notes.push(l); }
+    });
+    const headText=title||'\uD83C\uDF89 \u0639\u0631\u0636 \u0627\u0644\u062C\u0645\u0639\u0629 \u0648\u0627\u0644\u0633\u0628\u062A';
+    if(items.length){
+      weeklyInner='<div style="direction:rtl;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(160,110,60,.12);border:1.5px solid #F0DEC9;max-width:640px;margin:0 auto">'
+        +'<div style="background:linear-gradient(135deg,'+color+',#e6a15c);color:#fff;text-align:center;padding:16px;font-size:18px;font-weight:800">'+headText+'</div>'
+        +'<div style="display:flex;flex-wrap:wrap">'
+        +items.map((it,i)=>'<div style="flex:1 1 240px;padding:22px 18px;text-align:center'+(i>0?';border-inline-start:2px dashed #EAD9C4':'')+'">'
+          +'<div style="font-size:14px;font-weight:800;color:#3D2E22;margin-bottom:10px">'+it.kind+'</div>'
+          +'<div style="font-size:34px;font-weight:900;color:'+color+';line-height:1">'+it.price+'<small style="font-size:15px;font-weight:700;color:#6A5A4A"> \u0631\u064A\u0627\u0644</small></div>'
+          +(it.plus?'<div style="display:inline-block;margin-top:8px;font-size:12px;font-weight:700;color:#bd7530;background:#FBF3EA;padding:4px 12px;border-radius:14px">'+it.plus+'</div>':'')
+          +'</div>').join('')
+        +'</div>'
+        +(notes.length?'<div style="background:#FBF7F1;border-top:1px dashed #EAD9C4;padding:12px 18px;text-align:center;font-size:12px;color:#6A5A4A;line-height:1.9">'+notes.join(' \u00B7 ')+'</div>':'')
+        +'</div>';
+    } else {
+      weeklyInner='<div style="background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border:1.5px solid #D98E4555;text-align:center;max-width:640px;margin:0 auto">'
+        +wkRows.map(r=>{const t=(r.col0||r.col1||'').replace(/^"|"$/g,'').trim();return '<div style="font-size:13px;color:#333;line-height:2;white-space:pre-wrap">'+t+'</div>';}).join('<hr style="border:none;border-top:1px dashed #eee;margin:10px 0">')
+        +'</div>';
+    }
+  }
+
+  /* ---- Extra Information ---- */
   const extraInner=sections['Extra Information'].length?
     '<div style="display:flex;flex-direction:column;gap:10px">'
     +sections['Extra Information'].map(r=>{const title=r.col0||'';const text=(r.col1||'').replace(/^"|"$/g,'').trim();if(!title&&!text)return'';
@@ -4218,13 +4302,12 @@ function renderPetrominInstructionTab(arr, warrantyInner){
         +'</div>';}).join('')
     +'</div>':'';
 
-  // Build tabs (only sections with content)
+  /* ---- Tabs (order: Petromin Oil, Weekly Offers, Warranty, Extra Information) ---- */
   const tabs=[];
-  if(warrantyInner) tabs.push({label:'⚠️ Warranty',html:warrantyInner});
-  if(oilBrandInner) tabs.push({label:'🛢️ Oil Brands',html:oilBrandInner});
-  if(petrominOilInner) tabs.push({label:'🚗 Petromin Oil',html:petrominOilInner});
-  if(weeklyInner) tabs.push({label:'🎉 Weekly Offers',html:weeklyInner});
-  if(extraInner) tabs.push({label:'ℹ️ Extra Information',html:extraInner});
+  if(petrominTabInner) tabs.push({label:'\uD83D\uDE97 Petromin Oil',html:petrominTabInner});
+  if(weeklyInner) tabs.push({label:'\uD83C\uDF89 Weekly Offers',html:weeklyInner});
+  if(warrantyInner) tabs.push({label:'\u26A0\uFE0F Warranty',html:warrantyInner});
+  if(extraInner) tabs.push({label:'\u2139\uFE0F Extra Information',html:extraInner});
   if(!tabs.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 
   const tabStyle=on=>'display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;padding:9px 18px;border-radius:22px;cursor:pointer;background:'+(on?'#D98E451f':'transparent')+';color:#bd7530;border:1px solid transparent';
@@ -4233,7 +4316,6 @@ function renderPetrominInstructionTab(arr, warrantyInner){
   const panels=tabs.map((t,i)=>'<div class="piPanel" style="display:'+(i===0?'block':'none')+'">'+t.html+'</div>').join('');
   return '<div>'+bar+panels+'</div>';
 }
-
 
 
 function renderPetrominWarrantyTab(arr){
