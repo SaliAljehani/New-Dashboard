@@ -19,7 +19,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter',system-ui,sans-serif;font-size:12px;background:#f5f5f5;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column}
 #loadingDiv,#errDiv,#mainContent{flex:1 0 auto}
-.quotes-bar{background:#fff;border-bottom:1px solid #f0e8e8;padding:9px 20px;display:flex;align-items:center;justify-content:space-around;gap:10px}
+.quotes-bar{background:#FDFCF8;border-bottom:1px solid #f0e8e8;padding:9px 20px;display:flex;align-items:center;justify-content:space-around;gap:10px}
 .quotes-bar .q-item{font-size:12px;color:#c0272d;font-weight:600;text-align:center;direction:rtl}
 .quotes-bar .q-sep{width:1px;height:18px;background:rgba(192,39,45,.2);flex-shrink:0}
 .header{background:linear-gradient(135deg,#fafafa,#f5f5f5);padding:10px 20px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.06);position:relative}
@@ -34,43 +34,43 @@ body{font-family:'Inter',system-ui,sans-serif;font-size:12px;background:#f5f5f5;
 .load-bar{width:300px;height:6px;background:#f0f0f0;border-radius:3px;overflow:hidden}
 .load-fill{height:100%;background:linear-gradient(90deg,#c0272d,#e65100);border-radius:3px;transition:width .4s;width:0%}
 .err{background:#fde;color:#c0272d;padding:16px 24px;border-radius:10px;margin:20px;font-size:14px;display:flex;align-items:center;gap:10px}
-.ctrl{background:#fff;border-bottom:1px solid #e8eaed;padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
+.ctrl{background:#FDFCF8;border-bottom:1px solid #e8eaed;padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
 .ctrl label{font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
 select,input[type=date]{font-size:13px;padding:6px 10px;border-radius:8px;border:1.5px solid #ddd;background:#fafafa;color:#333;cursor:pointer}
 select:focus,input[type=date]:focus{border-color:#c0272d}
 select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
-.rbtn{padding:6px 14px;border-radius:8px;border:1.5px solid #ddd;background:#fff;color:#444;font-size:12px;cursor:pointer;font-weight:500}
+.rbtn{padding:6px 14px;border-radius:8px;border:1.5px solid #ddd;background:#FDFCF8;color:#444;font-size:12px;cursor:pointer;font-weight:500}
 .rbtn:hover{border-color:#c0272d;color:#c0272d}
 .rfbtn{padding:6px 14px;border-radius:8px;border:1.5px solid #c0272d;background:#fef2f2;color:#c0272d;font-size:12px;cursor:pointer;font-weight:600}
 .rfbtn:hover{background:#c0272d;color:#fff}
 .ptag{display:inline-block;background:#fef2f2;color:#c0272d;border:1px solid #fcc;border-radius:8px;padding:3px 10px;font-size:11px;font-weight:600}
-.page-nav{display:flex;gap:6px;background:#fff;padding:10px 24px;border-bottom:3px solid #c0272d;justify-content:center}
+.page-nav{display:flex;gap:6px;background:#FDFCF8;padding:10px 24px;border-bottom:3px solid #c0272d;justify-content:center}
 .pnav{padding:7px 18px;border-radius:8px;border:1.5px solid #ddd;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:#444;transition:.15s}
 .pnav.active{background:rgba(192,39,45,.06);color:#b02030;border-color:rgba(192,39,45,.15)}
 .pnav:hover:not(.active){background:#f5f5f5;border-color:#e0e0e0;color:#c0272d}
 .main{max-width:1600px;margin:0 auto;padding:18px 24px}
 .page2{display:none;max-width:1600px;margin:0 auto;padding:18px 24px}
-.hero{background:#fff;border-radius:14px;padding:18px 22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;gap:18px;border:0.5px solid #eee;transition:border-color .3s}
+.hero{background:#FDFCF8;border-radius:14px;padding:18px 22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;gap:18px;border:0.5px solid #eee;transition:border-color .3s}
 .av{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#e0e0e0,#eeeeee);display:flex;align-items:center;justify-content:center;color:#c0272d;font-size:18px;font-weight:700;flex-shrink:0;border:2px solid #bdbdbd}
 .hi2{font-size:18px;font-weight:700;color:#1a1a2e}
 .hi3{font-size:12px;color:#444;margin-top:2px;text-align:center}
 .rkbig{background:linear-gradient(135deg,#c0272d,#7b0000);color:#fff;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:600}
 .krow{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px}
-.kc{background:#fff;border-radius:8px;padding:8px 10px;box-shadow:0 1px 3px rgba(0,0,0,.05);border-top:2px solid #eee;text-align:center}
+.kc{background:#FDFCF8;border-radius:8px;padding:8px 10px;box-shadow:0 1px 3px rgba(0,0,0,.05);border-top:2px solid #eee;text-align:center}
 .kc.c1{border-top-color:#E3C5C5;background:#FBF7F7}.kc.c2{border-top-color:#D2CFC7;background:#F7F7F5}.kc.c3{border-top-color:#C5D4CB;background:#F6F8F7}
 .kc.c4{border-top-color:#D9CDBC;background:#F8F7F5}.kc.c5{border-top-color:#CBCDD9;background:#F7F7F8}.kc.c6{border-top-color:#D6C8D0;background:#F8F6F7}
 .klbl{font-size:9px;color:#666;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;text-align:center}
 .kval{font-size:16px;font-weight:700;color:#1a1a2e;text-align:center}
 .ksub{font-size:10px;color:#777;margin-top:1px}
 .r2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.card{background:#fff;border-radius:10px;padding:14px 18px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.card{background:#FDFCF8;border-radius:10px;padding:14px 18px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .ctit{font-size:10px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
 .tabs{display:flex;gap:5px;margin-bottom:14px;justify-content:center}
-.tab{padding:6px 14px;border-radius:8px;border:1.5px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#666}
+.tab{padding:6px 14px;border-radius:8px;border:1.5px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#FDFCF8;color:#666}
 .tab.active{background:rgba(192,39,45,.05);color:#a02030;border-color:rgba(192,39,45,.12);font-weight:700}
 .tab:hover:not(.active){background:#e0e0e0;border-color:#bdbdbd;color:#555}
 .agrid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:16px;overflow-x:auto}
-.ac{background:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 1px 4px rgba(0,0,0,.06);cursor:pointer;transition:.2s;border:2px solid transparent}
+.ac{background:#FDFCF8;border-radius:10px;padding:12px 14px;box-shadow:0 1px 4px rgba(0,0,0,.06);cursor:pointer;transition:.2s;border:2px solid transparent}
 .ac:hover{border-color:#bdbdbd;transform:translateY(-2px)}
 .ac.sel{border-color:#c0272d}
 .acn{font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:7px}
@@ -79,7 +79,7 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .acp span{color:#c0272d;font-weight:700}
 .tw{max-height:420px;overflow-y:auto;overflow-x:auto;border-radius:8px;border:1px solid #f0f0f0}
 table{width:100%;border-collapse:collapse;font-size:12px}
-th{text-align:left;color:#1a1a2e;font-weight:700;font-size:11px;padding:8px 12px 8px 0;border-bottom:2px solid #bbb;white-space:nowrap;position:sticky;top:0;background:#fff;z-index:1}
+th{text-align:left;color:#1a1a2e;font-weight:700;font-size:11px;padding:8px 12px 8px 0;border-bottom:2px solid #bbb;white-space:nowrap;position:sticky;top:0;background:#FDFCF8;z-index:1}
 td{padding:6px 10px;border-bottom:1px solid #d5d5d5;color:#333;white-space:nowrap;text-align:center}
 .no-border td{border-bottom:none!important}
 tr:hover td{background:#fef9f9}
@@ -92,7 +92,7 @@ tr:last-child td{border-bottom:none}
 /* Attendance */
 
 .dir-grid{margin-bottom:16px;overflow-x:auto}
-.dir-card{background:#fff;border-radius:12px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:2px solid transparent;transition:.2s;cursor:pointer}
+.dir-card{background:#FDFCF8;border-radius:12px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.06);border:2px solid transparent;transition:.2s;cursor:pointer}
 .dir-card:hover{border-color:#bdbdbd;transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.1)}
 .dir-card.active{border-color:#c0272d;background:#fef9f9}
 .dir-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
@@ -114,7 +114,7 @@ tr:last-child td{border-bottom:none}
 .ref-team-title.petromin{background:#b8860b}
 .ref-team-title.stellantis{background:#1565c0}
 .ref-team-title.baic{background:#c0272d}
-.ref-files{background:#fff;border-radius:0 0 10px 10px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}
+.ref-files{background:#FDFCF8;border-radius:0 0 10px 10px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}
 .ref-file{display:flex;align-items:center;gap:14px;padding:13px 18px;border-bottom:1px solid #f5f5f5;transition:.15s}
 .ref-file:last-child{border-bottom:none}
 .ref-file:hover{background:#fef9f9}
@@ -127,10 +127,10 @@ tr:last-child td{border-bottom:none}
 
 .schedule-wrap{margin-bottom:16px}
 .week-selector{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.week-btn{padding:6px 16px;border-radius:20px;border:1.5px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#555;transition:.15s}
+.week-btn{padding:6px 16px;border-radius:20px;border:1.5px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#FDFCF8;color:#555;transition:.15s}
 .week-btn.active{background:#c0272d;color:#fff;border-color:#c0272d}
 .week-btn:hover:not(.active){border-color:#bdbdbd;color:#555}
-.team-schedule{background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:12px}
+.team-schedule{background:#FDFCF8;border-radius:12px;padding:16px 20px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:12px}
 .team-schedule-title{font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .schedule-table{width:100%;border-collapse:collapse;font-size:12px}
 .schedule-table th{text-align:center;background:#f8f8f8;padding:8px 12px;font-size:11px;font-weight:700;color:#555;border-bottom:2px solid #eee}
@@ -145,10 +145,10 @@ tr:last-child td{border-bottom:none}
 
 .eom-wrap{margin-bottom:20px}
 .eom-month-selector{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
-.eom-month-btn{padding:6px 16px;border-radius:20px;border:1.5px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#555;transition:.15s}
+.eom-month-btn{padding:6px 16px;border-radius:20px;border:1.5px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#FDFCF8;color:#555;transition:.15s}
 .eom-month-btn.active{background:#c0272d;color:#fff;border-color:#c0272d}
 .eom-teams-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
-.eom-team-card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.eom-team-card{background:#FDFCF8;border-radius:14px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
 .eom-team-title{font-size:13px;font-weight:700;text-align:center;margin-bottom:16px;padding:8px;border-radius:8px;color:#fff}
 .eom-podium{display:flex;flex-direction:column;gap:10px}
 .eom-rank{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;background:#f9f9f9;border:1px solid #eee}
@@ -167,7 +167,7 @@ tr:last-child td{border-bottom:none}
 .eom-winner-score{font-size:36px;font-weight:700;color:#FFD700}
 
 .announce-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:16px}
-.announce-card{background:#fff;border-radius:12px;padding:16px 18px;box-shadow:0 2px 8px rgba(0,0,0,.08);border-left:5px solid #ddd;transition:.2s}
+.announce-card{background:#FDFCF8;border-radius:12px;padding:16px 18px;box-shadow:0 2px 8px rgba(0,0,0,.08);border-left:5px solid #ddd;transition:.2s}
 .announce-card:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.12)}
 .announce-card.high{border-left-color:#c0272d}
 .announce-card.medium{border-left-color:#D98E45}
@@ -179,7 +179,7 @@ tr:last-child td{border-bottom:none}
 .announce-priority.high{background:#fde;color:#c0272d}
 .announce-priority.medium{background:#FBF4EE;color:#D98E45}
 .announce-priority.low{background:#F4F8F5;color:#2e7d32}
-.esc-table{width:100%;border-collapse:collapse;font-size:12px;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.esc-table{width:100%;border-collapse:collapse;font-size:12px;background:#FDFCF8;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .esc-table th{background:#f5f5f5;padding:10px 14px;font-weight:700;font-size:11px;color:#555;text-align:center;border-bottom:2px solid #eee}
 .esc-table td{padding:10px 14px;border-bottom:1px solid #f5f5f5;text-align:center;color:#333}
 .esc-table tr:hover td{background:#fef9f9}
@@ -194,20 +194,20 @@ tr:last-child td{border-bottom:none}
 .ref-page{display:flex;flex-direction:column;gap:14px;padding-bottom:20px}
 
 /* Global search */
-.ref-global-search{background:#fff;border-radius:12px;padding:12px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;gap:10px;border-left:4px solid #A85060}
+.ref-global-search{background:#FDFCF8;border-radius:12px;padding:12px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;gap:10px;border-left:4px solid #A85060}
 .ref-global-inp{flex:1;padding:9px 16px;border-radius:24px;border:1.5px solid #ddd;font-size:13px;outline:none;background:#fafafa}
-.ref-global-inp:focus{border-color:#c0272d;background:#fff}
+.ref-global-inp:focus{border-color:#c0272d;background:#FDFCF8}
 .ref-global-clear{padding:7px 16px;background:#f5f5f5;color:#666;border:1px solid #ddd;border-radius:20px;font-size:12px;cursor:pointer;font-weight:600;white-space:nowrap}
 .ref-global-clear:hover{background:#fde;color:#c0272d;border-color:#c0272d}
 
 /* Panel */
-.ref-info-panel{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.ref-info-panel{background:#FDFCF8;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .ref-panel-header{padding:12px 16px;font-size:13px;font-weight:700;color:#c0272d;display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#f5f5f5,#eeeeee);border-bottom:2px solid rgba(192,39,45,.5);text-align:center}
 .ref-panel-body{padding:14px 16px}
 
 /* Contact pills */
 .ref-contacts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
-.ref-contact-pill{display:flex;align-items:center;gap:11px;background:#fff;border-radius:12px;padding:10px 13px;border:1px solid #eee;box-shadow:0 1px 4px rgba(0,0,0,.04);transition:.15s}
+.ref-contact-pill{display:flex;align-items:center;gap:11px;background:#FDFCF8;border-radius:12px;padding:10px 13px;border:1px solid #eee;box-shadow:0 1px 4px rgba(0,0,0,.04);transition:.15s}
 .ref-contact-pill:hover{box-shadow:0 3px 10px rgba(0,0,0,.09)}
 .ref-contact-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;color:#fff}
 .ref-contact-pill-label{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#8a8a8a;margin-bottom:2px}
@@ -219,7 +219,7 @@ tr:last-child td{border-bottom:none}
 /* Subject groups */
 .ref-subj-group{margin-bottom:14px}
 .ref-subj-group-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:5px 10px;margin-bottom:6px;border-radius:0 6px 6px 0;background:#fafafa}
-.ref-subj-item{padding:10px 12px;border-bottom:1px solid #f0f0f0;background:#fff;border-radius:6px;margin-bottom:4px;transition:.15s}
+.ref-subj-item{padding:10px 12px;border-bottom:1px solid #f0f0f0;background:#FDFCF8;border-radius:6px;margin-bottom:4px;transition:.15s}
 .ref-subj-item:hover{background:#fef9f9}
 .ref-subj-subject{font-size:13px;font-weight:700;color:#1a1a2e;display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px}
 .ref-subj-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:8px}
@@ -231,7 +231,7 @@ tr:last-child td{border-bottom:none}
 
 /* Link cards */
 .ref-link-card{background:#f9fbff;border-radius:10px;padding:10px 14px;border:1px solid #e8eaed;display:flex;align-items:center;gap:10px;transition:.15s;margin-bottom:6px}
-.ref-link-card:hover{border-color:#1565c0;background:#fff}
+.ref-link-card:hover{border-color:#1565c0;background:#FDFCF8}
 .ref-link-card-name{font-size:13px;font-weight:700;color:#1a1a2e;flex:1}
 .ref-link-open-btn{padding:5px 14px;background:#1565c0;color:#fff;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap}
 .ref-link-open-btn:hover{background:#0d47a1}
@@ -239,7 +239,7 @@ tr:last-child td{border-bottom:none}
 .ref-link-pass{font-size:10px;color:#bbb;margin-top:2px}
 
 /* Brand accordion */
-.ref-brand-section{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}
+.ref-brand-section{background:#FDFCF8;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}
 .ref-brand-header{padding:14px 18px;font-size:14px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
 .ref-brand-header:hover{filter:brightness(1.08)}
 .ref-brand-meta{font-size:11px;opacity:.75;margin-top:2px;font-weight:400}
@@ -262,7 +262,7 @@ tr:last-child td{border-bottom:none}
 .ref-card-hours{font-size:10px;color:#888;border-top:1px solid #f0f0f0;padding-top:7px;margin-top:7px;line-height:1.5}
 
 /* Email cards */
-.ref-email-card{background:#fff;border-radius:10px;padding:14px 18px;border:2px solid #fce8e0;transition:.15s;margin-bottom:4px;text-align:center;box-shadow:0 2px 8px rgba(192,39,45,.08)}
+.ref-email-card{background:#FDFCF8;border-radius:10px;padding:14px 18px;border:2px solid #fce8e0;transition:.15s;margin-bottom:4px;text-align:center;box-shadow:0 2px 8px rgba(192,39,45,.08)}
 .ref-email-card:hover{border-color:#bdbdbd;background:#f5f5f5}
 .ref-email-label{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px;text-align:center}
 .ref-email-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:5px;flex-wrap:wrap}
@@ -271,7 +271,7 @@ tr:last-child td{border-bottom:none}
 .ref-email-tag.cc{background:#1565c0;color:#fff}
 
 /* Brand circles */
-.ref-brand-circles{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.ref-brand-circles{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;background:#FDFCF8;border-radius:12px;padding:16px 20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .ref-brand-circle{display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;transition:.2s}
 .ref-brand-circle:hover{transform:translateY(-3px)}
 .ref-brand-circle-icon{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 2px 6px rgba(0,0,0,.08);filter:brightness(1.12) saturate(.9)}
@@ -287,7 +287,7 @@ tr:last-child td{border-bottom:none}
 .ref-search-inp:focus{border-color:#c0272d}
 
 .att-section{margin-top:4px}
-.month-block{background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:10px}
+.month-block{background:#FDFCF8;border-radius:10px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:10px}
 .month-title{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
 .month-totals{display:flex;gap:6px;flex-wrap:wrap}
 .mtot{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600}
@@ -302,12 +302,12 @@ tr:last-child td{border-bottom:none}
 .cal-day.el{background:#EAE6F4;color:#4A3868}.cal-day.empty{background:transparent}
 .cal-day.wd{font-size:13px;color:#444;background:transparent;font-weight:700}
 .ms-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:14px}
-.ms-card{background:#fff;border-radius:8px;padding:10px 12px;box-shadow:0 1px 3px rgba(0,0,0,.06);border-left:3px solid #eee;text-align:center}
+.ms-card{background:#FDFCF8;border-radius:8px;padding:10px 12px;box-shadow:0 1px 3px rgba(0,0,0,.06);border-left:3px solid #eee;text-align:center}
 .ms-val{font-size:18px;font-weight:700;color:#1a1a2e;text-align:center}
 .ms-name{font-size:11px;color:#555;font-weight:500;margin-bottom:3px;text-align:center}
 /* Call page */
 .call-krow{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
-.team-sec{background:#fff;border-radius:12px;padding:16px 20px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:12px}
+.team-sec{background:#FDFCF8;border-radius:12px;padding:16px 20px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:12px}
 .team-sec-title{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:12px;display:flex;align-items:center;gap:8px}
 .team-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .mbar-row{display:flex;align-items:center;gap:10px;margin-bottom:7px}
@@ -317,27 +317,27 @@ tr:last-child td{border-bottom:none}
 .mbar-val{font-size:12px;color:#555;font-weight:700;min-width:55px;text-align:right}
 .mbar-abn{font-size:11px;color:#e65100;min-width:65px}
 .comp-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
-.comp-card{background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.comp-card{background:#FDFCF8;border-radius:10px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .comp-team{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
 .comp-stat{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f5f5f5;font-size:12px}
 .comp-stat:last-child{border-bottom:none}
 .comp-stat .lbl{color:#888}.comp-stat .val{font-weight:700}
 .team-toggle{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;justify-content:center}
-.ttn{padding:5px 14px;border-radius:20px;border:1.5px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#666}
+.ttn{padding:5px 14px;border-radius:20px;border:1.5px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#FDFCF8;color:#666}
 .ttn.active{color:#fff;border-color:transparent}
 .ttn.nissan.active{background:#c0272d}.ttn.petromin.active{background:#D98E45;color:#fff}.ttn.stellantis.active{background:#1565c0}
-footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px solid #eee;margin-top:20px;background:#fff}
+footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px solid #eee;margin-top:20px;background:#FDFCF8}
 @media(max-width:900px){.krow{grid-template-columns:repeat(3,1fr)}.r2,.comp-grid,.call-krow{grid-template-columns:1fr}}
 
 /* ── Time-Off tab ─────────────────────────────────────────────────────── */
 .to-wrap{direction:ltr;text-align:left}
-.to-hero{background:#fff;border-radius:14px;padding:20px 22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;flex-direction:column;align-items:center;text-align:center;gap:22px;border:0.5px solid #eee;flex-wrap:wrap}
+.to-hero{background:#FDFCF8;border-radius:14px;padding:20px 22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;flex-direction:column;align-items:center;text-align:center;gap:22px;border:0.5px solid #eee;flex-wrap:wrap}
 .to-hero .hi2{font-size:18px;font-weight:800;color:#c0272d;background:linear-gradient(180deg,rgba(192,39,45,.12),rgba(192,39,45,.04));padding:9px 26px;border-radius:11px;border:1px solid rgba(192,39,45,.16);display:inline-block}
 .to-hero .hi3{font-size:12px;color:#666;margin-top:10px}
 .to-chip{font-size:12px;color:#c0272d;background:rgba(192,39,45,.08);padding:6px 14px;border-radius:20px;border:1px solid rgba(192,39,45,.2);font-weight:700;cursor:pointer}
 .to-krow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
 .to-tabs{display:flex;gap:5px;margin-bottom:14px;justify-content:center}
-.to-tab{padding:6px 16px;border-radius:8px;border:1.5px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:#666}
+.to-tab{padding:6px 16px;border-radius:8px;border:1.5px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#FDFCF8;color:#666}
 .to-tab.active{background:rgba(192,39,45,.05);color:#a02030;border-color:rgba(192,39,45,.12);font-weight:700}
 .to-panel{display:none}
 .to-panel.active{display:block}
@@ -366,11 +366,11 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .to-bsm{padding:6px 13px;border-radius:7px;font-size:11px;font-weight:700;border:none;cursor:pointer}
 .to-b-appr{background:#c0272d;color:#fff}
 .to-b-appr:hover{background:#a02030}
-.to-b-rej{background:#fff;color:#c0272d;border:1.5px solid #c0272d}
+.to-b-rej{background:#FDFCF8;color:#c0272d;border:1.5px solid #c0272d}
 .to-b-rej:hover{background:#fde8e6}
 .to-empty{text-align:center;padding:36px 16px;color:#aaa;font-size:12.5px}
 .to-emp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
-.to-emp{background:#fff;border:1px solid #eee;border-radius:10px;padding:14px;text-align:center}
+.to-emp{background:#FDFCF8;border:1px solid #eee;border-radius:10px;padding:14px;text-align:center}
 .to-emp .en{font-weight:700;font-size:12.5px;margin-bottom:8px}
 .to-ring{width:78px;height:78px;margin:0 auto 6px;position:relative}
 .to-ring svg{transform:rotate(-90deg)}
@@ -381,7 +381,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .to-hours-hint.ok{display:block;background:#e6f4ea;color:#1e7d3c}
 .to-hours-hint.warn{display:block;background:#fde8e6;color:#c0272d}
 .to-sum-list{display:flex;flex-direction:column;gap:12px}
-.to-sum-card{border:1px solid #eee;border-radius:11px;padding:13px 16px;background:#fff}
+.to-sum-card{border:1px solid #eee;border-radius:11px;padding:13px 16px;background:#FDFCF8}
 .to-sum-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px;padding-bottom:8px;border-bottom:1px dashed #eee}
 .to-sum-name{font-size:13.5px;font-weight:800;color:#1a1a2e}
 .to-sum-total{font-size:11px;font-weight:800;background:#f3f0f0;color:#7a5050;padding:4px 11px;border-radius:20px;white-space:nowrap}
@@ -391,7 +391,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .to-sum-mid{color:#333;font-weight:600;flex:1;min-width:120px}
 .to-modal-overlay{display:none;position:fixed;inset:0;background:rgba(20,20,20,.4);z-index:200;align-items:center;justify-content:center;padding:16px}
 .to-modal-overlay.show{display:flex}
-.to-modal-box{background:#fff;border-radius:14px;padding:20px;max-width:320px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.25);direction:ltr;text-align:left}
+.to-modal-box{background:#FDFCF8;border-radius:14px;padding:20px;max-width:320px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.25);direction:ltr;text-align:left}
 .to-modal-box h3{margin:0 0 6px;font-size:15px;color:#1a1a2e;font-weight:700}
 .to-modal-box p{margin:0 0 12px;font-size:12px;color:#888}
 .to-modal-box input{width:100%;padding:9px 11px;border:1.5px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;background:#fafafa;outline:none;margin-bottom:9px}
@@ -419,7 +419,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .att-pill.off{background:#FAF0F0;color:#885050}
 .att-pill.absent{background:#F8F2F2;color:#886060}
 .att-pill.complaints{background:#EDD8E0;color:#6A3050}
-.att-table-wrap{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.att-table-wrap{background:#FDFCF8;border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .att-table-title{padding:14px 18px;font-size:13px;font-weight:700;color:#1a1a2e;border-bottom:2px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between}
 .att-agent-table{width:100%;border-collapse:collapse;font-size:13px}
 .att-agent-table th{background:#f8f8f8;padding:6px 16px;font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.04em;border-bottom:2px solid #eee;text-align:center}
@@ -474,7 +474,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
   <div style="background:#FFFDFB;border-radius:14px;padding:26px 28px;max-width:340px;width:90%;box-shadow:0 10px 30px rgba(0,0,0,.18);text-align:center">
     <div id="nameModalStep1">
       <div style="font-size:15px;font-weight:700;color:#6B3636;margin-bottom:18px">👋 Welcome</div>
-      <select id="nameModalSelect" style="width:100%;padding:9px 10px;border:1.5px solid #e8dede;border-radius:8px;font-size:13px;margin-bottom:12px;background:#fff">
+      <select id="nameModalSelect" style="width:100%;padding:9px 10px;border:1.5px solid #e8dede;border-radius:8px;font-size:13px;margin-bottom:12px;background:#FDFCF8">
         <option value="">— Select your name —</option>
       </select>
       <button onclick="confirmAgentName()" style="width:100%;padding:10px;border:none;border-radius:8px;background:#C0272D;color:#fff;font-size:13px;font-weight:700;cursor:pointer">Confirm</button>
@@ -485,7 +485,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     </div>
     <div id="nameModalStep2" style="display:none">
       <div style="font-size:15px;font-weight:700;color:#6B3636;margin-bottom:14px">📋 Management / Supervisor</div>
-      <input id="nameModalMgmtInput" type="text" placeholder="Enter your name" style="width:100%;padding:9px 10px;border:1.5px solid #e8dede;border-radius:8px;font-size:13px;margin-bottom:14px;background:#fff;box-sizing:border-box">
+      <input id="nameModalMgmtInput" type="text" placeholder="Enter your name" style="width:100%;padding:9px 10px;border:1.5px solid #e8dede;border-radius:8px;font-size:13px;margin-bottom:14px;background:#FDFCF8;box-sizing:border-box">
       <button onclick="confirmMgmtName()" style="width:100%;padding:10px;border:none;border-radius:8px;background:#C0272D;color:#fff;font-size:13px;font-weight:700;cursor:pointer">Confirm</button>
       <div onclick="backToAgentList()" style="margin-top:14px;font-size:11px;color:#999;text-decoration:underline;cursor:pointer">← Back to name list</div>
     </div>
@@ -530,7 +530,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 
   <!-- PAGE 1 -->
   <div id="page1" class="main">
-    <div id="perfCtrl" style="background:#fff;border-bottom:1px solid #e8eaed;padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);position:sticky;top:0;z-index:50">
+    <div id="perfCtrl" style="background:#FDFCF8;border-bottom:1px solid #e8eaed;padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);position:sticky;top:0;z-index:50">
       <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em">From:</label><input type="date" id="df_p1" onchange="document.getElementById('df').value=this.value;rf()">
       <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em">To:</label><input type="date" id="dt_p1" onchange="document.getElementById('dt').value=this.value;rf()">
       <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-left:8px">Agent:</label>
@@ -747,7 +747,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 
 </div>
 </div>
-<footer style="border-top:2px solid #c0272d;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px 18px">
+<footer style="border-top:2px solid #c0272d;background:#FDFCF8;display:flex;align-items:center;justify-content:space-between;padding:10px 18px">
   <span id="lupd_footer" style="font-size:11px;font-weight:600;color:#555">🔄 Loading...</span>
   <span style="font-size:11px;color:#aaa;text-align:center">Inbound Daily Dashboard · Petromin Group · Connected to Google Sheets · Auto-updates on refresh</span>
   <span style="font-size:11px;color:#888">By: <b style="color:#c0272d">Sali Aljehani</b></span>
@@ -1537,7 +1537,7 @@ function renderAll(){
       const a=am[nm];
       const ag=AGENTS_DIR.find(x=>x.name===nm)||{};
       const badgeHtml=ag.badge?'<span style="font-size:9px;background:#FCEAEA;color:#C0272D;padding:1px 8px;border-radius:10px;flex-shrink:0">Badge '+ag.badge+'</span>':'';
-      return`<div style="min-width:620px;background:#fff;border-radius:12px;border:0.5px solid #eee;padding:13px 18px;display:grid;grid-template-columns:${cols};align-items:center;gap:10px;cursor:pointer;transition:.15s" onclick="selAgent('${nm}')" onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,.06)'" onmouseout="this.style.boxShadow=''">
+      return`<div style="min-width:620px;background:#FDFCF8;border-radius:12px;border:0.5px solid #eee;padding:13px 18px;display:grid;grid-template-columns:${cols};align-items:center;gap:10px;cursor:pointer;transition:.15s" onclick="selAgent('${nm}')" onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,.06)'" onmouseout="this.style.boxShadow=''">
         <div style="font-size:19px;font-weight:700;color:${rkCol(i)};text-align:center">${i+1}</div>
         <div style="min-width:0"><div style="font-size:14px;font-weight:600;color:#1a1a2e;white-space:nowrap">${nm}</div><div style="margin-top:2px;white-space:nowrap">${badgeHtml} <span style="font-size:10px;color:#bbb">${a.days} Day</span></div></div>
         <div style="text-align:center;background:rgba(192,39,45,.08);border-radius:10px;padding:11px 4px"><div style="font-size:9px;color:#b06a6d">Inbound</div><div style="font-size:15px;font-weight:700;color:#9a2a2f">${N(a.I)}</div></div>
@@ -2018,22 +2018,22 @@ async function renderCaseHandling(){
       '#caseHandlingContent .cdh{display:flex;align-items:center;gap:11px;margin-bottom:13px}'+
       '#caseHandlingContent .ic{width:36px;height:36px;border-radius:10px;background:var(--c);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0}'+
       '#caseHandlingContent .tt{font-size:17px;font-weight:800;color:#2c3038;flex:1}'+
-      '#caseHandlingContent .sla{font-size:11px;background:#fff;color:var(--c);padding:4px 12px;border-radius:20px;font-weight:700;border:1px solid var(--bd);white-space:nowrap}'+
+      '#caseHandlingContent .sla{font-size:11px;background:#FDFCF8;color:var(--c);padding:4px 12px;border-radius:20px;font-weight:700;border:1px solid var(--bd);white-space:nowrap}'+
       '#caseHandlingContent .chips{display:grid;grid-template-columns:1fr 1fr;gap:6px}'+'#caseHandlingContent .sc .chips{display:grid;grid-template-columns:1fr 1fr;gap:6px}'+
       '#caseHandlingContent .chip{background:var(--chip);border-radius:9px;padding:8px 12px;font-size:13px;color:#3a3f48;display:flex;gap:8px;align-items:flex-start}'+
       '#caseHandlingContent .chip .b{width:6px;height:6px;border-radius:50%;background:var(--c);margin-top:7px;flex-shrink:0}'+
-      '#caseHandlingContent .note{margin-top:9px;font-size:12px;padding:9px 12px;border-radius:9px;background:#fff;color:var(--c);font-weight:600;border-right:3px solid var(--c)}'+
+      '#caseHandlingContent .note{margin-top:9px;font-size:12px;padding:9px 12px;border-radius:9px;background:#FDFCF8;color:var(--c);font-weight:600;border-right:3px solid var(--c)}'+
       '#caseHandlingContent .subrow{display:grid;grid-template-columns:1fr;gap:12px}'+
-      '#caseHandlingContent .sc{background:#fff;border:1px solid var(--bd);border-radius:13px;padding:14px}'+
+      '#caseHandlingContent .sc{background:#FDFCF8;border:1px solid var(--bd);border-radius:13px;padding:14px}'+
       '#caseHandlingContent .sc h4{font-size:13.5px;color:#2c3038;margin:0 0 8px;font-weight:800;display:flex;align-items:center}'+
       '#caseHandlingContent .sc .sn{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;background:var(--c);color:#fff;font-size:11px;font-weight:700;margin-left:6px}'+
       '#caseHandlingContent .impact{font-size:11.5px;color:#8a6f45;background:#fbf6ea;border-radius:8px;padding:6px 9px;margin-bottom:8px}'+
       '#caseHandlingContent .mlbl{display:block;text-align:center;font-size:12px;font-weight:800;color:#fff;background:var(--c);border-radius:20px;padding:5px 0;margin:14px auto 9px;max-width:130px;box-shadow:0 1px 4px rgba(0,0,0,.12)}'+
       '#caseHandlingContent .mtop{margin-top:12px}'+
       '#caseHandlingContent .sc .chip{background:var(--chip);font-size:12px;padding:6px 9px}'+
-      '#caseHandlingContent .succ{margin-top:9px;font-size:11.5px;background:#fff;border:1px dashed var(--c);border-radius:9px;padding:8px 11px;color:var(--c)}'+
+      '#caseHandlingContent .succ{margin-top:9px;font-size:11.5px;background:#FDFCF8;border:1px dashed var(--c);border-radius:9px;padding:8px 11px;color:var(--c)}'+
       '#caseHandlingContent .succ .succ-l{display:block;font-weight:800;margin-bottom:2px}'+
-      '#caseHandlingContent .res{grid-column:1/-1;background:#fff;border:1px solid #e8ebef;border-radius:16px;padding:18px 24px}'+
+      '#caseHandlingContent .res{grid-column:1/-1;background:#FDFCF8;border:1px solid #e8ebef;border-radius:16px;padding:18px 24px}'+
       '#caseHandlingContent .res h3{text-align:center;font-size:15px;margin:0 0 12px;color:#2c3038}'+
       '#caseHandlingContent .rchips{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}'+
       '#caseHandlingContent .rchip{background:#f0f7f2;border-radius:10px;padding:9px 12px;font-size:12.5px;color:#3e6b4f;display:flex;gap:8px;align-items:center}'+
@@ -2346,7 +2346,7 @@ function renderDir(filter=''){
     +list.map((a)=>{
       const init = a.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
       const p = getAvatarColor(a.name);
-      return '<div style="background:#fff;border-radius:12px;border:1px solid '+p.border+';padding:14px 16px;display:flex;align-items:flex-start;gap:10px">'
+      return '<div style="background:#FDFCF8;border-radius:12px;border:1px solid '+p.border+';padding:14px 16px;display:flex;align-items:flex-start;gap:10px">'
         +'<div style="width:36px;height:36px;border-radius:50%;background:'+p.bg+';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:'+p.text+';flex-shrink:0;border:1px solid '+p.border+'">'+init+'</div>'
         +'<div style="flex:1;min-width:0">'
         +'<div style="font-size:12px;font-weight:600;color:'+p.text+';margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+a.name+'</div>'
@@ -2425,10 +2425,10 @@ const REF_SHEETS = {
   }
 };
 
-const STELLANTIS_WARRANTY_HTML='<div style="background:#fff;border-radius:12px;overflow-x:auto;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:16px"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#F4F8F5"><th style="padding:9px 14px;color:#3A6840;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">ضمان</th><th style="padding:9px 14px;color:#3A6840;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">CHRYSLER, DODGE, JEEP, RAM</th><th style="padding:9px 14px;color:#3A6840;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">FIAT, ABARTH, ALFA ROMEO</th></tr></thead><tbody><tr style="background:#fff"><td style="padding:8px 14px;font-weight:600;color:#333">الضمان الأساسي + بطارية المصنع</td><td style="padding:8px 14px;text-align:center">3 years / 60,000 km</td><td style="padding:8px 14px;text-align:center">2 years / unlimited mileage</td></tr><tr style="background:#f9fbff"><td style="padding:8px 14px;font-weight:600;color:#333">الضمان الممتد</td><td style="padding:8px 14px;text-align:center">5 years / 100,000 km</td><td style="padding:8px 14px;text-align:center">5 years / 120,000 km</td></tr><tr style="background:#fff"><td style="padding:8px 14px;font-weight:600;color:#333">ضمان قطع الغيار</td><td style="padding:8px 14px;text-align:center">1 year / 20,000 km</td><td style="padding:8px 14px;text-align:center">1 year / 20,000 km</td></tr></tbody></table></div>';
-const NISSAN_WARRANTY_HTML='<div style="background:#fff;border-radius:12px;overflow-x:auto;box-shadow:0 2px 8px rgba(0,0,0,.07);padding:14px 16px;direction:rtl;text-align:right;margin-bottom:16px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-left:4px solid #A85060"><div style="font-size:13px;font-weight:700;color:#c0272d;margin-bottom:8px">🛡️ الضمان الأساسي</div><div style="font-size:12px;color:#555;line-height:1.8">📅 يسري من تاريخ إصدار اللوحات<br>⏱️ 3 سنوات أو 100,000 كم<br>✅ يتفعل تلقائياً بدون إجراء<br>🔧 يشترط الصيانة في مراكز معتمدة</div></div><div style="background:#fef9f9;border-radius:10px;padding:14px;border-left:4px solid #A85060"><div style="font-size:13px;font-weight:700;color:#c0272d;margin-bottom:8px">🔋 ضمان البطارية</div><div style="font-size:12px;color:#555;line-height:1.8">📅 يسري من تاريخ إصدار اللوحات<br>السنة الأولى: تغيير مجاني ✅<br>السنة الثانية: خصم 50٪<br>السنة الثالثة: خصم 25٪<br>🏢 في مراكز بترومين نيسان فقط</div></div><div style="background:#f9fffe;border-radius:10px;padding:14px;border-left:4px solid #3A6840"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 جدول الصيانة</div><div style="font-size:12px;color:#555;line-height:1.8">🆓 فحص مجاني: 1,000 - 2,000 كم<br>⏱️ صيانة دورية: كل 10,000 كم أو 6 أشهر<br>مجانية لسيارات 2025-2026 داخل الوكالة</div></div><div style="background:#f9fffe;border-radius:10px;padding:14px;border-left:4px solid #3A6840"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">⚙️ زيت القير</div><div style="font-size:12px;color:#555;line-height:1.8">🔧 يُوصى بالتغيير بعد 40,000 - 60,000 كم<br>حسب ظروف القيادة والاستخدام</div></div></div></div>';
-const FOTON_SERVICE_PRICE_HTML=`<div style="background:#546e7a;color:#fff;padding:12px 16px;border-radius:12px 12px 0 0"><div dir="ltr" style="display:flex;gap:8px;justify-content:center;align-items:center;font-size:15px;font-weight:800">🛠️ <span>Service Price</span></div><div dir="ltr" style="text-align:center;font-size:11px;opacity:.9;margin-top:3px">Foton Genuine Service &amp; Parts</div></div><div style="background:#fff;border:1px solid #e6eaec;border-top:none;overflow-x:auto;box-shadow:0 2px 8px rgba(0,0,0,.06)"><table style="width:100%;min-width:780px;border-collapse:collapse;font-size:12px;white-space:nowrap"><thead><tr style="background:#546e7a"><th style="position:sticky;left:0;z-index:3;background:#546e7a;color:#fff;padding:9px 12px;text-align:right;font-weight:800;border-bottom:2px solid #3f545e">FOTON VEHICLES</th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">5,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">10,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">20,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">30,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">40,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">50,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">60,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">70,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">80,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">90,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">100,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th></tr></thead><tbody><tr style="background:#ffffff"><td style="position:sticky;left:0;z-index:2;background:#ffffff;padding:8px 12px;text-align:right;font-weight:800;color:#3f545e;border-left:2px solid #546e7a">PICK UP TUNLAND</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">245</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">460</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">540</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">460</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#546e7a;font-weight:800;background:rgba(84,110,122,.08)">1,230</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">460</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">540</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">460</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#546e7a;font-weight:800;background:rgba(84,110,122,.08)">1,690</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">460</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">540</td></tr><tr style="background:#f3f6f7"><td style="position:sticky;left:0;z-index:2;background:#f3f6f7;padding:8px 12px;text-align:right;font-weight:800;color:#3f545e;border-left:2px solid #546e7a">VAN VIEW CS2</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">245</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">445</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">525</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">445</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#546e7a;font-weight:800;background:rgba(84,110,122,.08)">1,230</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">445</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#546e7a;font-weight:800;background:rgba(84,110,122,.08)">1,770</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">445</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#546e7a;font-weight:800;background:rgba(84,110,122,.08)">1,700</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">445</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">525</td></tr><tr style="background:#ffffff"><td style="position:sticky;left:0;z-index:2;background:#ffffff;padding:8px 12px;text-align:right;font-weight:800;color:#3f545e;border-left:2px solid #546e7a">VAN TOANO</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">280</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">470</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">630</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">470</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#546e7a;font-weight:800;background:rgba(84,110,122,.08)">1,250</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">470</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#546e7a;font-weight:800;background:rgba(84,110,122,.08)">1,720</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">470</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#546e7a;font-weight:800;background:rgba(84,110,122,.08)">1,720</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">470</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">630</td></tr></tbody></table></div><div dir="rtl" style="padding:9px 14px;font-size:11px;color:#777;text-align:center;border:1px solid #e6eaec;border-top:none;border-radius:0 0 12px 12px">💡 الأسعار غير شاملة ضريبة القيمة المضافة · مراكز صيانة معتمدة</div>`;
-const BAIC_WARRANTY_HTML='<div style="background:#fff;border-radius:12px;overflow-x:auto;box-shadow:0 2px 8px rgba(0,0,0,.07);padding:14px 16px;direction:rtl;text-align:right;margin-bottom:16px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-left:4px solid #C86E35"><div style="font-size:13px;font-weight:700;color:#C86E35;margin-bottom:8px">🛡️ الضمان الأساسي لمركبات بايك</div><div style="font-size:12px;color:#555;line-height:1.8">📅 بداية سريان الضمان: من تاريخ إصدار لوحات المركبة<br>⏱️ مدة الضمان: 10 سنوات أو 150,000 كيلومتر (أيهما يأتي أولاً)</div></div><div style="background:#f9fffe;border-radius:10px;padding:14px;border-left:4px solid #3A6840"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 جدول الصيانة لمركبات بايك</div><div style="font-size:12px;color:#555;line-height:1.8">🆓 أول صيانة دورية: 5,000 كم أو 6 أشهر (أيهما يأتي أولاً)<br>⏱️ بعد ذلك: كل 7,500 كم أو 6 أشهر (أيهما يأتي أولاً)</div></div></div></div>';
+const STELLANTIS_WARRANTY_HTML='<div style="background:#FDFCF8;border-radius:12px;overflow-x:auto;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:16px"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#F4F8F5"><th style="padding:9px 14px;color:#3A6840;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">ضمان</th><th style="padding:9px 14px;color:#3A6840;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">CHRYSLER, DODGE, JEEP, RAM</th><th style="padding:9px 14px;color:#3A6840;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">FIAT, ABARTH, ALFA ROMEO</th></tr></thead><tbody><tr style="background:#FDFCF8"><td style="padding:8px 14px;font-weight:600;color:#333">الضمان الأساسي + بطارية المصنع</td><td style="padding:8px 14px;text-align:center">3 years / 60,000 km</td><td style="padding:8px 14px;text-align:center">2 years / unlimited mileage</td></tr><tr style="background:#f9fbff"><td style="padding:8px 14px;font-weight:600;color:#333">الضمان الممتد</td><td style="padding:8px 14px;text-align:center">5 years / 100,000 km</td><td style="padding:8px 14px;text-align:center">5 years / 120,000 km</td></tr><tr style="background:#FDFCF8"><td style="padding:8px 14px;font-weight:600;color:#333">ضمان قطع الغيار</td><td style="padding:8px 14px;text-align:center">1 year / 20,000 km</td><td style="padding:8px 14px;text-align:center">1 year / 20,000 km</td></tr></tbody></table></div>';
+const NISSAN_WARRANTY_HTML='<div style="background:#FDFCF8;border-radius:12px;overflow-x:auto;box-shadow:0 2px 8px rgba(0,0,0,.07);padding:14px 16px;direction:rtl;text-align:right;margin-bottom:16px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-left:4px solid #A85060"><div style="font-size:13px;font-weight:700;color:#c0272d;margin-bottom:8px">🛡️ الضمان الأساسي</div><div style="font-size:12px;color:#555;line-height:1.8">📅 يسري من تاريخ إصدار اللوحات<br>⏱️ 3 سنوات أو 100,000 كم<br>✅ يتفعل تلقائياً بدون إجراء<br>🔧 يشترط الصيانة في مراكز معتمدة</div></div><div style="background:#fef9f9;border-radius:10px;padding:14px;border-left:4px solid #A85060"><div style="font-size:13px;font-weight:700;color:#c0272d;margin-bottom:8px">🔋 ضمان البطارية</div><div style="font-size:12px;color:#555;line-height:1.8">📅 يسري من تاريخ إصدار اللوحات<br>السنة الأولى: تغيير مجاني ✅<br>السنة الثانية: خصم 50٪<br>السنة الثالثة: خصم 25٪<br>🏢 في مراكز بترومين نيسان فقط</div></div><div style="background:#f9fffe;border-radius:10px;padding:14px;border-left:4px solid #3A6840"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 جدول الصيانة</div><div style="font-size:12px;color:#555;line-height:1.8">🆓 فحص مجاني: 1,000 - 2,000 كم<br>⏱️ صيانة دورية: كل 10,000 كم أو 6 أشهر<br>مجانية لسيارات 2025-2026 داخل الوكالة</div></div><div style="background:#f9fffe;border-radius:10px;padding:14px;border-left:4px solid #3A6840"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">⚙️ زيت القير</div><div style="font-size:12px;color:#555;line-height:1.8">🔧 يُوصى بالتغيير بعد 40,000 - 60,000 كم<br>حسب ظروف القيادة والاستخدام</div></div></div></div>';
+const FOTON_SERVICE_PRICE_HTML=`<div style="background:#546e7a;color:#fff;padding:12px 16px;border-radius:12px 12px 0 0"><div dir="ltr" style="display:flex;gap:8px;justify-content:center;align-items:center;font-size:15px;font-weight:800">🛠️ <span>Service Price</span></div><div dir="ltr" style="text-align:center;font-size:11px;opacity:.9;margin-top:3px">Foton Genuine Service &amp; Parts</div></div><div style="background:#FDFCF8;border:1px solid #e6eaec;border-top:none;overflow-x:auto;box-shadow:0 2px 8px rgba(0,0,0,.06)"><table style="width:100%;min-width:780px;border-collapse:collapse;font-size:12px;white-space:nowrap"><thead><tr style="background:#546e7a"><th style="position:sticky;left:0;z-index:3;background:#546e7a;color:#fff;padding:9px 12px;text-align:right;font-weight:800;border-bottom:2px solid #3f545e">FOTON VEHICLES</th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">5,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">10,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">20,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">30,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">40,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">50,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">60,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">70,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">80,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">90,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th><th style="padding:8px 10px;color:#fff;font-weight:700;text-align:center;border-bottom:2px solid #3f545e;border-left:1px solid rgba(255,255,255,.15)">100,000<div style="font-size:9px;opacity:.85;font-weight:600;letter-spacing:.5px">SERVICE</div></th></tr></thead><tbody><tr style="background:#FDFCF8"><td style="position:sticky;left:0;z-index:2;background:#FDFCF8;padding:8px 12px;text-align:right;font-weight:800;color:#3f545e;border-left:2px solid #546e7a">PICK UP TUNLAND</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">245</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">460</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">540</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">460</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#546e7a;font-weight:800;background:rgba(84,110,122,.08)">1,230</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">460</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">540</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">460</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#546e7a;font-weight:800;background:rgba(84,110,122,.08)">1,690</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">460</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">540</td></tr><tr style="background:#f3f6f7"><td style="position:sticky;left:0;z-index:2;background:#f3f6f7;padding:8px 12px;text-align:right;font-weight:800;color:#3f545e;border-left:2px solid #546e7a">VAN VIEW CS2</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">245</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">445</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">525</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">445</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#546e7a;font-weight:800;background:rgba(84,110,122,.08)">1,230</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">445</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#546e7a;font-weight:800;background:rgba(84,110,122,.08)">1,770</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">445</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#546e7a;font-weight:800;background:rgba(84,110,122,.08)">1,700</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">445</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">525</td></tr><tr style="background:#FDFCF8"><td style="position:sticky;left:0;z-index:2;background:#FDFCF8;padding:8px 12px;text-align:right;font-weight:800;color:#3f545e;border-left:2px solid #546e7a">VAN TOANO</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">280</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">470</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">630</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">470</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#546e7a;font-weight:800;background:rgba(84,110,122,.08)">1,250</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">470</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#546e7a;font-weight:800;background:rgba(84,110,122,.08)">1,720</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">470</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#546e7a;font-weight:800;background:rgba(84,110,122,.08)">1,720</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">470</td><td style="padding:8px 10px;text-align:center;border-left:1px solid #eef1f2;color:#444;font-weight:600">630</td></tr></tbody></table></div><div dir="rtl" style="padding:9px 14px;font-size:11px;color:#777;text-align:center;border:1px solid #e6eaec;border-top:none;border-radius:0 0 12px 12px">💡 الأسعار غير شاملة ضريبة القيمة المضافة · مراكز صيانة معتمدة</div>`;
+const BAIC_WARRANTY_HTML='<div style="background:#FDFCF8;border-radius:12px;overflow-x:auto;box-shadow:0 2px 8px rgba(0,0,0,.07);padding:14px 16px;direction:rtl;text-align:right;margin-bottom:16px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div style="background:#fef9f9;border-radius:10px;padding:14px;border-left:4px solid #C86E35"><div style="font-size:13px;font-weight:700;color:#C86E35;margin-bottom:8px">🛡️ الضمان الأساسي لمركبات بايك</div><div style="font-size:12px;color:#555;line-height:1.8">📅 بداية سريان الضمان: من تاريخ إصدار لوحات المركبة<br>⏱️ مدة الضمان: 10 سنوات أو 150,000 كيلومتر (أيهما يأتي أولاً)</div></div><div style="background:#f9fffe;border-radius:10px;padding:14px;border-left:4px solid #3A6840"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 جدول الصيانة لمركبات بايك</div><div style="font-size:12px;color:#555;line-height:1.8">🆓 أول صيانة دورية: 5,000 كم أو 6 أشهر (أيهما يأتي أولاً)<br>⏱️ بعد ذلك: كل 7,500 كم أو 6 أشهر (أيهما يأتي أولاً)</div></div></div></div>';
 let REF_CACHE = {};
 let REF_ACTIVE_TABS = {nissan:0, stellantis:0, bodyshop:0, baic:0, baicRecall:0};
 let VIN_FILTERS = {};
@@ -2520,7 +2520,7 @@ function makeRefTable(rows, vinFilter=''){
           const extras = otherCols.filter(c=>String(r[c]||'').trim()).map(c=>`<div style="font-size:11px;color:#666;margin-bottom:3px"><span style="color:#aaa">${c}:</span> ${fv(r[c],vinFilter)}</div>`).join('');
           const hours = r[hoursCol] ? `<div style="font-size:10px;color:#888;border-top:1px solid #f5f5f5;padding-top:8px;margin-top:8px;line-height:1.6">🕐 ${fv(r[hoursCol],vinFilter)}</div>` : '';
           
-          return `<div style="background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid ${color};transition:.15s" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,.07)'">
+          return `<div style="background:#FDFCF8;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:3px solid ${color};transition:.15s" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,.07)'">
             <div style="margin-bottom:10px">${code}<span style="font-size:13px;font-weight:700;color:#1a1a2e">${title}</span></div>
             ${advisor}${phone}${email}${dist}${extras}${hours}
           </div>`;
@@ -2637,7 +2637,7 @@ function elmMapBtn(map,gps){
 }
 function elmBranchCard(b,col){
   var mapBtn=elmMapBtn(b.map,b.gps);
-  return '<div style="background:#fff;border-radius:10px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
+  return '<div style="background:#FDFCF8;border-radius:10px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
     +'<div style="background:'+col+'18;border-bottom:2px solid '+col+'22;padding:10px 14px;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:'+col+'">'+b.name+'</div>'
     +(b.city?'<div style="font-size:11px;color:#666;margin-top:4px">📌 '+elmCity(b.city)+'</div>':'')
@@ -2779,7 +2779,7 @@ function renderElectrominStationsTab(rows){
     var smno=cSMNo>-1?elmNum(row[cSMNo]):'';
     var am=(cAM>-1?row[cAM]:'').trim();
     var amno=cAMNo>-1?elmNum(row[cAMNo]):'';
-    return '<div style="background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
+    return '<div style="background:#FDFCF8;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
       +'<div style="background:'+col+'18;border-bottom:2px solid '+col+'22;padding:10px 14px;text-align:center">'
       +'<div style="font-size:12.5px;font-weight:700;color:'+col+'">'+nm+'</div>'
       +'<div style="font-size:10px;color:#888;margin-top:3px">'+(id?'🆔 E-'+id:'')+(type?' · '+type:'')+'</div>'
@@ -2842,7 +2842,7 @@ function renderElectrominEmailsTab(rows){
       var own=(row[cOwn]||'').trim();
       var esc=(row[cEsc]||'').trim();
       var cc=(row[cCC]||'').trim();
-      return '<div style="background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-left:4px solid '+col+';padding:12px 14px;text-align:left;direction:ltr">'
+      return '<div style="background:#FDFCF8;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-left:4px solid '+col+';padding:12px 14px;text-align:left;direction:ltr">'
         +'<div style="font-size:13px;font-weight:700;color:'+col+';margin-bottom:8px">'+req+'</div>'
         +(own?'<div style="font-size:12px;color:#555;margin-bottom:4px">👤 <b style="color:#333">Owner:</b> '+own+'</div>':'')
         +(esc?'<div style="font-size:12px;color:#555;margin-bottom:6px">⬆️ <b style="color:#333">Escalation:</b> '+esc+'</div>':'')
@@ -2905,7 +2905,7 @@ function renderElectrominFAQTab(rows){
         +(a.en?'<div style="font-size:12px;color:#777;line-height:1.7">'+a.en+'</div>':'')
         +'</div>';
     }).join('');
-    out+='<div style="margin-bottom:8px;background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden">'
+    out+='<div style="margin-bottom:8px;background:#FDFCF8;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden">'
       +'<div onclick="toggleRegion(\''+fid+'\')" style="display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;user-select:none;border-left:4px solid '+color+'">'
       +(it.qrc?'<span style="font-size:10px;font-weight:700;color:'+color+';background:'+color+'18;padding:2px 8px;border-radius:6px;flex-shrink:0">'+it.qrc+'</span>':'')
       +'<span style="font-size:13px;font-weight:600;color:#333;flex:1;direction:'+((/[\u0600-\u06FF]/.test(qLabel))?'rtl;text-align:right':'ltr;text-align:left')+'">'+qLabel+'</span>'
@@ -2930,7 +2930,7 @@ function renderElectrominSMSTab(rows){
     if(!text) return '';
     var safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
     var isAR=/[\u0600-\u06FF]/.test(text.substring(0,20));
-    return '<div style="background:#fff;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
+    return '<div style="background:#FDFCF8;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
       +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
       +'<span style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase">'+label+'</span>'
       +'<button onclick="copySMS(\''+id+'\')" style="padding:3px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer">\ud83d\udccb Copy</button>'
@@ -2949,7 +2949,7 @@ function renderElectrominSMSTab(rows){
     if(lc==='templates'||lc==='template') continue;
     if((en.toLowerCase()==='english')||(ar.toLowerCase()==='arabic')) continue;
     if(!en && !ar) continue;
-    cards.push('<div style="background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
+    cards.push('<div style="background:#FDFCF8;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
       +'<div style="background:'+color+'18;border-bottom:2px solid '+color+'22;padding:10px 14px;text-align:center">'
       +'<span style="font-size:13px;font-weight:700;color:'+color+'">\ud83d\udce8 '+(label||'Template')+'</span>'
       +'</div>'
@@ -3140,7 +3140,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
         +'</div>'
       : '';
 
-    return '<div style="background:#fff;border-radius:10px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
+    return '<div style="background:#FDFCF8;border-radius:10px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
       // Branch name — colored header box
       +'<div style="background:'+col_color+'18;border-bottom:2px solid '+col_color+'22;padding:10px 14px;margin-bottom:0;text-align:center">'
       +'<div style="font-size:13px;font-weight:700;color:'+col_color+'">'+b.name.replace(/\s*\(.*?\)\s*/g,'').replace(/\n/g,' ').trim()+'</div>'
@@ -3293,7 +3293,7 @@ function renderTristarTab(arr){
     const phone=fmtNum(String(r[phoneKey]||'').trim());
     const cc=String(r[ccKey]||'').trim();
     const gps=String(r[gpsKey]||'').trim();
-    return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
+    return '<div style="background:#FDFCF8;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
       +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
       +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+name+'</div>'
       +(arName?'<div style="font-size:12px;color:#888;margin-top:2px">'+arName+'</div>':'')
@@ -3378,7 +3378,7 @@ function renderApptScriptSection(arr){
     +'<span style="font-size:11px;color:#aaa">('+apptRows.length+')</span>'
     +'<span id="ico_'+sectionId+'" style="margin-left:auto;color:'+color+'">▶</span>'
     +'</div>'
-    +'<div id="'+sectionId+'" style="display:none;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07)">'+tableHTML+'</div>'
+    +'<div id="'+sectionId+'" style="display:none;background:#FDFCF8;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07)">'+tableHTML+'</div>'
     +'</div>';
 }
 
@@ -3405,7 +3405,7 @@ function renderStellantisAppointmentTab(arr){
   const SRC_COLOR={'Call Center':'#c0272d','WhatsApp':'#2e7d32','Online':'#1565c0'};
   const SRC_BG={'Call Center':'#fef2f2','WhatsApp':'#F4F8F5','Online':'#F4F7FA'};
 
-  const apptHTML='<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:16px">'
+  const apptHTML='<div style="background:#FDFCF8;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:16px">'
     +'<div style="background:'+color+';padding:12px 16px;color:#fff;font-size:13px;font-weight:700">📋 Appointment Script</div>'
     +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
     +'<thead><tr style="background:'+color+'15">'
@@ -3550,7 +3550,7 @@ function renderStellantisSparePartsTab(arr){
     const gps=String(r[gpsKey]||'').trim();
     const cc=ccMap[branch]||'';
     if(!branch||branch===branchKey) return '';
-    return '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
+    return '<div style="background:#FDFCF8;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
       +'<div style="background:'+color+'12;padding:10px 16px;text-align:center">'
       +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+branch+'</div>'
       +(city?'<div style="font-size:11px;color:#666;margin-top:4px">📌 '+city+'</div>':'')
@@ -3633,7 +3633,7 @@ function renderStellantisPMSTab(arr, sheetName){
         const em=String(r[keys[6]]||'').trim();
         const h=String(r[keys[7]]||'').trim();
         const gps=String(r[keys[8]]||'').trim();
-        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
+        return '<div style="background:#FDFCF8;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
           +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
           +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+b+'</div>'
           +(addr?'<div style="font-size:11px;color:#888;margin-top:4px">📍 '+addr+'</div>':'')
@@ -3729,7 +3729,7 @@ function renderStellantisPACTab(arr){
     const email=String(r[emailKey]||'').trim();
     const gps=String(r[gpsKey]||'').trim();
     const rm=rmByBranch[branch]||null;
-    return '<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
+    return '<div style="background:#FDFCF8;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
       +'<div style="background:'+color+'12;padding:10px 14px;text-align:center">'
       +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+branch+'</div>'
       +(city?'<div style="font-size:11px;color:#666;margin-top:2px">📌 '+city+'</div>':'')
@@ -3815,7 +3815,7 @@ function renderPACTab(arr){
     var loc=gv(r,locKey), hours=gv(r,hoursKey);
     if(!branch) return '';
     var hoursClean=hours.split('\n').map(function(s){return s.trim();}).filter(Boolean).join(' - ');
-    return '<div style="background:#fff;border-radius:10px;text-align:center;padding:0;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)">'
+    return '<div style="background:#FDFCF8;border-radius:10px;text-align:center;padding:0;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)">'
       +'<div style="background:#c0272d18;border-bottom:2px solid rgba(192,39,45,.5)22;padding:10px 14px;border-radius:10px 10px 0 0">'
       +'<div style="font-size:13px;font-weight:700;color:#c0272d">'+branch+'</div>'
       +(city?'<div style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:12px;color:#333;font-weight:600;margin-top:3px;direction:ltr"><span>&#128204;</span><span>'+city+'</span></div>':'')
@@ -3927,7 +3927,7 @@ function renderBaicShowroomTab(arr){
     const gps=String(r[gpsCol]||'').trim();
     return '<div style="position:relative;margin-top:11px;width:240px;max-width:100%">'
       +'<div style="position:absolute;top:-11px;left:50%;transform:translateX(-50%);z-index:2;background:'+color+';color:#fff;font-size:11px;font-weight:700;padding:3px 18px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.12)">'+regClean(reg)+'</div>'
-      +'<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07)">'
+      +'<div style="background:#FDFCF8;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07)">'
       +'<div style="background:'+color+'12;padding:16px 14px 12px;text-align:center">'
       +'<div style="font-size:14px;font-weight:700;color:#1a1a2e">'+name+'</div>'
       +(city?'<div style="font-size:11px;color:#888;margin-top:5px">📍 '+city+'</div>':'')
@@ -4048,7 +4048,7 @@ function renderBaicServiceTab(arr, apptArr){
         const phone=String(r[phoneCol]||'').split(',').map(s=>fmtNum(s.trim())).filter(Boolean).join(' / ');
         const email=String(r[emailCol]||'').trim();
         const gps=String(r[gpsLinkCol]||'').trim();
-        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
+        return '<div style="background:#FDFCF8;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
           +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
           +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
           +(city?'<div style="font-size:11px;color:#888;margin-top:3px">📌 '+city+'</div>':'')
@@ -4079,7 +4079,7 @@ function renderBaicLocationTab(arr, brand){
     if(!text) return '';
     const safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
     const isAR=/[\u0600-\u06FF]/.test(text.substring(0,30));
-    return '<div style="background:#fff;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
+    return '<div style="background:#FDFCF8;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
       +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
       +'<span style="font-size:10px;font-weight:700;color:'+c+';text-transform:uppercase">'+label+'</span>'
       +mkCopyBtn(id)
@@ -4197,14 +4197,14 @@ function renderPetrominInstructionTab(arr, warrantyInner){
   // Petromin Oil — table
   const oilDataRows=sections['Petromin Oil'].filter(r=>r.col0!=='Type of oil'&&r.col0&&r.col1);
   const petrominOilInner=oilDataRows.length?
-    '<div style="overflow-x:auto;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:13px">'
+    '<div style="overflow-x:auto;background:#FDFCF8;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:13px">'
     +'<thead><tr style="background:'+color+'15"><th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">نوع الزيت</th><th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">الاسم</th><th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">السعر</th></tr></thead><tbody>'
     +oilDataRows.map((r,i)=>'<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'"><td style="padding:9px 16px;font-weight:600;text-align:center">'+r.col0+'</td><td style="padding:9px 16px;text-align:center">'+r.col1+'</td><td style="padding:9px 16px;text-align:center;font-weight:700;color:'+color+'">'+r.col2+'</td></tr>').join('')
     +'</tbody></table></div>':'';
 
   // Weekly Offers — centered card
   const weeklyInner=sections['Weekly Offers'].length?
-    '<div style="background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border:1.5px solid #D98E4555;text-align:center">'
+    '<div style="background:#FDFCF8;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border:1.5px solid #D98E4555;text-align:center">'
     +sections['Weekly Offers'].map(r=>{const text=(r.col0||r.col1||'').replace(/^"|"$/g,'').trim();return '<div style="font-size:13px;color:#333;line-height:2;white-space:pre-wrap">'+text+'</div>';}).join('<hr style="border:none;border-top:1px dashed #eee;margin:10px 0">')
     +'</div>':'';
 
@@ -4212,7 +4212,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
   const extraInner=sections['Extra Information'].length?
     '<div style="display:flex;flex-direction:column;gap:10px">'
     +sections['Extra Information'].map(r=>{const title=r.col0||'';const text=(r.col1||'').replace(/^"|"$/g,'').trim();if(!title&&!text)return'';
-      return '<div style="background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #D98E4555;text-align:center">'
+      return '<div style="background:#FDFCF8;border-radius:10px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #D98E4555;text-align:center">'
         +(title?'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">'+title+'</div>':'')
         +(text?'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+text+'</div>':'')
         +'</div>';}).join('')
@@ -4250,7 +4250,7 @@ function renderPetrominWarrantyTab(arr){
   if(!items.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   return '<div style="display:flex;flex-direction:column;gap:10px">'
     +items.map(it=>{
-      return '<div style="background:#fff;border-radius:12px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border-right:4px solid '+color+';direction:rtl;text-align:right">'
+      return '<div style="background:#FDFCF8;border-radius:12px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border-right:4px solid '+color+';direction:rtl;text-align:right">'
         +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">⚠️ '+it.title+'</div>'
         +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+it.text+'</div>'
         +'</div>';
@@ -4341,7 +4341,7 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
   const body=order.map(g=>{
     const its=groups[g];
     const gid='peLoc_'+kind+'_'+g.replace(/[^A-Za-z0-9]/g,'');
-    const table='<div style="overflow-x:auto;background:#fff;border:1px solid #f0e6c8;border-top:0;border-radius:0 0 8px 8px"><table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;word-break:break-word"><thead><tr style="background:'+color+'0f">'+cols.map(th).join('')+'</tr></thead><tbody>'
+    const table='<div style="overflow-x:auto;background:#FDFCF8;border:1px solid #f0e6c8;border-top:0;border-radius:0 0 8px 8px"><table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;word-break:break-word"><thead><tr style="background:'+color+'0f">'+cols.map(th).join('')+'</tr></thead><tbody>'
       +its.map((it,i)=>'<tr style="background:'+(i%2?'#FDFBF4':'#fff')+'">'+rowFor(it)+'</tr>').join('')
       +'</tbody></table></div>';
     return '<div style="margin-bottom:10px">'
@@ -4424,7 +4424,7 @@ function renderVolvoSalesPricesTab(arr){
     +'<div dir="ltr" style="display:flex;gap:8px;justify-content:center;align-items:center;font-size:15px;font-weight:800">🏷️ <span>Sales Campaign Pricing</span> · <span dir="rtl">أسعار البيع</span></div>'
     +'<div dir="ltr" style="text-align:center;font-size:11px;opacity:.9;margin-top:3px">Q3–Q4 · All prices inclusive of VAT · SAR</div>'
     +'</div>'
-    +'<div style="background:#fff;border:1px solid #dfe4ea;border-top:none;border-radius:0 0 12px 12px;overflow-x:auto;box-shadow:0 2px 8px rgba(0,0,0,.06)">'
+    +'<div style="background:#FDFCF8;border:1px solid #dfe4ea;border-top:none;border-radius:0 0 12px 12px;overflow-x:auto;box-shadow:0 2px 8px rgba(0,0,0,.06)">'
     +'<table dir="ltr" style="width:100%;min-width:720px;border-collapse:collapse;font-size:12px;white-space:nowrap">'
     +'<thead>'
     +'<tr><th colspan="5" style="background:'+color+'"></th><th colspan="2" style="background:#00477f;color:#fff;padding:6px;text-align:center;font-weight:800;font-size:11px;letter-spacing:.5px">CASH DEALS ONLY</th></tr>'
@@ -4491,7 +4491,7 @@ function renderVolvoAftersalesTab(arr){
     const gps=String(r[keys[7]]||'').trim();
     const map=String(r[keys[8]]||'').trim();
     const loc=(map&&/^https?:/.test(map))?map:(gps?(/^https?:/.test(gps)?gps:'https://www.google.com/maps?q='+encodeURIComponent(gps)):'');
-    return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07)">'
+    return '<div style="background:#FDFCF8;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07)">'
       +'<div style="background:'+color+'12;padding:10px 14px;text-align:center;border-bottom:2px solid '+color+'22">'
       +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+b+'</div>'
       +(city?'<div style="font-size:11px;color:#888;margin-top:4px">📍 '+city+'</div>':'')
@@ -4551,7 +4551,7 @@ function renderPetrominTireBatteryTab(arr){
   // helpers
   const secHead=txt=>'<div style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:800;padding:10px 14px;border-radius:8px 8px 0 0;background:'+color+'12;color:'+color+';border-bottom:2px solid '+color+'66">'+txt+'</div>';
   const th=h=>'<th style="padding:8px 12px;color:#bd7530;font-weight:800;border-bottom:2px solid #f0dca8;text-align:center">'+h+'</th>';
-  const tbl=(headers,rows)=>'<div style="overflow-x:auto;background:#fff;border:1px solid #f0e6c8;border-top:0;border-radius:0 0 8px 8px"><table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;word-break:break-word"><thead><tr style="background:'+color+'0f">'+headers.map(th).join('')+'</tr></thead><tbody>'+rows+'</tbody></table></div>';
+  const tbl=(headers,rows)=>'<div style="overflow-x:auto;background:#FDFCF8;border:1px solid #f0e6c8;border-top:0;border-radius:0 0 8px 8px"><table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;word-break:break-word"><thead><tr style="background:'+color+'0f">'+headers.map(th).join('')+'</tr></thead><tbody>'+rows+'</tbody></table></div>';
   const emailCell=v=>String(v||'').split(/[,;]/).map(x=>{const s=x.trim();if(!s)return'';return '<a href="mailto:'+s+'" style="display:inline-block;background:#f5f5f5;color:#616161;padding:2px 7px;border-radius:5px;font-size:10.5px;font-weight:700;text-decoration:none;margin:1px;white-space:normal;word-break:break-all;max-width:100%">'+s+'</a>';}).filter(Boolean).join('');
 
   // Pirelli — OPEN table (Region · Manager · Email · Phone)
@@ -4782,7 +4782,7 @@ function renderNosFranchiseTab(arr){
       +'<span style="font-size:11px;color:#aaa">('+items.length+')</span>'
       +'<span id="ico_'+gid+'" style="margin-left:auto;color:'+color+'">▼</span></div>'
       +'<div id="'+gid+'"><div class="ref-cards-grid">'+items.map(it=>{
-        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
+        return '<div style="background:#FDFCF8;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
           +'<div style="background:'+color+'12;padding:10px 14px;text-align:center;border-bottom:2px solid '+color+'22">'
           +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+it.branch+'</div>'
           +'<div style="font-size:10px;color:#888;margin-top:3px;font-weight:700;text-transform:uppercase;letter-spacing:.03em">📍 '+it.city+'</div>'
@@ -4834,7 +4834,7 @@ function renderNosPriceTab(arr){
 
   return order.map((cat,ci)=>{
     const items=groups[cat];
-    const body='<div style="overflow-x:auto;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:12px">'
+    const body='<div style="overflow-x:auto;background:#FDFCF8;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:12px">'
       +'<thead><tr style="background:'+color+'12"><th style="padding:9px 14px;color:'+color+';font-weight:700;text-align:left;border-bottom:2px solid '+color+'22">Item Number</th><th style="padding:9px 14px;color:'+color+';font-weight:700;text-align:center;border-bottom:2px solid '+color+'22">Price (incl. VAT)</th></tr></thead><tbody>'
       +items.map((it,i)=>'<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'"><td style="padding:7px 14px">'+it.item+'</td><td style="padding:7px 14px;text-align:center;font-weight:700;color:'+color+'">'+it.price+'</td></tr>').join('')
       +'</tbody></table></div>';
@@ -4927,7 +4927,7 @@ function renderFotonInstructionTab(arr){
   });
 
   const warrantyHTML=warranty.length?mkCollapsibleOpen('🛡️ Warranty',
-    '<div style="overflow-x:auto;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:13px">'
+    '<div style="overflow-x:auto;background:#FDFCF8;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:13px">'
     +'<thead><tr style="background:'+color+'15"><th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">Type of car</th><th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">Coverage</th></tr></thead><tbody>'
     +warranty.map((w,i)=>'<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'"><td style="padding:9px 16px;font-weight:600;text-align:center">'+w.type+'</td><td style="padding:9px 16px;text-align:center">'+w.content+'</td></tr>').join('')
     +'</tbody></table></div>'
@@ -5008,7 +5008,7 @@ function fotonBranchCard(b, regColor){
     b.mobile&&b.mobile!=='N/A'?'<div style="font-size:12px;color:#555;margin-bottom:2px">📞 '+b.mobile+'</div>':'',
     b.email?'<div style="font-size:11px;margin-bottom:2px"><a href="mailto:'+b.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+b.email+'</a></div>':''
   ].filter(Boolean).join('');
-  return '<div style="background:#fff;border-radius:10px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
+  return '<div style="background:#FDFCF8;border-radius:10px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
     +'<div style="background:'+regColor+'18;border-bottom:2px solid '+regColor+'22;padding:10px 14px;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:'+regColor+'">'+b.name+'</div>'
     +(sub?'<div style="font-size:11px;color:#666;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">'+sub+'</div>':'')
@@ -5195,7 +5195,7 @@ function renderFotonSMSLocationTab(arr){
     if(!text) return '';
     const safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
     const isAR=/[\u0600-\u06FF]/.test(text.substring(0,20));
-    return '<div style="background:#fff;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
+    return '<div style="background:#FDFCF8;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
       +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
       +'<span style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase">'+label+'</span>'
       +'<button onclick="copySMS(\''+id+'\')" style="padding:3px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer">📋 Copy</button>'
@@ -5364,7 +5364,7 @@ function renderPetrominPACTab(arr){
         const branchNameOnly=branch.replace(/^\d+\s*-\s*/,'').trim();
         const nkBranch=branchNameOnly.toLowerCase().replace(/[^a-z0-9]/g,'');
         const rm=rmByCode[branchCode]||rmByBranch[nkBranch]||null;
-        return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
+        return '<div style="background:#FDFCF8;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
           +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
           +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
           +(city?'<div style="font-size:11px;color:#888;margin-top:3px">📌 '+city+'</div>':'')
@@ -5536,7 +5536,7 @@ function renderPetrominExpressStationsTab(arr){
         const coord=gv(v,kCoord);
         const coordLink=coord?(/^https?:\/\//i.test(coord)?coord:'https://www.google.com/maps?q='+encodeURIComponent(coord)):'';
         const coordHTML=coord?'<a href="'+coordLink+'" target="_blank" style="display:inline-block;font-size:10px;color:'+rc+';opacity:.9;margin-top:3px;text-decoration:none;border-bottom:1px dotted '+rc+'">🗺️ '+coord+'</a>':'';
-        return '<div style="background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);">'
+        return '<div style="background:#FDFCF8;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);">'
           +'<div style="background:'+rc+'12;padding:8px 12px;text-align:center">'
           +'<div style="font-size:12px;font-weight:700;color:'+rc+'">'+(be?be+' - ':'')+station+'</div>'
           +(locLine?'<div style="font-size:10px;color:'+rc+';opacity:.75;margin-top:2px">📍 '+locLine+'</div>':'')
@@ -5617,7 +5617,7 @@ function renderPetrominTristarTab(arr){
     const phone=fmtNum(vals[5]||'');
     const email=vals[6]||'';
     const rc=REGION_COLORS[reg]||color;
-    return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);width:280px;max-width:100%">'
+    return '<div style="background:#FDFCF8;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);width:280px;max-width:100%">'
       +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
       +'<div style="font-size:10px;color:'+rc+';font-weight:700">'+regClean(reg)+'</div>'
       +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
@@ -5646,7 +5646,7 @@ function renderBodyShopLocationTab(arr){
     if(!text) return '';
     const safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
     const isAR=/[\u0600-\u06FF]/.test(text.substring(0,10));
-    return '<div style="background:#fff;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
+    return '<div style="background:#FDFCF8;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
       +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
       +'<span style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase">'+label+'</span>'
       +'<button onclick="copySMS(\''+id+'\')" style="padding:3px 10px;background:#f0f0f0;border:1px solid #ddd;border-radius:6px;font-size:10px;cursor:pointer">📋 Copy</button>'
@@ -5784,7 +5784,7 @@ function renderBodyShopTab(arr){
             +(p.email?'<div style="font-size:11px"><a href="mailto:'+p.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+p.email+'</a></div>':'')
             +'</div>'
           ).join('');
-          return '<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
+          return '<div style="background:#FDFCF8;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
             +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
             +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+b.name+'</div>'
             +(b.dist?'<div style="font-size:11px;color:#888;margin-top:3px">📍 '+b.dist+'</div>':'')
@@ -5811,7 +5811,7 @@ function renderNissanWarrantyTab(arr){
       const title=String(r[titleKey]||'').trim();
       const desc=String(r[descKey]||'').trim();
       const c=colors[i%colors.length];
-      return '<div style="background:#fff;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:12px;border-right:4px solid '+c+'">'
+      return '<div style="background:#FDFCF8;border-radius:12px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:12px;border-right:4px solid '+c+'">'
         +'<div style="font-size:14px;font-weight:700;color:'+c+';margin-bottom:10px">'+title+'</div>'
         +'<div style="font-size:12px;color:#555;line-height:2;white-space:pre-wrap">'+desc+'</div>'
         +'</div>';
@@ -5830,14 +5830,14 @@ function renderNissanAppTab(arr){
     {f:'Phone OS (iOS / Android + version)',m:true},{f:'Nissan App Version',m:true}
   ];
   return '<div style="max-width:640px;margin:0 auto;direction:ltr;text-align:left">'
-    +'<div style="background:#fff;border-radius:10px;border:1px solid #eee;padding:12px 16px;margin-bottom:10px">'
+    +'<div style="background:#FDFCF8;border-radius:10px;border:1px solid #eee;padding:12px 16px;margin-bottom:10px">'
     +'<div style="margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="background:#c0272d;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">TO</span>'+fmtPills(toEmails)+'</div>'
     +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="background:#1565c0;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px">CC</span>'+fmtPills(ccEmail)+'</div>'
     +'</div>'
     +'<div style="background:#FBF4EE;border-radius:10px;border:1px solid #e8cbb8;padding:10px 16px;margin-bottom:12px">'
     +'<div style="font-size:11px;color:#555;line-height:1.7">⚠️ <strong>My Nissan App</strong> — Patrol only (Platinum, Titanium, Pro-4X, NISMO) · 2025–2026 · Petromin or Manahil only<br>📱 <strong>My Nissan Ownership</strong> — All other models</div>'
     +'</div>'
-    +'<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)">'
+    +'<div style="background:#FDFCF8;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)">'
     +'<div style="background:#c0272d;color:#fff;padding:10px 16px;font-size:13px;font-weight:700;text-align:center">📋 My Nissan App (CCS) — Y63</div>'
     +'<div style="padding:12px 16px">'
     +'<div style="font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">👤 User Information</div>'
@@ -5898,7 +5898,7 @@ function renderSMSTab(arr, sheetName, brand){
     if(!text) return '';
     var safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
     var isAR=/[\u0600-\u06FF]/.test(text.substring(0,30));
-    return '<div style="background:#fff;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
+    return '<div style="background:#FDFCF8;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
       +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
       +'<span style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase">'+label+'</span>'
       +mkCopyBtn(id)
@@ -6014,7 +6014,7 @@ function noAnsHeader(brand){
     +'<span style="font-size:13px;font-weight:700;color:'+d.dark+'">\uD83D\uDCE8 No Answer SMS</span>'
     +'<span id="'+icoId+'" style="color:'+d.dark+';font-size:12px">\u25B6</span>'
     +'</div>'
-    +'<div id="'+bodyId+'" style="display:none;background:#fff;border:1px solid #eee;border-top:none;border-radius:0 0 10px 10px;padding:12px">'
+    +'<div id="'+bodyId+'" style="display:none;background:#FDFCF8;border:1px solid #eee;border-top:none;border-radius:0 0 10px 10px;padding:12px">'
     +noAnsCards(brand)
     +'</div>'
     +'</div>';
@@ -6032,7 +6032,7 @@ function renderApptSMSTab(arr){
   function mkSmsBox(id,label,text,clr,isAR){
     if(!text) return '';
     var safe=text.replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    return '<div style="background:#fff;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
+    return '<div style="background:#FDFCF8;border-radius:8px;border:1px solid #eee;padding:10px;margin-bottom:8px">'
       +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'
       +'<span style="font-size:10px;font-weight:700;color:'+clr+';text-transform:uppercase">'+label+'</span>'
       +mkCopyBtn(id)
@@ -6160,19 +6160,19 @@ function showRefBrandPage(brand){
     
     +'</div>'
 
-    +(brand==='nissan'?'<div id="nissanModelsDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:12px 16px"><div id="nissanModelsContent" style="text-align:center;color:#aaa;font-size:12px">⏳ Loading...</div></div>':'')
-    +(brand==='stellantis'?'<div id="stellantisModelsDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:12px 16px"><div id="stellantisModelsContent" style="text-align:center;color:#aaa;font-size:12px">⏳ Loading...</div></div>':'')
-    +(brand==='baic'?'<div id="baicModelsDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:12px 16px"><div id="baicModelsContent" style="text-align:center;color:#aaa;font-size:12px">⏳ Loading...</div></div>':'')
+    +(brand==='nissan'?'<div id="nissanModelsDrawer" style="display:none;background:#FDFCF8;border-bottom:2px solid #eee;padding:12px 16px"><div id="nissanModelsContent" style="text-align:center;color:#aaa;font-size:12px">⏳ Loading...</div></div>':'')
+    +(brand==='stellantis'?'<div id="stellantisModelsDrawer" style="display:none;background:#FDFCF8;border-bottom:2px solid #eee;padding:12px 16px"><div id="stellantisModelsContent" style="text-align:center;color:#aaa;font-size:12px">⏳ Loading...</div></div>':'')
+    +(brand==='baic'?'<div id="baicModelsDrawer" style="display:none;background:#FDFCF8;border-bottom:2px solid #eee;padding:12px 16px"><div id="baicModelsContent" style="text-align:center;color:#aaa;font-size:12px">⏳ Loading...</div></div>':'')
 
-    +(brand==='baic'?'<div id="baicAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:14px 16px"><div style="background:#fafafa;border-radius:12px;overflow:hidden;border:1px solid #eee;box-shadow:0 2px 8px rgba(0,0,0,.05)"><div style="background:#C86E3518;padding:10px 16px;font-size:13px;font-weight:700;color:#C86E35;border-bottom:1px solid #e8cbb8">🗺️ Area Manager</div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#FBF4EE"><th style="padding:8px 12px;color:#C86E35;font-weight:700;border-bottom:2px solid #e8cbb8;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#C86E35;font-weight:700;border-bottom:2px solid #e8cbb8;text-align:center">👤 Branch Manager</th><th style="padding:8px 12px;color:#C86E35;font-weight:700;border-bottom:2px solid #e8cbb8;text-align:center">📞 Phone</th><th style="padding:8px 12px;color:#C86E35;font-weight:700;border-bottom:2px solid #e8cbb8;text-align:center">✉️ Email</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#C86E35">West · North · South</td><td style="padding:7px 12px;text-align:center">Roummie Palma</td><td style="padding:7px 12px;text-align:center">507103299</td><td style="padding:7px 12px;text-align:center"><a href="mailto:roummie@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">roummie@petromin.com</a></td></tr><tr style="background:#FBF4EE"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#C86E35">East</td><td style="padding:7px 12px;text-align:center">Jimshad Mayin</td><td style="padding:7px 12px;text-align:center">557554409</td><td style="padding:7px 12px;text-align:center"><a href="mailto:jimshad.mayin@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">jimshad.mayin@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#C86E35">Central<br><span style="font-size:10px;color:#999">Exit-14 · Kharj · Azeziah · Khurais · Al Badia</span></td><td style="padding:7px 12px;text-align:center">Mohammed Sallam</td><td style="padding:7px 12px;text-align:center">539143824</td><td style="padding:7px 12px;text-align:center"><a href="mailto:m.sallam@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">m.sallam@petromin.com</a></td></tr><tr style="background:#FBF4EE"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#C86E35">Central<br><span style="font-size:10px;color:#999">Darb · Thumama · Al Massif · QassimLand · Unaizah</span></td><td style="padding:7px 12px;text-align:center">Mohammed Sallam</td><td style="padding:7px 12px;text-align:center">555047230</td><td style="padding:7px 12px;text-align:center"><a href="mailto:m.sallam@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">m.sallam@petromin.com</a></td></tr></tbody></table></div></div></div>':'')
+    +(brand==='baic'?'<div id="baicAreaMgrGlobal" style="display:none;background:#FDFCF8;border-bottom:2px solid #eee;padding:14px 16px"><div style="background:#fafafa;border-radius:12px;overflow:hidden;border:1px solid #eee;box-shadow:0 2px 8px rgba(0,0,0,.05)"><div style="background:#C86E3518;padding:10px 16px;font-size:13px;font-weight:700;color:#C86E35;border-bottom:1px solid #e8cbb8">🗺️ Area Manager</div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#FBF4EE"><th style="padding:8px 12px;color:#C86E35;font-weight:700;border-bottom:2px solid #e8cbb8;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#C86E35;font-weight:700;border-bottom:2px solid #e8cbb8;text-align:center">👤 Branch Manager</th><th style="padding:8px 12px;color:#C86E35;font-weight:700;border-bottom:2px solid #e8cbb8;text-align:center">📞 Phone</th><th style="padding:8px 12px;color:#C86E35;font-weight:700;border-bottom:2px solid #e8cbb8;text-align:center">✉️ Email</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#C86E35">West · North · South</td><td style="padding:7px 12px;text-align:center">Roummie Palma</td><td style="padding:7px 12px;text-align:center">507103299</td><td style="padding:7px 12px;text-align:center"><a href="mailto:roummie@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">roummie@petromin.com</a></td></tr><tr style="background:#FBF4EE"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#C86E35">East</td><td style="padding:7px 12px;text-align:center">Jimshad Mayin</td><td style="padding:7px 12px;text-align:center">557554409</td><td style="padding:7px 12px;text-align:center"><a href="mailto:jimshad.mayin@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">jimshad.mayin@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#C86E35">Central<br><span style="font-size:10px;color:#999">Exit-14 · Kharj · Azeziah · Khurais · Al Badia</span></td><td style="padding:7px 12px;text-align:center">Mohammed Sallam</td><td style="padding:7px 12px;text-align:center">539143824</td><td style="padding:7px 12px;text-align:center"><a href="mailto:m.sallam@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">m.sallam@petromin.com</a></td></tr><tr style="background:#FBF4EE"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#C86E35">Central<br><span style="font-size:10px;color:#999">Darb · Thumama · Al Massif · QassimLand · Unaizah</span></td><td style="padding:7px 12px;text-align:center">Mohammed Sallam</td><td style="padding:7px 12px;text-align:center">555047230</td><td style="padding:7px 12px;text-align:center"><a href="mailto:m.sallam@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">m.sallam@petromin.com</a></td></tr></tbody></table></div></div></div>':'')
 
-    +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:14px 16px"><div style="background:#fafafa;border-radius:12px;overflow:hidden;border:1px solid #eee;box-shadow:0 2px 8px rgba(0,0,0,.05)"><div style="background:#c0272d18;padding:10px 16px;font-size:13px;font-weight:700;color:#c0272d;border-bottom:1px solid #e8cbb8">🗺️ Area Manager</div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#FBF0F0"><th style="padding:8px 12px;color:#c0272d;font-weight:700;border-bottom:2px solid #e8cbb8;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#c0272d;font-weight:700;border-bottom:2px solid #e8cbb8;text-align:center">✉️ Email</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#c0272d">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">ahmed.ateeq@petromin.com</a></td></tr><tr style="background:#FBF0F0"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#c0272d">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">simon.white@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#c0272d">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">z.bakhurji@petromin.com</a></td></tr></tbody></table></div></div></div>':'')
-    +(brand==='nissan'?'<div id="nissanWebsite" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:20px;text-align:center"><div style="font-size:13px;color:#888;margin-bottom:14px">Nissan Saudi Arabia — Petromin</div><a href="https://www.petromin-nissan.com/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;padding:12px 30px;background:#c0272d;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(192,39,45,.3)">🔗 petromin-nissan.com</a></div>':'')
-    +(brand==='petromin'?'<div id="petrominWebsite" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:20px"><div style="display:flex;flex-direction:column;gap:12px;align-items:center"><a href="https://petromin.com/ar/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:12px 28px;background:#D98E45;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;width:290px;justify-content:center;box-shadow:0 4px 14px rgba(218,165,32,.3)">🔗 الصفحة الرئيسية - Petromin</a><a href="https://www.petrominexpress.com/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:12px 28px;background:#c0272d;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;width:290px;justify-content:center;box-shadow:0 4px 14px rgba(192,39,45,.3)">🔗 بترومين إكسبرس - 650 محطة</a><a href="https://mac.petromin.com/Services/KSAPE/MiAutoCare/Account/login?returnUrl=%2FServices%2FKSAPE%2FMiAutoCare%2FHome%2Findex" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:12px 28px;background:#1a1a2e;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;width:290px;justify-content:center;box-shadow:0 4px 14px rgba(26,26,46,.3)">🔗 MiAutoCare - Public Site</a></div></div>':'')
-    +(brand==='petromin'?'<div id="petrominNoAnswer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px"><div style="border:1px solid #eee;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.05)"><div style="background:#D98E4514;border-bottom:1px solid #D98E4522;padding:10px;text-align:center;font-size:13px;font-weight:700;color:#a86a28">📨 No Answer SMS</div><div style="padding:12px">'+noAnsCards('petromin')+'</div></div></div>':'')
-    +(brand==='baic'?'<div id="baicWebsite" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:20px;text-align:center"><div style="font-size:13px;color:#888;margin-bottom:14px">BAIC Saudi Arabia — Petromin</div><a href="https://www.petromin-baic.com/ar/models" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;padding:12px 30px;background:#C86E35;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(210,105,30,.35)">🔗 petromin-baic.com</a></div>':'')
-    +(brand==='foton'?'<div id="fotonWebsite" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:20px;text-align:center"><div style="font-size:13px;color:#888;margin-bottom:14px">Foton Saudi Arabia — Petromin · Commercial Vehicles</div><a href="https://petromin-foton.com/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;padding:12px 30px;background:#546e7a;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(84,110,122,.35)">🔗 petromin-foton.com</a></div>':'')
-    +'<div id="petrominWarrantyDrawer" style="display:none;background:#fff;border-bottom:2px solid #eee;padding:16px 20px"></div>'
+    +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#FDFCF8;border-bottom:2px solid #eee;padding:14px 16px"><div style="background:#fafafa;border-radius:12px;overflow:hidden;border:1px solid #eee;box-shadow:0 2px 8px rgba(0,0,0,.05)"><div style="background:#c0272d18;padding:10px 16px;font-size:13px;font-weight:700;color:#c0272d;border-bottom:1px solid #e8cbb8">🗺️ Area Manager</div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#FBF0F0"><th style="padding:8px 12px;color:#c0272d;font-weight:700;border-bottom:2px solid #e8cbb8;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#c0272d;font-weight:700;border-bottom:2px solid #e8cbb8;text-align:center">✉️ Email</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#c0272d">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">ahmed.ateeq@petromin.com</a></td></tr><tr style="background:#FBF0F0"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#c0272d">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">simon.white@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#c0272d">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">z.bakhurji@petromin.com</a></td></tr></tbody></table></div></div></div>':'')
+    +(brand==='nissan'?'<div id="nissanWebsite" style="display:none;background:#FDFCF8;border-bottom:2px solid #eee;padding:20px;text-align:center"><div style="font-size:13px;color:#888;margin-bottom:14px">Nissan Saudi Arabia — Petromin</div><a href="https://www.petromin-nissan.com/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;padding:12px 30px;background:#c0272d;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(192,39,45,.3)">🔗 petromin-nissan.com</a></div>':'')
+    +(brand==='petromin'?'<div id="petrominWebsite" style="display:none;background:#FDFCF8;border-bottom:2px solid #eee;padding:20px"><div style="display:flex;flex-direction:column;gap:12px;align-items:center"><a href="https://petromin.com/ar/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:12px 28px;background:#D98E45;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;width:290px;justify-content:center;box-shadow:0 4px 14px rgba(218,165,32,.3)">🔗 الصفحة الرئيسية - Petromin</a><a href="https://www.petrominexpress.com/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:12px 28px;background:#c0272d;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;width:290px;justify-content:center;box-shadow:0 4px 14px rgba(192,39,45,.3)">🔗 بترومين إكسبرس - 650 محطة</a><a href="https://mac.petromin.com/Services/KSAPE/MiAutoCare/Account/login?returnUrl=%2FServices%2FKSAPE%2FMiAutoCare%2FHome%2Findex" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:12px 28px;background:#1a1a2e;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;width:290px;justify-content:center;box-shadow:0 4px 14px rgba(26,26,46,.3)">🔗 MiAutoCare - Public Site</a></div></div>':'')
+    +(brand==='petromin'?'<div id="petrominNoAnswer" style="display:none;background:#FDFCF8;border-bottom:2px solid #eee;padding:16px"><div style="border:1px solid #eee;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.05)"><div style="background:#D98E4514;border-bottom:1px solid #D98E4522;padding:10px;text-align:center;font-size:13px;font-weight:700;color:#a86a28">📨 No Answer SMS</div><div style="padding:12px">'+noAnsCards('petromin')+'</div></div></div>':'')
+    +(brand==='baic'?'<div id="baicWebsite" style="display:none;background:#FDFCF8;border-bottom:2px solid #eee;padding:20px;text-align:center"><div style="font-size:13px;color:#888;margin-bottom:14px">BAIC Saudi Arabia — Petromin</div><a href="https://www.petromin-baic.com/ar/models" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;padding:12px 30px;background:#C86E35;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(210,105,30,.35)">🔗 petromin-baic.com</a></div>':'')
+    +(brand==='foton'?'<div id="fotonWebsite" style="display:none;background:#FDFCF8;border-bottom:2px solid #eee;padding:20px;text-align:center"><div style="font-size:13px;color:#888;margin-bottom:14px">Foton Saudi Arabia — Petromin · Commercial Vehicles</div><a href="https://petromin-foton.com/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;padding:12px 30px;background:#546e7a;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(84,110,122,.35)">🔗 petromin-foton.com</a></div>':'')
+    +'<div id="petrominWarrantyDrawer" style="display:none;background:#FDFCF8;border-bottom:2px solid #eee;padding:16px 20px"></div>'
     +'<div class="ref-sub-tabs" id="refSubTabs_'+brand+'" style="justify-content:center;border-bottom:2px solid '+tabActive+'55">'
     +tabs.map((t,i)=>{
       const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📅 Appointment SMS','SMS & Location':'📅 Appointment & Location SMS','BAIC Location':'📅 Appointment & Location SMS','Showrooms':'Showroom','PMS':'PMS - Spare Parts','Location SMS':'SMS Location','Emails':'📧 Emails','EV Maintenance Branches':'🔧 Maintenance Branches','EV Charging Stations':'⚡ Charging Stations','FAQ':'❓ FAQ','SMS':'📨 SMS','Sales Prices':'🏷️ Sales Prices'};
@@ -6246,7 +6246,7 @@ async function togglePetrominWarranty(){
       });
       el.innerHTML=items.length
         ?'<div style="display:flex;flex-direction:column;gap:10px">'+items.map(it=>
-            '<div style="background:#fff;border-radius:12px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border-right:4px solid '+color+';direction:rtl;text-align:right">'
+            '<div style="background:#FDFCF8;border-radius:12px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border-right:4px solid '+color+';direction:rtl;text-align:right">'
             +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">⚠️ '+it.title+'</div>'
             +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+it.text+'</div>'
             +'</div>').join('')+'</div>'
@@ -6397,7 +6397,7 @@ async function renderInstructionTab(brand, cfg){
       warrantyBody='<div style="display:flex;flex-direction:column;gap:12px">'
         +warrantyRows.map((w,i)=>{
           const c=color;
-          return '<div style="background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden">'
+          return '<div style="background:#FDFCF8;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden">'
             +'<div style="padding:10px 14px;font-size:13px;font-weight:700;color:'+c+';direction:rtl;text-align:center;border-bottom:1px solid #f0f0f0">'+w.title+'</div>'
             +'<div style="display:grid;grid-template-columns:1fr 1fr">'
             +'<div style="padding:12px 14px;border-left:1px solid #f0f0f0;direction:rtl;text-align:center">'
@@ -6421,7 +6421,7 @@ async function renderInstructionTab(brand, cfg){
       warrantyBody='<div style="'+wWrapStyle+'">'
         +orderedRows.map((w,i)=>{
           const c=color;
-          return '<div style="'+wCardWidth+'background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid '+color+'55;direction:rtl;text-align:center">'
+          return '<div style="'+wCardWidth+'background:#FDFCF8;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid '+color+'55;direction:rtl;text-align:center">'
             +'<div style="font-size:13px;font-weight:700;color:'+c+';margin-bottom:8px">'+w.title+'</div>'
             +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+w.c1+'</div>'
             +'</div>';
@@ -6443,7 +6443,7 @@ async function renderInstructionTab(brand, cfg){
     pmsBody='<div style="'+wrapStyle+'">'
       +pmsRows.map((r,i)=>{
         const c=color;
-        return '<div style="'+cardWidth+'background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid '+color+'55;direction:rtl;text-align:center">'
+        return '<div style="'+cardWidth+'background:#FDFCF8;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid '+color+'55;direction:rtl;text-align:center">'
           +(r.title?'<div style="font-size:13px;font-weight:700;color:'+c+';margin-bottom:8px">'+r.title+'</div>':'')
           +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+r.content+'</div>'
           +'</div>';
@@ -6466,14 +6466,14 @@ async function renderInstructionTab(brand, cfg){
       apptBody='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
         +apptRows.map((r,i)=>{
           const c=WARRANTY_COLORS[i%WARRANTY_COLORS.length];
-          return '<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid '+color+'55;direction:rtl;text-align:center">'
+          return '<div style="background:#FDFCF8;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid '+color+'55;direction:rtl;text-align:center">'
             +'<div style="font-size:13px;font-weight:700;color:'+c+';margin-bottom:8px">'+r.svc+'</div>'
             +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+r.b+'</div>'
             +'</div>';
         }).join('')
         +'</div>';
     } else {
-      apptBody='<div style="overflow-x:auto;border-radius:12px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:12px">'
+      apptBody='<div style="overflow-x:auto;border-radius:12px;background:#FDFCF8;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:12px">'
       +'<thead><tr style="background:'+color+'12">'
       +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">Service</th>'
       +(hasSource?'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">Source</th><th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">Service Advisor</th>':'')
@@ -6519,7 +6519,7 @@ async function renderInstructionTab(brand, cfg){
   // ===== Notes section =====
   let noteHtml='';
   if(noteRows.length){
-    noteHtml='<div style="background:#fff;border-radius:12px;padding:14px 18px;border:1.5px solid #eee;direction:rtl;text-align:center;max-width:'+(brand==='baic'?'720px':'420px')+';margin:0 auto;box-shadow:0 2px 8px rgba(0,0,0,.05)">'
+    noteHtml='<div style="background:#FDFCF8;border-radius:12px;padding:14px 18px;border:1.5px solid #eee;direction:rtl;text-align:center;max-width:'+(brand==='baic'?'720px':'420px')+';margin:0 auto;box-shadow:0 2px 8px rgba(0,0,0,.05)">'
       +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:8px">📝 ملاحظات هامة</div>'
       +noteRows.map(n=>'<div style="font-size:12px;color:#555;line-height:2;white-space:pre-wrap;margin-bottom:8px">'+n+'</div>').join('')
       +'</div>';
@@ -6579,9 +6579,9 @@ async function renderRefBrand(brand,tabIdx){
     container.innerHTML=
       '<div style="padding:8px 4px 4px;direction:rtl;text-align:right">'
       +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">'
-      +'<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #7b000055;text-align:center"><div style="font-size:13px;font-weight:700;color:#7b0000;margin-bottom:8px">📋 Before Repair Service</div><div style="font-size:11px;color:#555;line-height:1.8">يلزم توفير المستندات التالية:<br>1- استمارة المركبة<br>2- تقرير الجهة المباشرة للحادث (نجم أو المرور)<br>3- الرقم المرجعي لمطالبة التأمين<br><br>يُشترط حضور وتسليم المركبة من مالكها أو المفوّض رسميًا.<br>في حال تعذّر الحضور يجب تقديم تفويض خطي.</div></div>'
-      +'<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #7b000055;text-align:center"><div style="font-size:13px;font-weight:700;color:#e65100;margin-bottom:8px">💰 Repair Quotation</div><div style="font-size:11px;color:#555;line-height:1.8">يستغرق فحص المركبة وإرسال التسعيرة لشركة التأمين من 7 إلى 14 يوم عمل.<br><br>• قابلة للقيادة: تُسلَّم بعد الفحص<br>• غير قابلة للقيادة: تُحجز بالفرع لحين الإصلاح</div></div>'
-      +'<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #7b000055;text-align:center"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 Repair Service</div><div style="font-size:11px;color:#555;line-height:1.8">يبدأ الإصلاح بعد موافقة التأمين، بحد أقصى 90 يوم عمل.<br><br>سيتم توفير قطع الغيار خلال هذه الفترة، وإشعاركم برسالة نصية عند توفرها.</div></div>'
+      +'<div style="background:#FDFCF8;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #7b000055;text-align:center"><div style="font-size:13px;font-weight:700;color:#7b0000;margin-bottom:8px">📋 Before Repair Service</div><div style="font-size:11px;color:#555;line-height:1.8">يلزم توفير المستندات التالية:<br>1- استمارة المركبة<br>2- تقرير الجهة المباشرة للحادث (نجم أو المرور)<br>3- الرقم المرجعي لمطالبة التأمين<br><br>يُشترط حضور وتسليم المركبة من مالكها أو المفوّض رسميًا.<br>في حال تعذّر الحضور يجب تقديم تفويض خطي.</div></div>'
+      +'<div style="background:#FDFCF8;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #7b000055;text-align:center"><div style="font-size:13px;font-weight:700;color:#e65100;margin-bottom:8px">💰 Repair Quotation</div><div style="font-size:11px;color:#555;line-height:1.8">يستغرق فحص المركبة وإرسال التسعيرة لشركة التأمين من 7 إلى 14 يوم عمل.<br><br>• قابلة للقيادة: تُسلَّم بعد الفحص<br>• غير قابلة للقيادة: تُحجز بالفرع لحين الإصلاح</div></div>'
+      +'<div style="background:#FDFCF8;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #7b000055;text-align:center"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 Repair Service</div><div style="font-size:11px;color:#555;line-height:1.8">يبدأ الإصلاح بعد موافقة التأمين، بحد أقصى 90 يوم عمل.<br><br>سيتم توفير قطع الغيار خلال هذه الفترة، وإشعاركم برسالة نصية عند توفرها.</div></div>'
       +'</div></div>';
     return;
   }
@@ -6628,7 +6628,7 @@ async function renderRefBrand(brand,tabIdx){
       });
       const warInner=warItems.length?
         '<div style="display:flex;flex-direction:column;gap:10px">'+warItems.map(it=>
-          '<div style="background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #D98E4555;text-align:center">'
+          '<div style="background:#FDFCF8;border-radius:10px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #D98E4555;text-align:center">'
           +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">'+it.title+'</div>'
           +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+it.text+'</div>'
           +'</div>').join('')+'</div>':'';
@@ -6650,7 +6650,7 @@ async function renderRefBrand(brand,tabIdx){
       else if(t==='Complaints Emails') container.innerHTML=renderPetrominComplaintsTab(arr);
       else container.innerHTML='<div style="text-align:center;padding:24px;color:#aaa">No renderer for '+t+'</div>';
     }catch(e){
-      container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
+      container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#FDFCF8;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
     }
     return;
   }
@@ -6682,7 +6682,7 @@ async function renderRefBrand(brand,tabIdx){
       if(container.dataset.reqId!==__reqId) return;
       container.innerHTML=renderVolvoAftersalesTab(arr);
     }catch(e){
-      container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
+      container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#FDFCF8;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
     }
     return;
   }
@@ -6701,7 +6701,7 @@ async function renderRefBrand(brand,tabIdx){
       else if(t==='NOS Complaint') container.innerHTML=renderNosComplaintTab(arr);
       else container.innerHTML='<div style="text-align:center;padding:24px;color:#aaa">No renderer for '+t+'</div>';
     }catch(e){
-      container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
+      container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#FDFCF8;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
     }
     return;
   }
@@ -6722,7 +6722,7 @@ async function renderRefBrand(brand,tabIdx){
       else if(t==='SMS') container.innerHTML=noAnsHeader('electromin')+renderElectrominSMSTab(arr);
       else container.innerHTML='<div style="text-align:center;padding:24px;color:#aaa">No renderer for '+t+'</div>';
     }catch(e){
-      container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
+      container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#FDFCF8;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
     }
     return;
   }
@@ -6753,7 +6753,7 @@ async function renderRefBrand(brand,tabIdx){
       else if(t==='Location SMS') container.innerHTML=renderFotonSMSLocationTab(arr);
       else container.innerHTML='<div style="text-align:center;padding:24px;color:#aaa">No renderer for '+t+'</div>';
     }catch(e){
-      container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
+      container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#FDFCF8;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
     }
     return;
   }
@@ -6762,7 +6762,7 @@ async function renderRefBrand(brand,tabIdx){
     try{
       container.innerHTML=await renderInstructionTab(brand,cfg);
     }catch(e){
-      container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
+      container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#FDFCF8;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
     }
     return;
   }
@@ -6955,7 +6955,7 @@ function renderRecallTab(arr, sheetName){
   });
 
   // Details section
-  const detailHTML=detailRows.length?'<div style="background:#fff;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:4px">'
+  const detailHTML=detailRows.length?'<div style="background:#FDFCF8;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:4px">'
     +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
     +'<thead><tr style="background:'+color+'15">'
     +detailRows[0].map(h=>h?'<th style="padding:10px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center;white-space:nowrap">'+h+'</th>':'').join('')
@@ -7106,7 +7106,7 @@ function renderRoster(){
   var filterHTML='<div style="display:flex;justify-content:center;margin-bottom:16px">'
     +'<select onchange="filterDailyWeek(this.value)" id="dwk_select" style="'
     +'padding:8px 20px;border-radius:20px;border:1.5px solid rgba(192,39,45,.25);'
-    +'background:#fff;color:#c0272d;font-size:12px;font-weight:700;cursor:pointer;outline:none;'
+    +'background:#FDFCF8;color:#c0272d;font-size:12px;font-weight:700;cursor:pointer;outline:none;'
     +'box-shadow:0 2px 6px rgba(192,39,45,.08)">';
   weekKeys.forEach(function(wk){
     filterHTML+='<option value="'+wk+'"'+(wk===activeWk?' selected':'')+'>'+weekMap[wk].label+'</option>';
@@ -7204,7 +7204,7 @@ function renderRoster(){
     }
     function buildBreakTable(brows,title,color){
       if(!brows.length) return '';
-      var t='<div style="background:#fff;border-radius:12px;border:1px solid #eee;overflow:hidden;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)">'
+      var t='<div style="background:#FDFCF8;border-radius:12px;border:1px solid #eee;overflow:hidden;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)">'
         +'<div style="background:'+color+'18;border-bottom:3px solid '+color+';padding:12px 16px;font-size:14px;font-weight:800;color:'+color+';text-align:center;letter-spacing:.02em">'+title+'</div>'
         +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">'
         +'<thead><tr style="background:'+color+'10">'
@@ -7235,13 +7235,13 @@ function renderRoster(){
   el.innerHTML = '<div style="padding:4px">'
     +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;max-width:720px;margin-left:auto;margin-right:auto">'
     +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(192,39,45,.08);color:#a02030;border:1.5px solid rgba(192,39,45,.25)">\uD83D\uDCCB Attendance</button>'
-    +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;color:#6A5A4A;border:1.5px solid #EDE4DA">\uD83D\uDCC5 Weekly Schedule</button>'
-    +'<button onclick="switchScheduleTab(&apos;campaigntraining&apos;)" id="stab_campaigntraining" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;color:#6A5A4A;border:1.5px solid #EDE4DA">\uD83C\uDF93 Training</button>'
-    +'<button onclick="switchScheduleTab(&apos;vacation2026&apos;)" id="stab_vacation2026" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;color:#6A5A4A;border:1.5px solid #EDE4DA">\uD83C\uDF34 Vacation</button>'
+    +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#FDFCF8;color:#6A5A4A;border:1.5px solid #EDE4DA">\uD83D\uDCC5 Weekly Schedule</button>'
+    +'<button onclick="switchScheduleTab(&apos;campaigntraining&apos;)" id="stab_campaigntraining" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#FDFCF8;color:#6A5A4A;border:1.5px solid #EDE4DA">\uD83C\uDF93 Training</button>'
+    +'<button onclick="switchScheduleTab(&apos;vacation2026&apos;)" id="stab_vacation2026" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#FDFCF8;color:#6A5A4A;border:1.5px solid #EDE4DA">\uD83C\uDF34 Vacation</button>'
     +'</div>'
     
     +'<div id="schedule_dailyoff" style="display:none"></div>'    +'<div id="schedule_vacation2026" style="display:none"></div>'    +'<div id="schedule_campaigntraining" style="display:none"></div>'    +'<div id="schedule_attendance" style="display:block">'
-    +'<div style="background:#fff;border-radius:10px;padding:10px 16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-left:4px solid #A85060">'
+    +'<div style="background:#FDFCF8;border-radius:10px;padding:10px 16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-left:4px solid #A85060">'
     +'<div style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">'
     +'<label style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">📅 Date:</label>'
     +'<input type="date" id="attDatePicker" style="font-size:13px;padding:6px 12px;border-radius:8px;border:1.5px solid #ddd;background:#fafafa;cursor:pointer;font-weight:600" onchange="renderAttendanceTab()">'
@@ -7723,7 +7723,7 @@ async function renderCampaignTraining(){
     foot += '<td style="border-top:2px solid #eee"></td></tr>';
 
     el.innerHTML = ''
-      + '<div style="background:#fff;border-radius:12px;padding:12px 16px;margin-bottom:12px;border-left:4px solid #A85060;box-shadow:0 1px 4px rgba(0,0,0,.05);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">'
+      + '<div style="background:#FDFCF8;border-radius:12px;padding:12px 16px;margin-bottom:12px;border-left:4px solid #A85060;box-shadow:0 1px 4px rgba(0,0,0,.05);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">'
       +   '<div><div style="font-size:15px;font-weight:700;color:#3A352B">Campaign Training</div><div style="font-size:11px;color:#999">'+shown+' agents · live from Google Sheet</div></div>'
       +   '<div style="display:flex;gap:10px;font-size:11px;color:#666">'
       +     '<span><span style="display:inline-block;width:14px;height:14px;border-radius:4px;background:#E8F0E6;border:1px solid #B7D0B2;vertical-align:-2px"></span> Trained</span>'
@@ -7731,7 +7731,7 @@ async function renderCampaignTraining(){
       +     '<span><span style="display:inline-block;width:14px;height:14px;border-radius:4px;background:#F7F7F7;border:1px solid #eee;vertical-align:-2px"></span> Not yet</span>'
       +   '</div>'
       + '</div>'
-      + '<div style="overflow-x:auto;background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.05);padding:4px">'
+      + '<div style="overflow-x:auto;background:#FDFCF8;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.05);padding:4px">'
       +   '<table style="table-layout:fixed;border-collapse:separate;border-spacing:0;width:100%;font-size:12px;min-width:'+minW+'px">'+colgroup+'<thead><tr>'+thead+'</tr></thead><tbody>'+body+foot+'</tbody></table>'
       + '</div>';
 
@@ -7924,7 +7924,7 @@ function renderRecallPage(){
     +'<span style="font-size:15px;font-weight:800;color:#fff">🔁 Recall</span>'
     +'<a href="https://recalls.sa/" target="_blank" style="position:absolute;right:12px;display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(255,255,255,.92);color:#757575;border:1px solid rgba(255,255,255,.5);border-radius:14px;font-size:10px;font-weight:700;text-decoration:none">🏛️ وزارة التجارة</a>'
     +'</div>'
-    +'<div style="background:#fff;border-radius:0 0 12px 12px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:16px">'
+    +'<div style="background:#FDFCF8;border-radius:0 0 12px 12px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:16px">'
     + circlesHTML
     +'<div id="recallBrandContent"></div>'
     +'</div>';
@@ -8001,7 +8001,7 @@ function searchRecallByVIN(brandFilter){
   resultsEl.innerHTML = '<div style="font-size:12px;color:#888;text-align:center;margin-bottom:10px">'+matches.length+' نتيجة</div>'
     + matches.map(r=>{
       const bc = brandColor(r.brand);
-      return '<div style="background:#fff;border-radius:10px;margin-bottom:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);border-left:4px solid '+bc+'">'
+      return '<div style="background:#FDFCF8;border-radius:10px;margin-bottom:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);border-left:4px solid '+bc+'">'
         +'<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:'+bc+'0d">'
         +'<div style="min-width:44px;height:36px;border-radius:8px;background:'+bc+';display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0">'+r.code+'</div>'
         +'<div style="flex:1">'
@@ -8146,7 +8146,7 @@ function renderStellantisRecallTab(arr, color){
     const allBrands = [c.brand, ...c.extra.map(e=>e.brand)].filter((v,idx,a)=>v&&a.indexOf(v)===idx).join(' · ');
     const allModels = [c.model, ...c.extra.map(e=>e.model)].filter(v=>v).join(' · ');
     const isAr = /[\u0600-\u06FF]/.test(c.desc);
-    html += '<div style="background:#fff;border-radius:10px;margin-bottom:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08);border-left:4px solid '+bc+'">'
+    html += '<div style="background:#FDFCF8;border-radius:10px;margin-bottom:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08);border-left:4px solid '+bc+'">'
       // Header row — clickable
       +'<div onclick="toggleStellRecall(\''+cardId+'\')" style="display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;user-select:none">'
       +'<div style="min-width:40px;height:40px;border-radius:8px;background:'+bc+';display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0">'+c.no+'</div>'
@@ -8190,7 +8190,7 @@ function renderRecallTab(arr, sheetName, color){
   });
 
   // Details table — منظم وأنيق
-  const detailHTML=detailRows.length?'<div style="background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:12px">'
+  const detailHTML=detailRows.length?'<div style="background:#FDFCF8;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:12px">'
     +'<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px">'
     +'<thead><tr style="background:'+color+'18">'
     +detailRows[0].map(h=>h?'<th style="padding:12px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'55;text-align:center;white-space:nowrap;font-size:12px;text-transform:uppercase;letter-spacing:.04em">'+h+'</th>':'').filter((_,i)=>detailRows[0][i]).join('')
@@ -8508,13 +8508,13 @@ async function renderRef(){
     const subC=['PN Sales Complaint','PN Aftersales Complaint','PS Sales Complaint','PS AftesSales Complaint','Body Shop Complaint','PE Complaint','PAC Complaint','BAIC Complaint','TS Complaint','Tire Complaint','Fuel Complaint','Foton Complaint','Electromin Complaint'];
     if(mainC){ mainC.subject='All Complaints'; mainC.status='Open'; mainC._deptTags=DEPT_TAGS; mainC._descText=DESC_TEXT; mainC._catTags=CAT_TAGS; mainC._notesAR=NOTES_AR; }
 
-    const fbox=(name,val,c)=>'<span style="background:#fff;border:1px solid #eccfcf;border-radius:7px;padding:5px 11px;font-size:10.5px;font-weight:600;color:#a85a5a;text-align:center;display:inline-block">'+name+'<small style="display:block;font-size:9.5px;color:'+c.t+';background:'+c.b+';font-weight:800;margin-top:4px;border-radius:4px;padding:1px 5px">'+val+'</small></span>';
+    const fbox=(name,val,c)=>'<span style="background:#FDFCF8;border:1px solid #eccfcf;border-radius:7px;padding:5px 11px;font-size:10.5px;font-weight:600;color:#a85a5a;text-align:center;display:inline-block">'+name+'<small style="display:block;font-size:9.5px;color:'+c.t+';background:'+c.b+';font-weight:800;margin-top:4px;border-radius:4px;padding:1px 5px">'+val+'</small></span>';
     const formulaBar=(val,two,c)=>{
       const plus='<span style="color:#c0272d88;font-weight:800;display:flex;align-items:center">+</span>';
       const boxes=two?[fbox('Invoice Number',val,c),fbox('Description',val,c)]:[fbox('Invoice Number',val,c),fbox('Subject',val,c),fbox('Description',val,c),fbox('Empty Box',val,c)];
       return'<div style="display:flex;flex-wrap:wrap;align-items:stretch;gap:7px;background:#fdf6f6;border:1px dashed #eccfcf;border-radius:10px;padding:11px 12px;direction:ltr;justify-content:center;margin:12px 14px">'+boxes.join(plus)+'</div>';
     };
-    const fieldRow=(icon,label,content,i)=>'<div style="display:grid;grid-template-columns:118px 1fr;gap:10px;padding:11px 16px;border-top:1px solid #f4f4f6;align-items:start;'+(i%2?'background:#fbfbfc':'background:#fff')+'"><div style="font-size:10.5px;font-weight:800;color:#9aa0a8;letter-spacing:.3px;padding-top:2px">'+icon+' '+label+'</div><div>'+content+'</div></div>';
+    const fieldRow=(icon,label,content,i)=>'<div style="display:grid;grid-template-columns:118px 1fr;gap:10px;padding:11px 16px;border-top:1px solid #f4f4f6;align-items:start;'+(i%2?'background:#fbfbfc':'background:#FDFCF8')+'"><div style="font-size:10.5px;font-weight:800;color:#9aa0a8;letter-spacing:.3px;padding-top:2px">'+icon+' '+label+'</div><div>'+content+'</div></div>';
     const subjItem=(it,isCMain,subTags,twoField,gColor)=>{
       const deptTags = it._deptTags || (it.dept?it.dept.split(/\n/).flatMap(d=>d.split(' - ')).map(s=>s.trim()).filter(Boolean):[]);
       const catTags  = it._catTags  || (it.cat?it.cat.split(/\n/).flatMap(c=>c.split(' - ')).map(s=>s.trim()).filter(Boolean):[]);
@@ -8583,7 +8583,7 @@ async function renderRef(){
       +'</div>'
 
       // LINKS PANEL - hidden, toggled by blue circle, opens BELOW circles
-      +(linkCards?('<div id="refLinksPanel" style="display:none;margin-top:8px;margin-bottom:4px;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)"><div onclick="toggleLinksPanel()" title="اضغطي للإغلاق" style="background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;padding:14px 20px;min-height:53px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:700;cursor:pointer;user-select:none">🔗 Links & Systems <span id="refLinksIco" style="font-size:12px;opacity:.85">▲</span></div><div class="ref-panel-body">'+linkCards+'</div></div>'):'')
+      +(linkCards?('<div id="refLinksPanel" style="display:none;margin-top:8px;margin-bottom:4px;background:#FDFCF8;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)"><div onclick="toggleLinksPanel()" title="اضغطي للإغلاق" style="background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;padding:14px 20px;min-height:53px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:700;cursor:pointer;user-select:none">🔗 Links & Systems <span id="refLinksIco" style="font-size:12px;opacity:.85">▲</span></div><div class="ref-panel-body">'+linkCards+'</div></div>'):'')
 
       // CONTACT NUMBERS — merged single panel
       +'<div class="ref-info-panel">'
@@ -8609,7 +8609,7 @@ async function renderRef(){
 
   }catch(e){
     console.error('renderRef error:',e);
-    container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#fff;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
+    container.innerHTML='<div style="color:#c0272d;padding:24px;text-align:center;background:#FDFCF8;border-radius:12px"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#888;margin-top:4px">'+e.message+'</div></div>';
   }
 }
 
@@ -8900,7 +8900,7 @@ async function renderDailyOff(){
     }
 
     function buildTable(w){
-      var t='<div style="overflow-x:auto"><table class="no-border" style="width:100%;border-collapse:collapse;font-size:11px;background:#fff">';
+      var t='<div style="overflow-x:auto"><table class="no-border" style="width:100%;border-collapse:collapse;font-size:11px;background:#FDFCF8">';
       t+='<thead><tr>';
       t+='<th style="padding:6px 12px;text-align:left;border-bottom:2px solid #EDE0D4;min-width:140px;font-weight:700;color:#5D4037;background:#F5F0E8;font-size:10px">Agent Name</th>';
       DAY_COLS.forEach(function(d){
@@ -8937,15 +8937,15 @@ async function renderDailyOff(){
     var html='<div style="background:#FDFCF8;border-radius:14px;padding:4px 16px 12px">';
     html+='<div style="display:flex;justify-content:flex-start;align-items:center;gap:8px;margin-bottom:10px;margin-top:2px">';
     html+='<button type="button" onclick="stepDailyOffWeek(-1)" id="dow_prev" aria-label="Previous week" style="'
-      +'width:36px;height:36px;flex:none;border-radius:8px;border:1px solid #E2D6C8;background:#fff;'
+      +'width:36px;height:36px;flex:none;border-radius:8px;border:1px solid #E2D6C8;background:#FDFCF8;'
       +'color:#8A6D5A;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center">\u2039</button>';
     html+='<div id="dow_label" data-idx="'+activeIdx+'" style="'
       +'padding:9px 24px;border-radius:8px;border:2px solid rgba(192,39,45,.25);'
-      +'background:#fff;color:#c0272d;font-size:13px;font-weight:700;'
+      +'background:#FDFCF8;color:#c0272d;font-size:13px;font-weight:700;'
       +'box-shadow:0 2px 6px rgba(192,39,45,.08);min-width:220px;text-align:center">'
       +(weeks[activeIdx]?weeks[activeIdx].label:'')+'</div>';
     html+='<button type="button" onclick="stepDailyOffWeek(1)" id="dow_next" aria-label="Next week" style="'
-      +'width:36px;height:36px;flex:none;border-radius:8px;border:1px solid #E2D6C8;background:#fff;'
+      +'width:36px;height:36px;flex:none;border-radius:8px;border:1px solid #E2D6C8;background:#FDFCF8;'
       +'color:#8A6D5A;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center">\u203a</button>';
     html+='</div>';
     // Legend
@@ -9115,7 +9115,7 @@ async function renderVacation2026(){
     var VM_BORDERS=['#E3C5C5','#D2CFC7','#C5D4CB','#D9CDBC','#CBCDD9','#D6C8D0','#E3C5C5','#C5D0CB','#D0C5D4','#C5CBD4','#D0D4C5','#CBC5D4'];
 
     function buildMonthTable(m){
-      var t='<div style="overflow-x:auto"><table style="border-collapse:collapse;font-size:11px;background:#fff;width:100%">';
+      var t='<div style="overflow-x:auto"><table style="border-collapse:collapse;font-size:11px;background:#FDFCF8;width:100%">';
       t+='<thead><tr style="background:#FAF8F5">';
       t+='<th style="padding:8px 14px;text-align:left;border-bottom:2px solid #E8DDD0;min-width:150px;position:sticky;left:0;background:#F5F0E8;z-index:2;font-size:11px;color:#5D4037;font-weight:700">Agent Name</th>';
       m.days.forEach(function(d){
