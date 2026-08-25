@@ -4177,6 +4177,7 @@ function renderBaicLocationTab(arr, brand){
 
 function renderPetrominInstructionTab(arr, warrantyInner){
   const color='#D98E45';
+  const WRAP='max-width:1100px;margin:0 auto';
   const sections={'Type of Oil':[],'Oil Brand':[],'PMS at Petromin Express':[],'Petromin Oil':[],'Package':[],'Weekly Offers':[],'Extra Information':[]};
   let currentSection=null;
   (arr||[]).forEach((r)=>{
@@ -4187,7 +4188,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
     if(v.some(x=>x)) sections[currentSection].push({cells:v, col0:v[0]||'', col1:v[1]||'', col2:v[2]||''});
   });
 
-  const H=t=>'<div style="text-align:center;font-size:13px;font-weight:800;color:'+color+';letter-spacing:.3px;margin:22px 0 12px">'+t+'</div>';
+  const H=t=>'<div style="text-align:center;font-size:13px;font-weight:800;color:'+color+';letter-spacing:.3px;margin:20px 0 12px">'+t+'</div>';
 
   /* ---- Oil Types & Agencies — side-bar boxes (LTR) ---- */
   const typeOilRows=(sections['Type of Oil'].length?sections['Type of Oil']:sections['Oil Brand']);
@@ -4203,46 +4204,58 @@ function renderPetrominInstructionTab(arr, warrantyInner){
       +(pmsRows.length?box('PMS at Petromin Express', joinBrands(pmsRows)):'');
   }
 
-  /* ---- Prices table (3 cols, aligned grid) ---- */
+  const th=(align,extra)=>'background:#FCF4EA;color:#bd7530;font-weight:800;padding:12px 14px;border-bottom:1px solid #F0E7DA;font-size:12.5px;text-align:'+align+(extra||'');
+  const td=(align,extra)=>'padding:12px 14px;border-bottom:1px solid #F6EFE6;text-align:'+align+(extra||'');
+
+  /* ---- Prices table ---- */
   const oilDataRows=sections['Petromin Oil'].filter(r=>r.col0&&r.col1&&r.col0!=='Type of oil');
   let pricesCard='';
   if(oilDataRows.length){
     pricesCard=H('\uD83E\uDDF4 Petromin Oil Prices')
       +'<div style="background:#fff;border:1px solid #F0E7DA;border-radius:14px;overflow:hidden"><table style="width:100%;border-collapse:collapse;font-size:13.5px;table-layout:fixed">'
-      +'<colgroup><col style="width:30%"><col style="width:35%"><col style="width:35%"></colgroup>'
+      +'<colgroup><col style="width:34%"><col style="width:33%"><col style="width:33%"></colgroup>'
       +'<thead><tr>'
-      +'<th style="background:#FCF4EA;color:#bd7530;font-weight:800;padding:12px 14px;border-bottom:1px solid #F0E7DA;font-size:12.5px;text-align:left">Type of Oil</th>'
-      +'<th style="background:#FCF4EA;color:#bd7530;font-weight:800;padding:12px 14px;border-bottom:1px solid #F0E7DA;font-size:12.5px;text-align:center">Name</th>'
-      +'<th style="background:#FCF4EA;color:#bd7530;font-weight:800;padding:12px 14px;border-bottom:1px solid #F0E7DA;font-size:12.5px;text-align:center">Price</th></tr></thead><tbody>'
+      +'<th style="'+th('left')+'">Type of Oil</th>'
+      +'<th style="'+th('center')+'">Name</th>'
+      +'<th style="'+th('center')+'">Price</th></tr></thead><tbody>'
       +oilDataRows.map((r,i)=>'<tr style="background:'+(i%2?'#FBF7F2':'#fff')+'">'
-        +'<td style="padding:12px 14px;border-bottom:1px solid #F6EFE6;text-align:left;font-weight:700;color:#3D2E22">'+r.col0+'</td>'
-        +'<td style="padding:12px 14px;border-bottom:1px solid #F6EFE6;text-align:center">'+r.col1+'</td>'
-        +'<td style="padding:12px 14px;border-bottom:1px solid #F6EFE6;text-align:center;font-weight:800;color:'+color+'">'+r.col2+'</td></tr>').join('')
+        +'<td style="'+td('left','font-weight:700;color:#3D2E22')+'">'+r.col0+'</td>'
+        +'<td style="'+td('center')+'">'+r.col1+'</td>'
+        +'<td style="'+td('center','font-weight:800;color:'+color)+'">'+r.col2+'</td></tr>').join('')
       +'</tbody></table></div>';
   }
 
-  /* ---- Packages table (3 cols, no liters column; single note below) ---- */
+  /* ---- Packages table (no liters column; single note below) ---- */
   const pkgRows=sections['Package'].filter(r=>{const n=(r.col0||'').toLowerCase();return r.col0&&n!=='package'&&!/mineral|synthetic|\u0639\u062F\u062F/.test(n);});
   let packagesCard='';
   if(pkgRows.length){
     const litersNote=(pkgRows[0].cells&&pkgRows[0].cells[1])?String(pkgRows[0].cells[1]).trim():'';
     packagesCard=H('\uD83D\uDCE6 Packages')
       +'<div style="background:#fff;border:1px solid #F0E7DA;border-radius:14px;overflow:hidden"><table style="width:100%;border-collapse:collapse;font-size:13.5px;table-layout:fixed">'
-      +'<colgroup><col style="width:30%"><col style="width:35%"><col style="width:35%"></colgroup>'
+      +'<colgroup><col style="width:34%"><col style="width:33%"><col style="width:33%"></colgroup>'
       +'<thead><tr>'
-      +'<th style="background:#FCF4EA;color:#bd7530;font-weight:800;padding:12px 14px;border-bottom:1px solid #F0E7DA;font-size:12.5px;text-align:left">Package</th>'
-      +'<th style="background:#FCF4EA;color:#bd7530;font-weight:800;padding:12px 14px;border-bottom:1px solid #F0E7DA;font-size:12.5px;text-align:center;line-height:1.3">Mineral<small style="display:block;font-size:11px;font-weight:700;color:#6A5A4A">\u0645\u0639\u062F\u0646\u064A</small></th>'
-      +'<th style="background:#FCF4EA;color:#bd7530;font-weight:800;padding:12px 14px;border-bottom:1px solid #F0E7DA;font-size:12.5px;text-align:center;line-height:1.3">Synthetic<small style="display:block;font-size:11px;font-weight:700;color:#6A5A4A">\u062A\u062E\u0644\u064A\u0642\u064A</small></th></tr></thead><tbody>'
+      +'<th style="'+th('left')+'">Package</th>'
+      +'<th style="'+th('center',';line-height:1.3')+'">Mineral<small style="display:block;font-size:11px;font-weight:700;color:#6A5A4A">\u0645\u0639\u062F\u0646\u064A</small></th>'
+      +'<th style="'+th('center',';line-height:1.3')+'">Synthetic<small style="display:block;font-size:11px;font-weight:700;color:#6A5A4A">\u062A\u062E\u0644\u064A\u0642\u064A</small></th></tr></thead><tbody>'
       +pkgRows.map((r,i)=>{const c=r.cells||[];const mineral=c[2]||'';const synthetic=c[4]||c[3]||'';
         return '<tr style="background:'+(i%2?'#FBF7F2':'#fff')+'">'
-        +'<td style="padding:12px 14px;border-bottom:1px solid #F6EFE6;text-align:left;font-weight:700;color:#3D2E22">'+(c[0]||'')+'</td>'
-        +'<td style="padding:12px 14px;border-bottom:1px solid #F6EFE6;text-align:center;font-weight:800;color:'+color+'">'+mineral+'</td>'
-        +'<td style="padding:12px 14px;border-bottom:1px solid #F6EFE6;text-align:center;font-weight:800;color:'+color+'">'+synthetic+'</td></tr>';}).join('')
+        +'<td style="'+td('left','font-weight:700;color:#3D2E22')+'">'+(c[0]||'')+'</td>'
+        +'<td style="'+td('center','font-weight:800;color:'+color)+'">'+mineral+'</td>'
+        +'<td style="'+td('center','font-weight:800;color:'+color)+'">'+synthetic+'</td></tr>';}).join('')
       +'</tbody></table></div>'
       +(litersNote?'<div style="text-align:center;font-size:12px;font-weight:700;color:#6A5A4A;margin-top:10px;background:#FBF3EA;border:1px dashed #E8D6BF;border-radius:10px;padding:8px">\uD83D\uDEE2\uFE0F \u062C\u0645\u064A\u0639 \u0627\u0644\u0628\u0627\u0642\u0627\u062A '+litersNote+'</div>':'');
   }
 
-  const petrominTabInner=(oilTypesInner||pricesCard||packagesCard)?'<div style="max-width:780px;margin:0 auto">'+oilTypesInner+pricesCard+packagesCard+'</div>':'';
+  /* ---- Prices + Packages side by side (stack on narrow) ---- */
+  let tablesRow='';
+  if(pricesCard||packagesCard){
+    tablesRow='<div style="display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start">'
+      +(pricesCard?'<div style="flex:1 1 420px;min-width:0">'+pricesCard+'</div>':'')
+      +(packagesCard?'<div style="flex:1 1 420px;min-width:0">'+packagesCard+'</div>':'')
+      +'</div>';
+  }
+
+  const petrominTabInner=(oilTypesInner||tablesRow)?'<div style="'+WRAP+'">'+oilTypesInner+tablesRow+'</div>':'';
 
   /* ---- Weekly Offers — coupon ticket (parsed from sheet text) ---- */
   let weeklyInner='';
@@ -4296,7 +4309,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
 
   /* ---- Extra Information ---- */
   const extraInner=sections['Extra Information'].length?
-    '<div style="display:flex;flex-direction:column;gap:10px;max-width:640px;margin:0 auto">'
+    '<div style="display:flex;flex-direction:column;gap:10px;'+WRAP+'">'
     +sections['Extra Information'].map(r=>{const title=r.col0||'';const text=(r.col1||'').replace(/^"|"$/g,'').trim();if(!title&&!text)return'';
       return '<div style="background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #D98E4555;text-align:center">'
         +(title?'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">'+title+'</div>':'')
@@ -4308,7 +4321,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
   const tabs=[];
   if(petrominTabInner) tabs.push({label:'\uD83D\uDE97 Petromin Oil',html:petrominTabInner});
   if(weeklyInner) tabs.push({label:'\uD83C\uDF89 Weekly Offers',html:weeklyInner});
-  if(warrantyInner) tabs.push({label:'\u26A0\uFE0F Warranty',html:warrantyInner});
+  if(warrantyInner) tabs.push({label:'\u26A0\uFE0F Warranty',html:'<div style="'+WRAP+'">'+warrantyInner+'</div>'});
   if(extraInner) tabs.push({label:'\u2139\uFE0F Extra Information',html:extraInner});
   if(!tabs.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 
