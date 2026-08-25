@@ -7234,7 +7234,7 @@ function renderRoster(){
 
   el.innerHTML = '<div style="padding:4px">'
     +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;max-width:720px;margin-left:auto;margin-right:auto">'
-    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#c0272d;color:#fff;border:1.5px solid #c0272d">\uD83D\uDCCB Attendance</button>'
+    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(192,39,45,.08);color:#a02030;border:1.5px solid rgba(192,39,45,.25)">\uD83D\uDCCB Attendance</button>'
     +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;color:#6A5A4A;border:1.5px solid #EDE4DA">\uD83D\uDCC5 Weekly Schedule</button>'
     +'<button onclick="switchScheduleTab(&apos;campaigntraining&apos;)" id="stab_campaigntraining" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;color:#6A5A4A;border:1.5px solid #EDE4DA">\uD83C\uDF93 Training</button>'
     +'<button onclick="switchScheduleTab(&apos;vacation2026&apos;)" id="stab_vacation2026" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;color:#6A5A4A;border:1.5px solid #EDE4DA">\uD83C\uDF34 Vacation</button>'
@@ -7751,9 +7751,9 @@ function switchScheduleTab(tab){
     if(el) el.style.display=t===tab?'block':'none';
     var btn=document.getElementById('stab_'+t);
     if(btn){
-      btn.style.background=t===tab?'#c0272d':'#fff';
-      btn.style.color=t===tab?'#fff':'#6A5A4A';
-      btn.style.border=t===tab?'1.5px solid #c0272d':'1.5px solid #EDE4DA';
+      btn.style.background=t===tab?'rgba(192,39,45,.08)':'#fff';
+      btn.style.color=t===tab?'#a02030':'#6A5A4A';
+      btn.style.border=t===tab?'1.5px solid rgba(192,39,45,.25)':'1.5px solid #EDE4DA';
     }
   });
   if(tab==='attendance') setAttToday();
