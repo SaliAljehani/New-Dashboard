@@ -4187,60 +4187,75 @@ function renderPetrominInstructionTab(arr, warrantyInner){
     if(v.some(x=>x)) sections[currentSection].push({cells:v, col0:v[0]||'', col1:v[1]||'', col2:v[2]||''});
   });
 
-  const H=t=>'<div style="text-align:center;font-size:13px;font-weight:800;color:'+color+';letter-spacing:.3px;margin:20px 0 10px">'+t+'</div>';
-  const chip=b=>'<span style="background:'+color+'0D;color:'+color+';font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;border:1px solid '+color+'30;margin:3px">'+b+'</span>';
-  const chipsFrom=rows=>'<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">'
+  const H=t=>'<div style="text-align:center;font-size:13px;font-weight:800;color:'+color+';letter-spacing:.3px;margin:0 0 10px">'+t+'</div>';
+  const chip=b=>'<span style="background:#FBF3EA;color:#bd7530;font-size:12px;font-weight:700;padding:5px 13px;border-radius:16px;border:1px solid #F0DEC9;margin:3px">'+b+'</span>';
+  const chipsFrom=rows=>'<div style="display:flex;flex-wrap:wrap;gap:7px;justify-content:center">'
     +rows.map(r=>String(r.col0||'').split(/\s+-\s+|\//).map(b=>b.trim()).filter(Boolean).map(chip).join('')).join('')
     +'</div>';
 
-  /* ---- Petromin Oil tab: Oil Types & Agencies + Prices + Packages ---- */
+  /* ---- Oil Types & Agencies (chips card) ---- */
   const typeOilRows=(sections['Type of Oil'].length?sections['Type of Oil']:sections['Oil Brand']);
   const pmsRows=sections['PMS at Petromin Express'];
   let oilTypesInner='';
   if(typeOilRows.length||pmsRows.length){
-    oilTypesInner+=H('\uD83D\uDEE2\uFE0F Oil Types &amp; Agencies');
+    let inner='';
     if(typeOilRows.length)
-      oilTypesInner+='<div style="margin-bottom:10px"><div style="text-align:center;font-size:12px;font-weight:700;color:#6A5A4A;margin-bottom:8px">Type of Oil</div>'+chipsFrom(typeOilRows)+'</div>';
+      inner+='<div style="'+(pmsRows.length?'':'')+'"><div style="text-align:center;font-size:12px;font-weight:800;color:#6A5A4A;margin-bottom:9px">Type of Oil</div>'+chipsFrom(typeOilRows)+'</div>';
     if(pmsRows.length)
-      oilTypesInner+='<div style="margin-top:12px"><div style="text-align:center;font-size:12px;font-weight:700;color:#6A5A4A;margin-bottom:8px">PMS at Petromin Express</div>'+chipsFrom(pmsRows)+'</div>';
+      inner+='<div style="'+(typeOilRows.length?'margin-top:14px;padding-top:14px;border-top:1px dashed #F0E7DA':'')+'"><div style="text-align:center;font-size:12px;font-weight:800;color:#6A5A4A;margin-bottom:9px">PMS at Petromin Express</div>'+chipsFrom(pmsRows)+'</div>';
+    oilTypesInner=H('\uD83D\uDEE2\uFE0F Oil Types &amp; Agencies')
+      +'<div style="background:#fff;border:1px solid #F0E7DA;border-radius:14px;padding:16px 14px;margin-bottom:8px">'+inner+'</div>';
   }
 
+  /* ---- Prices table (as a self-contained card) ---- */
   const oilDataRows=sections['Petromin Oil'].filter(r=>r.col0&&r.col1&&r.col0!=='Type of oil');
-  let pricesInner='';
+  let pricesCard='';
   if(oilDataRows.length){
-    pricesInner+=H('\uD83E\uDDF4 Petromin Oil Prices');
-    pricesInner+='<div style="overflow-x:auto;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:13px">'
-      +'<thead><tr style="background:'+color+'15">'
-      +'<th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">Type of Oil</th>'
-      +'<th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">Name</th>'
-      +'<th style="padding:10px 16px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">Price</th></tr></thead><tbody>'
-      +oilDataRows.map((r,i)=>'<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'">'
-        +'<td style="padding:9px 16px;font-weight:600;text-align:center">'+r.col0+'</td>'
-        +'<td style="padding:9px 16px;text-align:center">'+r.col1+'</td>'
-        +'<td style="padding:9px 16px;text-align:center;font-weight:700;color:'+color+'">'+r.col2+'</td></tr>').join('')
+    pricesCard=H('\uD83E\uDDF4 Petromin Oil Prices')
+      +'<div style="background:#fff;border:1px solid #F0E7DA;border-radius:14px;overflow:hidden"><table style="width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed">'
+      +'<colgroup><col style="width:42%"><col style="width:30%"><col style="width:28%"></colgroup>'
+      +'<thead><tr>'
+      +'<th style="background:#FCF4EA;color:#bd7530;font-weight:800;padding:11px 10px;border-bottom:1px solid #F0E7DA;font-size:12px;text-align:right">Type of Oil</th>'
+      +'<th style="background:#FCF4EA;color:#bd7530;font-weight:800;padding:11px 10px;border-bottom:1px solid #F0E7DA;font-size:12px;text-align:center">Name</th>'
+      +'<th style="background:#FCF4EA;color:#bd7530;font-weight:800;padding:11px 10px;border-bottom:1px solid #F0E7DA;font-size:12px;text-align:center">Price</th></tr></thead><tbody>'
+      +oilDataRows.map((r,i)=>'<tr style="background:'+(i%2?'#FBF7F2':'#fff')+'">'
+        +'<td style="padding:11px 10px;border-bottom:1px solid #F6EFE6;text-align:right;font-weight:700;color:#3D2E22">'+r.col0+'</td>'
+        +'<td style="padding:11px 10px;border-bottom:1px solid #F6EFE6;text-align:center">'+r.col1+'</td>'
+        +'<td style="padding:11px 10px;border-bottom:1px solid #F6EFE6;text-align:center;font-weight:800;color:'+color+'">'+r.col2+'</td></tr>').join('')
       +'</tbody></table></div>';
   }
 
+  /* ---- Packages table (as a self-contained card) ---- */
   const pkgRows=sections['Package'].filter(r=>{const n=(r.col0||'').toLowerCase();return r.col0&&n!=='package'&&!/mineral|synthetic|\u0639\u062F\u062F/.test(n);});
-  let packagesInner='';
+  let packagesCard='';
   if(pkgRows.length){
-    packagesInner+=H('\uD83D\uDCE6 Packages');
-    packagesInner+='<div style="overflow-x:auto;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:13px">'
-      +'<thead><tr style="background:'+color+'15">'
-      +'<th style="padding:10px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">Package</th>'
-      +'<th style="padding:10px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">\u0639\u062F\u062F \u0627\u0644\u0644\u062A\u0631\u0627\u062A</th>'
-      +'<th style="padding:10px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">Mineral New ( \u0645\u0639\u062F\u0646\u064A )</th>'
-      +'<th style="padding:10px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'33;text-align:center">Synthetic ( \u0635\u0646\u0627\u0639\u064A \u2013 \u062A\u062E\u0644\u064A\u0642\u064A )</th></tr></thead><tbody>'
+    packagesCard=H('\uD83D\uDCE6 Packages')
+      +'<div style="background:#fff;border:1px solid #F0E7DA;border-radius:14px;overflow:hidden"><table style="width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed">'
+      +'<colgroup><col style="width:24%"><col style="width:20%"><col style="width:28%"><col style="width:28%"></colgroup>'
+      +'<thead><tr>'
+      +'<th style="background:#FCF4EA;color:#bd7530;font-weight:800;padding:11px 8px;border-bottom:1px solid #F0E7DA;font-size:12px;text-align:right">Package</th>'
+      +'<th style="background:#FCF4EA;color:#bd7530;font-weight:800;padding:11px 8px;border-bottom:1px solid #F0E7DA;font-size:12px;text-align:center">\u0627\u0644\u0644\u062A\u0631\u0627\u062A</th>'
+      +'<th style="background:#FCF4EA;color:#bd7530;font-weight:800;padding:11px 8px;border-bottom:1px solid #F0E7DA;font-size:12px;text-align:center;line-height:1.3">Mineral<small style="display:block;font-size:10.5px;font-weight:700;color:#6A5A4A">\u0645\u0639\u062F\u0646\u064A</small></th>'
+      +'<th style="background:#FCF4EA;color:#bd7530;font-weight:800;padding:11px 8px;border-bottom:1px solid #F0E7DA;font-size:12px;text-align:center;line-height:1.3">Synthetic<small style="display:block;font-size:10.5px;font-weight:700;color:#6A5A4A">\u062A\u062E\u0644\u064A\u0642\u064A</small></th></tr></thead><tbody>'
       +pkgRows.map((r,i)=>{const c=r.cells||[];const liters=c[1]||'';const mineral=c[2]||'';const synthetic=c[4]||c[3]||'';
-        return '<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'">'
-        +'<td style="padding:9px 14px;font-weight:700;text-align:center">'+(c[0]||'')+'</td>'
-        +'<td style="padding:9px 14px;text-align:center;color:#6A5A4A">'+liters+'</td>'
-        +'<td style="padding:9px 14px;text-align:center;font-weight:700;color:'+color+'">'+mineral+'</td>'
-        +'<td style="padding:9px 14px;text-align:center;font-weight:700;color:'+color+'">'+synthetic+'</td></tr>';}).join('')
+        return '<tr style="background:'+(i%2?'#FBF7F2':'#fff')+'">'
+        +'<td style="padding:11px 8px;border-bottom:1px solid #F6EFE6;text-align:right;font-weight:700;color:#3D2E22">'+(c[0]||'')+'</td>'
+        +'<td style="padding:11px 8px;border-bottom:1px solid #F6EFE6;text-align:center;color:#6A5A4A">'+liters+'</td>'
+        +'<td style="padding:11px 8px;border-bottom:1px solid #F6EFE6;text-align:center;font-weight:800;color:'+color+'">'+mineral+'</td>'
+        +'<td style="padding:11px 8px;border-bottom:1px solid #F6EFE6;text-align:center;font-weight:800;color:'+color+'">'+synthetic+'</td></tr>';}).join('')
       +'</tbody></table></div>';
   }
 
-  const petrominTabInner=(oilTypesInner||pricesInner||packagesInner)?'<div>'+oilTypesInner+pricesInner+packagesInner+'</div>':'';
+  /* ---- Side-by-side row (stacks on narrow screens) ---- */
+  let tablesRow='';
+  if(pricesCard||packagesCard){
+    tablesRow='<div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;align-items:flex-start">'
+      +(pricesCard?'<div style="flex:1 1 290px;min-width:0">'+pricesCard+'</div>':'')
+      +(packagesCard?'<div style="flex:1.35 1 380px;min-width:0">'+packagesCard+'</div>':'')
+      +'</div>';
+  }
+
+  const petrominTabInner=(oilTypesInner||tablesRow)?'<div style="max-width:880px;margin:0 auto">'+oilTypesInner+tablesRow+'</div>':'';
 
   /* ---- Weekly Offers — coupon ticket (parsed from sheet text) ---- */
   let weeklyInner='';
@@ -4258,7 +4273,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
     const items=[]; const notes=[]; let title='';
     lines.forEach(l=>{
       if(/\u0639\u0631\u0636/.test(l) && /(\u0627\u0644\u062C\u0645\u0639\u0629|\u0627\u0644\u0633\u0628\u062A|weekly)/i.test(l)){ title=l.trim(); return; }
-      const parts=l.split(/\u0628\u0633\u0639\u0631/); // "بسعر"
+      const parts=l.split(/\u0628\u0633\u0639\u0631/);
       if(parts.length>1 && priceRe.test(parts.slice(1).join(''))){
         const kind=parts[0].trim();
         const after=parts.slice(1).join('');
@@ -4294,7 +4309,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
 
   /* ---- Extra Information ---- */
   const extraInner=sections['Extra Information'].length?
-    '<div style="display:flex;flex-direction:column;gap:10px">'
+    '<div style="display:flex;flex-direction:column;gap:10px;max-width:640px;margin:0 auto">'
     +sections['Extra Information'].map(r=>{const title=r.col0||'';const text=(r.col1||'').replace(/^"|"$/g,'').trim();if(!title&&!text)return'';
       return '<div style="background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #D98E4555;text-align:center">'
         +(title?'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">'+title+'</div>':'')
