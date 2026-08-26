@@ -4194,8 +4194,8 @@ function renderPetrominInstructionTab(arr, warrantyInner){
   const typeOilRows=(sections['Type of Oil'].length?sections['Type of Oil']:sections['Oil Brand']);
   const pmsRows=sections['PMS at Petromin Express'];
   const joinBrands=rows=>rows.map(r=>String(r.col0||'').trim()).filter(Boolean).join(' - ');
-  const box=(label,val)=>'<div style="background:#fff;border:1px solid #F0E7DA;border-left:4px solid '+color+';border-radius:10px;padding:13px 16px;direction:ltr;text-align:center;margin-bottom:10px">'
-    +'<div style="font-size:12.5px;font-weight:800;color:#bd7530;margin-bottom:6px">'+label+'</div>'
+  const box=(label,val)=>'<div style="background:#fff;border:1px solid '+color+'33;border-radius:12px;padding:14px 18px;direction:ltr;text-align:center;margin-bottom:10px">'
+    +'<div style="font-size:12.5px;font-weight:800;color:'+color+';margin-bottom:6px">'+label+'</div>'
     +'<div style="font-size:13.5px;font-weight:400;color:#3D2E22;line-height:1.7">'+val+'</div></div>';
   let oilTypesInner='';
   if(typeOilRows.length||pmsRows.length){
@@ -4204,11 +4204,11 @@ function renderPetrominInstructionTab(arr, warrantyInner){
   }
 
   /* header/cell styles: first (label) column shaded + black + centered; value cols centered */
-  const thLab='background:#EDDAC0;color:#3D2E22;font-weight:800;padding:12px 14px;border-bottom:1px solid #F0E7DA;font-size:12.5px;text-align:center';
-  const thVal='background:#FCF4EA;color:#bd7530;font-weight:800;padding:12px 14px;border-bottom:1px solid #F0E7DA;font-size:12.5px;text-align:center';
-  const tdLab='padding:12px 14px;border-bottom:1px solid #F6EFE6;background:#F7ECDC;color:#3D2E22;font-weight:800;text-align:center';
-  const tdVal=e=>'padding:12px 14px;border-bottom:1px solid #F6EFE6;text-align:center'+(e||'');
-  const ar=t=>'<small style="font-size:11px;font-weight:700;color:#6A5A4A;margin-inline-start:4px">'+t+'</small>';
+  const thLab='background:'+color+'26;color:'+color+';font-weight:700;padding:10px 16px;border-bottom:2px solid '+color+'33;font-size:12.5px;text-align:center';
+  const thVal='background:'+color+'15;color:'+color+';font-weight:700;padding:10px 16px;border-bottom:2px solid '+color+'33;font-size:12.5px;text-align:center';
+  const tdLab='padding:9px 16px;background:'+color+'15;color:#333;font-weight:700;text-align:center';
+  const tdVal=e=>'padding:9px 16px;text-align:center;color:#333'+(e||'');
+  const ar=t=>'<small style="font-size:11px;font-weight:700;color:#8a7d6d;margin-inline-start:4px">'+t+'</small>';
 
   /* ---- Prices table ---- */
   const oilDataRows=sections['Petromin Oil'].filter(r=>r.col0&&r.col1&&r.col0!=='Type of oil');
@@ -4218,7 +4218,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
       +'<div style="background:#fff;border:1px solid #F0E7DA;border-radius:14px;overflow:hidden"><table style="width:100%;border-collapse:collapse;font-size:13.5px;table-layout:fixed">'
       +'<colgroup><col style="width:34%"><col style="width:33%"><col style="width:33%"></colgroup>'
       +'<thead><tr><th style="'+thLab+'">Type of Oil</th><th style="'+thVal+'">Name</th><th style="'+thVal+'">Price</th></tr></thead><tbody>'
-      +oilDataRows.map((r,i)=>'<tr style="background:'+(i%2?'#FBF7F2':'#fff')+'">'
+      +oilDataRows.map((r,i)=>'<tr style="background:'+(i%2?'#fafafa':'#fff')+'">'
         +'<td style="'+tdLab+'">'+r.col0+'</td>'
         +'<td style="'+tdVal()+'">'+r.col1+'</td>'
         +'<td style="'+tdVal(';font-weight:800;color:'+color)+'">'+r.col2+'</td></tr>').join('')
@@ -4237,7 +4237,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
       +'<th style="'+thVal+'">Mineral'+ar('\u0645\u0639\u062F\u0646\u064A')+'</th>'
       +'<th style="'+thVal+'">Synthetic'+ar('\u062A\u062E\u0644\u064A\u0642\u064A')+'</th></tr></thead><tbody>'
       +pkgRows.map((r,i)=>{const c=r.cells||[];const mineral=c[2]||'';const synthetic=c[4]||c[3]||'';
-        return '<tr style="background:'+(i%2?'#FBF7F2':'#fff')+'">'
+        return '<tr style="background:'+(i%2?'#fafafa':'#fff')+'">'
         +'<td style="'+tdLab+'">'+(c[0]||'')+'</td>'
         +'<td style="'+tdVal(';font-weight:800;color:'+color)+'">'+mineral+'</td>'
         +'<td style="'+tdVal(';font-weight:800;color:'+color)+'">'+synthetic+'</td></tr>';}).join('')
@@ -5063,7 +5063,7 @@ function fotonEmailHdr(blocks, color){
   return '<div style="'+wrapStyle+'">'
     + blocks.map((b,i)=>{
         const _lo=(blocks.length%2===1)&&(i===blocks.length-1);
-        return '<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center;max-width:'+cw+(_lo?';grid-column:1 / -1;justify-self:center;max-width:500px;width:100%':'')+'">'
+        return '<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center;max-width:'+cw+(_lo?';grid-column:1 / -1;justify-self:center;max-width:760px;width:100%':'')+'">'
         +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 '+b.label+'</div>'
         +(b.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fotonFmtE(b.to,color)+'</div>':'')
         +(b.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fotonFmtE(b.cc,color)+'</div>':'')
@@ -6601,7 +6601,7 @@ async function renderInstructionTab(brand, cfg){
   // ===== Email to section =====
   let emailHtml='';
   if(emailRows.length){
-    emailHtml='<div style="font-size:13px;font-weight:700;color:'+color+';margin:18px 0 12px;text-align:center">📧 Email to</div>'
+    emailHtml=(brand==='stellantis'?'':'<div style="font-size:13px;font-weight:700;color:'+color+';margin:18px 0 12px;text-align:center">📧 Email to</div>')
       +'<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:16px">'
       +emailRows.map(e=>{
         return '<div class="ref-card" style="flex:1 1 380px;max-width:500px;padding:16px 20px;text-align:center">'
@@ -6623,7 +6623,7 @@ async function renderInstructionTab(brand, cfg){
   }
 
   // Extra Information = email + notes wrapped in collapsible
-  const extraBody = (brand==='stellantis'?'':emailHtml) + noteHtml;
+  const extraBody = emailHtml + noteHtml;
   const extraHtml = extraBody ? mkCollapsible('📋 Extra Information', extraBody, 'instr_'+brand+'_extra', color) : '';
 
   if(brand==='baic'||brand==='nissan'||brand==='stellantis'){
