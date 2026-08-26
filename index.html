@@ -239,7 +239,7 @@ tr:last-child td{border-bottom:none}
 .ref-link-pass{font-size:10px;color:#bbb;margin-top:2px}
 
 /* Brand accordion */
-.ref-brand-section{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden}
+.ref-brand-section{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden;min-height:calc(100vh - 210px)}
 .ref-brand-header{padding:14px 18px;font-size:14px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
 .ref-brand-header:hover{filter:brightness(1.08)}
 .ref-brand-meta{font-size:11px;opacity:.75;margin-top:2px;font-weight:400}
@@ -4176,7 +4176,7 @@ function renderBaicLocationTab(arr, brand){
 
 function renderPetrominInstructionTab(arr, warrantyInner){
   const color='#D98E45';
-  const WRAP='max-width:1100px;margin:0 auto';
+  const WRAP='width:100%';
   const sections={'Type of Oil':[],'Oil Brand':[],'PMS at Petromin Express':[],'Petromin Oil':[],'Package':[],'Weekly Offers':[],'Extra Information':[]};
   let currentSection=null;
   (arr||[]).forEach((r)=>{
@@ -4193,7 +4193,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
   const typeOilRows=(sections['Type of Oil'].length?sections['Type of Oil']:sections['Oil Brand']);
   const pmsRows=sections['PMS at Petromin Express'];
   const joinBrands=rows=>rows.map(r=>String(r.col0||'').trim()).filter(Boolean).join(' - ');
-  const box=(label,val)=>'<div style="background:#fff;border:1px solid '+color+'33;border-radius:12px;padding:14px 18px;direction:ltr;text-align:center;margin-bottom:10px">'
+  const box=(label,val)=>'<div style="background:#FCFAF7;border:none;border-radius:12px;padding:14px 18px;direction:ltr;text-align:center;margin-bottom:10px">'
     +'<div style="font-size:12.5px;font-weight:800;color:'+color+';margin-bottom:6px">'+label+'</div>'
     +'<div style="font-size:13.5px;font-weight:400;color:#3D2E22;line-height:1.7">'+val+'</div></div>';
   let oilTypesInner='';
@@ -4214,7 +4214,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
   let pricesCard='';
   if(oilDataRows.length){
     pricesCard=H('\uD83E\uDDF4 Petromin Oil Prices')
-      +'<div style="background:#fff;border:1px solid #F0E7DA;border-radius:14px;overflow:hidden"><table style="width:100%;border-collapse:collapse;font-size:13.5px;table-layout:fixed">'
+      +'<div style="background:#FCFAF7;border:none;border-radius:14px;overflow:hidden"><table style="width:100%;border-collapse:collapse;font-size:13.5px;table-layout:fixed">'
       +'<colgroup><col style="width:34%"><col style="width:33%"><col style="width:33%"></colgroup>'
       +'<thead><tr><th style="'+thLab+'">Type of Oil</th><th style="'+thVal+'">Name</th><th style="'+thVal+'">Price</th></tr></thead><tbody>'
       +oilDataRows.map((r,i)=>'<tr style="background:'+(i%2?'#fafafa':'#fff')+'">'
@@ -4230,7 +4230,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
   if(pkgRows.length){
     const litersNote=(pkgRows[0].cells&&pkgRows[0].cells[1])?String(pkgRows[0].cells[1]).trim():'';
     packagesCard=H('\uD83D\uDCE6 Packages')
-      +'<div style="background:#fff;border:1px solid #F0E7DA;border-radius:14px;overflow:hidden"><table style="width:100%;border-collapse:collapse;font-size:13.5px;table-layout:fixed">'
+      +'<div style="background:#FCFAF7;border:none;border-radius:14px;overflow:hidden"><table style="width:100%;border-collapse:collapse;font-size:13.5px;table-layout:fixed">'
       +'<colgroup><col style="width:34%"><col style="width:33%"><col style="width:33%"></colgroup>'
       +'<thead><tr><th style="'+thLab+'">Package</th>'
       +'<th style="'+thVal+'">Mineral'+ar('\u0645\u0639\u062F\u0646\u064A')+'</th>'
@@ -4299,7 +4299,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
         +(notes.length?'<div style="background:#FBF7F1;border-top:1px dashed #EAD9C4;padding:12px 18px;text-align:center;font-size:12px;color:#6A5A4A;line-height:1.9">'+notes.join(' \u00B7 ')+'</div>':'')
         +'</div>';
     } else {
-      weeklyInner='<div style="background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.07);border:1.5px solid #D98E4555;text-align:center;max-width:640px;margin:0 auto">'
+      weeklyInner='<div style="background:#FCFAF7;border-radius:12px;padding:16px;box-shadow:none;border:none;text-align:center;width:100%">'
         +wkRows.map(r=>{const t=(r.col0||r.col1||'').replace(/^"|"$/g,'').trim();return '<div style="font-size:13px;color:#333;line-height:2;white-space:pre-wrap">'+t+'</div>';}).join('<hr style="border:none;border-top:1px dashed #eee;margin:10px 0">')
         +'</div>';
     }
@@ -4309,7 +4309,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
   const extraInner=sections['Extra Information'].length?
     '<div style="display:flex;flex-direction:column;gap:10px;'+WRAP+'">'
     +sections['Extra Information'].map(r=>{const title=r.col0||'';const text=(r.col1||'').replace(/^"|"$/g,'').trim();if(!title&&!text)return'';
-      return '<div style="background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #D98E4555;text-align:center">'
+      return '<div style="background:#FCFAF7;border-radius:10px;padding:14px 16px;box-shadow:none;border:none;text-align:center">'
         +(title?'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">'+title+'</div>':'')
         +(text?'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+text+'</div>':'')
         +'</div>';}).join('')
@@ -6513,11 +6513,11 @@ async function renderInstructionTab(brand, cfg){
       const wWrapStyle = orderedRows.length===1
         ? 'display:flex;justify-content:center'
         : 'display:grid;grid-template-columns:1fr 1fr;gap:12px';
-      const wCardWidth = orderedRows.length===1 ? (brand==='baic'?'max-width:720px;width:100%;':'max-width:420px;width:100%;') : '';
+      const wCardWidth = orderedRows.length===1 ? (brand==='baic'?'width:100%;':'width:100%;') : '';
       warrantyBody='<div style="'+wWrapStyle+'">'
         +orderedRows.map((w,i)=>{
           const c=color;
-          return '<div style="'+wCardWidth+'background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid '+color+'55;direction:rtl;text-align:center">'
+          return '<div style="'+wCardWidth+'background:#FCFAF7;border-radius:10px;padding:14px;box-shadow:none;border:none;direction:rtl;text-align:center">'
             +'<div style="font-size:13px;font-weight:700;color:'+c+';margin-bottom:8px">'+w.title+'</div>'
             +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+w.c1+'</div>'
             +'</div>';
@@ -6535,11 +6535,11 @@ async function renderInstructionTab(brand, cfg){
     const wrapStyle = pmsRows.length===1
       ? 'display:flex;justify-content:center'
       : 'display:grid;grid-template-columns:1fr 1fr;gap:12px';
-    const cardWidth = pmsRows.length===1 ? (brand==='baic'?'max-width:720px;width:100%;':'max-width:420px;width:100%;') : '';
+    const cardWidth = pmsRows.length===1 ? (brand==='baic'?'width:100%;':'width:100%;') : '';
     pmsBody='<div style="'+wrapStyle+'">'
       +pmsRows.map((r,i)=>{
         const c=color;
-        return '<div style="'+cardWidth+'background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid '+color+'55;direction:rtl;text-align:center">'
+        return '<div style="'+cardWidth+'background:#FCFAF7;border-radius:10px;padding:14px;box-shadow:none;border:none;direction:rtl;text-align:center">'
           +(r.title?'<div style="font-size:13px;font-weight:700;color:'+c+';margin-bottom:8px">'+r.title+'</div>':'')
           +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+r.content+'</div>'
           +'</div>';
@@ -6562,7 +6562,7 @@ async function renderInstructionTab(brand, cfg){
       apptBody='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
         +apptRows.map((r,i)=>{
           const c=WARRANTY_COLORS[i%WARRANTY_COLORS.length];
-          return '<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid '+color+'55;direction:rtl;text-align:center">'
+          return '<div style="background:#FCFAF7;border-radius:10px;padding:14px;box-shadow:none;border:none;direction:rtl;text-align:center">'
             +'<div style="font-size:13px;font-weight:700;color:'+c+';margin-bottom:8px">'+r.svc+'</div>'
             +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+r.b+'</div>'
             +'</div>';
@@ -6724,7 +6724,7 @@ async function renderRefBrand(brand,tabIdx){
       });
       const warInner=warItems.length?
         '<div style="display:flex;flex-direction:column;gap:10px">'+warItems.map(it=>
-          '<div style="background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #D98E4555;text-align:center">'
+          '<div style="background:#FCFAF7;border-radius:10px;padding:14px 16px;box-shadow:none;border:none;text-align:center">'
           +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">'+it.title+'</div>'
           +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+it.text+'</div>'
           +'</div>').join('')+'</div>':'';
