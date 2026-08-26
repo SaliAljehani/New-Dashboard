@@ -4249,8 +4249,8 @@ function renderPetrominInstructionTab(arr, warrantyInner){
   let tablesRow='';
   if(pricesCard||packagesCard){
     tablesRow='<div style="display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin-top:6px">'
-      +(pricesCard?'<div style="flex:1 1 420px;min-width:0">'+pricesCard+'</div>':'')
-      +(packagesCard?'<div style="flex:1 1 420px;min-width:0">'+packagesCard+'</div>':'')
+      +(pricesCard?'<div style="flex:1 1 330px;min-width:0">'+pricesCard+'</div>':'')
+      +(packagesCard?'<div style="flex:1 1 330px;min-width:0">'+packagesCard+'</div>':'')
       +'</div>';
   }
 
@@ -4329,7 +4329,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
     +tabs.map((t,i)=>'<div class="piTab" data-ac="#bd7530" data-ic="#bd7530" onclick="showPetrominInstrTab('+i+')" style="'+vStyle(i===0)+'">'+t.label+'</div>').join('')+'</div>';
   const panels='<div style="flex:1 1 320px;min-width:0">'+tabs.map((t,i)=>'<div class="piPanel" style="display:'+(i===0?'block':'none')+'">'+t.html+'</div>').join('')+'</div>';
   const sty='<style>@media(max-width:700px){.piSideWrap{flex-direction:column}.piSideTabs{flex-direction:row!important;flex-wrap:wrap;justify-content:center;flex:1 1 auto!important}}</style>';
-  return sty+'<div class="piSideWrap" style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start">'+sideTabs+panels+'</div>';
+  return sty+'<div class="piSideWrap" style="max-width:1000px;margin:0 auto;display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start">'+sideTabs+panels+'</div>';
 }
 
 
