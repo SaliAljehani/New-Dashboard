@@ -210,7 +210,7 @@ tr:last-child td{border-bottom:none}
 .ref-contact-pill{display:flex;align-items:center;gap:11px;background:#fff;border-radius:12px;padding:10px 13px;border:1px solid #eee;box-shadow:0 1px 4px rgba(0,0,0,.04);transition:.15s}
 .ref-contact-pill:hover{box-shadow:0 3px 10px rgba(0,0,0,.09)}
 .ref-contact-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;color:#fff}
-.ref-contact-pill-label{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#8a8a8a;margin-bottom:2px}
+.ref-contact-pill-label{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#555;margin-bottom:2px}
 .ref-contact-pill-val{font-size:15px;font-weight:800;color:#1a1a2e;letter-spacing:.02em}
 
 /* Two-col layout */
@@ -4190,22 +4190,25 @@ function renderPetrominInstructionTab(arr, warrantyInner){
 
   const H=t=>'<div style="text-align:center;font-size:13px;font-weight:800;color:'+color+';letter-spacing:.3px;margin:20px 0 12px">'+t+'</div>';
 
-  /* ---- Oil Types & Agencies — side-bar boxes (LTR) ---- */
+  /* ---- Oil Types & Agencies — centered side-bar boxes, values not bold, NO section title ---- */
   const typeOilRows=(sections['Type of Oil'].length?sections['Type of Oil']:sections['Oil Brand']);
   const pmsRows=sections['PMS at Petromin Express'];
   const joinBrands=rows=>rows.map(r=>String(r.col0||'').trim()).filter(Boolean).join(' - ');
-  const box=(label,val)=>'<div style="background:#fff;border:1px solid #F0E7DA;border-left:4px solid '+color+';border-radius:10px;padding:13px 16px;direction:ltr;text-align:left;margin-bottom:10px">'
+  const box=(label,val)=>'<div style="background:#fff;border:1px solid #F0E7DA;border-left:4px solid '+color+';border-radius:10px;padding:13px 16px;direction:ltr;text-align:center;margin-bottom:10px">'
     +'<div style="font-size:12.5px;font-weight:800;color:#bd7530;margin-bottom:6px">'+label+'</div>'
-    +'<div style="font-size:13.5px;font-weight:600;color:#3D2E22;line-height:1.7">'+val+'</div></div>';
+    +'<div style="font-size:13.5px;font-weight:400;color:#3D2E22;line-height:1.7">'+val+'</div></div>';
   let oilTypesInner='';
   if(typeOilRows.length||pmsRows.length){
-    oilTypesInner=H('\uD83D\uDEE2\uFE0F Oil Types &amp; Agencies')
-      +(typeOilRows.length?box('Type of Oil', joinBrands(typeOilRows)):'')
+    oilTypesInner=(typeOilRows.length?box('Type of Oil', joinBrands(typeOilRows)):'')
       +(pmsRows.length?box('PMS at Petromin Express', joinBrands(pmsRows)):'');
   }
 
-  const th=(align,extra)=>'background:#FCF4EA;color:#bd7530;font-weight:800;padding:12px 14px;border-bottom:1px solid #F0E7DA;font-size:12.5px;text-align:'+align+(extra||'');
-  const td=(align,extra)=>'padding:12px 14px;border-bottom:1px solid #F6EFE6;text-align:'+align+(extra||'');
+  /* header/cell styles: first (label) column shaded + black + centered; value cols centered */
+  const thLab='background:#EDDAC0;color:#3D2E22;font-weight:800;padding:12px 14px;border-bottom:1px solid #F0E7DA;font-size:12.5px;text-align:center';
+  const thVal='background:#FCF4EA;color:#bd7530;font-weight:800;padding:12px 14px;border-bottom:1px solid #F0E7DA;font-size:12.5px;text-align:center';
+  const tdLab='padding:12px 14px;border-bottom:1px solid #F6EFE6;background:#F7ECDC;color:#3D2E22;font-weight:800;text-align:center';
+  const tdVal=e=>'padding:12px 14px;border-bottom:1px solid #F6EFE6;text-align:center'+(e||'');
+  const ar=t=>'<small style="font-size:11px;font-weight:700;color:#6A5A4A;margin-inline-start:4px">'+t+'</small>';
 
   /* ---- Prices table ---- */
   const oilDataRows=sections['Petromin Oil'].filter(r=>r.col0&&r.col1&&r.col0!=='Type of oil');
@@ -4214,18 +4217,15 @@ function renderPetrominInstructionTab(arr, warrantyInner){
     pricesCard=H('\uD83E\uDDF4 Petromin Oil Prices')
       +'<div style="background:#fff;border:1px solid #F0E7DA;border-radius:14px;overflow:hidden"><table style="width:100%;border-collapse:collapse;font-size:13.5px;table-layout:fixed">'
       +'<colgroup><col style="width:34%"><col style="width:33%"><col style="width:33%"></colgroup>'
-      +'<thead><tr>'
-      +'<th style="'+th('left')+'">Type of Oil</th>'
-      +'<th style="'+th('center')+'">Name</th>'
-      +'<th style="'+th('center')+'">Price</th></tr></thead><tbody>'
+      +'<thead><tr><th style="'+thLab+'">Type of Oil</th><th style="'+thVal+'">Name</th><th style="'+thVal+'">Price</th></tr></thead><tbody>'
       +oilDataRows.map((r,i)=>'<tr style="background:'+(i%2?'#FBF7F2':'#fff')+'">'
-        +'<td style="'+td('left','font-weight:700;color:#3D2E22')+'">'+r.col0+'</td>'
-        +'<td style="'+td('center')+'">'+r.col1+'</td>'
-        +'<td style="'+td('center','font-weight:800;color:'+color)+'">'+r.col2+'</td></tr>').join('')
+        +'<td style="'+tdLab+'">'+r.col0+'</td>'
+        +'<td style="'+tdVal()+'">'+r.col1+'</td>'
+        +'<td style="'+tdVal(';font-weight:800;color:'+color)+'">'+r.col2+'</td></tr>').join('')
       +'</tbody></table></div>';
   }
 
-  /* ---- Packages table (no liters column; single note below) ---- */
+  /* ---- Packages table (no liters col; inline Arabic headers; note below) ---- */
   const pkgRows=sections['Package'].filter(r=>{const n=(r.col0||'').toLowerCase();return r.col0&&n!=='package'&&!/mineral|synthetic|\u0639\u062F\u062F/.test(n);});
   let packagesCard='';
   if(pkgRows.length){
@@ -4233,23 +4233,22 @@ function renderPetrominInstructionTab(arr, warrantyInner){
     packagesCard=H('\uD83D\uDCE6 Packages')
       +'<div style="background:#fff;border:1px solid #F0E7DA;border-radius:14px;overflow:hidden"><table style="width:100%;border-collapse:collapse;font-size:13.5px;table-layout:fixed">'
       +'<colgroup><col style="width:34%"><col style="width:33%"><col style="width:33%"></colgroup>'
-      +'<thead><tr>'
-      +'<th style="'+th('left')+'">Package</th>'
-      +'<th style="'+th('center',';line-height:1.3')+'">Mineral<small style="display:block;font-size:11px;font-weight:700;color:#6A5A4A">\u0645\u0639\u062F\u0646\u064A</small></th>'
-      +'<th style="'+th('center',';line-height:1.3')+'">Synthetic<small style="display:block;font-size:11px;font-weight:700;color:#6A5A4A">\u062A\u062E\u0644\u064A\u0642\u064A</small></th></tr></thead><tbody>'
+      +'<thead><tr><th style="'+thLab+'">Package</th>'
+      +'<th style="'+thVal+'">Mineral'+ar('\u0645\u0639\u062F\u0646\u064A')+'</th>'
+      +'<th style="'+thVal+'">Synthetic'+ar('\u062A\u062E\u0644\u064A\u0642\u064A')+'</th></tr></thead><tbody>'
       +pkgRows.map((r,i)=>{const c=r.cells||[];const mineral=c[2]||'';const synthetic=c[4]||c[3]||'';
         return '<tr style="background:'+(i%2?'#FBF7F2':'#fff')+'">'
-        +'<td style="'+td('left','font-weight:700;color:#3D2E22')+'">'+(c[0]||'')+'</td>'
-        +'<td style="'+td('center','font-weight:800;color:'+color)+'">'+mineral+'</td>'
-        +'<td style="'+td('center','font-weight:800;color:'+color)+'">'+synthetic+'</td></tr>';}).join('')
+        +'<td style="'+tdLab+'">'+(c[0]||'')+'</td>'
+        +'<td style="'+tdVal(';font-weight:800;color:'+color)+'">'+mineral+'</td>'
+        +'<td style="'+tdVal(';font-weight:800;color:'+color)+'">'+synthetic+'</td></tr>';}).join('')
       +'</tbody></table></div>'
       +(litersNote?'<div style="text-align:center;font-size:12px;font-weight:700;color:#6A5A4A;margin-top:10px;background:#FBF3EA;border:1px dashed #E8D6BF;border-radius:10px;padding:8px">\uD83D\uDEE2\uFE0F \u062C\u0645\u064A\u0639 \u0627\u0644\u0628\u0627\u0642\u0627\u062A '+litersNote+'</div>':'');
   }
 
-  /* ---- Prices + Packages side by side (stack on narrow) ---- */
+  /* ---- Prices + Packages side by side ---- */
   let tablesRow='';
   if(pricesCard||packagesCard){
-    tablesRow='<div style="display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start">'
+    tablesRow='<div style="display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin-top:6px">'
       +(pricesCard?'<div style="flex:1 1 420px;min-width:0">'+pricesCard+'</div>':'')
       +(packagesCard?'<div style="flex:1 1 420px;min-width:0">'+packagesCard+'</div>':'')
       +'</div>';
@@ -4257,7 +4256,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
 
   const petrominTabInner=(oilTypesInner||tablesRow)?'<div style="'+WRAP+'">'+oilTypesInner+tablesRow+'</div>':'';
 
-  /* ---- Weekly Offers — coupon ticket (parsed from sheet text) ---- */
+  /* ---- Weekly Offers — coupon ticket ---- */
   let weeklyInner='';
   const wkRows=sections['Weekly Offers'];
   if(wkRows.length){
@@ -4317,7 +4316,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
         +'</div>';}).join('')
     +'</div>':'';
 
-  /* ---- Tabs (order: Petromin Oil, Weekly Offers, Warranty, Extra Information) ---- */
+  /* ---- Tabs ---- */
   const tabs=[];
   if(petrominTabInner) tabs.push({label:'\uD83D\uDE97 Petromin Oil',html:petrominTabInner});
   if(weeklyInner) tabs.push({label:'\uD83C\uDF89 Weekly Offers',html:weeklyInner});
@@ -5062,13 +5061,14 @@ function fotonEmailHdr(blocks, color){
     : 'display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px';
   const cw = blocks.length===1 ? '420px' : 'none';
   return '<div style="'+wrapStyle+'">'
-    + blocks.map(b=>
-        '<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center;max-width:'+cw+'">'
+    + blocks.map((b,i)=>{
+        const _lo=(blocks.length%2===1)&&(i===blocks.length-1);
+        return '<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center;max-width:'+cw+(_lo?';grid-column:1 / -1;justify-self:center;max-width:500px;width:100%':'')+'">'
         +'<div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:8px">📧 '+b.label+'</div>'
         +(b.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fotonFmtE(b.to,color)+'</div>':'')
         +(b.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fotonFmtE(b.cc,color)+'</div>':'')
-        +'</div>'
-      ).join('')
+        +'</div>';
+      }).join('')
     +'</div>';
 }
 
@@ -6623,7 +6623,7 @@ async function renderInstructionTab(brand, cfg){
   }
 
   // Extra Information = email + notes wrapped in collapsible
-  const extraBody = emailHtml + noteHtml;
+  const extraBody = (brand==='stellantis'?'':emailHtml) + noteHtml;
   const extraHtml = extraBody ? mkCollapsible('📋 Extra Information', extraBody, 'instr_'+brand+'_extra', color) : '';
 
   if(brand==='baic'||brand==='nissan'||brand==='stellantis'){
@@ -8512,7 +8512,7 @@ async function renderRef(){
     // Links: rows where Program/Link columns have http values
     const linksData = (Array.isArray(subjectRaw)?subjectRaw:(subjectRaw.rows||[])).filter(r=>{
       const vals=Object.values(r).map(x=>String(x||'').trim());
-      return vals.some(v=>v.startsWith('http')||(/\.(xlsx|pdf|docx)$/i.test(v)));
+      return vals.some(v=>v.startsWith('http')||(/\.(xlsx|pdf|docx)$/i.test(v))||(/@/.test(v)&&/\b(TO|CC)\b/i.test(v)));
     });
     // Contact: rows with phone numbers (7+ digits)
     const contactData = (Array.isArray(subjectRaw)?subjectRaw:(subjectRaw.rows||[])).filter(r=>{
@@ -8563,7 +8563,7 @@ async function renderRef(){
     // LINKS
     const linksArr=(Array.isArray(linksData)?linksData:(linksData.rows||[])).filter(r=>{
       const vals=Object.values(r).map(x=>String(x||'').trim());
-      return vals.some(v=>v.startsWith('http')||(/\.(xlsx|pdf|docx)$/i.test(v)));
+      return vals.some(v=>v.startsWith('http')||(/\.(xlsx|pdf|docx)$/i.test(v))||(/@/.test(v)&&/\b(TO|CC)\b/i.test(v)));
     });
     const linkCards=linksArr.map(r=>{
       const keys=Object.keys(r);
@@ -8578,6 +8578,20 @@ async function renderRef(){
       const pass = passKey?String(r[passKey]||'').trim() : (v[3]||'');
       if(!name)return'';
       const isUrl=url.startsWith('http');
+      const _emailCell = v.find(x=>/@/.test(x)&&/\b(TO|CC)\b/i.test(x)) || ((/@/.test(url)&&/\b(TO|CC)\b/i.test(url))?url:'');
+      if(!isUrl && !/\.(xlsx|pdf|docx)$/i.test(url) && _emailCell){
+        const _toRaw=(_emailCell.match(/TO\s*:?\s*([\s\S]*?)(?:\bCC\b|$)/i)||[])[1]||'';
+        const _ccRaw=(_emailCell.match(/CC\s*:?\s*([\s\S]*)$/i)||[])[1]||'';
+        const _list=z=>z.split(/[,;\s]+/).map(x=>x.trim()).filter(x=>/@/.test(x));
+        const _toL=_list(_toRaw), _ccL=_list(_ccRaw);
+        const _pill=x=>'<span style="font-size:11px;color:#1565c0;background:#eef4fb;border:1px solid #dbe7f5;padding:2px 8px;border-radius:6px">'+x+'</span>';
+        const _tag=(t,c)=>'<span style="font-size:9px;font-weight:800;padding:2px 7px;border-radius:4px;color:#fff;background:'+c+'">'+t+'</span>';
+        const _mailto='mailto:'+encodeURIComponent(_toL.join(','))+(_ccL.length?'?cc='+encodeURIComponent(_ccL.join(',')):'');
+        return '<div class="ref-link-card"><div style="flex:1"><div class="ref-link-card-name">'+name+'</div>'
+          +(_toL.length?'<div style="display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-top:5px">'+_tag('TO','#c0272d')+_toL.map(_pill).join('')+'</div>':'')
+          +(_ccL.length?'<div style="display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-top:5px">'+_tag('CC','#1565c0')+_ccL.map(_pill).join('')+'</div>':'')
+          +'</div><a href="'+_mailto+'" class="ref-link-open-btn">✉️ Email</a></div>';
+      }
       const isFile=/\.(xlsx|pdf|docx)$/i.test(url);
       return'<div class="ref-link-card"><div style="flex:1"><div class="ref-link-card-name">'+name+'</div>'+(pass?'<div class="ref-link-pass">🔑 '+pass+'</div>':'')+'</div>'+(isUrl?'<a href="'+url+'" target="_blank" class="ref-link-open-btn">🔗 Open</a>':isFile?'<span class="ref-link-file">📄 '+url+'</span>':'')+'</div>';
     }).filter(Boolean).join('');
