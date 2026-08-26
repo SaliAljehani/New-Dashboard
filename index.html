@@ -17,12 +17,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" defer></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',system-ui,sans-serif;font-size:12px;background:#f5f5f5;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column}
+body{font-family:'Inter',system-ui,sans-serif;font-size:12px;background:#FDFDFC;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column}
 #loadingDiv,#errDiv,#mainContent{flex:1 0 auto}
-.quotes-bar{background:#fff;border-bottom:1px solid #f0e8e8;padding:9px 20px;display:flex;align-items:center;justify-content:space-around;gap:10px}
+.quotes-bar{background:#FDFDFC;border-bottom:1px solid #EFEDE9;padding:9px 20px;display:flex;align-items:center;justify-content:space-around;gap:10px}
 .quotes-bar .q-item{font-size:12px;color:#c0272d;font-weight:600;text-align:center;direction:rtl}
 .quotes-bar .q-sep{width:1px;height:18px;background:rgba(192,39,45,.2);flex-shrink:0}
-.header{background:linear-gradient(135deg,#fafafa,#f5f5f5);padding:10px 20px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.06);position:relative}
+.header{background:#FDFDFC;padding:10px 20px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.06);position:relative}
 .header h1{color:#b04050;font-size:16px;font-weight:700}
 .page-nav-line{height:3px;background:#c0272d}
 .lupd{font-size:14px;color:#c0272d;background:rgba(192,39,45,.08);padding:6px 15px;border-radius:20px;cursor:pointer;border:1px solid rgba(192,39,45,.2)}
@@ -4193,7 +4193,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
   const typeOilRows=(sections['Type of Oil'].length?sections['Type of Oil']:sections['Oil Brand']);
   const pmsRows=sections['PMS at Petromin Express'];
   const joinBrands=rows=>rows.map(r=>String(r.col0||'').trim()).filter(Boolean).join(' - ');
-  const box=(label,val)=>'<div style="background:#FCFAF7;border:none;border-radius:12px;padding:14px 18px;direction:ltr;text-align:center;margin-bottom:10px">'
+  const box=(label,val)=>'<div style="background:'+color+'14;border:none;border-radius:12px;padding:14px 18px;direction:ltr;text-align:center;margin-bottom:10px">'
     +'<div style="font-size:12.5px;font-weight:800;color:'+color+';margin-bottom:6px">'+label+'</div>'
     +'<div style="font-size:13.5px;font-weight:400;color:#3D2E22;line-height:1.7">'+val+'</div></div>';
   let oilTypesInner='';
@@ -4214,7 +4214,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
   let pricesCard='';
   if(oilDataRows.length){
     pricesCard=H('\uD83E\uDDF4 Petromin Oil Prices')
-      +'<div style="background:#FCFAF7;border:none;border-radius:14px;overflow:hidden"><table style="width:100%;border-collapse:collapse;font-size:13.5px;table-layout:fixed">'
+      +'<div style="background:'+color+'14;border:none;border-radius:14px;overflow:hidden"><table style="width:100%;border-collapse:collapse;font-size:13.5px;table-layout:fixed">'
       +'<colgroup><col style="width:34%"><col style="width:33%"><col style="width:33%"></colgroup>'
       +'<thead><tr><th style="'+thLab+'">Type of Oil</th><th style="'+thVal+'">Name</th><th style="'+thVal+'">Price</th></tr></thead><tbody>'
       +oilDataRows.map((r,i)=>'<tr style="background:'+(i%2?'#fafafa':'#fff')+'">'
@@ -4230,7 +4230,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
   if(pkgRows.length){
     const litersNote=(pkgRows[0].cells&&pkgRows[0].cells[1])?String(pkgRows[0].cells[1]).trim():'';
     packagesCard=H('\uD83D\uDCE6 Packages')
-      +'<div style="background:#FCFAF7;border:none;border-radius:14px;overflow:hidden"><table style="width:100%;border-collapse:collapse;font-size:13.5px;table-layout:fixed">'
+      +'<div style="background:'+color+'14;border:none;border-radius:14px;overflow:hidden"><table style="width:100%;border-collapse:collapse;font-size:13.5px;table-layout:fixed">'
       +'<colgroup><col style="width:34%"><col style="width:33%"><col style="width:33%"></colgroup>'
       +'<thead><tr><th style="'+thLab+'">Package</th>'
       +'<th style="'+thVal+'">Mineral'+ar('\u0645\u0639\u062F\u0646\u064A')+'</th>'
@@ -4248,8 +4248,8 @@ function renderPetrominInstructionTab(arr, warrantyInner){
   let tablesRow='';
   if(pricesCard||packagesCard){
     tablesRow='<div style="display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;margin-top:6px">'
-      +(pricesCard?'<div style="flex:1 1 330px;min-width:0">'+pricesCard+'</div>':'')
-      +(packagesCard?'<div style="flex:1 1 330px;min-width:0">'+packagesCard+'</div>':'')
+      +(pricesCard?'<div style="flex:1 1 100%;min-width:0">'+pricesCard+'</div>':'')
+      +(packagesCard?'<div style="flex:1 1 100%;min-width:0">'+packagesCard+'</div>':'')
       +'</div>';
   }
 
@@ -4287,7 +4287,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
     });
     const headText=title||'\uD83C\uDF89 \u0639\u0631\u0636 \u0627\u0644\u062C\u0645\u0639\u0629 \u0648\u0627\u0644\u0633\u0628\u062A';
     if(items.length){
-      weeklyInner='<div style="direction:rtl;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 16px rgba(160,110,60,.12);border:1.5px solid #F0DEC9;max-width:640px;margin:0 auto">'
+      weeklyInner='<div style="direction:rtl;background:'+color+'14;border-radius:16px;overflow:hidden;box-shadow:none;border:none;width:100%;margin:0">'
         +'<div style="background:linear-gradient(135deg,'+color+',#e6a15c);color:#fff;text-align:center;padding:16px;font-size:18px;font-weight:800">'+headText+'</div>'
         +'<div style="display:flex;flex-wrap:wrap">'
         +items.map((it,i)=>'<div style="flex:1 1 240px;padding:22px 18px;text-align:center'+(i>0?';border-inline-start:2px dashed #EAD9C4':'')+'">'
@@ -4299,7 +4299,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
         +(notes.length?'<div style="background:#FBF7F1;border-top:1px dashed #EAD9C4;padding:12px 18px;text-align:center;font-size:12px;color:#6A5A4A;line-height:1.9">'+notes.join(' \u00B7 ')+'</div>':'')
         +'</div>';
     } else {
-      weeklyInner='<div style="background:#FCFAF7;border-radius:12px;padding:16px;box-shadow:none;border:none;text-align:center;width:100%">'
+      weeklyInner='<div style="background:'+color+'14;border-radius:12px;padding:16px;box-shadow:none;border:none;text-align:center;width:100%">'
         +wkRows.map(r=>{const t=(r.col0||r.col1||'').replace(/^"|"$/g,'').trim();return '<div style="font-size:13px;color:#333;line-height:2;white-space:pre-wrap">'+t+'</div>';}).join('<hr style="border:none;border-top:1px dashed #eee;margin:10px 0">')
         +'</div>';
     }
@@ -4309,7 +4309,7 @@ function renderPetrominInstructionTab(arr, warrantyInner){
   const extraInner=sections['Extra Information'].length?
     '<div style="display:flex;flex-direction:column;gap:10px;'+WRAP+'">'
     +sections['Extra Information'].map(r=>{const title=r.col0||'';const text=(r.col1||'').replace(/^"|"$/g,'').trim();if(!title&&!text)return'';
-      return '<div style="background:#FCFAF7;border-radius:10px;padding:14px 16px;box-shadow:none;border:none;text-align:center">'
+      return '<div style="background:'+color+'14;border-radius:10px;padding:14px 16px;box-shadow:none;border:none;text-align:center">'
         +(title?'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">'+title+'</div>':'')
         +(text?'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+text+'</div>':'')
         +'</div>';}).join('')
@@ -6392,7 +6392,7 @@ function mkCollapsibleOpen(title, bodyHtml, id, color){
 
 async function renderInstructionTab(brand, cfg){
   const BRAND_COLORS={nissan:'#c0272d',stellantis:'#1565c0',baic:'#C86E35',volvo:'#003057'};
-  const color=BRAND_COLORS[brand]||'#333';
+  const color=BRAND_COLORS[brand]||'#555555';
 
   const data=await fetchSheet(cfg.id,'Instruction');
   const arr=Array.isArray(data)?data:(data.rows||[]);
@@ -6512,12 +6512,12 @@ async function renderInstructionTab(brand, cfg){
       const orderedRows = warrantyRows.slice().reverse();
       const wWrapStyle = orderedRows.length===1
         ? 'display:flex;justify-content:center'
-        : 'display:grid;grid-template-columns:1fr 1fr;gap:12px';
+        : 'display:grid;grid-template-columns:1fr;gap:12px';
       const wCardWidth = orderedRows.length===1 ? (brand==='baic'?'width:100%;':'width:100%;') : '';
       warrantyBody='<div style="'+wWrapStyle+'">'
         +orderedRows.map((w,i)=>{
           const c=color;
-          return '<div style="'+wCardWidth+'background:#FCFAF7;border-radius:10px;padding:14px;box-shadow:none;border:none;direction:rtl;text-align:center">'
+          return '<div style="'+wCardWidth+'background:'+color+'14;border-radius:10px;padding:14px;box-shadow:none;border:none;direction:rtl;text-align:center">'
             +'<div style="font-size:13px;font-weight:700;color:'+c+';margin-bottom:8px">'+w.title+'</div>'
             +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+w.c1+'</div>'
             +'</div>';
@@ -6534,12 +6534,12 @@ async function renderInstructionTab(brand, cfg){
   if(pmsRows.length){
     const wrapStyle = pmsRows.length===1
       ? 'display:flex;justify-content:center'
-      : 'display:grid;grid-template-columns:1fr 1fr;gap:12px';
+      : 'display:grid;grid-template-columns:1fr;gap:12px';
     const cardWidth = pmsRows.length===1 ? (brand==='baic'?'width:100%;':'width:100%;') : '';
     pmsBody='<div style="'+wrapStyle+'">'
       +pmsRows.map((r,i)=>{
         const c=color;
-        return '<div style="'+cardWidth+'background:#FCFAF7;border-radius:10px;padding:14px;box-shadow:none;border:none;direction:rtl;text-align:center">'
+        return '<div style="'+cardWidth+'background:'+color+'14;border-radius:10px;padding:14px;box-shadow:none;border:none;direction:rtl;text-align:center">'
           +(r.title?'<div style="font-size:13px;font-weight:700;color:'+c+';margin-bottom:8px">'+r.title+'</div>':'')
           +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+r.content+'</div>'
           +'</div>';
@@ -6562,7 +6562,7 @@ async function renderInstructionTab(brand, cfg){
       apptBody='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
         +apptRows.map((r,i)=>{
           const c=WARRANTY_COLORS[i%WARRANTY_COLORS.length];
-          return '<div style="background:#FCFAF7;border-radius:10px;padding:14px;box-shadow:none;border:none;direction:rtl;text-align:center">'
+          return '<div style="background:'+color+'14;border-radius:10px;padding:14px;box-shadow:none;border:none;direction:rtl;text-align:center">'
             +'<div style="font-size:13px;font-weight:700;color:'+c+';margin-bottom:8px">'+r.svc+'</div>'
             +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+r.b+'</div>'
             +'</div>';
@@ -6603,7 +6603,7 @@ async function renderInstructionTab(brand, cfg){
     emailHtml=(brand==='stellantis'?'':'<div style="font-size:13px;font-weight:700;color:'+color+';margin:18px 0 12px;text-align:center">📧 Email to</div>')
       +'<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:16px">'
       +emailRows.map(e=>{
-        return '<div class="ref-card" style="flex:1 1 380px;max-width:500px;padding:16px 20px;text-align:center">'
+        return '<div class="ref-card" style="flex:1 1 100%;max-width:none;padding:16px 20px;text-align:center;background:'+color+'14;border:1px solid '+color+'33">'
           +'<div style="font-size:14px;font-weight:800;color:'+color+';margin-bottom:12px">'+e.label+'</div>'
           +(e.to?'<div style="margin-bottom:9px;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px"><span style="background:'+color+'12;color:'+color+';font-size:10px;font-weight:800;padding:2px 8px;border-radius:4px">TO</span>'+fmtEmails(e.to)+'</div>':'')
           +(e.cc?'<div style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px"><span style="background:#F4F7FA;color:#1565c0;font-size:10px;font-weight:800;padding:2px 8px;border-radius:4px">CC</span>'+fmtEmails(e.cc)+'</div>':'')
@@ -6615,7 +6615,7 @@ async function renderInstructionTab(brand, cfg){
   // ===== Notes section =====
   let noteHtml='';
   if(noteRows.length){
-    noteHtml='<div style="background:#fff;border-radius:12px;padding:14px 18px;border:1.5px solid #eee;direction:rtl;text-align:center;max-width:'+(brand==='baic'?'720px':'420px')+';margin:0 auto;box-shadow:0 2px 8px rgba(0,0,0,.05)">'
+    noteHtml='<div style="background:'+color+'14;border-radius:12px;padding:14px 18px;border:none;direction:rtl;text-align:center;width:100%;margin:0;box-shadow:none">'
       +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:8px">📝 ملاحظات هامة</div>'
       +noteRows.map(n=>'<div style="font-size:12px;color:#555;line-height:2;white-space:pre-wrap;margin-bottom:8px">'+n+'</div>').join('')
       +'</div>';
@@ -6674,10 +6674,10 @@ async function renderRefBrand(brand,tabIdx){
   if(brand==='bodyshop' && sheetName.trim()==='Instruction'){
     container.innerHTML=
       '<div style="padding:8px 4px 4px;direction:rtl;text-align:right">'
-      +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">'
-      +'<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #7b000055;text-align:center"><div style="font-size:13px;font-weight:700;color:#7b0000;margin-bottom:8px">📋 Before Repair Service</div><div style="font-size:11px;color:#555;line-height:1.8">يلزم توفير المستندات التالية:<br>1- استمارة المركبة<br>2- تقرير الجهة المباشرة للحادث (نجم أو المرور)<br>3- الرقم المرجعي لمطالبة التأمين<br><br>يُشترط حضور وتسليم المركبة من مالكها أو المفوّض رسميًا.<br>في حال تعذّر الحضور يجب تقديم تفويض خطي.</div></div>'
-      +'<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #7b000055;text-align:center"><div style="font-size:13px;font-weight:700;color:#e65100;margin-bottom:8px">💰 Repair Quotation</div><div style="font-size:11px;color:#555;line-height:1.8">يستغرق فحص المركبة وإرسال التسعيرة لشركة التأمين من 7 إلى 14 يوم عمل.<br><br>• قابلة للقيادة: تُسلَّم بعد الفحص<br>• غير قابلة للقيادة: تُحجز بالفرع لحين الإصلاح</div></div>'
-      +'<div style="background:#fff;border-radius:10px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1.5px solid #7b000055;text-align:center"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 Repair Service</div><div style="font-size:11px;color:#555;line-height:1.8">يبدأ الإصلاح بعد موافقة التأمين، بحد أقصى 90 يوم عمل.<br><br>سيتم توفير قطع الغيار خلال هذه الفترة، وإشعاركم برسالة نصية عند توفرها.</div></div>'
+      +'<div style="display:grid;grid-template-columns:1fr;gap:12px">'
+      +'<div style="background:#7b000014;border-radius:10px;padding:14px;box-shadow:none;border:none;text-align:center"><div style="font-size:13px;font-weight:700;color:#7b0000;margin-bottom:8px">📋 Before Repair Service</div><div style="font-size:11px;color:#555;line-height:1.8">يلزم توفير المستندات التالية:<br>1- استمارة المركبة<br>2- تقرير الجهة المباشرة للحادث (نجم أو المرور)<br>3- الرقم المرجعي لمطالبة التأمين<br><br>يُشترط حضور وتسليم المركبة من مالكها أو المفوّض رسميًا.<br>في حال تعذّر الحضور يجب تقديم تفويض خطي.</div></div>'
+      +'<div style="background:#7b000014;border-radius:10px;padding:14px;box-shadow:none;border:none;text-align:center"><div style="font-size:13px;font-weight:700;color:#e65100;margin-bottom:8px">💰 Repair Quotation</div><div style="font-size:11px;color:#555;line-height:1.8">يستغرق فحص المركبة وإرسال التسعيرة لشركة التأمين من 7 إلى 14 يوم عمل.<br><br>• قابلة للقيادة: تُسلَّم بعد الفحص<br>• غير قابلة للقيادة: تُحجز بالفرع لحين الإصلاح</div></div>'
+      +'<div style="background:#7b000014;border-radius:10px;padding:14px;box-shadow:none;border:none;text-align:center"><div style="font-size:13px;font-weight:700;color:#2e7d32;margin-bottom:8px">🔧 Repair Service</div><div style="font-size:11px;color:#555;line-height:1.8">يبدأ الإصلاح بعد موافقة التأمين، بحد أقصى 90 يوم عمل.<br><br>سيتم توفير قطع الغيار خلال هذه الفترة، وإشعاركم برسالة نصية عند توفرها.</div></div>'
       +'</div></div>';
     return;
   }
@@ -6724,7 +6724,7 @@ async function renderRefBrand(brand,tabIdx){
       });
       const warInner=warItems.length?
         '<div style="display:flex;flex-direction:column;gap:10px">'+warItems.map(it=>
-          '<div style="background:#FCFAF7;border-radius:10px;padding:14px 16px;box-shadow:none;border:none;text-align:center">'
+          '<div style="background:'+color+'14;border-radius:10px;padding:14px 16px;box-shadow:none;border:none;text-align:center">'
           +'<div style="font-size:13px;font-weight:700;color:'+color+';margin-bottom:6px">'+it.title+'</div>'
           +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+it.text+'</div>'
           +'</div>').join('')+'</div>':'';
