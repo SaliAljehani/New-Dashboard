@@ -1167,9 +1167,9 @@ function renderAttWeekStrip(){
   for(var i=0;i<7;i++){
     var d=new Date(base);d.setDate(base.getDate()+i);var iso=attFmtD(d);
     var on=(iso===picker.value);
-    cells+='<div onclick="attPickDay(\''+iso+'\')" style="background:'+(on?'#c0272d':'#FEFEFD')+';border:1px solid '+(on?'#c0272d':'#F0E7DA')+';border-radius:12px;padding:9px 0;text-align:center;cursor:pointer">'
-      +'<div style="font-size:10px;font-weight:700;color:'+(on?'#fff':'#a06a4a')+'">'+DOW[d.getDay()]+'</div>'
-      +'<div style="font-size:16px;font-weight:800;color:'+(on?'#fff':'#5a4a3a')+';margin-top:2px">'+d.getDate()+'</div></div>';
+    cells+='<div onclick="attPickDay(\''+iso+'\')" style="background:'+(on?'#fbe3e3':'#FEFEFD')+';border:1px solid '+(on?'#f3c9c9':'#F0E7DA')+';border-radius:10px;padding:7px 0;text-align:center;cursor:pointer">'
+      +'<div style="font-size:10px;font-weight:700;color:'+(on?'#a02030':'#a06a4a')+'">'+DOW[d.getDay()]+'</div>'
+      +'<div style="font-size:15px;font-weight:800;color:'+(on?'#a02030':'#5a4a3a')+';margin-top:1px">'+d.getDate()+'</div></div>';
   }
   var e=new Date(base);e.setDate(base.getDate()+6);
   var wlbl='\u25C6 Week: '+base.getDate()+' '+MON[base.getMonth()]+' \u2013 '+e.getDate()+' '+MON[e.getMonth()]+' '+e.getFullYear();
@@ -7371,7 +7371,7 @@ function renderRoster(){
     +'</div>'
     
     +'<div id="schedule_dailyoff" style="display:none"></div>'    +'<div id="schedule_vacation2026" style="display:none"></div>'    +'<div id="schedule_campaigntraining" style="display:none"></div>'    +'<div id="schedule_attendance" style="display:block">'
-    +'<div style="background:#FEFEFD;border-radius:10px;padding:10px 16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-left:4px solid #A85060">'
+    +'<div style="background:#FEFEFD;border-radius:12px;padding:8px 16px;margin:0 auto 12px;max-width:460px;box-shadow:0 1px 4px rgba(0,0,0,.06)">'
     +'<div style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">'
     +'<label style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">📅 Date:</label>'
     +'<input type="date" id="attDatePicker" style="font-size:13px;padding:6px 12px;border-radius:8px;border:1.5px solid #ddd;background:#FDFDFC;cursor:pointer;font-weight:600" onchange="renderAttendanceTab()">'
