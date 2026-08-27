@@ -327,7 +327,8 @@ tr:last-child td{border-bottom:none}
 .ttn.active{color:#fff;border-color:transparent}
 .ttn.nissan.active{background:#c0272d}.ttn.petromin.active{background:#D98E45;color:#fff}.ttn.stellantis.active{background:#1565c0}
 footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px solid #eee;margin-top:20px;background:#FEFEFD}
-@media(max-width:900px){.krow{grid-template-columns:repeat(3,1fr)}.r2,.comp-grid,.call-krow{grid-template-columns:1fr}}
+@media(max-width:900px){.krow{grid-template-columns:repeat(3,1fr)}.r2,.comp-grid,.call-krow{grid-template-columns:1fr}.att-summary-grid{grid-template-columns:repeat(3,1fr)!important}}
+@media(max-width:560px){.att-summary-grid{grid-template-columns:repeat(2,1fr)!important}}
 
 /* ── Time-Off tab ─────────────────────────────────────────────────────── */
 .to-wrap{direction:ltr;text-align:left}
@@ -1208,11 +1209,12 @@ function renderAttendanceTab(){
   const displayDate=DAY_NAMES[dObj.getDay()]+', '+dObj.getDate()+' '+MON_NAMES[dObj.getMonth()]+' '+dObj.getFullYear();
 
   // Group
-  const officeList=[],liveList=[],multiList=[],absentList=[];
+  const officeList=[],remoteList=[],liveList=[],multiList=[],absentList=[];
   rows.forEach(r=>{
     const camp=r.campaign||'';
     const isAbsent=['Off','Absent','Vacation','Sick','Sickleave','EL','Saturday Shift'].includes(r.status);
     if(isAbsent){absentList.push(r);return;}
+    if(r.status==='Remote'){remoteList.push(r);return;}
     if(camp==='WhatsApp'||camp.toLowerCase().includes('whatsapp')){liveList.push(r);}
     else if(camp==='Multi Campaign'||camp.toLowerCase().includes('multi')){multiList.push(r);}
     officeList.push(r);
@@ -1252,8 +1254,9 @@ function renderAttendanceTab(){
   }
 
   const html='<div style="font-size:11px;color:#888;margin-bottom:14px;text-align:center">'+displayDate+'</div>'
-    +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">'
-    +mkCard('#EEF0EC','#4A5A42',officeList.length,'🏢','Office',officeList,false)
+    +'<div class="att-summary-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px">'
+    +mkCard('#E8F5E3','#3B6D11',officeList.length,'🏢','Office',officeList,false)
+    +mkCard('#E3EEF9','#185FA5',remoteList.length,'🏠','Work Remotely',remoteList,false)
     +mkCard('#F5F0E8','#6B5A3A',multiList.length,'📞','Multi Camp',multiList,false)
     +mkCard('#EEF0EC','#4A5A42',liveList.length,'💬','Live Chat',liveList,false)
     +mkCard('#F5EFEF','#7A5050',absentList.length,'','Off · Sick · Vacation · Absent',absentList,true)
