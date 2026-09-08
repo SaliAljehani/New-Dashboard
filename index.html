@@ -5702,13 +5702,13 @@ function renderPetrominExpressStationsTab(arr){
           +'<div style="padding:8px 12px;text-align:center">'
           +(am?'<div style="font-size:11px;color:#555;margin-bottom:3px">👤 '+am+'</div>':'')
           +(mob?'<div style="font-size:11px;color:#555;margin-bottom:3px">📞 '+mob+'</div>':'')
-          +(amEmail?'<div style="font-size:10px;margin-bottom:3px"><a href="mailto:'+amEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">✉️ '+amEmail+'</a></div>':'')
-          +(stEmail&&stEmail!==amEmail?'<div style="font-size:10px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:4px"><span style="background:#daeaf8;color:#185fa5;font-weight:800;padding:1px 6px;border-radius:4px;font-size:9px;white-space:nowrap">Station Email</span><a href="mailto:'+stEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">'+stEmail+'</a></div>':'')
+          +(amEmail?'<div style="font-size:10px;margin-bottom:3px"><a href="mailto:'+amEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px;word-break:break-all;white-space:normal">✉️ '+amEmail+'</a></div>':'')
+          +(stEmail&&stEmail!==amEmail?'<div style="font-size:10px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap"><span style="background:#daeaf8;color:#185fa5;font-weight:800;padding:1px 6px;border-radius:4px;font-size:9px;white-space:nowrap">Station Email</span><a href="mailto:'+stEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px;word-break:break-all;white-space:normal;max-width:100%">'+stEmail+'</a></div>':'')
           +'<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2px;margin-bottom:2px">'+badge('AC',gv(v,kAc))+badge('PMS',gv(v,kPms))+badge('BATTERIES',gv(v,kBatt))+badge('ECO WASH',gv(v,kEco))+'</div>'
           +(regName?'<div style="border-top:1px solid #f0e8d0;padding-top:6px;margin-top:6px">'
             +'<div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px">RM</div>'
             +'<div style="font-size:11px;color:#555">👤 '+regName+(regMob?' - 📞 '+regMob:'')+'</div>'
-            +(regEmail?'<div style="font-size:10px;margin-top:2px"><a href="mailto:'+regEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">'+regEmail+'</a></div>':'')
+            +(regEmail?'<div style="font-size:10px;margin-top:2px"><a href="mailto:'+regEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px;word-break:break-all;white-space:normal">'+regEmail+'</a></div>':'')
             +'</div>':'')
           +'</div></div>';
       }).join('');
