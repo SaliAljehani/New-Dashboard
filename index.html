@@ -4123,7 +4123,7 @@ function renderBaicServiceTab(arr, apptArr){
           +(city?'<div style="font-size:11px;color:#888;margin-top:3px">📌 '+city+'</div>':'')
           +(gps&&gps.startsWith('http')?'<div style="margin-top:5px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
           +'</div>'
-          +'<div style="padding:10px 14px;text-align:center">'
+          +'<div style="padding:10px 14px;text-align:center;background:#D98E4508">'
           +(mgr?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+mgr+'</div>':'')
           +(phone?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+phone+'</div>':'')
           +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
@@ -4132,7 +4132,7 @@ function renderBaicServiceTab(arr, apptArr){
       }).join('')+'</div></div></div>';
   }).join('');
 
-  const amCardsHTML=mkCollapsible('🗺️ Area Manager','<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:12px">'+BAIC_AM_CARDS.map(am=>'<div style="background:#FEFEFD;border:1px solid #e8eaed;border-radius:12px;padding:12px 18px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04)">'+'<div style="font-size:13px;font-weight:700;color:#333">'+am.name+'</div>'+'<div style="font-size:11px;color:#888;margin:3px 0">'+am.region+'</div>'+'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+am.phone+'</div>'+'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:3px 9px;border-radius:6px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+am.email+'</a></div>'+'</div>').join('')+'</div>','baicSvcAM',color);
+  const amCardsHTML=mkCollapsible('🗺️ Area Manager','<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:12px">'+BAIC_AM_CARDS.map(am=>'<div style="background:#D98E4508;border:1px solid #D98E4525;border-radius:12px;padding:12px 18px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04)">'+'<div style="font-size:13px;font-weight:700;color:#333">'+am.name+'</div>'+'<div style="font-size:11px;color:#888;margin:3px 0">'+am.region+'</div>'+'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+am.phone+'</div>'+'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="color:#C86E35;font-weight:700;text-decoration:none;word-break:break-all">✉️ '+am.email+'</a></div>'+'</div>').join('')+'</div>','baicSvcAM',color);
 
   return '<div>'+emailHtml+amCardsHTML+regHTML+'</div>';
 }
@@ -5485,11 +5485,11 @@ function renderPetrominPACTab(arr){
   const amList=Object.values(amMap);
   const amHTML=amList.length?mkCollapsible('🗺️ Regional Manager',
     '<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:12px">'+amList.map(am=>{
-      return '<div style="background:#FEFEFD;border:1px solid #e8eaed;border-radius:12px;padding:12px 18px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04)">'
+      return '<div style="background:#D98E4508;border:1px solid #D98E4525;border-radius:12px;padding:12px 18px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04)">'
         +'<div style="font-size:13px;font-weight:700;color:#333">'+am.name+'</div>'
         +'<div style="font-size:11px;color:#888;margin:3px 0">📦 '+am.branches+' branches</div>'
         +'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+[...am.mobiles].join(' / ')+'</div>'
-        +'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:3px 9px;border-radius:6px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+am.email+'</a></div>'
+        +'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="color:#c0272d;font-weight:700;text-decoration:none;word-break:break-all">✉️ '+am.email+'</a></div>'
         +'</div>';
     }).join('')+'</div>'
     ,'petrominPacAM',color):'';
@@ -5543,15 +5543,15 @@ function renderPetrominPACTab(arr){
           +(city?'<div style="font-size:11px;color:#888;margin-top:3px">📌 '+city+'</div>':'')
           +(gpsLink?'<div style="margin-top:5px"><a href="'+gpsLink+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
           +'</div>'
-          +'<div style="padding:10px 14px;text-align:center">'
+          +'<div style="padding:10px 14px;text-align:center;background:#D98E4508">'
           +(mgr?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+mgr+'</div>':'')
           +(phone?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+phone+'</div>':'')
           +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
-          +(rm?'<div style="border-top:1px solid #f0f0f0;padding-top:6px;margin-top:2px">'
-            +'<div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px">RM</div>'
+          +(rm?'<div style="border-top:1px solid '+rc+'22;padding-top:6px;margin-top:2px">'
+            +'<div style="font-size:9px;color:'+rc+';text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px;font-weight:700">Area Manager</div>'
             +'<div style="font-size:11px;color:#555">👤 '+rm.name+'</div>'
             +(rm.mobile?'<div style="font-size:11px;color:#555;margin-top:2px">📞 '+rm.mobile+'</div>':'')
-            +(rm.email?'<div style="font-size:10px;margin-top:2px"><a href="mailto:'+rm.email+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">'+rm.email+'</a></div>':'')
+            +(rm.email?'<div style="font-size:10px;margin-top:2px"><a href="mailto:'+rm.email+'" style="background:'+rc+'15;color:'+rc+';font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">'+rm.email+'</a></div>':'')
             +'</div>':'')
           +'</div></div>';
       }).join('')+'</div></div></div>';
@@ -5719,16 +5719,17 @@ function renderPetrominExpressStationsTab(arr){
           +(locLine?'<div style="font-size:10px;color:#6b4a2e;font-weight:600;margin-top:2px">📍 '+locLine+'</div>':'')
           +coordHTML
           +'</div>'
-          +'<div style="padding:8px 12px;text-align:center">'
+          +'<div style="padding:8px 12px;text-align:center;background:#D98E4508">'
           +(am?'<div style="font-size:11px;color:#555;margin-bottom:3px">👤 '+am+'</div>':'')
           +(mob?'<div style="font-size:11px;color:#555;margin-bottom:3px">📞 '+mob+'</div>':'')
           +(amEmail?'<div style="font-size:10px;margin-bottom:3px"><a href="mailto:'+amEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px;word-break:break-all;white-space:normal">✉️ '+amEmail+'</a></div>':'')
           +(stEmail&&stEmail!==amEmail?'<div style="font-size:10px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap"><span style="background:#daeaf8;color:#185fa5;font-weight:800;padding:1px 6px;border-radius:4px;font-size:9px;white-space:nowrap">Station Email</span><a href="mailto:'+stEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px;word-break:break-all;white-space:normal;max-width:100%">'+stEmail+'</a></div>':'')
           +'<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2px;margin-bottom:2px">'+badge('AC',gv(v,kAc))+badge('PMS',gv(v,kPms))+badge('BATTERIES',gv(v,kBatt))+badge('ECO WASH',gv(v,kEco))+'</div>'
-          +(regName?'<div style="border-top:1px solid #f0e8d0;padding-top:6px;margin-top:6px">'
-            +'<div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px">RM</div>'
-            +'<div style="font-size:11px;color:#555">👤 '+regName+(regMob?' - 📞 '+regMob:'')+'</div>'
-            +(regEmail?'<div style="font-size:10px;margin-top:2px"><a href="mailto:'+regEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px;word-break:break-all;white-space:normal">'+regEmail+'</a></div>':'')
+          +(regName?'<div style="border-top:1px solid #D98E4530;padding-top:6px;margin-top:6px">'
+            +'<div style="font-size:9px;color:#b06a1f;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px;font-weight:700">Area Manager</div>'
+            +'<div style="font-size:11px;color:#555">👤 '+regName+'</div>'
+            +(regMob?'<div style="font-size:11px;color:#555;margin-top:2px">📞 '+regMob+'</div>':'')
+            +(regEmail?'<div style="font-size:10px;margin-top:2px"><a href="mailto:'+regEmail+'" style="background:#D98E4518;color:#b06a1f;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px;word-break:break-all;white-space:normal">'+regEmail+'</a></div>':'')
             +'</div>':'')
           +'</div></div>';
       }).join('');
