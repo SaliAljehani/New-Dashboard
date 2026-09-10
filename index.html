@@ -1241,9 +1241,16 @@ function renderAttendanceTab(){
     const camp=r.campaign||'';
     const isAbsent=['Off','Absent','Vacation','Sick','Sickleave','EL','Saturday Shift'].includes(r.status);
     if(isAbsent){absentList.push(r);return;}
-    if(r.status==='Remote'){remoteList.push(r);return;}
-    if(camp==='WhatsApp'||camp.toLowerCase().includes('whatsapp')){liveList.push(r);}
-    else if(camp==='Multi Campaign'||camp.toLowerCase().includes('multi')){multiList.push(r);}
+    const isWhats=(camp==='WhatsApp'||camp.toLowerCase().includes('whatsapp'));
+    const isMulti=(camp==='Multi Campaign'||camp.toLowerCase().includes('multi'));
+    if(r.status==='Remote'){
+      remoteList.push(r);
+      if(isWhats){liveList.push({...r,_rmt:true});}
+      else if(isMulti){multiList.push({...r,_rmt:true});}
+      return;
+    }
+    if(isWhats){liveList.push(r);}
+    else if(isMulti){multiList.push(r);}
     officeList.push(r);
   });
 
@@ -1257,7 +1264,7 @@ function renderAttendanceTab(){
     'Saturday Shift':{bg:'#DDD8F0',color:'#2A1A60',label:'Sat Shift'},
   };
 
-  function mkName(r){ return '<div style="font-size:11px;font-weight:500;color:#444;text-align:center;padding:3px 0">'+r.name+'</div>'; }
+  function mkName(r){ return '<div style="font-size:11px;font-weight:500;color:#444;text-align:center;padding:3px 0">'+(r._rmt?'🏠 ':'')+r.name+'</div>'; }
   function mkNameBadge(r){
     const b=ABSENT_BADGE[r.status]||{bg:'#F8ECEC',color:'#7A3A3A',label:r.status};
     return '<div style="display:flex;align-items:center;justify-content:space-between;padding:3px 0">'
