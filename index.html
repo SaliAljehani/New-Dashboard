@@ -4010,8 +4010,7 @@ function renderBaicShowroomTab(arr){
 function renderBaicServiceTab(arr, apptArr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#C86E35';
-  const BAIC_AM={West:{name:'Roummie Palma',phone:'507103299',email:'roummie@petromin.com'},North:{name:'Roummie Palma',phone:'507103299',email:'roummie@petromin.com'},South:{name:'Roummie Palma',phone:'507103299',email:'roummie@petromin.com'},East:{name:'Jimshad Mayin',phone:'557554409',email:'jimshad.mayin@petromin.com'},Central:{name:'Mohammed Sallam',phone:'539143824 / 555047230',email:'m.sallam@petromin.com'}};
-  const BAIC_AM_CARDS=[{name:'Roummie Palma',region:'West · North · South',phone:'507103299',email:'roummie@petromin.com'},{name:'Jimshad Mayin',region:'East',phone:'557554409',email:'jimshad.mayin@petromin.com'},{name:'Mohammed Sallam',region:'Central',phone:'539143824 / 555047230',email:'m.sallam@petromin.com'}];
+  const amRows=[];
   const keys=Object.keys(arr[0]||{});
   const regionCol=keys[0], cityCol=keys[1], branchCol=keys[2], mgrCol=keys[3], phoneCol=keys[4], emailCol=keys[5], gpsLinkCol=keys[7];
 
@@ -4042,6 +4041,10 @@ function renderBaicServiceTab(arr, apptArr){
       return;
     }
     if(v0==='Region'||v0==='Branch Manager') { mode='other'; return; }
+    if(String(vals[2]||'').includes('@') && v1 && !v1.includes('@')){
+      amRows.push({region:v0, name:v1, email:String(vals[2]).trim(), phone:fmtNum(v3)});
+      return;
+    }
     if(VALID_REGIONS.has(v0)){
       // Skip Area Manager rows: their columns are shifted so the branch-name
       // cell holds an email instead of a real branch name. They already have
@@ -4075,6 +4078,15 @@ function renderBaicServiceTab(arr, apptArr){
   // Group branches by region (normalize so "Eastern"→East, "Western"→West, etc.)
   const REGION_ALIAS={Eastern:'East',Western:'West',Northern:'North',Southern:'South',Center:'Central',Centeral:'Central'};
   const normReg=r=>REGION_ALIAS[r]||r;
+  const BAIC_AM={}, _amSeen={}, BAIC_AM_CARDS=[];
+  amRows.forEach(a=>{
+    if(!a.name)return;
+    const toks=a.region.split(/[^A-Za-z]+/).map(t=>t.trim()).filter(Boolean);
+    const regDisp=toks.join(' · ')||a.region;
+    toks.forEach(t=>{const k=normReg(t);if(!BAIC_AM[k])BAIC_AM[k]={name:a.name,phone:a.phone,email:a.email};else if(a.phone&&BAIC_AM[k].phone.indexOf(a.phone)<0)BAIC_AM[k].phone+=' / '+a.phone;});
+    if(!_amSeen[a.name]){_amSeen[a.name]={name:a.name,region:regDisp,phone:a.phone,email:a.email};BAIC_AM_CARDS.push(_amSeen[a.name]);}
+    else if(a.phone&&_amSeen[a.name].phone.indexOf(a.phone)<0)_amSeen[a.name].phone+=' / '+a.phone;
+  });
   const regions={};
   branchRows.forEach(r=>{
     const reg=normReg(String(r[regionCol]||'').trim());
@@ -4127,12 +4139,12 @@ function renderBaicServiceTab(arr, apptArr){
           +(mgr?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+mgr+'</div>':'')
           +(phone?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+phone+'</div>':'')
           +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
-          +(function(){var am=BAIC_AM[reg];return am?'<div style="border-top:1px solid #f0e2d5;padding-top:6px;margin-top:4px">'+'<div style="font-size:9px;color:'+color+';text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px;font-weight:700">Area Manager</div>'+'<div style="font-size:11px;color:#555">👤 '+am.name+'</div>'+'<div style="font-size:11px;color:#555;margin-top:2px">📞 '+am.phone+'</div>'+'<div style="font-size:10px;margin-top:2px"><a href="mailto:'+am.email+'" style="background:'+color+'15;color:'+color+';font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">'+am.email+'</a></div>'+'</div>':'';})()
+          +(function(){var am=BAIC_AM[reg];return am?'<div style="border-top:1px solid #f0e2d5;padding-top:6px;margin-top:4px">'+'<div style="font-size:9px;color:'+color+';text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px;font-weight:700">Regional Manager</div>'+'<div style="font-size:11px;color:#555">👤 '+am.name+'</div>'+'<div style="font-size:11px;color:#555;margin-top:2px">📞 '+am.phone+'</div>'+'<div style="font-size:10px;margin-top:2px"><a href="mailto:'+am.email+'" style="background:'+color+'15;color:'+color+';font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">'+am.email+'</a></div>'+'</div>':'';})()
           +'</div></div>';
       }).join('')+'</div></div></div>';
   }).join('');
 
-  const amCardsHTML=mkCollapsible('🗺️ Area Manager','<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:12px">'+BAIC_AM_CARDS.map(am=>'<div style="background:#FDFCFB;border:1px solid #D98E4525;border-radius:12px;padding:12px 18px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04)">'+'<div style="font-size:13px;font-weight:700;color:#333">'+am.name+'</div>'+'<div style="font-size:11px;color:#888;margin:3px 0">'+am.region+'</div>'+'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+am.phone+'</div>'+'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="color:#C86E35;font-weight:700;text-decoration:none;word-break:break-all">✉️ '+am.email+'</a></div>'+'</div>').join('')+'</div>','baicSvcAM',color);
+  const amCardsHTML=BAIC_AM_CARDS.length?mkCollapsible('🗺️ Regional Manager','<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:12px">'+BAIC_AM_CARDS.map(am=>'<div style="background:#FDFCFB;border:1px solid #D98E4525;border-radius:12px;padding:12px 18px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04)">'+'<div style="font-size:13px;font-weight:700;color:#333">'+am.name+'</div>'+'<div style="font-size:11px;color:#888;margin:3px 0">'+am.region+'</div>'+'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+am.phone+'</div>'+'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="color:#C86E35;font-weight:700;text-decoration:none;word-break:break-all">✉️ '+am.email+'</a></div>'+'</div>').join('')+'</div>','baicSvcAM',color):'';
 
   return '<div>'+emailHtml+amCardsHTML+regHTML+'</div>';
 }
@@ -5489,7 +5501,7 @@ function renderPetrominPACTab(arr){
         +'<div style="font-size:13px;font-weight:700;color:#333">'+am.name+'</div>'
         +'<div style="font-size:11px;color:#888;margin:3px 0">📦 '+am.branches+' branches</div>'
         +'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+[...am.mobiles].join(' / ')+'</div>'
-        +'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="color:#c0272d;font-weight:700;text-decoration:none;word-break:break-all">✉️ '+am.email+'</a></div>'
+        +'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="color:#C86E35;font-weight:700;text-decoration:none;word-break:break-all">✉️ '+am.email+'</a></div>'
         +'</div>';
     }).join('')+'</div>'
     ,'petrominPacAM',color):'';
@@ -5547,11 +5559,11 @@ function renderPetrominPACTab(arr){
           +(mgr?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+mgr+'</div>':'')
           +(phone?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+phone+'</div>':'')
           +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
-          +(rm?'<div style="border-top:1px solid '+rc+'22;padding-top:6px;margin-top:2px">'
-            +'<div style="font-size:9px;color:'+rc+';text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px;font-weight:700">Area Manager</div>'
+          +(rm?'<div style="border-top:1px solid #C86E3522;padding-top:6px;margin-top:2px">'
+            +'<div style="font-size:9px;color:#C86E35;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px;font-weight:700">Regional Manager</div>'
             +'<div style="font-size:11px;color:#555">👤 '+rm.name+'</div>'
             +(rm.mobile?'<div style="font-size:11px;color:#555;margin-top:2px">📞 '+rm.mobile+'</div>':'')
-            +(rm.email?'<div style="font-size:10px;margin-top:2px"><a href="mailto:'+rm.email+'" style="background:'+rc+'15;color:'+rc+';font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">'+rm.email+'</a></div>':'')
+            +(rm.email?'<div style="font-size:10px;margin-top:2px"><a href="mailto:'+rm.email+'" style="background:#C86E3515;color:#C86E35;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">'+rm.email+'</a></div>':'')
             +'</div>':'')
           +'</div></div>';
       }).join('')+'</div></div></div>';
@@ -5666,11 +5678,11 @@ function renderPetrominExpressStationsTab(arr){
       +'<div style="font-size:13px;font-weight:700;color:#333">'+rm.name+'</div>'
       +'<div style="font-size:11px;color:#999;margin:4px 0">🏢 '+rm.branches+' branches</div>'
       +(rm.mobile?'<div style="font-size:12px;color:#555;margin-bottom:3px">📞 '+rm.mobile+'</div>':'')
-      +'<a href="mailto:'+rm.email+'" style="font-size:11px;color:'+color+';font-weight:700;text-decoration:none;word-break:break-all">'+rm.email+'</a>'
+      +'<a href="mailto:'+rm.email+'" style="font-size:11px;color:#C86E35;font-weight:700;text-decoration:none;word-break:break-all">'+rm.email+'</a>'
       +'</div>';
     return rows.map((r,i)=>'<div style="display:flex;gap:10px'+(i?';margin-top:10px':'')+'">'+r.map(cardOf).join('')+'</div>').join('');
   })();
-  const rmHTML=rmList.length?mkCollapsible('🗺️ Regional Managers ('+rmList.length+')',
+  const rmHTML=rmList.length?mkCollapsible('🗺️ Regional Manager',
     rmRowsHTML
     ,'peExpRM',color):'';
 
@@ -5725,11 +5737,11 @@ function renderPetrominExpressStationsTab(arr){
           +(amEmail?'<div style="font-size:10px;margin-bottom:3px"><a href="mailto:'+amEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px;word-break:break-all;white-space:normal">✉️ '+amEmail+'</a></div>':'')
           +(stEmail&&stEmail!==amEmail?'<div style="font-size:10px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap"><span style="background:#daeaf8;color:#185fa5;font-weight:800;padding:1px 6px;border-radius:4px;font-size:9px;white-space:nowrap">Station Email</span><a href="mailto:'+stEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px;word-break:break-all;white-space:normal;max-width:100%">'+stEmail+'</a></div>':'')
           +'<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2px;margin-bottom:2px">'+badge('AC',gv(v,kAc))+badge('PMS',gv(v,kPms))+badge('BATTERIES',gv(v,kBatt))+badge('ECO WASH',gv(v,kEco))+'</div>'
-          +(regName?'<div style="border-top:1px solid #D98E4530;padding-top:6px;margin-top:6px">'
-            +'<div style="font-size:9px;color:#b06a1f;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px;font-weight:700">Area Manager</div>'
+          +(regName?'<div style="border-top:1px solid #C86E3522;padding-top:6px;margin-top:6px">'
+            +'<div style="font-size:9px;color:#C86E35;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px;font-weight:700">Regional Manager</div>'
             +'<div style="font-size:11px;color:#555">👤 '+regName+'</div>'
             +(regMob?'<div style="font-size:11px;color:#555;margin-top:2px">📞 '+regMob+'</div>':'')
-            +(regEmail?'<div style="font-size:10px;margin-top:2px"><a href="mailto:'+regEmail+'" style="background:#D98E4518;color:#b06a1f;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px;word-break:break-all;white-space:normal">'+regEmail+'</a></div>':'')
+            +(regEmail?'<div style="font-size:10px;margin-top:2px"><a href="mailto:'+regEmail+'" style="background:#C86E3515;color:#C86E35;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px;word-break:break-all;white-space:normal">'+regEmail+'</a></div>':'')
             +'</div>':'')
           +'</div></div>';
       }).join('');
