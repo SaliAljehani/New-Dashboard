@@ -9130,8 +9130,8 @@ async function renderDailyOff(){
         var dateStr=w.dates&&w.dates[d]?'<div style="font-size:10px;font-weight:600;color:#4A3528;margin-top:2px">'+w.dates[d]+'</div>':'';
         t+='<th style="padding:8px 6px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:96px;font-weight:700;font-size:13px;color:#5D4037;background:#F5F0E8">'+d+dateStr+'</th>';
       });
-      t+='<th style="padding:8px 6px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:76px;font-weight:700;font-size:13px;color:#c0272d;background:rgba(192,39,45,.05)">⏰ Break</th>';
-      t+='<th style="padding:8px 6px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:82px;font-weight:700;font-size:13px;color:#B26A00;background:rgba(178,106,0,.06)">🗓️ Sat Break</th>';
+      t+='<th style="padding:8px 6px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:88px;font-weight:700;font-size:13px;color:#c0272d;background:rgba(192,39,45,.05)">⏰ Weekly Break</th>';
+      t+='<th style="padding:8px 6px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:96px;font-weight:700;font-size:13px;color:#c0272d;background:rgba(192,39,45,.05)">🗓️ Saturday Break</th>';
       t+='</tr></thead><tbody style="border:none">';
       w.agents.forEach(function(ag,ai){
         var rowBg='#FFFFFF';
@@ -9145,17 +9145,18 @@ async function renderDailyOff(){
           var wknd=d==='Friday';
           t+='<td style="padding:7px 6px;text-align:center;background:'+(wknd?'rgba(237,224,212,.2)':'')+'">'+badge(ag[d])+'</td>';
         });
-        var brk=(ag[BREAK_COL]||'').trim();
-        brk=brk.replace(/^(\d{1,2}):(\d{2}):\d{2}\s*(AM|PM)$/i,'$1:$2 $3');
         var _bt=breakTint(ag);
-        var _bBg=_bt?_bt.bg:'#F6F4F0';
-        var _bCol=_bt?_bt.col:'#8A857C';
-        t+='<td style="padding:7px 6px;text-align:center;background:rgba(192,39,45,.03)"><span class="bdg" data-bg="'+_bBg+'" style="display:block;width:100%;background:'+_bBg+';color:'+_bCol+';font-size:13px;font-weight:600;padding:7px 6px;text-align:center;white-space:nowrap;border-radius:5px">'+(brk||'—')+'</span></td>';
-        var satBrk=(ag[SAT_BREAK_COL]||'').trim();
-        satBrk=satBrk.replace(/^(\d{1,2}):(\d{2}):\d{2}\s*(AM|PM)$/i,'$1:$2 $3');
-        var _sbBg=_bBg,_sbCol=_bCol;
-        if(satBrk.toLowerCase()==='off'){_sbBg='#FACDD0';_sbCol='#7A2A2E';}
-        t+='<td style="padding:7px 6px;text-align:center;background:rgba(178,106,0,.03)"><span class="bdg" data-bg="'+_sbBg+'" style="display:block;width:100%;background:'+_sbBg+';color:'+_sbCol+';font-size:13px;font-weight:600;padding:7px 6px;text-align:center;white-space:nowrap;border-radius:5px">'+(satBrk||'—')+'</span></td>';
+        var _tBg=_bt?_bt.bg:'#F6F4F0';
+        var _tCol=_bt?_bt.col:'#8A857C';
+        // Both break columns share one renderer so they look identical; OFF is red in both.
+        var _brkCell=function(v){
+          v=String(v||'').trim().replace(/^(\d{1,2}):(\d{2}):\d{2}\s*(AM|PM)$/i,'$1:$2 $3');
+          var bg=_tBg,col=_tCol;
+          if(v.toLowerCase()==='off'){bg='#FACDD0';col='#7A2A2E';}
+          return '<td style="padding:7px 6px;text-align:center;background:rgba(192,39,45,.03)"><span class="bdg" data-bg="'+bg+'" style="display:block;width:100%;background:'+bg+';color:'+col+';font-size:13px;font-weight:600;padding:7px 6px;text-align:center;white-space:nowrap;border-radius:5px">'+(v||'—')+'</span></td>';
+        };
+        t+=_brkCell(ag[BREAK_COL]);
+        t+=_brkCell(ag[SAT_BREAK_COL]);
         t+='</tr>';
       });
       t+='</tbody></table></div>';
