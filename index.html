@@ -8939,6 +8939,7 @@ async function renderDailyOff(){
     };
     var DAY_COLS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     var BREAK_COL = 'Break Time';
+    var SAT_BREAK_COL = 'Saturday Break';
 
     var weeks=[], curWeek=null, curDayMap={}, agentColI=0;
 
@@ -8976,26 +8977,39 @@ async function renderDailyOff(){
         });
         if(firstDay>0) agentColI = firstDay-1;
         curDayMap = {};
-        var breakColIdx = -1;
+        var breakColIdx = -1, satBreakColIdx = -1;
         cells.forEach(function(h,ci){
           if(ci<=agentColI) return;
           var hl=h.trim().toLowerCase().replace(/[^a-z]/g,'').slice(0,3);
           var full=DAY_SHORT[hl]||DAY_SHORT[h.trim().toLowerCase()];
           if(full && !curDayMap[full]) curDayMap[full]=ci;
-          if(h.trim().toLowerCase().includes('break')) breakColIdx=ci;
-        });
-        // Fallback: gviz types the Break column as time-of-day, so its header
-        // text ("Break Time") comes back empty and the check above misses it.
-        // In that case the Break column is the one right after Saturday (last day).
-        if(breakColIdx < 0){
-          var maxDayIdx = -1;
-          DAY_COLS.forEach(function(d){ if(curDayMap[d]!==undefined && curDayMap[d]>maxDayIdx) maxDayIdx=curDayMap[d]; });
-          var cand = maxDayIdx + 1;
-          if(maxDayIdx>=0 && (cand>=cells.length || !cells[cand] || cells[cand].trim()==='')){
-            breakColIdx = cand;
+          var ht=h.trim().toLowerCase();
+          if(ht.includes('break')){
+            if(ht.includes('sat')) satBreakColIdx=ci;   // "Saturday Break"
+            else breakColIdx=ci;                          // "Break Time" / "Weekly Break"
           }
+        });
+        // Fallback: gviz types the Break columns as time-of-day, so their header
+        // text ("Break Time" / "Saturday Break") comes back empty and the checks
+        // above miss them. In that case the Weekly Break is the column right after
+        // Saturday, and the Saturday Break is the column right after that.
+        var _breaky = function(s){
+          s = String(s||'').trim();
+          if(!s) return true; // stripped/empty header
+          return /off|vac/i.test(s) || /\d{1,2}\s*:\s*\d{2}/.test(s) || /\d\s*[\u2013\-]\s*\d/.test(s);
+        };
+        var maxDayIdx = -1;
+        DAY_COLS.forEach(function(d){ if(curDayMap[d]!==undefined && curDayMap[d]>maxDayIdx) maxDayIdx=curDayMap[d]; });
+        if(breakColIdx < 0 && maxDayIdx >= 0){
+          var cand = maxDayIdx + 1;
+          if(cand>=cells.length || _breaky(cells[cand])) breakColIdx = cand;
+        }
+        if(satBreakColIdx < 0 && breakColIdx >= 0){
+          var cand2 = breakColIdx + 1;
+          if(cand2>=cells.length || _breaky(cells[cand2])) satBreakColIdx = cand2;
         }
         if(breakColIdx>=0) curDayMap[BREAK_COL]=breakColIdx;
+        if(satBreakColIdx>=0) curDayMap[SAT_BREAK_COL]=satBreakColIdx;
         if(!curWeek||curWeek.label!==wLabel){curWeek={label:wLabel,agents:[]};weeks.push(curWeek);}
         continue;
       }
@@ -9039,6 +9053,8 @@ async function renderDailyOff(){
         });
         var bIdx = curDayMap[BREAK_COL];
         agent[BREAK_COL] = (bIdx !== undefined && bIdx >= 0) ? (cells[bIdx]||'') : '';
+        var sbIdx = curDayMap[SAT_BREAK_COL];
+        agent[SAT_BREAK_COL] = (sbIdx !== undefined && sbIdx >= 0) ? (cells[sbIdx]||'') : '';
         curWeek.agents.push(agent);
       } else if(curWeek){
         // نحاول نجد الاسم في أي خلية غير فارغة وغير يوم وغير رقم
@@ -9115,6 +9131,7 @@ async function renderDailyOff(){
         t+='<th style="padding:8px 6px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:96px;font-weight:700;font-size:13px;color:#5D4037;background:#F5F0E8">'+d+dateStr+'</th>';
       });
       t+='<th style="padding:8px 6px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:76px;font-weight:700;font-size:13px;color:#c0272d;background:rgba(192,39,45,.05)">⏰ Break</th>';
+      t+='<th style="padding:8px 6px;text-align:center;border-bottom:2px solid #E8DDD0;min-width:82px;font-weight:700;font-size:13px;color:#B26A00;background:rgba(178,106,0,.06)">🗓️ Sat Break</th>';
       t+='</tr></thead><tbody style="border:none">';
       w.agents.forEach(function(ag,ai){
         var rowBg='#FFFFFF';
@@ -9134,6 +9151,11 @@ async function renderDailyOff(){
         var _bBg=_bt?_bt.bg:'#F6F4F0';
         var _bCol=_bt?_bt.col:'#8A857C';
         t+='<td style="padding:7px 6px;text-align:center;background:rgba(192,39,45,.03)"><span class="bdg" data-bg="'+_bBg+'" style="display:block;width:100%;background:'+_bBg+';color:'+_bCol+';font-size:13px;font-weight:600;padding:7px 6px;text-align:center;white-space:nowrap;border-radius:5px">'+(brk||'—')+'</span></td>';
+        var satBrk=(ag[SAT_BREAK_COL]||'').trim();
+        satBrk=satBrk.replace(/^(\d{1,2}):(\d{2}):\d{2}\s*(AM|PM)$/i,'$1:$2 $3');
+        var _sbBg=_bBg,_sbCol=_bCol;
+        if(satBrk.toLowerCase()==='off'){_sbBg='#FACDD0';_sbCol='#7A2A2E';}
+        t+='<td style="padding:7px 6px;text-align:center;background:rgba(178,106,0,.03)"><span class="bdg" data-bg="'+_sbBg+'" style="display:block;width:100%;background:'+_sbBg+';color:'+_sbCol+';font-size:13px;font-weight:600;padding:7px 6px;text-align:center;white-space:nowrap;border-radius:5px">'+(satBrk||'—')+'</span></td>';
         t+='</tr>';
       });
       t+='</tbody></table></div>';
