@@ -5240,7 +5240,7 @@ function renderFotonPMSTab(arr){
   const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
 
   // Sheet layout:
-  //   Branches  A=Regions B=City C=Branch Code-Station D=Street E=District F=GPS G=Contact H=Mobile
+  //   Branches  A=Regions B=City C=Branch Code-Station D=Street E=District F=GPS G=Contact H=Mobile I=Email
   //   Spare     B="Spare Parts" C=Name D=Mobile E=Coverage
   //   Emails    B=Label C=TO D=CC   (preceded by a C="TO" D="CC" header row)
   const branches=[], emailBlocks=[], spare=[];
@@ -5268,7 +5268,8 @@ function renderFotonPMSTab(arr){
     }
     if(v0 && v1 && v2){
       branches.push({region:v0, name:v2, city:v1, street:v3, district:v4,
-                     gps:vals[5]||'', contact:vals[6]||'', mobile:fmtNum(vals[7]||'')});
+                     gps:vals[5]||'', contact:vals[6]||'', mobile:fmtNum(vals[7]||''),
+                     email:(vals.slice(6).find(x=>x.includes('@'))||'')});
       if(hoursIdx>=0 && !hoursRaw && vals[hoursIdx]) hoursRaw=vals[hoursIdx];
     }
   });
