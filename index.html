@@ -2890,6 +2890,20 @@ function renderElectrominEmailsTab(rows){
   var cOwn=fc('responsible','owner'); if(cOwn<0)cOwn=2;
   var cEsc=fc('escalation'); if(cEsc<0)cEsc=3;
   var cCC=fc('cc'); if(cCC<0)cCC=4;
+  // "To" recipient email column. Its header may be blank, so try a header
+  // match first, then fall back to the first @-bearing column after Owner.
+  var cTo=fc('to email','to address','send to','email to','recipient','to');
+  if(cTo<0 || cTo===cCat || cTo===cReq || cTo===cOwn || cTo===cEsc || cTo===cCC){
+    cTo=-1;
+    for(var _c=cOwn+1;_c<H.length;_c++){
+      if(_c===cEsc||_c===cCC) continue;
+      var _hits=0;
+      for(var _r=hIdx+1;_r<Math.min(rows.length,hIdx+8);_r++){
+        if(rows[_r] && /@/.test(rows[_r][_c]||'')) _hits++;
+      }
+      if(_hits>0){ cTo=_c; break; }
+    }
+  }
   var groups={};
   for(var r=hIdx+1;r<rows.length;r++){
     var row=rows[r];
@@ -2910,11 +2924,13 @@ function renderElectrominEmailsTab(rows){
       var own=(row[cOwn]||'').trim();
       var esc=(row[cEsc]||'').trim();
       var cc=(row[cCC]||'').trim();
+      var to=(cTo>=0?(row[cTo]||'').trim():'');
       return '<div style="background:#FEFEFD;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-left:4px solid '+col+';padding:12px 14px;text-align:left;direction:ltr">'
         +'<div style="font-size:13px;font-weight:700;color:'+col+';margin-bottom:8px">'+req+'</div>'
         +(own?'<div style="font-size:12px;color:#555;margin-bottom:4px">👤 <b style="color:#333">Owner:</b> '+own+'</div>':'')
         +(esc?'<div style="font-size:12px;color:#555;margin-bottom:6px">⬆️ <b style="color:#333">Escalation:</b> '+esc+'</div>':'')
-        +(cc?'<div style="padding-top:6px;border-top:1px solid #f0f0f0"><div style="font-size:10px;color:#999;font-weight:700;margin-bottom:3px">CC</div>'+chipTo(cc,col)+'</div>':'')
+        +(to?'<div style="padding-top:6px;border-top:1px solid #f0f0f0"><div style="font-size:10px;color:#999;font-weight:700;margin-bottom:3px">TO</div>'+chipTo(to,col)+'</div>':'')
+        +(cc?'<div style="padding-top:6px'+(to?'':';border-top:1px solid #f0f0f0')+'"><div style="font-size:10px;color:#999;font-weight:700;margin-bottom:3px">CC</div>'+chipTo(cc,col)+'</div>':'')
         +'</div>';
     }).join('');
     out+='<div style="margin-bottom:16px">'
