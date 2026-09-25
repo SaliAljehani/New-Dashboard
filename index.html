@@ -111,7 +111,7 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 @media(max-width:900px){.ag-kpis,.att-strip{grid-template-columns:repeat(3,1fr)}}
 #page4 td{border-bottom-color:#f0edea!important;padding-top:9px;padding-bottom:9px}
 #page4 th{border-bottom-width:1px!important}
-.bd-box{text-align:left;background:#FDFDFC;border:0.5px solid #eee;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden;color:#1a1a2e}
+.bd-box{text-align:center;background:#FDFDFC;border:0.5px solid #eee;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden;color:#1a1a2e}
 .bd-head{padding:16px 22px;background:var(--brbg);text-align:center}
 .bd-title{font-size:16px;font-weight:700}
 .bd-title b{color:var(--brc);margin-right:6px}
@@ -121,26 +121,33 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .bd-sec{padding:14px 22px;border-top:1px solid #f2efec}
 .bd-hours{font-size:13px;color:#666;text-align:center}
 .bd-lbl{font-size:12px;color:#999;margin-bottom:8px;font-weight:500}
-.bd-pp{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.bd-pp{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0}
+.bd-pp>div{padding:0 12px}
+.bd-pp>div+div{border-left:1px solid #f2efec}
 .bd-p+.bd-p{margin-top:12px}
 .bd-nm{font-size:15px;font-weight:600;margin-bottom:6px}
-.bd-rw{font-size:14px;margin-bottom:5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;word-break:break-all}
+.bd-rw{font-size:14px;margin-bottom:5px;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;word-break:break-all}
 .bd-rw .ic{width:18px;flex-shrink:0;text-align:center;filter:grayscale(1);opacity:.5}
 .bd-rw a.em{color:var(--brc);text-decoration:none;font-weight:600}
 .bd-rw a.em:hover{text-decoration:underline}
 .bd-cp{border:1px solid #e8e5e1;background:#fff;border-radius:6px;padding:1px 8px;color:#999;font-size:11px;cursor:pointer}
 .bd-cp:hover{color:var(--brc);border-color:var(--brc)}
+.bd-chip.no{background:#F4F2F0;color:#aaa;text-decoration:line-through}
 .bd-chip{display:inline-block;background:#EEF6EF;color:#2e7d4f;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;margin:0 6px 6px 0}
 .bd-more{font-size:13px;color:#555;line-height:1.7}
+.br-list::-webkit-scrollbar{width:5px}
+.br-list::-webkit-scrollbar-track{background:transparent}
+.br-list::-webkit-scrollbar-thumb{background:var(--brc,#c0272d);border-radius:10px;opacity:.7}
+.br-it .ds{display:block;font-size:11px;color:#aaa;padding-left:40px;margin-top:1px}
 .br-hidden{display:none!important}
 .br-md{display:grid;grid-template-columns:320px minmax(0,1fr);gap:14px;align-items:start;margin-bottom:16px}
-.br-list{text-align:left;background:#FDFDFC;border:0.5px solid #eee;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:10px;max-height:72vh;overflow-y:auto;position:sticky;top:10px}
+.br-list{scrollbar-width:thin;scrollbar-color:var(--brc,#c0272d) transparent;text-align:left;background:#FDFDFC;border:0.5px solid #eee;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:10px;max-height:72vh;overflow-y:auto;position:sticky;top:10px}
 .br-search{width:100%;box-sizing:border-box;padding:8px 12px;border:1px solid #e5e5e5;border-radius:10px;font-size:13px;background:#fff;margin-bottom:6px;outline:none}
 .br-search:focus{border-color:var(--brc,#c0272d)}
 .br-rg{display:flex;justify-content:space-between;padding:7px 10px;margin:10px 0 2px;border-radius:8px;background:var(--brbg,#FBEDEE);font-size:12px;font-weight:700;color:var(--brc,#c0272d)}
 .br-ct{display:flex;justify-content:space-between;padding:8px 10px 3px;font-size:11px;color:#999;font-weight:500}
 .br-rg span+span{color:#aaa;font-weight:500}
-.br-it{display:flex;gap:8px;padding:6px 9px 6px 16px;border-radius:8px;cursor:pointer;font-size:13px;color:#1a1a2e}
+.br-it{display:block;gap:8px;padding:6px 9px 6px 16px;border-radius:8px;cursor:pointer;font-size:13px;color:#1a1a2e}
 .br-it:hover{background:rgba(0,0,0,.03)}
 .br-it.on{background:var(--brbg,#FBEDEE)}
 .br-it b{color:var(--brc,#c0272d);font-weight:700;margin-right:6px;display:inline-block;min-width:34px}
@@ -3212,6 +3219,7 @@ const BRANCH_REGION_COLORS = {
   North:'#e65100',Northern:'#e65100'
 };
 
+function sheetPersonLabel(h){h=String(h||'').replace(/\s*(name|#)\s*$/i,'').replace(/managers\b/i,'Manager').replace(/\s+/g,' ').trim();return h||'Branch Manager';}
 const NISSAN_AM={West:'ahmed.ateeq@petromin.com',South:'ahmed.ateeq@petromin.com',Central:'simon.white@petromin.com',East:'z.bakhurji@petromin.com'};
 function renderNissanBranchTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
@@ -3320,7 +3328,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
         +'</div>'
       : '';
 
-    return '<div style="background:#FEFEFD;border-radius:10px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
+    return '<div data-plabel="'+sheetPersonLabel(advisorCol)+'" style="background:#FEFEFD;border-radius:10px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
       // Branch name — colored header box
       +'<div style="background:'+col_color+'18;border-bottom:2px solid '+col_color+'22;padding:10px 14px;margin-bottom:0;text-align:center">'
       +'<div style="font-size:13px;font-weight:700;color:'+col_color+'">'+b.name.replace(/\s*\(.*?\)\s*/g,'').replace(/\n/g,' ').trim()+'</div>'
@@ -5839,7 +5847,7 @@ function renderPetrominExpressStationsTab(arr){
         const coord=gv(v,kCoord);
         const coordLink=coord?(/^https?:\/\//i.test(coord)?coord:'https://www.google.com/maps?q='+encodeURIComponent(coord)):'';
         const coordHTML=coord?'<a href="'+coordLink+'" target="_blank" style="display:inline-block;font-size:10px;color:'+rc+';opacity:.9;margin-top:3px;text-decoration:none;border-bottom:1px dotted '+rc+'">🗺️ '+coord+'</a>':'';
-        return '<div style="background:#FEFEFD;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);">'
+        return '<div data-plabel="'+sheetPersonLabel(kAmName||'Area Manager')+'" style="background:#FEFEFD;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);">'
           +'<div style="background:'+rc+'12;padding:8px 12px;text-align:center">'
           +'<div style="font-size:12px;font-weight:700;color:'+rc+'">'+(be?be+' - ':'')+station+'</div>'
           +(locLine?'<div style="font-size:10px;color:#6b4a2e;font-weight:600;margin-top:2px">📍 '+locLine+'</div>':'')
@@ -10050,7 +10058,12 @@ window.addEventListener('DOMContentLoaded', () => {
 (function(){
   var CODE_RE=/^\s*\d{2,6}\s*[-–—]\s*\S/;
   function cardTitle(card){var h=card.firstElementChild;if(!h)return'';var t=h.firstElementChild||h;return (t.textContent||'').replace(/\s+/g,' ').trim();}
-  function cardCity(card){var h=card.firstElementChild;if(!h)return'';var m=(h.textContent||'').match(/📌\s*([^\n]*?)\s*(?=📍|🗺|$)/u);return m?m[1].trim():'';}
+  function cardLoc(card){var h=card.firstElementChild;var r={city:'',dist:''};if(!h)return r;var t=h.textContent||'';
+    var c=t.match(/📌\s*([^\n]*?)\s*(?=📍|🗺|$)/u);var d=t.match(/📍\s*([^\n]*?)\s*(?=📌|🗺|$)/u);
+    if(c)r.city=c[1].trim();
+    if(d){var dv=d[1].trim();if(!r.city&&/\s[-–]\s/.test(dv)){var parts=dv.split(/\s[-–]\s/);r.city=parts.pop().trim();r.dist=parts.join(' - ').trim();}else r.dist=dv;}
+    return r;}
+  function cardCity(card){return cardLoc(card).city;}
   function isBranchGrid(g){var cards=[].slice.call(g.children);if(!cards.length)return false;var n=cards.filter(function(c){return CODE_RE.test(cardTitle(c));}).length;return n/cards.length>=0.5;}
   function blockOf(g){var p=g.parentElement,r;if(p&&p.id&&p.parentElement){r={block:p.parentElement,header:p.previousElementSibling};}else{r={block:p,header:g.previousElementSibling};}if(!r.block||r.block.children.length>3||r.block.querySelectorAll('.ref-cards-grid').length>1||r.block.id==='refContent'){r={block:g,header:null};}return r;}
   function headerInfo(h){if(!h)return{name:'',hours:''};var spans=h.querySelectorAll('span');var name=spans.length?spans[0].textContent.trim():(h.textContent||'').trim().split('\n')[0];var hours='';spans.forEach(function(sp){var t=sp.textContent.trim();if(/🕐|⏰|Saturday|Sunday|AM|PM/u.test(t)&&t.length>hours.length)hours=t;});return{name:name,hours:hours.replace(/^(🕐|⏰)\s*/u,'').trim()};}
@@ -10081,7 +10094,8 @@ window.addEventListener('DOMContentLoaded', () => {
         if(/government\s*sales/i.test(t)){sec='gov';cur=null;return;}
         if(/^station\s*email$/i.test(t)){stationNext=true;return;}
         if(/^[🕐⏰]/u.test(raw)){d.hours=t;return;}
-        if(/✓|✔/.test(raw)&&t.length<30){d.chips.push(t.replace(/[✓✔]/g,'').trim());return;}
+        if(/✓|✔/.test(raw)&&t.length<30){d.chips.push({t:t.replace(/[✓✔]/g,'').trim(),ok:true});return;}
+        if(/✗|✘|✕/.test(raw)&&t.length<30){d.chips.push({t:t.replace(/[✗✘✕]/g,'').trim(),ok:false});return;}
         var href=isA?(el.getAttribute('href')||''):'';
         var em=href.indexOf('mailto:')===0?href.slice(7):((t.match(EMAIL_RE)||[])[0]||'');
         if(em){if(stationNext){d.station.push(em);stationNext=false;return;}(cur||person()).emails.push(em);return;}
@@ -10112,12 +10126,12 @@ window.addEventListener('DOMContentLoaded', () => {
       +'</div>';
     if(hours)h+='<div class="bd-sec bd-hours">⏰ '+esc(hours)+'</div>';
     var cols='';
-    if(d.sections.branch.length)cols+='<div><div class="bd-lbl">Branch manager</div>'+peopleHtml(d.sections.branch)+'</div>';
-    if(d.sections.regional.length)cols+='<div><div class="bd-lbl">Regional manager</div>'+peopleHtml(d.sections.regional)+'</div>';
+    if(d.sections.branch.length)cols+='<div><div class="bd-lbl">'+esc(card.getAttribute('data-plabel')||'Branch Manager')+'</div>'+peopleHtml(d.sections.branch)+'</div>';
+    if(d.sections.regional.length)cols+='<div><div class="bd-lbl">Regional Manager</div>'+peopleHtml(d.sections.regional)+'</div>';
     if(cols)h+='<div class="bd-sec"><div class="bd-pp">'+cols+'</div></div>';
     if(d.station.length)h+='<div class="bd-sec"><div class="bd-lbl">Station email</div>'+d.station.map(function(em){return'<div class="bd-rw"><span class="ic">✉️</span><a class="em" href="mailto:'+esc(em)+'">'+esc(em)+'</a> '+cpBtn(em)+'</div>';}).join('')+'</div>';
     if(d.sections.gov.length)h+='<div class="bd-sec"><div class="bd-lbl">Government sales</div><div class="bd-pp">'+peopleHtml(d.sections.gov)+'</div></div>';
-    if(d.chips.length)h+='<div class="bd-sec"><div class="bd-lbl">Services</div>'+d.chips.map(function(c){return'<span class="bd-chip">'+esc(c)+' ✓</span>';}).join('')+'</div>';
+    if(d.chips.length)h+='<div class="bd-sec"><div class="bd-lbl">Services</div>'+d.chips.map(function(c){return'<span class="bd-chip'+(c.ok?'':' no')+'">'+esc(c.t)+(c.ok?' ✓':'')+'</span>';}).join('')+'</div>';
     if(d.more.length)h+='<div class="bd-sec"><div class="bd-lbl">More info</div><div class="bd-more">'+d.more.map(esc).join('<br>')+'</div></div>';
     box.innerHTML=h;return box;
   }
@@ -10137,7 +10151,7 @@ window.addEventListener('DOMContentLoaded', () => {
         var rg=document.createElement('div');rg.className='br-rg';rg.innerHTML='<span></span><span></span>';rg.firstChild.textContent=it.info.name;rg.lastChild.textContent=it.cards.length;list.appendChild(rg);
         var rEntries=[];var byCity={},cOrder=[];
         it.cards.forEach(function(card){var c=cardCity(card)||'';if(!byCity[c]){byCity[c]=[];cOrder.push(c);}byCity[c].push(card);});
-        cOrder.sort(function(a,b){if(!a)return 1;if(!b)return -1;return byCity[b].length-byCity[a].length||a.localeCompare(b);});
+        cOrder.sort(function(a,b){return (a?0:1)-(b?0:1);});
         it.cityHeads=[];
         cOrder.forEach(function(c){
           var ch=null;
@@ -10145,8 +10159,9 @@ window.addEventListener('DOMContentLoaded', () => {
           byCity[c].forEach(function(card){
             var title=cardTitle(card);var m=title.match(/^\s*(\d{2,6})\s*[-–—]\s*(.*)$/);
             var row=document.createElement('div');row.className='br-it';
-            row.innerHTML='<span><b></b><span class="n"></span></span>';
+            row.innerHTML='<span><b></b><span class="n"></span></span><span class="ds"></span>';
             row.querySelector('b').textContent=m?m[1]:'';row.querySelector('.n').textContent=m?m[2]:title;
+            var _ds=cardLoc(card).dist;if(_ds&&_ds.toLowerCase()!==c.toLowerCase())row.querySelector('.ds').textContent=_ds;else row.querySelector('.ds').remove();
             var e={row:row,card:card,info:it.info,rg:rg,city:c};row.onclick=function(){select(e);};
             list.appendChild(row);entries.push(e);rEntries.push(e);
           });
