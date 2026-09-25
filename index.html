@@ -135,6 +135,7 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .bd-chip.no{background:#F4F2F0;color:#aaa;text-decoration:line-through}
 .bd-chip{display:inline-block;background:#EEF6EF;color:#2e7d4f;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;margin:0 6px 6px 0}
 .bd-more{font-size:13px;color:#555;line-height:1.7}
+.bd-role{display:inline-block;margin:8px 0 4px;font-size:11px;font-weight:700;color:#fff;background:var(--brc);border-radius:4px;padding:1px 8px}
 .br-list::-webkit-scrollbar{width:5px}
 .br-list::-webkit-scrollbar-track{background:transparent}
 .br-list::-webkit-scrollbar-thumb{background:var(--brc,#c0272d);border-radius:10px;opacity:.7}
@@ -2897,9 +2898,7 @@ const ELM_CITY_REGION={
 };
 const ELM_STATION_REGION_COLORS=new Proxy({},{get:function(){return '#3A6048';}});
 const ELM_STATION_REGION_ORDER=['West','Central','East','South','North','Other'];
-const ELM_CITY_REGION_UPPER={};
-Object.keys(ELM_CITY_REGION).forEach(function(k){ELM_CITY_REGION_UPPER[k.toUpperCase()]=ELM_CITY_REGION[k];});
-function elmCityToRegion(city){city=String(city||'').trim();return ELM_CITY_REGION[city]||ELM_CITY_REGION_UPPER[city.toUpperCase()]||'Other';}
+function elmCityToRegion(city){city=String(city||'').trim();return ELM_CITY_REGION[city]||'Other';}
 // Map detailed sheet regions (CR North/South, WR North/South, Eastern...) to unified 5 regions
 function elmMainRegion(raw){
   var r=String(raw||'').trim().toUpperCase();
@@ -3221,7 +3220,7 @@ const BRANCH_REGION_COLORS = {
   North:'#e65100',Northern:'#e65100'
 };
 
-function sheetPersonLabel(h){h=String(h||'').replace(/\s*(name|#)\s*$/i,'').replace(/managers\b/i,'Manager').replace(/\s+/g,' ').trim();return h||'Branch Manager';}
+function sheetPersonLabel(h){if(/advisor/i.test(String(h||'')))return'Branch Manager';h=String(h||'').replace(/\s*(name|#)\s*$/i,'').replace(/managers\b/i,'Manager').replace(/\s+/g,' ').trim();return h||'Branch Manager';}
 const NISSAN_AM={West:'ahmed.ateeq@petromin.com',South:'ahmed.ateeq@petromin.com',Central:'simon.white@petromin.com',East:'z.bakhurji@petromin.com'};
 function renderNissanBranchTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
@@ -3243,23 +3242,11 @@ function renderNissanBranchTab(arr, sheetName, brand){
   const isSP = sh.includes('spare');
   const isBP = sh.includes('body');
 
-  const spCc = (isSP && brand==='stellantis') ? 'a.akesh@petromin.com, cs.agent@petromin.com' : 'o.alghamdi@petromin.com, cs.agent@petromin.com';
   const emCfg = isSP
-    ? {req:{to:'Manager Branch',cc:spCc},
-       com:{to:'Manager Branch + CRTeam@petromin.com',cc:spCc}}
+    ? {req:{to:'Manager Branch',cc:'o.alghamdi@petromin.com, cs.agent@petromin.com'},
+       com:{to:'Manager Branch + CRTeam@petromin.com',cc:'o.alghamdi@petromin.com, cs.agent@petromin.com'}}
     : {req:{to:'Manager Branch',cc:'cs.agent@petromin.com'},
        com:{to:'Manager Branch + CRTeam@petromin.com',cc:'cs.agent@petromin.com'}};
-
-  // Extra branch-specific CC recipients for Stellantis Spare Parts (in addition to the shared CC above)
-  const STELLANTIS_SP_EXTRA_CC = {
-    'Khurais':['shahzad.ali@petromin.com','f.abdullah@petromin.com','abdullah.swaidan@petromin.com'],
-    'Automall':['tariq.jabsheh@petromin.com'],
-    'Madinah Road - JEDDAH':['e.abusalah@petromin.com'],
-    'Dammam':['osama.mohammed@petromin.com'],
-    'Khobar':['p.nerkar@petromin.com'],
-    'Jubail':['i.nasrallah@petromin.com'],
-    'Hail':['praveen.v@petromin.com']
-  };
 
   const emailHdr =
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">'
@@ -3342,7 +3329,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
         +'</div>'
       : '';
 
-    return '<div data-plabel="Branch Manager" style="background:#FEFEFD;border-radius:10px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
+    return '<div data-plabel="'+sheetPersonLabel(advisorCol)+'" style="background:#FEFEFD;border-radius:10px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
       // Branch name — colored header box
       +'<div style="background:'+col_color+'18;border-bottom:2px solid '+col_color+'22;padding:10px 14px;margin-bottom:0;text-align:center">'
       +'<div style="font-size:13px;font-weight:700;color:'+col_color+'">'+b.name.replace(/\s*\(.*?\)\s*/g,'').replace(/\n/g,' ').trim()+'</div>'
@@ -3354,7 +3341,6 @@ function renderNissanBranchTab(arr, sheetName, brand){
       +persHTML
       +govHTML
       +(brand==='nissan'&&NISSAN_AM[b.reg]?'<div style="margin-top:8px;padding-top:6px;border-top:1px solid #f0f0f0"><div style="font-size:10px;font-weight:700;color:'+col_color+';text-transform:uppercase">Regional Manager</div><div style="font-size:11px"><a href="mailto:'+NISSAN_AM[b.reg]+'">✉️ '+NISSAN_AM[b.reg]+'</a></div></div>':'')
-      +((isSP&&brand==='stellantis'&&STELLANTIS_SP_EXTRA_CC[b.name.trim()])?'<div style="margin-top:8px;padding-top:6px;border-top:1px solid #f0f0f0"><div style="font-size:10px;font-weight:700;color:'+col_color+';text-transform:uppercase">Also CC</div>'+STELLANTIS_SP_EXTRA_CC[b.name.trim()].map(function(em){return '<div style="font-size:11px"><a href="mailto:'+em+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+em+'</a></div>';}).join('')+'</div>':'')
       +(b.phone&&!b.persons.some(p=>p.phone===b.phone)?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+b.phone+'</div>':'')
       +(b.hours&&b.regHours&&b.hours.trim()!==b.regHours.trim()?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+b.hours+'</div>':'')
       +'</div></div>';
@@ -4011,19 +3997,7 @@ function renderPACTab(arr){
     return loc && loc.startsWith('http');
   }).slice(0, 9);
 
-  // Regional Manager per city — shown inside each branch card (not as a separate box)
-  var CITY_RM={
-    'Sakaka':{name:'Mohammed Sallam',phone:'0555047230',email:'m.sallam@petromin.com'},
-    'Dwadmi':{name:'Roummie Palma',phone:'0539143824',email:'roummie@petromin.com'},
-    'Al Kharj':{name:'Roummie Palma',phone:'0539143824',email:'roummie@petromin.com'},
-    'Khafji':{name:'Sumeet Bhat',phone:'0557554409',email:'sumeet.bhat@petromin.com'},
-    'Mohyail':{name:'Chirag Dhingra',phone:'0539200978',email:'c.dhingra@petromin.com'},
-    'Khamis Mushait':{name:'Chirag Dhingra',phone:'0539200978',email:'c.dhingra@petromin.com'},
-    'Yanbu':{name:'Chirag Dhingra',phone:'0539200978',email:'c.dhingra@petromin.com'},
-    'Tabuk':{name:'Chirag Dhingra',phone:'0539200978',email:'c.dhingra@petromin.com'},
-    'Taif':{name:'Faizan Shams',phone:'0550113348',email:'f.shams@petromin.com'}
-  };
-
+  var PAC_RM={'sakaka':['Mohammed Sallam','0555047230','m.sallam@petromin.com'],'dwadmi':['Roummie Palma','0539143824','roummie@petromin.com'],'al kharj':['Roummie Palma','0539143824','roummie@petromin.com'],'khafji':['Sumeet Bhat','0557554409','sumeet.bhat@petromin.com'],'mohyail':['Chirag Dhingra','0539200978','c.dhingra@petromin.com'],'khamis mushait':['Chirag Dhingra','0539200978','c.dhingra@petromin.com'],'yanbu':['Chirag Dhingra','0539200978','c.dhingra@petromin.com'],'tabuk':['Chirag Dhingra','0539200978','c.dhingra@petromin.com'],'taif':['Faizan Shams','0550113348','f.shams@petromin.com']};
   // Build workshop cards
   var cards=workshopRows.map(function(r){
     var branch=gv(r,branchKey), city=gv(r,cityKey);
@@ -4031,13 +4005,6 @@ function renderPACTab(arr){
     var loc=gv(r,locKey), hours=gv(r,hoursKey);
     if(!branch) return '';
     var hoursClean=hours.split('\n').map(function(s){return s.trim();}).filter(Boolean).join(' - ');
-    var rm=CITY_RM[city];
-    var rmHTML=rm?('<div style="margin-top:8px;padding-top:6px;border-top:1px solid #f0f0f0">'
-      +'<div style="font-size:10px;font-weight:700;color:#1565c0;text-transform:uppercase">Regional Manager</div>'
-      +(rm.name?'<div style="font-size:11px;color:#555">&#128100; '+rm.name+'</div>':'')
-      +(rm.phone?'<div style="font-size:11px;color:#555">&#128222; '+rm.phone+'</div>':'')
-      +(rm.email?'<div style="font-size:11px"><a href="mailto:'+rm.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">&#9993; '+rm.email+'</a></div>':'')
-      +'</div>'):'';
     return '<div style="background:#FEFEFD;border-radius:10px;text-align:center;padding:0;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)">'
       +'<div style="background:#c0272d18;border-bottom:2px solid rgba(192,39,45,.5)22;padding:10px 14px;border-radius:10px 10px 0 0">'
       +'<div style="font-size:13px;font-weight:700;color:#c0272d">'+branch+'</div>'
@@ -4048,10 +4015,48 @@ function renderPACTab(arr){
       +mkRow('&#128100;',bm)
       +mkRow('&#128222;',phone)
       +mkRow('&#9993;',email)
+      +(function(){var rm=PAC_RM[String(city||'').trim().toLowerCase()];if(!rm)return'';return'<div style="margin-top:8px;padding-top:6px;border-top:1px solid #f0f0f0"><div style="font-size:10px;font-weight:700;color:#c0272d;text-transform:uppercase">Regional Manager</div>'+mkRow('&#128100;',rm[0])+mkRow('&#128222;',rm[1])+mkRow('&#9993;',rm[2])+'</div>';})()
       +(hoursClean?'<div style="font-size:10px;color:#555;margin-top:8px;padding-top:6px;border-top:1px solid #f0f0f0">&#128336; '+hoursClean+'</div>':'')
-      +rmHTML
       +'</div></div>';
   }).filter(Boolean).join('');
+
+  // Build RM table — use the data that has City + RM name + RM email
+  var rmTableRows=arr.filter(function(r){
+    var branch=gv(r,branchKey);
+    var phone=gv(r,phoneKey);
+    var email=gv(r,emailKey);
+    // RM rows have email but NO phone number and NO location link
+    return !branch.match(/^\d/)&&!branch.includes('Workshop')&&gv(r,cityKey)&&(email||gv(r,bmKey));
+  });
+
+  var rmTable='';
+  if(rmTableRows.length){
+    rmTable='<div style="margin-top:20px">'
+      +'<div onclick="toggleRegion(\'pacRM\')" style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:#F4F7FA;border-radius:8px;margin-bottom:10px;cursor:pointer;border-left:4px solid #3A6898">'
+      +'<span style="font-size:13px;font-weight:700;color:#1565c0">&#127970; Regional Managers</span>'
+      +'<span id="ico_pacRM" style="color:#1565c0">&#9660;</span>'
+      +'</div>'
+      +'<div id="pacRM" style="overflow-x:auto;border-radius:10px;border:1px solid #e8eaed">'
+      +'<table style="width:100%;border-collapse:collapse;font-size:12px">'
+      +'<thead><tr style="background:#3A689818">'
+      +'<th style="padding:8px 12px;text-align:left;color:#3A6898;font-weight:700;border-bottom:2px solid #3A689822">City</th>'
+      +'<th style="padding:8px 12px;text-align:left;color:#3A6898;font-weight:700;border-bottom:2px solid #3A689822">Regional Manager</th>'
+      +'<th style="padding:8px 12px;text-align:left;color:#3A6898;font-weight:700;border-bottom:2px solid #3A689822">Email</th>'
+      +'</tr></thead><tbody>'
+      +rmTableRows.map(function(r){
+        var city=gv(r,cityKey), rm=gv(r,bmKey), email=gv(r,emailKey);
+        if(!city&&!rm) return '';
+        return '<tr style="border-bottom:1px solid #f5f5f5">'
+          +'<td style="padding:7px 12px;color:#555;text-align:center">'+city+'</td>'
+          +'<td style="padding:7px 12px;font-weight:600;color:#1a1a2e">'+rm+'</td>'
+          +'<td style="padding:7px 12px;text-align:center">'+(email?'<a href="mailto:'+email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">'+email+'</a>':'—')+'</td>'
+          +'</tr>';
+      }).filter(Boolean).join('')
+      +'</tbody></table></div></div>';
+  }
+
+  // Static RM table
+  var staticRM='';
 
   // Request / Complaint email cards — read from the PAC sheet (add "for Request"
   // / "for Complaint" + TO/CC rows there). Shows nothing until those rows exist.
@@ -4059,8 +4064,8 @@ function renderPACTab(arr){
 
   return '<div style="margin-bottom:12px">'
     +pacEmailCards
-    // Top bar: title only (Regional Manager now shown inside each branch card)
-    +'<div style="display:flex;align-items:center;justify-content:center;margin-bottom:14px;gap:10px">'
+    // Top bar: title + RM button on right
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px">'
     +'<div style="font-size:14px;font-weight:700;color:#c0272d;padding:10px;background:#fef2f2;border-radius:8px;flex:1;text-align:center">&#128295; Petromin Auto Care (PAC) &mdash; '+workshopRows.length+' workshops</div>'
     +'</div>'
     +'<div class="ref-cards-grid">'+cards+'</div>'
@@ -4600,32 +4605,6 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
 
   const mapLink=(coord,link)=>{if(link&&/^https?:/.test(link))return link;if(!coord)return'';if(/^https?:/.test(coord))return coord;return 'https://www.google.com/maps?q='+encodeURIComponent(coord);};
 
-  // Fuel Station — same card + searchable-list format as the other reference sections
-  if(kind==='fuel'){
-    const fuelCard=it=>{
-      const loc=mapLink(it.coord,it.link);
-      return '<div style="background:#FEFEFD;border-radius:10px;text-align:center;padding:0;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)">'
-        +'<div style="background:'+color+'18;border-bottom:2px solid '+color+'22;padding:10px 14px;border-radius:10px 10px 0 0">'
-        +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+(it.code?it.code+' - ':'')+it.name+'</div>'
-        +(it.city?'<div style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:12px;color:#333;font-weight:600;margin-top:3px;direction:ltr"><span>📌</span><span>'+it.city+'</span></div>':'')
-        +(loc?'<div style="margin-top:5px;direction:ltr"><a href="'+loc+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600;text-decoration:none">🗺️ Location</a></div>':'')
-        +'</div>'
-        +'<div style="padding:10px 14px">'
-        +(it.am?'<div style="font-size:12px;font-weight:600;color:#555;margin-bottom:2px">👤 '+it.am+'</div>':'')
-        +(it.mobile?'<div style="font-size:12px;color:#555;margin-bottom:2px">📞 '+it.mobile+'</div>':'')
-        +(it.rm?'<div style="margin-top:8px;padding-top:6px;border-top:1px solid #f0f0f0"><div style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase">Regional Manager</div><div style="font-size:12px;font-weight:600;color:#555;margin-top:2px">👤 '+it.rm+'</div></div>':'')
-        +'</div></div>';
-    };
-    return '<div style="font-size:11px;color:#999;margin-bottom:10px;text-align:center">Total: '+items.length+' locations</div>'
-      +order.map(g=>{
-        const its=groups[g];
-        const gid='peLoc_fuel_'+g.replace(/[^A-Za-z0-9]/g,'');
-        return '<div style="margin-bottom:12px">'
-          +'<div onclick="toggleRegion(\''+gid+'\')" style="display:flex;align-items:center;gap:10px;padding:9px 14px;background:'+color+'12;border-radius:0 8px 8px 0;border-left:4px solid '+color+';cursor:pointer;margin-bottom:8px"><span style="font-size:13px;font-weight:800;color:'+color+'">'+icon+' '+g+'</span><span style="font-size:11px;color:#aaa">('+its.length+')</span><span id="ico_'+gid+'" style="margin-left:auto;color:'+color+'">▼</span></div>'
-          +'<div id="'+gid+'"><div class="ref-cards-grid">'+its.map(fuelCard).join('')+'</div></div></div>';
-      }).join('');
-  }
-
   const cols = kind==='fuel' ? ['Code','Station','City','AM','Mobile','RM','Location']
     : kind==='ecowash' ? ['Code','Station','City','Area Manager','Location']
     : ['Code','Station','City','Contact','Mobile','Email','Location'];
@@ -4646,9 +4625,25 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
   const body=order.map(g=>{
     const its=groups[g];
     const gid='peLoc_'+kind+'_'+g.replace(/[^A-Za-z0-9]/g,'');
-    const table='<div style="overflow-x:auto;background:#FEFEFD;border:1px solid #f0e6c8;border-top:0;border-radius:0 0 8px 8px"><table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;word-break:break-word"><thead><tr style="background:'+color+'0f">'+cols.map(th).join('')+'</tr></thead><tbody>'
-      +its.map((it,i)=>'<tr style="background:'+(i%2?'#FDFBF4':'#fff')+'">'+rowFor(it)+'</tr>').join('')
-      +'</tbody></table></div>';
+    const esc2=x=>String(x==null?'':x).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    const cardFor=it=>{
+      const href=mapLink(it.coord,it.link);
+      const coordTxt=/-?\d{1,3}\.\d+\s*,\s*-?\d{1,3}\.\d+/.test(String(it.coord||''))?String(it.coord).match(/-?\d{1,3}\.\d+\s*,\s*-?\d{1,3}\.\d+/)[0]:'Location';
+      const plabel=kind==='fuel'?'Area Manager':(kind==='ecowash'?'Area Manager':'Contact');
+      const person=kind==='fuel'?it.am:(kind==='ecowash'?it.mgr:it.contact);
+      return '<div data-plabel="'+plabel+'" style="background:#FEFEFD;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07)">'
+        +'<div style="background:'+color+'12;padding:10px 14px;text-align:center">'
+        +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+esc2((it.code?it.code+' - ':'')+it.name)+'</div>'
+        +(it.city?'<div style="font-size:11px;color:#666;margin-top:3px">📌 '+esc2(it.city)+'</div>':'')
+        +(href?'<div style="margin-top:4px"><a href="'+esc2(href)+'" target="_blank" style="color:'+color+';font-size:11px">🗺️ '+esc2(coordTxt)+'</a></div>':'')
+        +'</div><div style="padding:10px 14px;text-align:center">'
+        +(person?'<div style="font-size:12px;color:#555">👤 '+esc2(person)+'</div>':'')
+        +(it.mobile?'<div style="font-size:12px">📞 '+esc2(it.mobile)+'</div>':'')
+        +(it.email&&String(it.email).includes('@')?'<div style="font-size:11px"><a href="mailto:'+esc2(it.email)+'">✉️ '+esc2(it.email)+'</a></div>':'')
+        +(kind==='fuel'&&it.rm?'<div style="margin-top:8px;padding-top:6px;border-top:1px solid #f0f0f0"><div style="font-size:10px;font-weight:700;color:'+color+';text-transform:uppercase">Regional Manager</div><div style="font-size:12px">👤 '+esc2(it.rm)+'</div></div>':'')
+        +'</div></div>';
+    };
+    const table='<div class="ref-cards-grid">'+its.map(cardFor).join('')+'</div>';
     return '<div style="margin-bottom:10px">'
       +'<div onclick="toggleRegion(\''+gid+'\')" style="display:flex;align-items:center;gap:10px;padding:9px 14px;background:'+color+'12;border-radius:0 8px 8px 0;border-left:4px solid '+color+';cursor:pointer;margin-bottom:6px"><span style="font-size:13px;font-weight:800;color:'+color+'">'+icon+' '+g+'</span><span style="font-size:11px;color:#aaa">('+its.length+')</span><span id="ico_'+gid+'" style="margin-left:auto;color:'+color+'">▼</span></div>'
       +'<div id="'+gid+'">'+table+'</div></div>';
@@ -5071,9 +5066,8 @@ function renderNosFranchiseTab(arr){
     'Qunfidha':'West','Al Qunfudhah':'West','Rania':'West','Khoar':'West',
     'Bisha':'South','Jizan':'South','Jazan':'South','Najran':'South','Abha':'South','Khamis Mushait':'South','Al Bahah':'South','Baljurashi':'South','Sharorah':'South',
     'Sakaka':'North','Al Qurayyat':'North','Arar':'North','Turaif':'North','Hail':'North','Tabuk':'North'};
-  const SUPP_UPPER={};
-  Object.keys(SUPP).forEach(k=>{SUPP_UPPER[k.toUpperCase()]=SUPP[k];});
-  const cityRegion=c=>{const k=String(c||'').trim();return SUPP[k]||SUPP_UPPER[k.toUpperCase()]||elmCityToRegion(k);};
+  const _nz=x=>String(x||'').toUpperCase().replace(/[^A-Z]/g,'');const _SUPPN={};Object.keys(SUPP).forEach(k=>_SUPPN[_nz(k)]=SUPP[k]);const _ELMN={};Object.keys(ELM_CITY_REGION).forEach(k=>_ELMN[_nz(k)]=ELM_CITY_REGION[k]);
+  const cityRegion=c=>{const k=String(c||'').trim();return SUPP[k]||_SUPPN[_nz(k)]||_ELMN[_nz(k)]||elmCityToRegion(k);};
   const REG_ORDER=['West','Central','East','South','North','Other'];
   const REG_LABEL={West:'West',Central:'Central',East:'East',North:'North',South:'South',Other:'Other'};
   const regGroups={};
@@ -5089,11 +5083,11 @@ function renderNosFranchiseTab(arr){
       +'<span style="font-size:11px;color:#aaa">('+items.length+')</span>'
       +'<span id="ico_'+gid+'" style="margin-left:auto;color:'+color+'">▼</span></div>'
       +'<div id="'+gid+'"><div class="ref-cards-grid">'+items.map(it=>{
-        return '<div style="background:#FEFEFD;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
+        return '<div data-plabel="Owner" style="background:#FEFEFD;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
           +'<div style="background:'+color+'12;padding:10px 14px;text-align:center;border-bottom:2px solid '+color+'22">'
           +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+it.branch+'</div>'
-          +'<div style="font-size:10px;color:#888;margin-top:3px;font-weight:700;text-transform:uppercase;letter-spacing:.03em">📍 '+it.city+'</div>'
-          +(it.district?'<div style="font-size:11px;color:#888;margin-top:3px">📌 '+it.district+'</div>':'')
+          +'<div style="font-size:10px;color:#888;margin-top:3px;font-weight:700;text-transform:uppercase;letter-spacing:.03em">📌 '+it.city+'</div>'
+          +(it.district?'<div style="font-size:11px;color:#888;margin-top:3px">📍 '+it.district+'</div>':'')
           +'</div>'
           +'<div style="padding:10px 14px;text-align:center">'
           +(it.owner?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+it.owner+'</div>':'')
@@ -6082,6 +6076,7 @@ function renderBodyShopTab(arr){
             branches[name]={
               name,
               dist:distCol?String(r[distCol]||'').trim():'',
+              city:String(r[keys[1]]||'').trim(),
               hours:hoursCol?cleanHours(r[hoursCol]):'',
               gps:gpsCol?String(r[gpsCol]||'').trim():'',
               persons:[]
@@ -6105,6 +6100,7 @@ function renderBodyShopTab(arr){
           return '<div style="background:#FEFEFD;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
             +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
             +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+b.name+'</div>'
+            +(b.city?'<div style="font-size:11px;color:#666;margin-top:3px">📌 '+b.city+'</div>':'')
             +(b.dist?'<div style="font-size:11px;color:#888;margin-top:3px">📍 '+b.dist+'</div>':'')
             +'</div>'
             +'<div style="padding:10px 14px;text-align:center">'
@@ -10062,9 +10058,9 @@ window.addEventListener('DOMContentLoaded', () => {
 <script>
 /* ── Branch pages: list on the left, selected branch details on the right ── */
 (function(){
-  var CODE_RE=/^\s*\d{2,6}\s*[-–—]\s*\S/;
+  var CODE_RE=/^\s*\d{2,10}\s*[-–—]\s*\S/;
   function cardTitle(card){var h=card.firstElementChild;if(!h)return'';var t=h.firstElementChild||h;return (t.textContent||'').replace(/\s+/g,' ').trim();}
-  function cardLoc(card){var h=card.firstElementChild;var r={city:'',dist:''};if(!h)return r;var t=h.textContent||'';
+  function cardLoc(card){var h0=card.firstElementChild;var r={city:'',dist:''};if(!h0)return r;var h=h0.cloneNode(true);[].slice.call(h.querySelectorAll('a')).forEach(function(a){a.remove();});var t=h.textContent||'';
     var c=t.match(/📌\s*([^\n]*?)\s*(?=📍|🗺|$)/u);var d=t.match(/📍\s*([^\n]*?)\s*(?=📌|🗺|$)/u);
     if(c)r.city=c[1].trim();
     if(d){var dv=d[1].trim();var _pp=dv.split(/\s[-–]\s/);if(!r.city&&_pp.length>1&&/^[A-Za-z][A-Za-z .'-]*$/.test(_pp[_pp.length-1].trim())){r.city=_pp.pop().trim();r.dist=_pp.join(' - ').trim();}else r.dist=dv;}
@@ -10088,31 +10084,42 @@ window.addEventListener('DOMContentLoaded', () => {
     var hasPerson=/👤/u.test(bt)||!!c.querySelector('a[href^="mailto:"]');return hasLoc&&hasPerson;}
   function isBranchGrid(g){var cards=[].slice.call(g.children);if(!cards.length)return false;var n=cards.filter(looksBranch).length;return n/cards.length>=0.5;}
   function blockOf(g){var p=g.parentElement,r;if(p&&p.id&&p.parentElement){r={block:p.parentElement,header:p.previousElementSibling};}else{r={block:p,header:g.previousElementSibling};}if(!r.block||r.block.children.length>3||r.block.querySelectorAll('.ref-cards-grid').length>1||r.block.id==='refContent'){r={block:g,header:null};}return r;}
-  function headerInfo(h){if(!h)return{name:'',hours:''};var spans=h.querySelectorAll('span');var name=spans.length?spans[0].textContent.trim():(h.textContent||'').trim().split('\n')[0];var hours='';spans.forEach(function(sp){var t=sp.textContent.trim();if(/🕐|⏰|Saturday|Sunday|AM|PM/u.test(t)&&t.length>hours.length)hours=t;});return{name:name,hours:hours.replace(/^(🕐|⏰)\s*/u,'').trim()};}
+  function headerInfo(h){if(!h||(h.getAttribute('onclick')||'').indexOf('toggleRegion')<0)return{name:'',hours:''};var spans=h.querySelectorAll('span');var name=spans.length?spans[0].textContent.trim():(h.textContent||'').trim().split('\n')[0];var hours='';spans.forEach(function(sp){var t=sp.textContent.trim();if(/🕐|⏰|Saturday|Sunday|AM|PM/u.test(t)&&t.length>hours.length)hours=t;});return{name:name,hours:hours.replace(/^(🕐|⏰)\s*/u,'').trim()};}
   function brandColor(card){var h=card.firstElementChild;var t=h&&(h.firstElementChild||h);var c=t?getComputedStyle(t).color:'';return c||'#c0272d';}
   function darker(rgb){var m=rgb.match(/\d+/g);if(!m)return rgb;return'rgb('+m.slice(0,3).map(function(v){return Math.round(v*0.8);}).join(',')+')';}
   function tint(rgb){var m=rgb.match(/\d+/g);if(!m)return'#FBEDEE';return'rgba('+m[0]+','+m[1]+','+m[2]+',.09)';}
 
 
   var EMAIL_RE=/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/;
-  function clean(t){return String(t||'').replace(/[👤📞📱✉️📧📌📍🗺️🕐⏰🏢☎]/gu,'').replace(/\uFE0F/g,'').replace(/\s+/g,' ').trim();}
+  function clean(t){return String(t||'').replace(/[👤📞📱✉️📧📌📍🗺️🕐⏰🏢☎🧑💼]/gu,'').replace(/[\uFE0F\u200D]/g,'').replace(/\s+/g,' ').trim();}
   function parseCard(card){
     var h=card.firstElementChild;if(!h)return null;
     var titleEl=h.firstElementChild||h;var title=(titleEl.textContent||'').replace(/\s+/g,' ').trim();
     var map=null,mapTxt='';[].slice.call(h.querySelectorAll('a[href]')).forEach(function(a){if(/^https?:/.test(a.getAttribute('href'))&&!map){map=a.getAttribute('href');mapTxt=clean(a.textContent);}});
     var subs=[];[].slice.call(h.querySelectorAll('span,div')).forEach(function(el){if(el===titleEl||el.contains(titleEl)||el.children.length)return;if(el.closest('a'))return;var t=clean(el.textContent);if(t&&t!==clean(title)&&subs.indexOf(t)<0)subs.push(t);});
     var d={title:title,map:map,mapTxt:mapTxt,subs:subs,sections:{branch:[],regional:[],gov:[]},station:[],chips:[],hours:'',more:[]};
-    var sec='branch',cur=null,stationNext=false;
-    function person(){cur={name:'',phones:[],emails:[]};d.sections[sec].push(cur);return cur;}
+    var sec='branch',cur=null,stationNext=false,role='';
+    function person(){cur={name:'',phones:[],emails:[],role:''};d.sections[sec].push(cur);return cur;}
     var body=[].slice.call(card.children,1);
     body.forEach(function(root){
-      var nodes=[root].concat([].slice.call(root.querySelectorAll('*')));
+      var nodes=[root].concat([].slice.call(root.querySelectorAll('*')));var done=new Set();
       nodes.forEach(function(el){
+        if(done.has(el))return;
         var isA=el.tagName==='A';
+        var raw0=(el.textContent||'').trim();
+        var unit=!isA&&el.children.length&&/^(👤|📞|📱|☎|🧑|🕐|⏰)/u.test(raw0)&&!el.querySelector('div,p,li,table');
+        if(unit){[].slice.call(el.querySelectorAll('*')).forEach(function(x){done.add(x);});
+          var ml=[].slice.call(el.querySelectorAll('a[href^="mailto:"]')).map(function(a){return a.getAttribute('href').slice(7);});
+          var tl=el.querySelector('a[href^="tel:"]');
+          if(/^🧑/u.test(raw0)){var pp=clean(raw0).split(/\s*·\s*/);cur={name:pp[0]||'',phones:pp[1]?[pp[1]]:[],emails:[],role:'Supervisor'};d.sections[sec].push(cur);return;}
+          if(/^(🕐|⏰)/u.test(raw0)){d.hours=clean(raw0);return;}
+          if(/^👤/u.test(raw0)){person().name=clean(raw0.replace(EMAIL_RE,''));ml.forEach(function(m){cur.emails.push({e:m,role:role});});return;}
+          var ph=tl?tl.getAttribute('href').slice(4):clean(raw0);if(!cur||cur.emails.length)person();cur.phones.push(ph);return;}
         if(!isA&&el.children.length&&![].slice.call(el.children).every(function(c){return c.tagName==='BR';}))return;
         if(!isA&&el.closest('a'))return;
         var raw=(el.textContent||'').trim();if(!raw)return;var t=clean(raw);
-        if(/^(regional|area)\s*manager$/i.test(t)){sec='regional';cur=null;return;}
+        if(/^(TO|CC)$/.test(t)){role=t;return;}
+        if(/^(regional|area)\s*manager$/i.test(t)){sec='regional';cur=null;role='';return;}
         if(/government\s*sales/i.test(t)){sec='gov';cur=null;return;}
         if(/^station\s*email$/i.test(t)){stationNext=true;return;}
         if(/^[🕐⏰]/u.test(raw)){d.hours=t;return;}
@@ -10120,11 +10127,12 @@ window.addEventListener('DOMContentLoaded', () => {
         if(/✗|✘|✕/.test(raw)&&t.length<30){d.chips.push({t:t.replace(/[✗✘✕]/g,'').trim(),ok:false});return;}
         var href=isA?(el.getAttribute('href')||''):'';
         var em=href.indexOf('mailto:')===0?href.slice(7):((t.match(EMAIL_RE)||[])[0]||'');
-        if(em){if(stationNext){d.station.push(em);stationNext=false;return;}(cur||person()).emails.push(em);return;}
+        if(em){if(stationNext){d.station.push(em);stationNext=false;return;}(cur||person()).emails.push({e:em,role:role});return;}
         if(href.indexOf('tel:')===0||/^📞|^📱|^☎/u.test(raw)){var ph=href.indexOf('tel:')===0?href.slice(4):t;if(!cur||cur.emails.length)person();cur.phones.push(ph);return;}
         if(/^👤/u.test(raw)){person().name=t;return;}
+        if(/^🧑/u.test(raw)){var pp2=t.split(/\s*·\s*/);cur={name:pp2[0]||'',phones:pp2[1]?[pp2[1]]:[],emails:[],role:'Supervisor'};d.sections[sec].push(cur);return;}
         if(isA)return;
-        if(d.more.indexOf(t)<0)d.more.push(t);
+        if(t&&d.more.indexOf(t)<0)d.more.push(t);
       });
     });
     ['branch','regional','gov'].forEach(function(k){d.sections[k]=d.sections[k].filter(function(p){return p.name||p.phones.length||p.emails.length;});});
@@ -10134,12 +10142,13 @@ window.addEventListener('DOMContentLoaded', () => {
   function esc(t){return String(t||'').replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
   function cpBtn(v){return'<button type="button" class="bd-cp" data-cp="'+esc(v)+'">copy</button>';}
   function peopleHtml(list){return list.map(function(p){
-    return'<div class="bd-p">'+(p.name?'<div class="bd-nm">'+esc(p.name)+'</div>':'')
+    return'<div class="bd-p">'+(p.role?'<div class="bd-lbl" style="margin-bottom:2px">'+esc(p.role)+'</div>':'')+(p.name?'<div class="bd-nm">'+esc(p.name)+'</div>':'')
       +p.phones.map(function(ph){return'<div class="bd-rw"><span class="ic">📞</span>'+esc(ph)+' '+cpBtn(ph)+'</div>';}).join('')
-      +p.emails.map(function(em){return'<div class="bd-rw"><span class="ic">✉️</span><a class="em" href="mailto:'+esc(em)+'">'+esc(em)+'</a> '+cpBtn(em)+'</div>';}).join('')+'</div>';}).join('');}
+      +(function(){var groups={},ord=[];p.emails.forEach(function(x){var k=x.role||'';if(!groups[k]){groups[k]=[];ord.push(k);}groups[k].push(x.e);});
+        return ord.map(function(k){return(k?'<div class="bd-role">'+k+'</div>':'')+groups[k].map(function(em){return'<div class="bd-rw"><span class="ic">✉️</span><a class="em" href="mailto:'+esc(em)+'">'+esc(em)+'</a> '+cpBtn(em)+'</div>';}).join('');}).join('');})()+'</div>';}).join('');}
   function renderDetail(card,info){
     var d=parseCard(card);if(!d)return null;
-    var m=d.title.match(/^\s*(\d{2,6})\s*[-–—]\s*(.*)$/);
+    var m=d.title.match(/^\s*(\d{2,10})\s*[-–—]\s*(.*)$/);
     var box=document.createElement('div');box.className='bd-box';
     var hours=info.hours||d.hours;
     var h='<div class="bd-head"><div class="bd-title">'+(m?'<b>'+esc(m[1])+'</b>'+esc(m[2]):esc(d.title))+'</div>'
@@ -10161,8 +10170,21 @@ window.addEventListener('DOMContentLoaded', () => {
     var done=function(){var o=b.textContent;b.textContent='copied ✓';setTimeout(function(){b.textContent=o;},1200);};
     if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(v).then(done,done);}else{var ta=document.createElement('textarea');ta.value=v;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}ta.remove();done();}});
 
+  var REG_N={};(function(){var nz=function(x){return String(x||'').toUpperCase().replace(/[^A-Z]/g,'');};
+    if(typeof ELM_CITY_REGION!=='undefined')Object.keys(ELM_CITY_REGION).forEach(function(k){REG_N[nz(k)]=ELM_CITY_REGION[k];});
+    var extra={Mecca:'West',Makkah:'West',Madinah:'West',Madina:'West',Medina:'West',Jeddah:'West',Taif:'West',Yanbu:'West',Thuwal:'West',Rabigh:'West',Riyadh:'Central',Qassim:'Central',Buraydah:'Central',Unayzah:'Central',Kharj:'Central',AlKharj:'Central',Dwadmi:'Central',Dawadmi:'Central',Hail:'North',Tabuk:'North',Sakaka:'North',Arar:'North',Dammam:'East',Khobar:'East',Jubail:'East',AlHassa:'East',Hofuf:'East',Khafji:'East',Abha:'South',KhamisMushait:'South',Jizan:'South',Najran:'South',Mohyail:'South',Bisha:'South',Baha:'South'};
+    Object.keys(extra).forEach(function(k){if(!REG_N[nz(k)])REG_N[nz(k)]=extra[k];});
+    window.__brRegionOf=function(c){return REG_N[nz(c)]||'';};})();
+  function regionSplit(gr){var out=[];gr.items.forEach(function(it){
+      if(it.info.name){out.push(it);return;}
+      var by={},ord=['West','Central','East','South','North','Other'];
+      it.cards.forEach(function(c){var rg=window.__brRegionOf(cardCity(c))||'Other';(by[rg]=by[rg]||[]).push(c);});
+      var keys=ord.filter(function(k){return by[k];});
+      if(keys.length===1&&keys[0]==='Other'){out.push(it);return;}
+      keys.forEach(function(k){out.push({block:it.block,info:{name:k,hours:''},cards:by[k]});});});
+    gr.items=out;}
   function build(groups){
-    groups.forEach(function(gr){
+    groups.forEach(function(gr){regionSplit(gr);
       var first=gr.items[0];var color=brandColor(first.cards[0]);
       var md=document.createElement('div');md.className='br-md';md.style.setProperty('--brc',color);md.style.setProperty('--brbg',tint(color));md.style.setProperty('--brcd',darker(color));
       var list=document.createElement('div');list.className='br-list';
@@ -10170,7 +10192,7 @@ window.addEventListener('DOMContentLoaded', () => {
       var detail=document.createElement('div');detail.className='br-detail';
       var entries=[];
       gr.items.forEach(function(it){
-        var rg=document.createElement('div');rg.className='br-rg';rg.innerHTML='<span></span><span></span>';rg.firstChild.textContent=it.info.name;rg.lastChild.textContent=it.cards.length;list.appendChild(rg);
+        var rg=document.createElement('div');rg.className='br-rg';rg.innerHTML='<span></span><span></span>';rg.firstChild.textContent=it.info.name;rg.lastChild.textContent=it.cards.length;if(!it.info.name)rg.style.display='none';list.appendChild(rg);
         var rEntries=[];var byCity={},cOrder=[];
         it.cards.forEach(function(card){var c=cardCity(card)||'';if(!byCity[c]){byCity[c]=[];cOrder.push(c);}byCity[c].push(card);});
         cOrder.sort(function(a,b){return (a?0:1)-(b?0:1);});
@@ -10179,7 +10201,7 @@ window.addEventListener('DOMContentLoaded', () => {
           var ch=null;
           if(c){ch=document.createElement('div');ch.className='br-ct';ch.innerHTML='<span></span><span></span>';ch.firstChild.textContent=c;ch.lastChild.textContent=byCity[c].length;list.appendChild(ch);it.cityHeads.push({el:ch,city:c});}
           byCity[c].forEach(function(card){
-            var title=cardTitle(card);var m=title.match(/^\s*(\d{2,6})\s*[-–—]\s*(.*)$/);
+            var title=cardTitle(card);var m=title.match(/^\s*(\d{2,10})\s*[-–—]\s*(.*)$/);
             var row=document.createElement('div');row.className='br-it';
             row.innerHTML='<span><b></b><span class="n"></span></span><span class="ds"></span>';
             row.querySelector('b').textContent=m?m[1]:'';row.querySelector('.n').textContent=m?m[2]:title;
@@ -10206,7 +10228,7 @@ window.addEventListener('DOMContentLoaded', () => {
       var sec=gr.parent.closest('[id^="page"]')||gr.parent;
       md.appendChild(list);md.appendChild(detail);
       gr.parent.insertBefore(md,gr.items[0].block);
-      gr.items.forEach(function(it){it.block.classList.add('br-hidden');});
+      gr.items.forEach(function(it){it.block&&it.block.classList.add('br-hidden');});
       // hide the page's old branch search box (the new list has its own)
       [].slice.call(gr.parent.querySelectorAll('input[placeholder*="Search by branch"]')).forEach(function(inp){if(!inp.classList.contains('br-search')&&inp.parentElement)inp.parentElement.classList.add('br-hidden');});
       if(entries.length)select(entries[0]);
