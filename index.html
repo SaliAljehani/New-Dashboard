@@ -111,6 +111,26 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 @media(max-width:900px){.ag-kpis,.att-strip{grid-template-columns:repeat(3,1fr)}}
 #page4 td{border-bottom-color:#f0edea!important;padding-top:9px;padding-bottom:9px}
 #page4 th{border-bottom-width:1px!important}
+.bd-box{background:#FDFDFC;border:0.5px solid #eee;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow:hidden;color:#1a1a2e}
+.bd-head{padding:18px 22px;background:var(--brbg)}
+.bd-title{font-size:20px;font-weight:700}
+.bd-title b{color:var(--brc);margin-right:6px}
+.bd-sub{font-size:13px;color:#777;margin-top:5px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.bd-sub a{color:#1565c0;text-decoration:none;font-weight:600}
+.bd-sec{padding:14px 22px;border-top:1px solid #f2efec}
+.bd-hours{font-size:13px;color:#666}
+.bd-lbl{font-size:12px;color:#999;margin-bottom:8px;font-weight:500}
+.bd-pp{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.bd-p+.bd-p{margin-top:12px}
+.bd-nm{font-size:15px;font-weight:600;margin-bottom:6px}
+.bd-rw{font-size:14px;margin-bottom:5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;word-break:break-all}
+.bd-rw .ic{width:18px;color:#bbb;flex-shrink:0;text-align:center}
+.bd-rw a.em{color:var(--brcd);text-decoration:none;font-weight:600}
+.bd-rw a.em:hover{text-decoration:underline}
+.bd-cp{border:1px solid #e8e5e1;background:#fff;border-radius:6px;padding:1px 8px;color:#999;font-size:11px;cursor:pointer}
+.bd-cp:hover{color:var(--brcd);border-color:var(--brc)}
+.bd-chip{display:inline-block;background:#EEF6EF;color:#2e7d4f;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;margin:0 6px 6px 0}
+.bd-more{font-size:13px;color:#555;line-height:1.7}
 .br-hidden{display:none!important}
 .br-md{display:grid;grid-template-columns:320px minmax(0,1fr);gap:14px;align-items:start;margin-bottom:16px}
 .br-list{background:#FDFDFC;border:0.5px solid #eee;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:10px;max-height:72vh;overflow-y:auto;position:sticky;top:10px}
@@ -2765,7 +2785,7 @@ const ELM_REGION_COLORS=new Proxy({},{get:function(){return ELM_GREEN;}});
 const ELM_REGION_ORDER=['CR North','CR South','Central','Centeral','Center','WR North','WR South','Western','West','Eastern','East','Northern','Southern'];
 const ELM_CITY_AR={'Jeddah':'جدة','Makkah':'مكة المكرمة','Mecca':'مكة المكرمة','Madinah':'المدينة المنورة','Medina':'المدينة المنورة','Madina':'المدينة المنورة','Riyadh':'الرياض','Ryiadh':'الرياض','Dammam':'الدمام','Khobar':'الخبر','Al Khobar':'الخبر','Jubail':'الجبيل','Al Jubail':'الجبيل','Hassa':'الأحساء','Al Hofuf':'الهفوف','Jizan':'جيزان','Jazan':'جازان','Hail':'حائل','Buraydah':'بريدة','Buraidah':'بريدة','Unayzah':'عنيزة','Unaizah':'عنيزة','Tabuk':'تبوك','Abha':'أبها','Taif':'الطائف','Yanbu':'ينبع','Najran':'نجران','Sharorah':'شرورة','Baha':'الباحة','Al Bahah':'الباحة','Baljurashi':'بلجرشي','Sakaka':'سكاكا','Arar':'عرعر','Turaif':'طريف','Duba':'ضباء','Khamis Mushait':'خميس مشيط','Kharj':'الخرج','Al-Kharj':'الخرج','Dwadmi':'الدوادمي','Al Duwadimi':'الدوادمي','Al Duwadimi ':'الدوادمي','Rabigh':'رابغ','Khulais':'خليص','Safwa':'صفوة','Al Jumum':'الجموم','Bani Tamim':'بني تميم','Al Quwaiiyah':'القويعية','Shaqra':'شقراء','Az Zulfi':'الزلفي','Al Mithnab':'المذنب','Ar Rass':'الرص','Al Bukayriyah':'البكيرية','Abu Arish':'أبو عريش','Sabya':'صبيا','Al Wajh':'الوجه','Al Qurayyat':'القريات','Al Henakiyah':'الحناكية','Khaybar':'خيبر','Hafar Al Batin':'حفر الباطن','Al Faihaa':'الفيحاء','Buqayq':'بقيق','Khafji':'الخفجي','Almajaridah':'المجاردة','Al Namas':'النماص','Sabt Al Alayah':'سبت العلاية','Al Ula':'العلا','Tanomah':'تنومة','Al Sharqiyyah':'الشرقية','Bisha':'بيشة'};
 function elmNum(n){var s=String(n==null?'':n).trim();if(!s||s==='-')return'';if(/[eE]\+/.test(s)){var p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;}
-function elmCity(c){c=String(c||'').trim();return ELM_CITY_AR[c]?ELM_CITY_AR[c]+' · '+c:c;}
+function elmCity(c){return String(c||'').trim();}
 function elmClean(rows){return (rows||[]).map(function(r){return Array.isArray(r)?r.map(function(x){return String(x==null?'':x).trim();}):[];});}
 function elmSortRegs(keys){return keys.sort(function(a,b){var ia=ELM_REGION_ORDER.indexOf(a);var ib=ELM_REGION_ORDER.indexOf(b);return (ia<0?99:ia)-(ib<0?99:ib);});}
 function elmMapBtn(map,gps){
@@ -2860,6 +2880,8 @@ function renderElectrominBranchTab(rows,mode){
 
 // EV Charging Stations — grouped by region
 const ELM_CITY_REGION={
+  "HOTA":'Central',"WADY DAWASIR":'Central',"LAYLA":'Central',"DHALAM":'Central',"QUWAIIYAH":'Central',"AFIF":'Central',"AL MAJMA'AH":'Central',"DAWADAMY":'Central',"ZULFI":'Central',"BUKAYRIYAH":'Central',"RASS":'Central',"BADAYEA":'Central',"MITHNAB":'Central',"QATIF":'East',"RASTANURA":'East',"UMAL SAHEK":'East',"NARIYAH":'East',"HAFER BATIN":'East',"AL HASSA":'East',"QURRIYAT":'North',"DAWMAT AL JANDAL":'North',"KHYBER":'West',"JAMMOOM":'West',"DURAH":'West',"KHAMIS":'South',"NAMAS":'South',"SABTL OLAYA":'South',"TANUMA":'South',"MAJARDA":'South',"AHAD MASRIHAH":'South',"ZEHRAN JANOOB":'South',"SHARURA":'South',"SABIYA":'South',"DARB":'South',"BAISH":'South',"EDABI":'South',"SAMTA":'South',"BAHA":'South',"BILJURESHI":'South',"MOHYAIL":'South',"AL MIKHWA":'South',"BARIQ":'South',"QUNFIDHA":'South',"AL QUOZ":'South',
+
   'Jeddah':'West','Makkah':'West','Mecca':'West','Madinah':'West','Medina':'West','Madina':'West','Taif':'West','Yanbu':'West','Rabigh':'West','Khulais':'West','Al Jumum':'West','Al Ula':'West','Al Henakiyah':'West','Khaybar':'West','Abu Arish':'South','Jazan':'South','Jizan':'South','Sabya':'South','Al Wajh':'North','Duba':'North','Tabuk':'North','Sakaka':'North','Al Qurayyat':'North','Arar':'North','Turaif':'North','Najran':'South','Sharorah':'South','Abha':'South','Bisha':'South','Khamis Mushait':'South','Almajaridah':'South','Al Namas':'South','Sabt Al Alayah':'South','Tanomah':'South','Al Bahah':'South','Baljurashi':'South','Al Sharqiyyah':'East',
   'Riyadh':'Central','Ryiadh':'Central','Riyadh Al Khabra':'Central','Al-Kharj':'Central','Kharj':'Central','Bani Tamim':'Central','Al Duwadimi':'Central','Dwadmi':'Central','Al Quwaiiyah':'Central','Shaqra':'Central','Az Zulfi':'Central','Buraydah':'Central','Buraidah':'Central','Unayzah':'Central','Unaizah':'Central','Ar Rass':'Central','Al Mithnab':'Central','Al Bukayriyah':'Central','Hail':'North',
   'Dammam':'East','Khobar':'East','Al Khobar':'East','Jubail':'East','Al Jubail':'East','Al Hofuf':'East','Hassa':'East','Al Hasa':'East','Al-Ahsa':'East','Al Ahsa':'East','Ahsa':'East','Hasa':'East','Safwa':'East','Buqayq':'East','Khafji':'East','Hafar Al Batin':'East','Al Faihaa':'East'
@@ -3188,6 +3210,7 @@ const BRANCH_REGION_COLORS = {
   North:'#e65100',Northern:'#e65100'
 };
 
+const NISSAN_AM={West:'ahmed.ateeq@petromin.com',South:'ahmed.ateeq@petromin.com',Central:'simon.white@petromin.com',East:'z.bakhurji@petromin.com'};
 function renderNissanBranchTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#C86E35',baicRecall:'#6A5818',petromin:'#D98E45',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
@@ -3252,7 +3275,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
     'Najran':'نجران','Baha':'الباحة','Jouf':'الجوف','Arar':'عرعر',
     'Hafr Al Batin':'حفر الباطن','Madinah Munowa':'المدينة المنورة'
   };
-  const arCity = c => CITY_AR[c] || CITY_AR[c.trim()] || c;
+  const arCity = c => String(c||'').trim();
   const gv = (r,c) => c ? String(r[c]||'').trim() : '';
 
   // Group by region — skip invalid rows, normalize to 5 main regions
@@ -3306,6 +3329,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
       +(b.service?'<div style="display:inline-block;background:'+col_color+'15;color:'+col_color+';padding:2px 10px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px">'+b.service+'</div>':'')
       +persHTML
       +govHTML
+      +(brand==='nissan'&&NISSAN_AM[b.reg]?'<div style="margin-top:8px;padding-top:6px;border-top:1px solid #f0f0f0"><div style="font-size:10px;font-weight:700;color:'+col_color+';text-transform:uppercase">Regional Manager</div><div style="font-size:11px"><a href="mailto:'+NISSAN_AM[b.reg]+'">✉️ '+NISSAN_AM[b.reg]+'</a></div></div>':'')
       +(b.phone&&!b.persons.some(p=>p.phone===b.phone)?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+b.phone+'</div>':'')
       +(b.hours&&b.regHours&&b.hours.trim()!==b.regHours.trim()?'<div style="font-size:10px;color:#888;margin-top:6px;padding-top:6px;border-top:1px solid #f0f0f0">🕐 '+b.hours+'</div>':'')
       +'</div></div>';
@@ -3328,7 +3352,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
       const name = gv(r, branchCol);
       if(!name) return;
       if(!branches[name]) branches[name] = {
-        name, city:gv(r,cityCol), district:gv(r,distCol), persons:[], gov:[],
+        name, reg, city:gv(r,cityCol), district:gv(r,distCol), persons:[], gov:[],
         gps:gv(r,gpsCol), hours:gv(r,hoursCol),
         service:gv(r,serviceCol), phone:fmtNum(gv(r,phoneCol)),
         regHours:hoursRaw
@@ -3927,7 +3951,7 @@ function renderStellantisPACTab(arr){
     ,'stellantisPacAM',color):'';
 
   return '<div>'
-    +emailHtml+amHTML+branchCards
+    +emailHtml+branchCards
     +'</div>';
 }
 function renderPACTab(arr){
@@ -4233,7 +4257,7 @@ function renderBaicServiceTab(arr, apptArr){
 
   const amCardsHTML=BAIC_AM_CARDS.length?mkCollapsible('🗺️ Regional Manager','<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:12px">'+BAIC_AM_CARDS.map(am=>'<div style="background:#FDFCFB;border:1px solid #D98E4525;border-radius:12px;padding:12px 18px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04)">'+'<div style="font-size:13px;font-weight:700;color:#333">'+am.name+'</div>'+'<div style="font-size:11px;color:#888;margin:3px 0">'+am.region+'</div>'+'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+am.phone+'</div>'+'<div style="font-size:11px"><a href="mailto:'+am.email+'" style="color:#C86E35;font-weight:700;text-decoration:none;word-break:break-all">✉️ '+am.email+'</a></div>'+'</div>').join('')+'</div>','baicSvcAM',color):'';
 
-  return '<div>'+emailHtml+amCardsHTML+regHTML+'</div>';
+  return '<div>'+emailHtml+regHTML+'</div>';
 }
 
 function renderBaicLocationTab(arr, brand){
@@ -5658,7 +5682,7 @@ function renderPetrominPACTab(arr){
   }).join('');
 
   const searchBox='<div style="margin-bottom:14px;text-align:center"><input type="text" id="pacSearch" placeholder="🔍 Search by branch number or name..." oninput="filterExpressStations(this.value)" style="width:100%;max-width:360px;padding:8px 14px;border:1px solid #ddd;border-radius:20px;font-size:13px;text-align:center"></div>';
-  return '<div>'+searchBox+emailHtml+amHTML+regHTML+'</div>';
+  return '<div>'+searchBox+emailHtml+regHTML+'</div>';
 }
 
 function filterExpressStations(q){
@@ -5787,7 +5811,7 @@ function renderPetrominExpressStationsTab(arr){
       regions[reg].push(city);
     });
     const regOrder=ELM_STATION_REGION_ORDER.filter(r=>regions[r]);
-    const REG_DISPLAY_LABEL={Other:'غير مصنّفة'};
+    const REG_DISPLAY_LABEL={Other:'Other'};
     return regOrder.map(reg=>{
       const regCities=regions[reg];
       const rc='#D98E45';
@@ -5847,7 +5871,7 @@ function renderPetrominExpressStationsTab(arr){
 
   const total=cityOrder.reduce((s,c)=>s+cities[c].length,0);
   const searchBoxFinal=searchBox.replace('TOTAL_PLACEHOLDER',total);
-  return '<div>'+searchBoxFinal+emailHtml+rmHTML+html+'</div>';
+  return '<div>'+searchBoxFinal+emailHtml+html+'</div>';
 }
 
 function renderPetrominTristarTab(arr){
@@ -6427,7 +6451,6 @@ function showRefBrandPage(brand){
     +'<span style="margin-left:auto"></span>'
     +(brand==='stellantis'?'<button onclick="loadVehicleModels(\'stellantis\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.92);color:'+tabActive+';border:1px solid rgba(255,255,255,.5);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Vehicle <span id="ico_stellantisModels">▼</span></button>':'')
     +(brand==='nissan'?'<button onclick="loadVehicleModels(\'nissan\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.92);color:'+tabActive+';border:1px solid rgba(255,255,255,.5);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Vehicle <span id="ico_nissanModels">▼</span></button>':'')
-    +(brand==='nissan'?'<button onclick="toggleRegion(\'nissanAreaMgrGlobal\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.92);color:'+tabActive+';border:1px solid rgba(255,255,255,.5);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🗺️ Area Manager <span id="ico_nissanAreaMgrGlobal">▼</span></button>':'')
     +(brand==='baic'?'<button onclick="loadVehicleModels(\'baic\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.92);color:'+tabActive+';border:1px solid rgba(255,255,255,.5);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Vehicles <span id="ico_baicModels">▼</span></button>':'')
     +''
     +(brand==='nissan'?'<button onclick="toggleRegion(\'nissanWebsite\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.92);color:'+tabActive+';border:1px solid rgba(255,255,255,.5);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🌐 Website <span id="ico_nissanWebsite">▼</span></button>':'')
@@ -6444,7 +6467,6 @@ function showRefBrandPage(brand){
 
     +''
 
-    +(brand==='nissan'?'<div id="nissanAreaMgrGlobal" style="display:none;background:#FEFEFD;border-bottom:2px solid #eee;padding:14px 16px"><div style="background:#FDFDFC;border-radius:12px;overflow:hidden;border:1px solid #eee;box-shadow:0 2px 8px rgba(0,0,0,.05)"><div style="background:#c0272d18;padding:10px 16px;font-size:13px;font-weight:700;color:#c0272d;border-bottom:1px solid #e8cbb8">🗺️ Area Manager</div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#FBF0F0"><th style="padding:8px 12px;color:#c0272d;font-weight:700;border-bottom:2px solid #e8cbb8;text-align:center">🗺️ Region</th><th style="padding:8px 12px;color:#c0272d;font-weight:700;border-bottom:2px solid #e8cbb8;text-align:center">✉️ Email</th></tr></thead><tbody><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#c0272d">West · South</td><td style="padding:7px 12px;text-align:center"><a href="mailto:ahmed.ateeq@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">ahmed.ateeq@petromin.com</a></td></tr><tr style="background:#FBF0F0"><td style="padding:7px 12px;font-weight:700;text-align:center;color:#c0272d">Central</td><td style="padding:7px 12px;text-align:center"><a href="mailto:simon.white@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">simon.white@petromin.com</a></td></tr><tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#c0272d">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">z.bakhurji@petromin.com</a></td></tr></tbody></table></div></div></div>':'')
     +(brand==='nissan'?'<div id="nissanWebsite" style="display:none;background:#FEFEFD;border-bottom:2px solid #eee;padding:20px;text-align:center"><div style="font-size:13px;color:#888;margin-bottom:14px">Nissan Saudi Arabia — Petromin</div><a href="https://www.petromin-nissan.com/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;padding:12px 30px;background:#c0272d;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(192,39,45,.3)">🔗 petromin-nissan.com</a></div>':'')
     +(brand==='petromin'?'<div id="petrominWebsite" style="display:none;background:#FEFEFD;border-bottom:2px solid #eee;padding:20px"><div style="display:flex;flex-direction:column;gap:12px;align-items:center"><a href="https://petromin.com/ar/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:12px 28px;background:#D98E45;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;width:290px;justify-content:center;box-shadow:0 4px 14px rgba(218,165,32,.3)">🔗 الصفحة الرئيسية - Petromin</a><a href="https://www.petrominexpress.com/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:12px 28px;background:#c0272d;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;width:290px;justify-content:center;box-shadow:0 4px 14px rgba(192,39,45,.3)">🔗 بترومين إكسبرس - 650 محطة</a><a href="https://mac.petromin.com/Services/KSAPE/MiAutoCare/Account/login?returnUrl=%2FServices%2FKSAPE%2FMiAutoCare%2FHome%2Findex" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:12px 28px;background:#1a1a2e;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;width:290px;justify-content:center;box-shadow:0 4px 14px rgba(26,26,46,.3)">🔗 MiAutoCare - Public Site</a></div></div>':'')
     +(brand==='petromin'?'<div id="petrominNoAnswer" style="display:none;background:#FEFEFD;border-bottom:2px solid #eee;padding:16px"><div style="border:1px solid #eee;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.05)"><div style="background:#D98E4514;border-bottom:1px solid #D98E4522;padding:10px;text-align:center;font-size:13px;font-weight:700;color:#a86a28">📨 No Answer SMS</div><div style="padding:12px">'+noAnsCards('petromin')+'</div></div></div>':'')
@@ -10031,12 +10053,78 @@ window.addEventListener('DOMContentLoaded', () => {
   function blockOf(g){var p=g.parentElement,r;if(p&&p.id&&p.parentElement){r={block:p.parentElement,header:p.previousElementSibling};}else{r={block:p,header:g.previousElementSibling};}if(!r.block||r.block.children.length>3||r.block.querySelectorAll('.ref-cards-grid').length>1||r.block.id==='refContent'){r={block:g,header:null};}return r;}
   function headerInfo(h){if(!h)return{name:'',hours:''};var spans=h.querySelectorAll('span');var name=spans.length?spans[0].textContent.trim():(h.textContent||'').trim().split('\n')[0];var hours='';spans.forEach(function(sp){var t=sp.textContent.trim();if(/🕐|⏰|Saturday|Sunday|AM|PM/u.test(t)&&t.length>hours.length)hours=t;});return{name:name,hours:hours.replace(/^(🕐|⏰)\s*/u,'').trim()};}
   function brandColor(card){var h=card.firstElementChild;var t=h&&(h.firstElementChild||h);var c=t?getComputedStyle(t).color:'';return c||'#c0272d';}
+  function darker(rgb){var m=rgb.match(/\d+/g);if(!m)return rgb;return'rgb('+m.slice(0,3).map(function(v){return Math.round(v*0.8);}).join(',')+')';}
   function tint(rgb){var m=rgb.match(/\d+/g);if(!m)return'#FBEDEE';return'rgba('+m[0]+','+m[1]+','+m[2]+',.09)';}
+
+
+  var EMAIL_RE=/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/;
+  function clean(t){return String(t||'').replace(/[👤📞📱✉️📧📌📍🗺️🕐⏰🏢☎]/gu,'').replace(/\uFE0F/g,'').replace(/\s+/g,' ').trim();}
+  function parseCard(card){
+    var h=card.firstElementChild;if(!h)return null;
+    var titleEl=h.firstElementChild||h;var title=(titleEl.textContent||'').replace(/\s+/g,' ').trim();
+    var map=null;[].slice.call(h.querySelectorAll('a[href]')).forEach(function(a){if(/^https?:/.test(a.getAttribute('href'))&&!map)map=a.getAttribute('href');});
+    var subs=[];[].slice.call(h.querySelectorAll('span,div')).forEach(function(el){if(el===titleEl||el.contains(titleEl)||el.children.length)return;if(el.closest('a'))return;var t=clean(el.textContent);if(t&&t!==clean(title)&&subs.indexOf(t)<0)subs.push(t);});
+    var d={title:title,map:map,subs:subs,sections:{branch:[],regional:[],gov:[]},station:[],chips:[],hours:'',more:[]};
+    var sec='branch',cur=null,stationNext=false;
+    function person(){cur={name:'',phones:[],emails:[]};d.sections[sec].push(cur);return cur;}
+    var body=[].slice.call(card.children,1);
+    body.forEach(function(root){
+      var nodes=[root].concat([].slice.call(root.querySelectorAll('*')));
+      nodes.forEach(function(el){
+        var isA=el.tagName==='A';
+        if(!isA&&el.children.length&&![].slice.call(el.children).every(function(c){return c.tagName==='BR';}))return;
+        if(!isA&&el.closest('a'))return;
+        var raw=(el.textContent||'').trim();if(!raw)return;var t=clean(raw);
+        if(/^(regional|area)\s*manager$/i.test(t)){sec='regional';cur=null;return;}
+        if(/government\s*sales/i.test(t)){sec='gov';cur=null;return;}
+        if(/^station\s*email$/i.test(t)){stationNext=true;return;}
+        if(/^[🕐⏰]/u.test(raw)){d.hours=t;return;}
+        if(/✓|✔/.test(raw)&&t.length<30){d.chips.push(t.replace(/[✓✔]/g,'').trim());return;}
+        var href=isA?(el.getAttribute('href')||''):'';
+        var em=href.indexOf('mailto:')===0?href.slice(7):((t.match(EMAIL_RE)||[])[0]||'');
+        if(em){if(stationNext){d.station.push(em);stationNext=false;return;}(cur||person()).emails.push(em);return;}
+        if(href.indexOf('tel:')===0||/^📞|^📱|^☎/u.test(raw)){var ph=href.indexOf('tel:')===0?href.slice(4):t;if(!cur||cur.emails.length)person();cur.phones.push(ph);return;}
+        if(/^👤/u.test(raw)){person().name=t;return;}
+        if(isA)return;
+        if(d.more.indexOf(t)<0)d.more.push(t);
+      });
+    });
+    ['branch','regional','gov'].forEach(function(k){d.sections[k]=d.sections[k].filter(function(p){return p.name||p.phones.length||p.emails.length;});});
+    var any=d.sections.branch.length+d.sections.regional.length+d.sections.gov.length+d.station.length;
+    return any?d:null;
+  }
+  function esc(t){return String(t||'').replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function cpBtn(v){return'<button type="button" class="bd-cp" data-cp="'+esc(v)+'">copy</button>';}
+  function peopleHtml(list){return list.map(function(p){
+    return'<div class="bd-p">'+(p.name?'<div class="bd-nm">'+esc(p.name)+'</div>':'')
+      +p.phones.map(function(ph){return'<div class="bd-rw"><span class="ic">📞</span>'+esc(ph)+' '+cpBtn(ph)+'</div>';}).join('')
+      +p.emails.map(function(em){return'<div class="bd-rw"><span class="ic">✉️</span><a class="em" href="mailto:'+esc(em)+'">'+esc(em)+'</a> '+cpBtn(em)+'</div>';}).join('')+'</div>';}).join('');}
+  function renderDetail(card,info){
+    var d=parseCard(card);if(!d)return null;
+    var m=d.title.match(/^\s*(\d{2,6})\s*[-–—]\s*(.*)$/);
+    var box=document.createElement('div');box.className='bd-box';
+    var hours=info.hours||d.hours;
+    var h='<div class="bd-head"><div class="bd-title">'+(m?'<b>'+esc(m[1])+'</b>'+esc(m[2]):esc(d.title))+'</div>'
+      +'<div class="bd-sub">'+(d.subs.length?'<span>📍 '+esc(d.subs.join(' · '))+'</span>':'')+(d.map?'<a href="'+esc(d.map)+'" target="_blank">Open location</a>':'')+'</div></div>';
+    if(hours)h+='<div class="bd-sec bd-hours">⏰ '+esc(hours)+'</div>';
+    var cols='';
+    if(d.sections.branch.length)cols+='<div><div class="bd-lbl">Branch manager</div>'+peopleHtml(d.sections.branch)+'</div>';
+    if(d.sections.regional.length)cols+='<div><div class="bd-lbl">Regional manager</div>'+peopleHtml(d.sections.regional)+'</div>';
+    if(cols)h+='<div class="bd-sec"><div class="bd-pp">'+cols+'</div></div>';
+    if(d.station.length)h+='<div class="bd-sec"><div class="bd-lbl">Station email</div>'+d.station.map(function(em){return'<div class="bd-rw"><span class="ic">✉️</span><a class="em" href="mailto:'+esc(em)+'">'+esc(em)+'</a> '+cpBtn(em)+'</div>';}).join('')+'</div>';
+    if(d.sections.gov.length)h+='<div class="bd-sec"><div class="bd-lbl">Government sales</div><div class="bd-pp">'+peopleHtml(d.sections.gov)+'</div></div>';
+    if(d.chips.length)h+='<div class="bd-sec"><div class="bd-lbl">Services</div>'+d.chips.map(function(c){return'<span class="bd-chip">'+esc(c)+' ✓</span>';}).join('')+'</div>';
+    if(d.more.length)h+='<div class="bd-sec"><div class="bd-lbl">More info</div><div class="bd-more">'+d.more.map(esc).join('<br>')+'</div></div>';
+    box.innerHTML=h;return box;
+  }
+  document.addEventListener('click',function(ev){var b=ev.target.closest&&ev.target.closest('.bd-cp');if(!b)return;var v=b.getAttribute('data-cp');
+    var done=function(){var o=b.textContent;b.textContent='copied ✓';setTimeout(function(){b.textContent=o;},1200);};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(v).then(done,done);}else{var ta=document.createElement('textarea');ta.value=v;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}ta.remove();done();}});
 
   function build(groups){
     groups.forEach(function(gr){
       var first=gr.items[0];var color=brandColor(first.cards[0]);
-      var md=document.createElement('div');md.className='br-md';md.style.setProperty('--brc',color);md.style.setProperty('--brbg',tint(color));
+      var md=document.createElement('div');md.className='br-md';md.style.setProperty('--brc',color);md.style.setProperty('--brbg',tint(color));md.style.setProperty('--brcd',darker(color));
       var list=document.createElement('div');list.className='br-list';
       var search=document.createElement('input');search.className='br-search';search.placeholder='🔍 Search by branch number or name…';list.appendChild(search);
       var detail=document.createElement('div');detail.className='br-detail';
@@ -10057,6 +10145,8 @@ window.addEventListener('DOMContentLoaded', () => {
       var empty=document.createElement('div');empty.className='br-empty';empty.textContent='No branches match your search.';empty.style.display='none';list.appendChild(empty);
       function select(e){entries.forEach(function(x){x.row.classList.toggle('on',x===e);});
         detail.innerHTML='';
+        var built=null;try{built=renderDetail(e.card,e.info);}catch(err){console.warn('branch detail',err);}
+        if(built){detail.appendChild(built);return;}
         if(e.info.hours){var hr=document.createElement('div');hr.className='br-hours';hr.textContent='⏰ '+e.info.hours;detail.appendChild(hr);}
         var cl=e.card.cloneNode(true);cl.style.display='';cl.classList.add('br-card');detail.appendChild(cl);}
       search.addEventListener('input',function(){var q=search.value.trim().toLowerCase();var shown=0;
