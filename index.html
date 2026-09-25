@@ -109,6 +109,30 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .att-d i{width:7px;height:7px;border-radius:50%;display:block}
 .att-d.x{border-color:transparent;color:#ccc;font-weight:400}
 @media(max-width:900px){.ag-kpis,.att-strip{grid-template-columns:repeat(3,1fr)}}
+#page4 td{border-bottom-color:#f0edea!important;padding-top:9px;padding-bottom:9px}
+#page4 th{border-bottom-width:1px!important}
+.br-hidden{display:none!important}
+.br-md{display:grid;grid-template-columns:320px minmax(0,1fr);gap:14px;align-items:start;margin-bottom:16px}
+.br-list{background:#FDFDFC;border:0.5px solid #eee;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:10px;max-height:72vh;overflow-y:auto;position:sticky;top:10px}
+.br-search{width:100%;box-sizing:border-box;padding:8px 12px;border:1px solid #e5e5e5;border-radius:10px;font-size:13px;background:#fff;margin-bottom:6px;outline:none}
+.br-search:focus{border-color:var(--brc,#c0272d)}
+.br-rg{display:flex;justify-content:space-between;padding:10px 8px 4px;font-size:12px;font-weight:700;color:var(--brc,#c0272d)}
+.br-rg span+span{color:#aaa;font-weight:500}
+.br-it{display:flex;justify-content:space-between;gap:8px;padding:7px 9px;border-radius:8px;cursor:pointer;font-size:13px;color:#1a1a2e}
+.br-it:hover{background:rgba(0,0,0,.03)}
+.br-it.on{background:var(--brbg,#FBEDEE)}
+.br-it b{color:var(--brc,#c0272d);font-weight:700;margin-right:6px}
+.br-it .c{color:#999;font-size:12px;white-space:nowrap}
+.br-empty{padding:14px 8px;color:#aaa;font-size:12px;text-align:center}
+.br-detail{position:sticky;top:10px}
+.br-detail>.br-hours{background:#FDFDFC;border:0.5px solid #eee;border-radius:12px;padding:9px 14px;font-size:12px;color:#777;margin-bottom:10px}
+.br-detail .br-card{border-radius:14px!important;box-shadow:0 2px 8px rgba(0,0,0,.06)!important;border:0.5px solid #eee;background:#FDFDFC!important}
+.br-detail .br-card *{text-align:left!important}
+.br-detail .br-card div[style*="justify-content:center"]{justify-content:flex-start!important}
+.br-detail .br-card>div:first-child{padding:16px 20px!important}
+.br-detail .br-card>div:first-child>div:first-child{font-size:17px!important}
+.br-detail .br-card>div+div{padding:14px 20px!important;font-size:13px}
+@media(max-width:900px){.br-md{grid-template-columns:1fr}.br-list,.br-detail{position:static;max-height:none}}
 .agrid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:16px;overflow-x:auto}
 .ac{background:#FEFEFD;border-radius:10px;padding:12px 14px;box-shadow:0 1px 4px rgba(0,0,0,.06);cursor:pointer;transition:.2s;border:2px solid transparent}
 .ac:hover{border-color:#bdbdbd;transform:translateY(-2px)}
@@ -117,10 +141,10 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .acs{display:flex;gap:6px;flex-wrap:wrap}
 .acp{font-size:10px;color:#555;background:#d8d8d8;padding:2px 7px;border-radius:8px}
 .acp span{color:#c0272d;font-weight:700}
-.tw{max-height:420px;overflow-y:auto;overflow-x:auto;border-radius:8px;border:1px solid #f0f0f0}
+.tw{max-height:420px;overflow-y:auto;overflow-x:auto;border-radius:8px;border:1px solid #f0edea}
 table{width:100%;border-collapse:collapse;font-size:12px}
-th{text-align:left;color:#1a1a2e;font-weight:700;font-size:11px;padding:8px 12px 8px 0;border-bottom:2px solid #bbb;white-space:nowrap;position:sticky;top:0;background:#FEFEFD;z-index:1}
-td{padding:6px 10px;border-bottom:1px solid #d5d5d5;color:#333;white-space:nowrap;text-align:center}
+th{text-align:left;color:#888;font-weight:600;font-size:11px;padding:9px 12px 9px 0;border-bottom:1px solid #e6e2de;white-space:nowrap;position:sticky;top:0;background:#FEFEFD;z-index:1}
+td{padding:9px 10px;border-bottom:1px solid #f0edea;color:#333;white-space:nowrap;text-align:center}
 .no-border td{border-bottom:none!important}
 tr:hover td{background:#fef9f9}
 tr:last-child td{border-bottom:none}
@@ -9996,5 +10020,73 @@ window.addEventListener('DOMContentLoaded', () => {
 </div>
 
 <div class="to-toast" id="toToast"></div>
+
+<script>
+/* ── Branch pages: list on the left, selected branch details on the right ── */
+(function(){
+  var CODE_RE=/^\s*\d{2,6}\s*[-–—]\s*\S/;
+  function cardTitle(card){var h=card.firstElementChild;if(!h)return'';var t=h.firstElementChild||h;return (t.textContent||'').replace(/\s+/g,' ').trim();}
+  function cardCity(card){var h=card.firstElementChild;if(!h)return'';var m=(h.textContent||'').match(/📌\s*([^\n]*?)\s*(?=📍|🗺|$)/u);return m?m[1].trim():'';}
+  function isBranchGrid(g){var cards=[].slice.call(g.children);if(!cards.length)return false;var n=cards.filter(function(c){return CODE_RE.test(cardTitle(c));}).length;return n/cards.length>=0.5;}
+  function blockOf(g){var p=g.parentElement,r;if(p&&p.id&&p.parentElement){r={block:p.parentElement,header:p.previousElementSibling};}else{r={block:p,header:g.previousElementSibling};}if(!r.block||r.block.children.length>3||r.block.querySelectorAll('.ref-cards-grid').length>1||r.block.id==='refContent'){r={block:g,header:null};}return r;}
+  function headerInfo(h){if(!h)return{name:'',hours:''};var spans=h.querySelectorAll('span');var name=spans.length?spans[0].textContent.trim():(h.textContent||'').trim().split('\n')[0];var hours='';spans.forEach(function(sp){var t=sp.textContent.trim();if(/🕐|⏰|Saturday|Sunday|AM|PM/u.test(t)&&t.length>hours.length)hours=t;});return{name:name,hours:hours.replace(/^(🕐|⏰)\s*/u,'').trim()};}
+  function brandColor(card){var h=card.firstElementChild;var t=h&&(h.firstElementChild||h);var c=t?getComputedStyle(t).color:'';return c||'#c0272d';}
+  function tint(rgb){var m=rgb.match(/\d+/g);if(!m)return'#FBEDEE';return'rgba('+m[0]+','+m[1]+','+m[2]+',.09)';}
+
+  function build(groups){
+    groups.forEach(function(gr){
+      var first=gr.items[0];var color=brandColor(first.cards[0]);
+      var md=document.createElement('div');md.className='br-md';md.style.setProperty('--brc',color);md.style.setProperty('--brbg',tint(color));
+      var list=document.createElement('div');list.className='br-list';
+      var search=document.createElement('input');search.className='br-search';search.placeholder='🔍 Search by branch number or name…';list.appendChild(search);
+      var detail=document.createElement('div');detail.className='br-detail';
+      var entries=[];
+      gr.items.forEach(function(it){
+        var rg=document.createElement('div');rg.className='br-rg';rg.innerHTML='<span></span><span></span>';rg.firstChild.textContent=it.info.name;rg.lastChild.textContent=it.cards.length;list.appendChild(rg);
+        var rEntries=[];
+        it.cards.forEach(function(card){
+          var title=cardTitle(card);var m=title.match(/^\s*(\d{2,6})\s*[-–—]\s*(.*)$/);
+          var row=document.createElement('div');row.className='br-it';
+          row.innerHTML='<span><b></b><span class="n"></span></span><span class="c"></span>';
+          row.querySelector('b').textContent=m?m[1]:'';row.querySelector('.n').textContent=m?m[2]:title;row.querySelector('.c').textContent=cardCity(card);
+          var e={row:row,card:card,info:it.info,rg:rg};row.onclick=function(){select(e);};
+          list.appendChild(row);entries.push(e);rEntries.push(e);
+        });
+        it.rEntries=rEntries;
+      });
+      var empty=document.createElement('div');empty.className='br-empty';empty.textContent='No branches match your search.';empty.style.display='none';list.appendChild(empty);
+      function select(e){entries.forEach(function(x){x.row.classList.toggle('on',x===e);});
+        detail.innerHTML='';
+        if(e.info.hours){var hr=document.createElement('div');hr.className='br-hours';hr.textContent='⏰ '+e.info.hours;detail.appendChild(hr);}
+        var cl=e.card.cloneNode(true);cl.style.display='';cl.classList.add('br-card');detail.appendChild(cl);}
+      search.addEventListener('input',function(){var q=search.value.trim().toLowerCase();var shown=0;
+        gr.items.forEach(function(it){var any=0;it.rEntries.forEach(function(e){var ok=!q||e.card.textContent.toLowerCase().indexOf(q)>-1;e.row.style.display=ok?'':'none';if(ok){any++;shown++;}});(it.rEntries[0]||{}).rg&&(it.rEntries[0].rg.style.display=any?'':'none');});
+        empty.style.display=shown?'none':'';
+        var cur=entries.find(function(x){return x.row.classList.contains('on');});
+        if(!cur||cur.row.style.display==='none'){var nx=entries.find(function(x){return x.row.style.display!=='none';});if(nx)select(nx);}});
+      md.appendChild(list);md.appendChild(detail);
+      gr.parent.insertBefore(md,gr.items[0].block);
+      gr.items.forEach(function(it){it.block.classList.add('br-hidden');});
+      // hide the page's old branch search box (the new list has its own)
+      [].slice.call(gr.parent.querySelectorAll('input[placeholder*="Search by branch"]')).forEach(function(inp){if(!inp.classList.contains('br-search')&&inp.parentElement)inp.parentElement.classList.add('br-hidden');});
+      if(entries.length)select(entries[0]);
+    });
+  }
+  function scan(){
+    var grids=[].slice.call(document.querySelectorAll('.ref-cards-grid:not([data-br])'));
+    if(!grids.length)return;
+    var groups=[];
+    grids.forEach(function(g){g.setAttribute('data-br','0');if(!isBranchGrid(g))return;g.setAttribute('data-br','1');
+      var b=blockOf(g);if(!b.block||!b.block.parentElement)return;
+      var parent=b.block.parentElement;var gr=groups.find(function(x){return x.parent===parent;});
+      if(!gr){gr={parent:parent,items:[]};groups.push(gr);}
+      gr.items.push({block:b.block,info:headerInfo(b.header),cards:[].slice.call(g.children)});});
+    if(groups.length)build(groups);
+  }
+  var t=null;
+  new MutationObserver(function(){clearTimeout(t);t=setTimeout(scan,120);}).observe(document.body,{childList:true,subtree:true});
+  document.addEventListener('DOMContentLoaded',scan);
+})();
+</script>
 </body>
 </html>
