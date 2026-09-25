@@ -69,6 +69,18 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .tab{padding:6px 14px;border-radius:8px;border:1.5px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#FEFEFD;color:#666}
 .tab.active{background:rgba(192,39,45,.05);color:#a02030;border-color:rgba(192,39,45,.12);font-weight:700}
 .tab:hover:not(.active){background:#e0e0e0;border-color:#bdbdbd;color:#555}
+.pf-l{font-size:12px;color:#888;font-weight:500}
+#perfCtrl input[type=date]{border:1px solid #e5e5e5;background:#fff}
+.tp-wrap{display:grid;grid-template-columns:230px minmax(0,1fr);gap:14px;align-items:start}
+.tp-sum{background:#FEFEFD;border:0.5px solid #eee;border-radius:12px;padding:14px 16px;position:sticky;top:78px}
+.tp-sum .h{font-size:14px;font-weight:700;color:#1a1a2e}
+.tp-sum .s{font-size:11px;color:#999;margin:2px 0 8px}
+.tp-sum .m{padding:9px 0;border-top:1px solid #f2f0ee}
+.tp-sum .m .l{font-size:11px;color:#888;font-weight:500}
+.tp-sum .m .v{font-size:22px;font-weight:700;color:#1a1a2e;line-height:1.25;font-variant-numeric:tabular-nums}
+.tp-sum .m .p{font-size:11px;color:#999;font-variant-numeric:tabular-nums}
+.tp-up{color:#2e7d4f;font-weight:600}.tp-dn{color:#c0272d;font-weight:600}.tp-eq{color:#999;font-weight:600}
+@media(max-width:900px){.tp-wrap{grid-template-columns:1fr}.tp-sum{position:static}}
 .agrid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:16px;overflow-x:auto}
 .ac{background:#FEFEFD;border-radius:10px;padding:12px 14px;box-shadow:0 1px 4px rgba(0,0,0,.06);cursor:pointer;transition:.2s;border:2px solid transparent}
 .ac:hover{border-color:#bdbdbd;transform:translateY(-2px)}
@@ -533,17 +545,17 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
   <!-- PAGE 1 -->
   <div id="page1" class="main">
     <div id="perfCtrl" style="background:#FEFEFD;border-bottom:1px solid #e8eaed;padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);position:sticky;top:0;z-index:50">
-      <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em">From:</label><input type="date" id="df_p1" onchange="document.getElementById('df').value=this.value;rf()">
-      <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em">To:</label><input type="date" id="dt_p1" onchange="document.getElementById('dt').value=this.value;rf()">
-      <label style="font-size:12px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-left:8px">Agent:</label>
-      <select id="agSel_p1" onchange="document.getElementById('agSel').value=this.value;selAgent(this.value)" style="font-size:14px;font-weight:600;color:#c0272d;min-width:180px;padding:6px 10px;border-radius:8px;border:1.5px solid #ddd;background:#FDFDFC;cursor:pointer">
+      <label class="pf-l">From</label><input type="date" id="df_p1" onchange="document.getElementById('df').value=this.value;rf()">
+      <label class="pf-l">To</label><input type="date" id="dt_p1" onchange="document.getElementById('dt').value=this.value;rf()">
+      <label class="pf-l" style="margin-left:8px">Agent</label>
+      <select id="agSel_p1" onchange="document.getElementById('agSel').value=this.value;selAgent(this.value)" style="font-size:13px;font-weight:500;color:#1a1a2e;min-width:180px;padding:6px 10px;border-radius:8px;border:1px solid #e5e5e5;background:#fff;cursor:pointer">
         <option value="">— All Agents —</option>
       </select>
-      <button class="rbtn" onclick="resetAll()">↺ Reset</button>
-      <button class="rfbtn" onclick="refreshAll()">🔄 Refresh</button>
     </div>
     <div id="vAll">
-
+     <div class="tp-wrap">
+      <aside id="tpSummary" class="tp-sum"></aside>
+      <div class="tp-list">
       <div id="agrid" class="agrid" style="display:grid"></div>
       <div id="atable" class="card" style="display:none">
         <div class="ctit">All Agents – Period Summary</div>
@@ -557,6 +569,8 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
           <th class="tr">Avg. Handling Time</th>
         </tr></thead><tbody id="atbody"></tbody></table></div>
       </div>
+      </div>
+     </div>
     </div>
 
     <div id="vAgent" style="display:none">
@@ -1533,11 +1547,11 @@ function initUI(silent){
   // Date range
   const allD=Object.values(D).flat().map(r=>r[0]).filter(Boolean).sort();
   if(allD.length){
-    document.getElementById('df').value=allD[0];
+    document.getElementById('df').value=allD[allD.length-1];
     document.getElementById('dt').value=allD[allD.length-1];
-    var _dfp1=document.getElementById('df_p1');if(_dfp1)_dfp1.value=allD[0];
+    var _dfp1=document.getElementById('df_p1');if(_dfp1)_dfp1.value=allD[allD.length-1];
     var _dtp1=document.getElementById('dt_p1');if(_dtp1)_dtp1.value=allD[allD.length-1];
-    document.getElementById('ptag').textContent=allD[0]+' → '+allD[allD.length-1];
+    document.getElementById('ptag').textContent=allD[allD.length-1]+' → '+allD[allD.length-1];
   }
   // Agent select
   const s=document.getElementById('agSel');
@@ -1563,6 +1577,38 @@ function gf(){var ids_f=['df2','df_p1','df'],ids_t=['dt2','dt_p1','dt'],f='',t='
 function frows(name){const{f,t}=gf();if(!f||!t)return(D[name]||[]);return(D[name]||[]).filter(r=>r[0]&&r[0]>=f&&r[0]<=t);}
 function fall(){const{f,t}=gf();const R={};Object.keys(D).forEach(n=>{const r=(!f||!t)?(D[n]||[]):(D[n]||[]).filter(r=>r[0]&&r[0]>=f&&r[0]<=t);if(r.length)R[n]=r;});return R;}
 function ag(rows){let I=0,T=0,W=0,DI=0,tS=0,tN=0,hS=0,hN=0;rows.forEach(r=>{I+=r[1];T+=r[2];W+=r[3];DI+=r[4];if(r[5]>0){tS+=r[5];tN++;}if(r[7]>0){hS+=r[7];hN++;}});return{days:rows.length,I,T,W,DI,avgTalk:tN?Math.round(tS/tN):0,avgAHT:hN?Math.round(hS/hN):0};}
+
+
+// ── MONTH SUMMARY (current month-to-date vs same days last month) ──────────
+function _tpAgg(f,t){let I=0,T=0,W=0,tS=0,tN=0,hS=0,hN=0,n=0;Object.values(D).forEach(rows=>(rows||[]).forEach(r=>{if(!r[0]||r[0]<f||r[0]>t)return;n++;I+=r[1]||0;T+=r[2]||0;W+=r[3]||0;if(r[5]>0){tS+=r[5];tN++;}if(r[7]>0){hS+=r[7];hN++;}}));return{n,I,T,W,talk:tN?Math.round(tS/tN):0,aht:hN?Math.round(hS/hN):0};}
+function _tpDiffTime(s){const a=Math.abs(s),m=Math.floor(a/60),x=a%60;return m+':'+(x<10?'0':'')+x;}
+function renderTeamSummary(){
+  const el=document.getElementById('tpSummary');if(!el)return;
+  const allD=Object.values(D).flat().map(r=>r&&r[0]).filter(Boolean).sort();
+  if(!allD.length){el.innerHTML='';return;}
+  const last=allD[allD.length-1];const y=+last.slice(0,4),mo=+last.slice(5,7),d=+last.slice(8,10);
+  const py=mo===1?y-1:y,pm=mo===1?12:mo-1;const pDays=new Date(Date.UTC(py,pm,0)).getUTCDate();const pd=Math.min(d,pDays);
+  const pad=n=>(n<10?'0':'')+n;
+  const cf=y+'-'+pad(mo)+'-01',ct=last,pf=py+'-'+pad(pm)+'-01',pt=py+'-'+pad(pm)+'-'+pad(pd);
+  const MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const MF=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const c=_tpAgg(cf,ct),p=_tpAgg(pf,pt),hasP=p.n>0,pn=MN[pm-1];
+  const diff=(cv,pv,isTime,lowerBetter)=>{
+    if(!hasP)return'<span class="tp-eq">—</span>';
+    const dv=cv-pv;if(!dv)return'<span class="tp-eq">● 0</span>';
+    const up=dv>0,good=lowerBetter?!up:up;
+    const txt=isTime?(up?'+':'−')+_tpDiffTime(dv):(up?'+':'−')+N(Math.abs(dv));
+    return'<span class="'+(good?'tp-up':'tp-dn')+'">'+(up?'▲':'▼')+' '+txt+'</span>';
+  };
+  const row=(l,cv,pv,isTime,lb)=>'<div class="m"><div class="l">'+l+'</div><div class="v">'+(isTime?(cv?fmtS(cv):'—'):N(cv))+'</div><div class="p">'+(hasP?pn+' '+(isTime?(pv?fmtS(pv):'—'):N(pv))+' · ':'')+diff(cv,pv,isTime,lb)+'</div></div>';
+  el.innerHTML='<div class="h">'+MF[mo-1]+' vs '+MF[pm-1]+'</div>'
+    +'<div class="s">1–'+d+' '+MN[mo-1]+' · 1–'+pd+' '+pn+(hasP?'':' (no data)')+'</div>'
+    +row('Inbound',c.I,p.I,false,false)
+    +row('Tickets',c.T,p.T,false,false)
+    +row('WhatsApp',c.W,p.W,false,false)
+    +row('Avg Talk',c.talk,p.talk,true,true)
+    +row('Avg Handling',c.aht,p.aht,true,true);
+}
 
 // ── RENDER ALL ───────────────────────────────────────────────────────────────
 const AVATAR_COLORS=[
@@ -1598,15 +1644,16 @@ function renderAll(){
   const agents=Object.keys(data).sort();
   const am={};agents.forEach(a=>am[a]=ag(data[a]));
   const sorted=[...agents].sort((a,b)=>am[b].I-am[a].I);
+  try{renderTeamSummary();}catch(e){console.warn('summary',e);}
   if(CV==='grid'){
     const cols='44px 1.3fr repeat(5,1fr)';
     const rkCol=(i)=>{ if(i===0)return'#C6A94A'; if(i===1)return'#B8A67E'; if(i===2)return'#C58A5A'; const t=Math.min(1,(i-3)/14); const r=Math.round(203+(224-203)*t),g=Math.round(190+(218-190)*t),b=Math.round(158+(200-158)*t); return`rgb(${r},${g},${b})`; };
     document.getElementById('agrid').innerHTML=sorted.map((nm,i)=>{
       const a=am[nm];
       const ag=AGENTS_DIR.find(x=>x.name===nm)||{};
-      const badgeHtml=ag.badge?'<span style="font-size:11px;font-weight:600;background:#FCEAEA;color:#C0272D;padding:2px 9px;border-radius:10px;flex-shrink:0">Badge '+ag.badge+'</span>':'';
+      const badgeHtml=ag.badge?'<span style="font-size:11px;font-weight:500;color:#8a8a8a">Badge '+ag.badge+' ·</span>':'';
       return`<div style="min-width:620px;background:#FEFEFD;border-radius:12px;border:0.5px solid #eee;padding:13px 18px;display:grid;grid-template-columns:${cols};align-items:center;gap:10px;cursor:pointer;transition:.15s" onclick="selAgent('${nm}')" onmouseover="this.style.boxShadow='0 2px 8px rgba(0,0,0,.06)'" onmouseout="this.style.boxShadow=''">
-        <div style="font-size:19px;font-weight:700;color:${rkCol(i)};text-align:center">${i+1}</div>
+        <div style="font-size:${i<3?'24px':'19px'};font-weight:700;color:${rkCol(i)};text-align:center;line-height:1">${i<3?['🥇','🥈','🥉'][i]:i+1}</div>
         <div style="min-width:0"><div style="font-size:15px;font-weight:600;color:#1a1a2e;white-space:nowrap">${nm}</div><div style="margin-top:3px;white-space:nowrap">${badgeHtml} <span style="font-size:11px;font-weight:500;color:#8a8a8a">${a.days} Day</span></div></div>
         <div style="text-align:center;background:rgba(192,39,45,.08);border-radius:10px;padding:11px 4px"><div style="font-size:11px;font-weight:600;color:#8f3237">Inbound</div><div style="font-size:16px;font-weight:700;color:#9a2a2f">${N(a.I)}</div></div>
         <div style="text-align:center;background:rgba(192,39,45,.08);border-radius:10px;padding:11px 4px"><div style="font-size:11px;font-weight:600;color:#8f3237">Tickets</div><div style="font-size:16px;font-weight:700;color:#9a2a2f">${N(a.T)}</div></div>
@@ -1671,7 +1718,7 @@ function renderAgent(name){
   document.getElementById('hname').textContent=name;
   document.getElementById('hname').style.color='#1a1a2e';
   const _hbEl=document.getElementById('hbadge');
-  if(_hbEl) _hbEl.innerHTML=_ag.badge?'<span style="font-size:10px;background:#FCEAEA;color:#C0272D;padding:2px 10px;border-radius:12px">Badge '+_ag.badge+'</span>':'';
+  if(_hbEl) _hbEl.innerHTML=_ag.badge?'<span style="font-size:11px;color:#8a8a8a">Badge '+_ag.badge+'</span>':'';
   document.getElementById('hmeta').textContent=`${rows[0][0]} → ${rows[rows.length-1][0]}`;
   // Contact info from directory
   const hcontact = document.getElementById('hcontact');
@@ -7440,14 +7487,13 @@ function renderRoster(){
   }
 
   el.innerHTML = '<div style="padding:4px">'
-    +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;max-width:720px;margin-left:auto;margin-right:auto">'
+    +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;max-width:560px;margin-left:auto;margin-right:auto">'
     +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(192,39,45,.08);color:#a02030;border:1.5px solid rgba(192,39,45,.25)">\uD83D\uDCCB Attendance</button>'
     +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#FEFEFD;color:#6A5A4A;border:1.5px solid #EDE4DA">\uD83D\uDCC5 Weekly Schedule</button>'
-    +'<button onclick="switchScheduleTab(&apos;campaigntraining&apos;)" id="stab_campaigntraining" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#FEFEFD;color:#6A5A4A;border:1.5px solid #EDE4DA">\uD83C\uDF93 Training</button>'
     +'<button onclick="switchScheduleTab(&apos;vacation2026&apos;)" id="stab_vacation2026" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#FEFEFD;color:#6A5A4A;border:1.5px solid #EDE4DA">\uD83C\uDF34 Vacation</button>'
     +'</div>'
     
-    +'<div id="schedule_dailyoff" style="display:none"></div>'    +'<div id="schedule_vacation2026" style="display:none"></div>'    +'<div id="schedule_campaigntraining" style="display:none"></div>'    +'<div id="schedule_attendance" style="display:block">'
+    +'<div id="schedule_dailyoff" style="display:none"></div>'    +'<div id="schedule_vacation2026" style="display:none"></div>'        +'<div id="schedule_attendance" style="display:block">'
     +'<div style="margin-bottom:12px">'
     +'<div style="display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;position:relative">'
     +'<div id="attDateTitle" onclick="toggleAttCal()" style="display:inline-flex;align-items:center;gap:8px;font-size:16px;font-weight:700;color:#5D4037;cursor:pointer;padding:6px 4px"></div>'
@@ -7953,8 +7999,7 @@ async function renderCampaignTraining(){
 function switchScheduleTab(tab){
   if(tab==='dailyoff') renderDailyOff();
   if(tab==='vacation2026') renderVacation2026();
-  if(tab==='campaigntraining') renderCampaignTraining();
-  var tabIds=['attendance','dailyoff','vacation2026','campaigntraining'];
+  var tabIds=['attendance','dailyoff','vacation2026'];
   tabIds.forEach(function(t){
     var el=document.getElementById('schedule_'+t);
     if(el) el.style.display=t===tab?'block':'none';
