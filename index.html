@@ -81,6 +81,34 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .tp-sum .m .p{font-size:11px;color:#999;font-variant-numeric:tabular-nums}
 .tp-up{color:#2e7d4f;font-weight:600}.tp-dn{color:#c0272d;font-weight:600}.tp-eq{color:#999;font-weight:600}
 @media(max-width:900px){.tp-wrap{grid-template-columns:1fr}.tp-sum{position:static}}
+.hero.ag-hero{justify-content:flex-start;align-items:baseline;gap:12px;padding:14px 20px;flex-wrap:wrap}
+.ag-name{font-size:17px;font-weight:700;color:#1a1a2e}
+.ag-sub{font-size:12px;color:#8a8a8a}
+.ag-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));background:#FDFDFC;border:0.5px solid #eee;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:14px}
+.ag-k{padding:12px 10px;text-align:center}
+.ag-k+.ag-k{border-left:1px solid #f0edea}
+.ag-k .l{font-size:12px;color:#888;font-weight:500}
+.ag-k .v{font-size:24px;font-weight:700;color:#1a1a2e;line-height:1.25;font-variant-numeric:tabular-nums}
+.ag-k .p{font-size:11px;color:#999;font-variant-numeric:tabular-nums}
+.card.ag-daily{background:#FDFDFC;border:0.5px solid #eee;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.ag-daily .tw{border-color:#f0edea}
+.ag-daily td{border-bottom:1px solid #f0edea;padding:9px 10px}
+.ag-daily tr:last-child td{border-bottom:none}
+.att-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));background:#FDFDFC;border:0.5px solid #eee;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:14px}
+.att-strip>div{padding:11px 8px;text-align:center}
+.att-strip>div+div{border-left:1px solid #f0edea}
+.att-strip .l{font-size:12px;color:#777;font-weight:500;white-space:nowrap}
+.att-strip .v{font-size:24px;font-weight:700;color:#1a1a2e;line-height:1.25}
+.att-strip .v.z{color:#d0cdc8}
+.att-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:1px}
+.att-month{background:#FDFDFC;border:0.5px solid #eee;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:14px 16px;margin-bottom:10px}
+.att-mt{font-size:14px;font-weight:700;color:#1a1a2e;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none}
+.att-cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:10px}
+.att-wd{text-align:center;font-size:12px;color:#999;padding-bottom:2px}
+.att-d{border:1px solid #ece9e5;border-radius:10px;min-height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:13px;font-weight:600;color:#1a1a2e}
+.att-d i{width:7px;height:7px;border-radius:50%;display:block}
+.att-d.x{border-color:transparent;color:#ccc;font-weight:400}
+@media(max-width:900px){.ag-kpis,.att-strip{grid-template-columns:repeat(3,1fr)}}
 .agrid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:16px;overflow-x:auto}
 .ac{background:#FEFEFD;border-radius:10px;padding:12px 14px;box-shadow:0 1px 4px rgba(0,0,0,.06);cursor:pointer;transition:.2s;border:2px solid transparent}
 .ac:hover{border-color:#bdbdbd;transform:translateY(-2px)}
@@ -575,15 +603,12 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 
     <div id="vAgent" style="display:none">
 
-      <div class="hero">
-        <div style="flex:1;text-align:center">
-          <div class="hi2" id="hname" style="font-size:16px;font-weight:700;color:#1a1a2e;text-align:center">–</div>
-          <div id="hbadge" style="margin:5px 0"></div>
-          <div class="hi3" id="hmeta">–</div>
-          <div style="display:flex;gap:16px;margin-top:8px;flex-wrap:wrap;justify-content:center" id="hcontact"></div>
-        </div>
+      <div class="hero ag-hero">
+        <span id="hname" class="ag-name">–</span>
+        <span id="hbadge" class="ag-sub"></span>
+        <span id="hmeta" class="ag-sub">–</span>
+        <div id="hcontact" style="display:none"></div>
       </div>
-      <div class="krow" id="akpis"></div>
       <div class="tabs">
         <button class="tab active" onclick="sat('daily',this)">📅 Daily Performance</button>
         <button class="tab" onclick="sat('attendance',this)">📆 Attendance</button>
@@ -591,8 +616,8 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
       </div>
 
       <div id="adaily" style="display:none">
-        <div class="card">
-          <div class="ctit" style="margin-bottom:10px">📅 Daily Performance (newest first)</div>
+        <div class="ag-kpis" id="akpis"></div>
+        <div class="card ag-daily">
           <div class="tw"><table><thead>
             <tr>
               <th rowspan="2" style="color:#333;font-size:11px;font-weight:700;text-align:center;vertical-align:middle;background:#F5F2EE;border-bottom:1px solid #E0D8D0;padding:8px 10px">Date</th>
@@ -1610,6 +1635,10 @@ function renderTeamSummary(){
     +row('Avg Handling',c.aht,p.aht,true,true);
 }
 
+
+function _agShiftMonth(ds){const y=+ds.slice(0,4),m=+ds.slice(5,7),d=+ds.slice(8,10);const py=m===1?y-1:y,pm=m===1?12:m-1;const dim=new Date(Date.UTC(py,pm,0)).getUTCDate();const pad=n=>(n<10?'0':'')+n;return py+'-'+pad(pm)+'-'+pad(Math.min(d,dim));}
+function _agLastMonth(name,f,t){const pf=_agShiftMonth(f),pt=_agShiftMonth(t);const r=(D[name]||[]).filter(x=>x[0]&&x[0]>=pf&&x[0]<=pt);return r.length?ag(r):null;}
+
 // ── RENDER ALL ───────────────────────────────────────────────────────────────
 const AVATAR_COLORS=[
   {bg:'#F5EFEF',border:'#E8D8D8',text:'#7A5050',cardBg:'#fff'},
@@ -1718,20 +1747,29 @@ function renderAgent(name){
   document.getElementById('hname').textContent=name;
   document.getElementById('hname').style.color='#1a1a2e';
   const _hbEl=document.getElementById('hbadge');
-  if(_hbEl) _hbEl.innerHTML=_ag.badge?'<span style="font-size:11px;color:#8a8a8a">Badge '+_ag.badge+'</span>':'';
+  if(_hbEl) _hbEl.textContent=_ag.badge?'Badge '+_ag.badge+' ·':'';
   document.getElementById('hmeta').textContent=`${rows[0][0]} → ${rows[rows.length-1][0]}`;
   // Contact info from directory
   const hcontact = document.getElementById('hcontact');
   hcontact.innerHTML = '';
   const avgDay=a.days?Math.round(a.I/a.days):0;
-  document.getElementById('akpis').innerHTML=`
-    <div class="kc c1"><div class="klbl">Total Inbound</div><div class="kval">${N(a.I)}</div><div class="ksub">${avgDay}/day</div></div>
-    <div class="kc c2"><div class="klbl">Total Tickets</div><div class="kval">${N(a.T)}</div><div class="ksub">${a.days?Math.round(a.T/a.days):0}/day</div></div>
-    <div class="kc c3"><div class="klbl">WhatsApp</div><div class="kval">${N(a.W)}</div></div>
-    <div class="kc c5"><div class="klbl">Avg Talk Time</div><div class="kval">${fmtS(a.avgTalk)}</div></div>
-    <div class="kc c4"><div class="klbl">Avg Handling Time</div><div class="kval">${fmtS(a.avgAHT)}</div></div>
-    <div class="kc c6"><div class="klbl">Working Days</div><div class="kval">${a.days}</div></div>
-  `;
+  const _lm=_agLastMonth(name,rows[0][0],rows[rows.length-1][0]);
+  const _k=(l,cur,prev,isTime,lowerBetter,sub)=>{
+    let p;
+    if(sub!==undefined)p=sub;
+    else if(!_lm)p='Last month —';
+    else{const dv=cur-prev;const up=dv>0,good=lowerBetter?!up:up;
+      const dtxt=!dv?'<span class="tp-eq">● 0</span>':'<span class="'+(good?'tp-up':'tp-dn')+'">'+(up?'▲ +':'▼ −')+(isTime?fmtS(Math.abs(dv)):N(Math.abs(dv)))+'</span>';
+      p='Last month '+(isTime?fmtS(prev):N(prev))+' · '+dtxt;}
+    return'<div class="ag-k"><div class="l">'+l+'</div><div class="v">'+(isTime?fmtS(cur):N(cur))+'</div><div class="p">'+p+'</div></div>';
+  };
+  document.getElementById('akpis').innerHTML=
+     _k('Total Inbound',a.I,_lm&&_lm.I,false,false)
+    +_k('Total Tickets',a.T,_lm&&_lm.T,false,false)
+    +_k('WhatsApp',a.W,_lm&&_lm.W,false,false)
+    +_k('Avg Talk Time',a.avgTalk,_lm&&_lm.avgTalk,true,true)
+    +_k('Avg Handling Time',a.avgAHT,_lm&&_lm.avgAHT,true,true)
+    +'<div class="ag-k"><div class="l">Working Days</div><div class="v">'+a.days+'</div><div class="p">'+avgDay+' calls/day</div></div>';
   const dates=rows.map(r=>r[0].slice(5));
   document.getElementById('dtbody').innerHTML=[...rows].reverse().map(r=>{
     // Color coding: red=bad, green=good
@@ -1828,64 +1866,26 @@ function renderAttendance(name){
   Object.values(rows).forEach(s=>{if(s in tot)tot[s]++;});
   const byM={};
   Object.entries(rows).forEach(([d,s])=>{const m=d.slice(0,7);if(!byM[m])byM[m]={};byM[m][d]=s;});
-  let html=`<div class="ms-grid">
-    <div class="ms-card" style="border-left-color:#A8C4B0;background:#F6F8F7"><div class="ms-name">🏢 Office</div><div class="ms-val">${tot.Office}</div></div>
-    <div class="ms-card" style="border-left-color:#A8B8D4;background:#F7F7F8"><div class="ms-name">🏠 Remote</div><div class="ms-val">${tot.Remote}</div></div>
-    <div class="ms-card" style="border-left-color:#C8B4D4;background:#F8F6F7"><div class="ms-name">🌴 Vacation</div><div class="ms-val">${tot.Vacation}</div></div>
-    <div class="ms-card" style="border-left-color:#D9B98C;background:#F8F7F5"><div class="ms-name">🤒 Sick Leave</div><div class="ms-val">${tot.Sick}</div></div>
-    <div class="ms-card" style="border-left-color:#C9C6BC;background:#F7F7F5"><div class="ms-name">– Off</div><div class="ms-val">${tot.Off}</div></div>
-    <div class="ms-card" style="border-left-color:#D4A8A8;background:#FBF7F7"><div class="ms-name">❌ Absent</div><div class="ms-val">${tot.Absent}</div></div>
-    <div class="ms-card" style="border-left-color:#9BC0C2;background:#F6F8F8"><div class="ms-name">📅 Saturday Shift</div><div class="ms-val">${tot['Saturday Shift']}</div></div>
-  </div>`;
-  html+=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin:14px 2px 18px">
-    <span class="mtot office">🏢 Office</span>
-    <span class="mtot remote">🏠 Remote</span>
-    <span class="mtot vacation">🌴 Vacation</span>
-    <span class="mtot sick">🤒 Sick Leave</span>
-    <span class="mtot off">Off</span>
-    <span class="mtot absent">❌ Absent</span>
-    <span class="mtot satshift">📅 Saturday Shift</span>
-  </div>`;
+  const ACOL={Office:'#7cb58a',Remote:'#6f9bd6',Vacation:'#a58bd6',Sick:'#d9a55a',Off:'#e3a3a8',Absent:'#c0272d','Saturday Shift':'#8aa0b8',EL:'#9a8cc0'};
+  const ALBL={Office:'Office',Remote:'Remote',Vacation:'Vacation',Sick:'Sick leave',Off:'Off',Absent:'Absent','Saturday Shift':'Saturday shift'};
+  let html='<div class="att-strip">'+Object.keys(ALBL).map(k=>'<div><div class="l"><span class="att-dot" style="background:'+ACOL[k]+'"></span>'+ALBL[k]+'</div><div class="v'+(tot[k]?'':' z')+'">'+tot[k]+'</div></div>').join('')+'</div>';
   const _nowM=new Date().toISOString().slice(0,7);
-  Object.keys(byM).sort().reverse().forEach(m=>{
+  const _ms=Object.keys(byM).sort().reverse();
+  _ms.forEach((m,mi)=>{
     const days=byM[m];
-    const mT={};Object.values(days).forEach(s=>{mT[s]=(mT[s]||0)+1;});
     const yr=parseInt(m.split('-')[0]),mo=parseInt(m.split('-')[1]);
     const first=new Date(yr,mo-1,1).getDay();
     const dim=new Date(yr,mo,0).getDate();
-    const isOpen=m===_nowM;
+    const isOpen=m===_nowM||mi===0;
     const mid='cal_'+m.replace('-','_');
-    html+=`<div class="month-block" style="margin-bottom:10px">
-      <div class="month-title" style="cursor:pointer;user-select:none" onclick="var c=document.getElementById('${mid}');c.style.display=c.style.display==='none'?'block':'none';this.querySelector('.arr').textContent=c.style.display==='none'?'▶':'▼';">
-        <span>${mnm(m)}</span>
-        <div style="display:flex;align-items:center;gap:8px">
-          <div class="month-totals">
-            ${mT.Office?`<span class="mtot office">🏢 ${mT.Office}</span>`:''}
-            ${mT.Remote?`<span class="mtot remote">🏠 ${mT.Remote}</span>`:''}
-            ${mT.Vacation?`<span class="mtot vacation">🌴 ${mT.Vacation}</span>`:''}
-            ${mT.Sick?`<span class="mtot sick">🤒 ${mT.Sick}</span>`:''}
-            ${mT.Absent?`<span class="mtot absent">❌ ${mT.Absent}</span>`:''}
-            ${mT.Off?`<span class="mtot off">– ${mT.Off}</span>`:''}
-            ${mT['Saturday Shift']?`<span class="mtot satshift">📅 ${mT['Saturday Shift']}</span>`:''}
-          </div>
-          <span class="arr" style="font-size:11px;color:#999">${isOpen?'▼':'▶'}</span>
-        </div>
-      </div>
-      <div id="${mid}" style="display:${isOpen?'block':'none'}">
-        <div class="cal-grid">
-          <div class="cal-day wd">Sunday</div><div class="cal-day wd">Monday</div><div class="cal-day wd">Tuesday</div>
-          <div class="cal-day wd">Wednesday</div><div class="cal-day wd">Thursday</div><div class="cal-day wd">Friday</div><div class="cal-day wd">Saturday</div>
-          ${Array(first).fill('<div class="cal-day empty"></div>').join('')}
-          ${Array.from({length:dim},(_,i)=>{
-            const d=i+1,ds=m+'-'+String(d).padStart(2,'0');
-            const st=days[ds];
-            if(!st)return`<div class="cal-day empty" style="color:#ccc"><div>${d}</div></div>`;
-            const showIcon=st!=='Office'&&st!=='Off';
-            return`<div class="cal-day ${scls(st)}" title="${ds}: ${st}"><div>${d}</div>${showIcon?'<div style="font-size:9px">'+slbl(st)+'</div>':''}</div>`;
-          }).join('')}
-        </div>
-      </div>
-    </div>`;
+    html+='<div class="att-month"><div class="att-mt" onclick="var c=document.getElementById(\''+mid+'\');c.style.display=c.style.display===\'none\'?\'grid\':\'none\';this.querySelector(\'.arr\').textContent=c.style.display===\'none\'?\'▶\':\'▼\';"><span>'+mnm(m)+'</span><span class="arr" style="font-size:11px;color:#999">'+(isOpen?'▼':'▶')+'</span></div>'
+      +'<div id="'+mid+'" class="att-cal" style="display:'+(isOpen?'grid':'none')+'">'
+      +['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(w=>'<div class="att-wd">'+w+'</div>').join('')
+      +Array(first).fill('<div></div>').join('')
+      +Array.from({length:dim},(_,i)=>{const d=i+1,ds=m+'-'+String(d).padStart(2,'0');const st=days[ds];
+        if(!st)return'<div class="att-d x">'+d+'</div>';
+        return'<div class="att-d" title="'+ds+': '+st+'">'+d+'<i style="background:'+(ACOL[st]||'#ccc')+'"></i></div>';}).join('')
+      +'</div></div>';
   });
   document.getElementById('attContent').innerHTML=html;
 }
