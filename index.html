@@ -8622,6 +8622,20 @@ async function renderRef(){
       ?arr.map(e=>'<div class="ref-contact-pill"'+(fw?' style="width:220px"':'')+'><div class="ref-contact-icon" style="background:'+col+'">'+icon+'</div><div><div class="ref-contact-pill-label">'+e.name+'</div><div class="ref-contact-pill-val">'+e.num+'</div></div></div>').join('')
       :'<div style="color:#aaa;font-size:12px;padding:8px">—</div>';
 
+    const deptPills=(toll,wa)=>{
+      const used=new Set();
+      const rows=toll.map(t=>({name:t.name,num:t.num,wa:''}));
+      wa.forEach(w=>{
+        const key=w.name.toLowerCase().replace(/whats\s*app/g,'').trim();
+        const r=rows.find((x,i)=>!used.has(i)&&key&&(key==='petromin'?x.name.toLowerCase().includes('express'):x.name.toLowerCase().includes(key)));
+        if(r){used.add(rows.indexOf(r));r.wa=w.num;}else rows.push({name:w.name.replace(/whats\s*app/i,'').trim(),num:'',wa:w.num});
+      });
+      rows.sort((a,b)=>(b.wa?1:0)-(a.wa?1:0));
+      return rows.map(e=>'<div class="ref-contact-pill"><div class="ref-contact-icon" style="background:#dc6b70">📞</div><div><div class="ref-contact-pill-label">'+e.name+'</div>'
+        +(e.num?'<div class="ref-contact-pill-val">'+e.num+'</div>':'')
+        +(e.wa?'<div style="font-size:12px;font-weight:700;color:#2e7d4f;margin-top:1px">💬 '+e.wa+'</div>':'')
+        +'</div></div>').join('');
+    };
     const deptTable=(toll,wa)=>{
       const DOT=[['express','#E08A3C'],['baic','#D0763A'],['nissan','#c0272d'],['stellantis','#1f6fc4'],['foton','#6b7b8c'],['energy','#3f7a56'],['national','#2e8b57'],['volvo','#1f2a44']];
       const dot=n=>{const l=n.toLowerCase();const f=DOT.find(d=>l.includes(d[0]));return f?f[1]:'#aaa';};
@@ -8779,7 +8793,7 @@ async function renderRef(){
       // CONTACT NUMBERS — merged single panel
       +'<div class="ref-info-panel">'
       +'<div class="ref-panel-header">📞 Contact Numbers</div>'
-      +'<div class="ref-panel-body">'+deptTable(tollFree,waNums)+'</div>'
+      +'<div class="ref-panel-body"><div class="ref-contacts-grid">'+deptPills(tollFree,waNums)+'</div></div>'
       +'</div>'
 
 
@@ -9080,13 +9094,14 @@ async function renderDailyOff(){
       if(!v) return '<span style="color:#ccc">—</span>';
       var vl=v.toLowerCase().trim();
       var col,fw='600';
-      if(vl==='off'){col='#CFC9C1';fw='500';}
-      else if(vl==='vacation'||vl==='v'||vl==='vaction'){col='#B8892A';}
-      else if(vl.indexOf('live')===0||vl==='livechat'){col='#E07A7F';}
-      else if(vl.includes('multi')){col='#7E7872';}
-      else if(vl.indexOf('national')>-1){col='#6DB07F';}
+      var fs='normal';
+      if(vl==='off'){col='#D6D1CB';fw='500';}
+      else if(vl==='vacation'||vl==='v'||vl==='vaction'){col='#B07A00';}
+      else if(vl.indexOf('live')===0||vl==='livechat'){col='#c0272d';}
+      else if(vl.includes('multi')){col='#6f6a64';fw='500';}
+      else if(vl.indexOf('national')>-1){col='#9a9590';fw='500';fs='italic';}
       else{col='#999';}
-      return '<span style="display:block;color:'+col+';font-size:12px;font-weight:'+fw+';text-align:center;white-space:nowrap">'+v+'</span>';
+      return '<span style="display:block;color:'+col+';font-size:12px;font-weight:'+fw+';font-style:'+fs+';text-align:center;white-space:nowrap">'+v+'</span>';
     }
 
     // Break cell tint = the agent's dominant shift type across the week
@@ -9098,23 +9113,23 @@ async function renderDailyOff(){
         else if(vl.includes('multi')) multi++;
       });
       if(live===0&&multi===0) return null;
-      if(live>=multi) return {bg:'#FAECE7',col:'#993C1D'};
-      return {bg:'#FBF9F4',col:'#6B5A3A'};
+      if(live>=multi) return {bg:'#FDF7F7',col:'#c0272d'};
+      return {bg:'#FDF7F7',col:'#6f6a64'};
     }
 
     function buildTable(w){
       var _td=new Date();var _tdStr=_td.getDate()+' '+_td.toLocaleString('en-US',{month:'short'});
       var t='<div style="overflow:auto;max-height:72vh;border:1px solid #ECE8E3;border-radius:10px"><table class="no-border wk-tbl" style="width:100%;border-collapse:collapse;font-size:12px;background:#FDFDFC">';
       t+='<thead><tr>';
-      t+='<th style="padding:8px 12px;text-align:left;border-bottom:1px solid #E6E1DB;min-width:150px;font-weight:700;color:#555;background:#F7F5F2;font-size:12px;position:sticky;top:0;z-index:2">Agent Name</th>';
+      t+='<th style="padding:9px 12px;text-align:left;border-bottom:2px solid #EDEAE6;min-width:150px;font-weight:600;color:#8a8580;background:#FDFDFC;font-size:12px;position:sticky;top:0;z-index:2">Agent Name</th>';
       DAY_COLS.forEach(function(d){
         var wknd=d==='Friday';
         var _isT=w.dates&&String(w.dates[d]||'').replace(/\s+/g,' ').trim().toLowerCase()===_tdStr.toLowerCase();
-        var dateStr=w.dates&&w.dates[d]?'<div style="font-size:11px;font-weight:500;color:'+(_isT?'#E07A7F':'#999')+';margin-top:2px">'+w.dates[d]+(_isT?' · Today':'')+'</div>':'';
-        t+='<th style="padding:7px 6px;text-align:center;border-bottom:1px solid #E6E1DB;min-width:90px;font-weight:700;font-size:12px;color:'+(_isT?'#E07A7F':'#555')+';background:'+(_isT?'#FBF3F1':'#F7F5F2')+';position:sticky;top:0;z-index:2">'+d+dateStr+'</th>';
+        var dateStr=w.dates&&w.dates[d]?'<div style="font-size:11px;font-weight:400;color:'+(_isT?'#c0272d':'#aaa')+';margin-top:2px">'+w.dates[d]+(_isT?' · Today':'')+'</div>':'';
+        t+='<th style="padding:9px 6px;text-align:center;border-bottom:2px solid #EDEAE6;min-width:90px;font-weight:600;font-size:12px;color:'+(_isT?'#c0272d':'#8a8580')+';background:'+(_isT?'#FBF1F1':'#FDFDFC')+';position:sticky;top:0;z-index:2">'+d+dateStr+'</th>';
       });
-      t+='<th style="padding:7px 6px;text-align:center;border-bottom:1px solid #E6E1DB;min-width:88px;font-weight:700;font-size:12px;color:#E07A7F;background:#F7F5F2;position:sticky;top:0;z-index:2">⏰ Weekly Break</th>';
-      t+='<th style="padding:7px 6px;text-align:center;border-bottom:1px solid #E6E1DB;min-width:96px;font-weight:700;font-size:12px;color:#E07A7F;background:#F7F5F2;position:sticky;top:0;z-index:2">🗓️ Saturday Break</th>';
+      t+='<th style="padding:9px 6px;text-align:center;border-bottom:2px solid #EDEAE6;border-left:2px solid #F0DCDC;min-width:88px;font-weight:600;font-size:12px;color:#c0272d;background:#FBF1F1;position:sticky;top:0;z-index:2">Weekly Break</th>';
+      t+='<th style="padding:9px 6px;text-align:center;border-bottom:2px solid #EDEAE6;min-width:96px;font-weight:600;font-size:12px;color:#c0272d;background:#FBF1F1;position:sticky;top:0;z-index:2">Saturday Break</th>';
       t+='</tr></thead><tbody style="border:none">';
       w.agents.forEach(function(ag,ai){
         var rowBg='#FFFFFF';
@@ -9123,21 +9138,22 @@ async function renderDailyOff(){
           +'onmouseout="if(this.getAttribute(\'data-sel\')!==\'1\'){this.querySelectorAll(\'td\').forEach(function(td){td.style.background=\'\';});this.querySelectorAll(\'span.bdg\').forEach(function(s){s.style.background=s.getAttribute(\'data-bg\');});}" '
           +'onclick="(function(row){var tbl=row.closest(\'table\');tbl.querySelectorAll(\'tr[data-sel=\\\"1\\\"]\').forEach(function(r){r.setAttribute(\'data-sel\',\'0\');r.style.outline=\'\';r.querySelectorAll(\'td\').forEach(function(td){td.style.background=\'\';td.style.fontWeight=\'\';});r.querySelectorAll(\'span.bdg\').forEach(function(s){s.style.background=s.getAttribute(\'data-bg\');});});row.setAttribute(\'data-sel\',\'1\');row.style.outline=\'2px solid #c0272d\';row.querySelectorAll(\'td\').forEach(function(td){td.style.background=\'#FCCCCF\';td.style.fontWeight=\'700\';});row.querySelectorAll(\'span.bdg\').forEach(function(s){s.style.background=\'#F5A0A5\';});})(this)">';
         var _nc=getAvatarColor(ag.name);
-        t+='<td style="padding:5px 12px;text-align:left;font-size:12px;font-weight:600;color:#333;border-bottom:1px solid #F2EFEC">'+ag.name+'</td>';
+        t+='<td style="padding:6px 12px;text-align:left;font-size:12px;font-weight:600;color:#2b2b2b;border-bottom:1px solid #F3F0EC">'+ag.name+'</td>';
         DAY_COLS.forEach(function(d){
           var _isT=w.dates&&String(w.dates[d]||'').replace(/\s+/g,' ').trim().toLowerCase()===_tdStr.toLowerCase();
-          t+='<td style="padding:5px 6px;text-align:center;border-bottom:1px solid #F2EFEC;background:'+(_isT?'#FCF8F6':'')+'">'+badge(ag[d])+'</td>';
+          t+='<td style="padding:6px;text-align:center;border-bottom:1px solid #F3F0EC;background:'+(_isT?'#FDF7F7':'')+'">'+badge(ag[d])+'</td>';
         });
         var _bt=breakTint(ag);
         var _tBg=_bt?_bt.bg:'#F6F4F0';
-        var _tCol=_bt?_bt.col:'#8A857C';
+        var _tCol=_bt?_bt.col:'#6f6a64';
         // Both break columns share one renderer so they look identical; OFF is red in both.
-        var _brkCell=function(v){
+        var _brkCell=function(v,_first){
           v=String(v||'').trim().replace(/^(\d{1,2}):(\d{2}):\d{2}\s*(AM|PM)$/i,'$1:$2 $3');
-          var col=v.toLowerCase()==='off'?'#CFC9C1':'#555';
-          return '<td style="padding:5px 6px;text-align:center;border-bottom:1px solid #F2EFEC"><span style="color:'+(v?col:'#ccc')+';font-size:12px;font-weight:600;white-space:nowrap">'+(v||'—')+'</span></td>';
+          var _empty=!v||v==='-'||v==='—';
+          var col=v.toLowerCase()==='off'?'#D6D1CB':_tCol;
+          return '<td style="padding:6px;text-align:center;border-bottom:1px solid #F3F0EC;background:#FDF7F7'+(_first?';border-left:2px solid #F0DCDC':'')+'"><span style="color:'+(_empty?'#D6D1CB':col)+';font-size:12px;font-weight:'+(_empty?'400':'700')+';white-space:nowrap">'+(v||'—')+'</span></td>';
         };
-        t+=_brkCell(ag[BREAK_COL]);
+        t+=_brkCell(ag[BREAK_COL],true);
         t+=_brkCell(ag[SAT_BREAK_COL]);
         t+='</tr>';
       });
@@ -9159,7 +9175,6 @@ async function renderDailyOff(){
       +'width:36px;height:36px;flex:none;border-radius:8px;border:1px solid #E2D6C8;background:#FEFEFD;'
       +'color:#8A6D5A;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center">\u203a</button>';
     html+='</div>';
-    html+='<div style="display:flex;gap:16px;flex-wrap:wrap;margin:0 0 8px 2px;font-size:12px;font-weight:600"><span style="color:#7E7872">Multi-Camp</span><span style="color:#E07A7F">Live Chat / NI / PE</span><span style="color:#B8892A">Vacation</span><span style="color:#6DB07F">National Day</span><span style="color:#CFC9C1">OFF</span></div>';
     html+='<div id="dow_tables">';
     weeks.forEach(function(w,wi){
       html+='<div id="dowt_'+wi+'" style="display:'+(wi===activeIdx?'block':'none')+'">'+buildTable(w)+'</div>';
