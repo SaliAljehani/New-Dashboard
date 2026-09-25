@@ -10061,10 +10061,26 @@ window.addEventListener('DOMContentLoaded', () => {
   function cardLoc(card){var h=card.firstElementChild;var r={city:'',dist:''};if(!h)return r;var t=h.textContent||'';
     var c=t.match(/📌\s*([^\n]*?)\s*(?=📍|🗺|$)/u);var d=t.match(/📍\s*([^\n]*?)\s*(?=📌|🗺|$)/u);
     if(c)r.city=c[1].trim();
-    if(d){var dv=d[1].trim();if(!r.city&&/\s[-–]\s/.test(dv)){var parts=dv.split(/\s[-–]\s/);r.city=parts.pop().trim();r.dist=parts.join(' - ').trim();}else r.dist=dv;}
+    if(d){var dv=d[1].trim();var _pp=dv.split(/\s[-–]\s/);if(!r.city&&_pp.length>1&&/^[A-Za-z][A-Za-z .'-]*$/.test(_pp[_pp.length-1].trim())){r.city=_pp.pop().trim();r.dist=_pp.join(' - ').trim();}else r.dist=dv;}
     return r;}
-  function cardCity(card){return cardLoc(card).city;}
-  function isBranchGrid(g){var cards=[].slice.call(g.children);if(!cards.length)return false;var n=cards.filter(function(c){return CODE_RE.test(cardTitle(c));}).length;return n/cards.length>=0.5;}
+  var CITY_CANON={Mecca:'Makkah',Medina:'Madinah',Madina:'Madinah',Ryiadh:'Riyadh','Al Khobar':'Khobar','Al Jubail':'Jubail',Jazan:'Jizan',Buraidah:'Buraydah',Unaizah:'Unayzah','Al-Kharj':'Kharj','Al Duwadimi':'Dwadmi','Al Bahah':'Baha',Hassa:'Al Hassa','Al Hofuf':'Al Hassa',Hufouf:'Al Hassa',Hofuf:'Al Hassa',Ahsa:'Al Hassa','Al Ahsa':'Al Hassa',Tabouk:'Tabuk',Qassim:'Qassim'};
+  var CITY_EN=[],CITY_ARL=[];
+  (function(){var src=(typeof ELM_CITY_AR!=='undefined')?ELM_CITY_AR:{};var seen={};
+    Object.keys(src).concat(['Qassim','Hufouf','Hofuf','Ahsa','Tabouk','Makkah','Madinah','Jeddah','Riyadh']).forEach(function(k){k=k.trim();if(!k||seen[k])return;seen[k]=1;CITY_EN.push(k);});
+    Object.keys(src).forEach(function(k){var a=String(src[k]).trim();if(a)CITY_ARL.push({ar:a,en:k.trim()});});
+    CITY_ARL.push({ar:'القصيم',en:'Qassim'},{ar:'جدة',en:'Jeddah'},{ar:'جده',en:'Jeddah'},{ar:'مكة',en:'Makkah'},{ar:'المدينة',en:'Madinah'},{ar:'الرياض',en:'Riyadh'},{ar:'الدمام',en:'Dammam'},{ar:'الهفوف',en:'Al Hassa'},{ar:'الأحساء',en:'Al Hassa'});
+    CITY_EN.sort(function(a,b){return b.length-a.length;});CITY_ARL.sort(function(a,b){return b.ar.length-a.ar.length;});})();
+  function canonCity(c){c=String(c||'').trim();return CITY_CANON[c]||c;}
+  function findCityIn(text){text=String(text||'');
+    for(var i=0;i<CITY_EN.length;i++){var k=CITY_EN[i];var re=new RegExp('(^|[^A-Za-z])'+k.replace(/[-\/\\^$*+?.()|[\]{}]/g,'\\$&')+'([^A-Za-z]|$)','i');if(re.test(text))return canonCity(k);}
+    for(var j=0;j<CITY_ARL.length;j++){if(text.indexOf(CITY_ARL[j].ar)>-1)return canonCity(CITY_ARL[j].en);}
+    return'';}
+  function cardCity(card){var l=cardLoc(card);if(l.city)return l.city.split(/\s[-–]\s/)[0].trim();var h=card.firstElementChild;var t=cardTitle(card);
+    return findCityIn(t)||findCityIn(l.dist)||findCityIn(h?h.textContent:'')||'';}
+  function looksBranch(c){if(CODE_RE.test(cardTitle(c)))return true;var h=c.firstElementChild;if(!h||c.children.length<2)return false;var ht=h.textContent||'';
+    var hasLoc=/📍|📌/u.test(ht)||!!h.querySelector('a[href^="http"]');var bt=[].slice.call(c.children,1).map(function(x){return x.textContent||'';}).join(' ');
+    var hasPerson=/👤/u.test(bt)||!!c.querySelector('a[href^="mailto:"]');return hasLoc&&hasPerson;}
+  function isBranchGrid(g){var cards=[].slice.call(g.children);if(!cards.length)return false;var n=cards.filter(looksBranch).length;return n/cards.length>=0.5;}
   function blockOf(g){var p=g.parentElement,r;if(p&&p.id&&p.parentElement){r={block:p.parentElement,header:p.previousElementSibling};}else{r={block:p,header:g.previousElementSibling};}if(!r.block||r.block.children.length>3||r.block.querySelectorAll('.ref-cards-grid').length>1||r.block.id==='refContent'){r={block:g,header:null};}return r;}
   function headerInfo(h){if(!h)return{name:'',hours:''};var spans=h.querySelectorAll('span');var name=spans.length?spans[0].textContent.trim():(h.textContent||'').trim().split('\n')[0];var hours='';spans.forEach(function(sp){var t=sp.textContent.trim();if(/🕐|⏰|Saturday|Sunday|AM|PM/u.test(t)&&t.length>hours.length)hours=t;});return{name:name,hours:hours.replace(/^(🕐|⏰)\s*/u,'').trim()};}
   function brandColor(card){var h=card.firstElementChild;var t=h&&(h.firstElementChild||h);var c=t?getComputedStyle(t).color:'';return c||'#c0272d';}
@@ -10121,7 +10137,7 @@ window.addEventListener('DOMContentLoaded', () => {
     var box=document.createElement('div');box.className='bd-box';
     var hours=info.hours||d.hours;
     var h='<div class="bd-head"><div class="bd-title">'+(m?'<b>'+esc(m[1])+'</b>'+esc(m[2]):esc(d.title))+'</div>'
-      +(d.subs.length?'<div class="bd-sub">'+esc(d.subs.join(' · '))+'</div>':'')
+      +(function(){var cty=cardCity(card);var sb=d.subs.slice();if(cty&&!sb.some(function(x){return x.toLowerCase().indexOf(cty.toLowerCase())>-1;}))sb.unshift(cty);return sb.length?'<div class="bd-sub">'+esc(sb.join(' · '))+'</div>':'';})()
       +(d.map?(function(){var coords=/-?\d{1,3}\.\d+\s*,\s*-?\d{1,3}\.\d+/.test(d.mapTxt)?d.mapTxt.match(/-?\d{1,3}\.\d+\s*,\s*-?\d{1,3}\.\d+/)[0]:'';var txt=coords||d.map;return'<div class="bd-loc"><a href="'+esc(d.map)+'" target="_blank">'+esc(txt)+'</a>'+cpBtn(txt)+'</div>';})():'')
       +'</div>';
     if(hours)h+='<div class="bd-sec bd-hours">⏰ '+esc(hours)+'</div>';
@@ -10155,7 +10171,7 @@ window.addEventListener('DOMContentLoaded', () => {
         it.cityHeads=[];
         cOrder.forEach(function(c){
           var ch=null;
-          if(c&&cOrder.length>1){ch=document.createElement('div');ch.className='br-ct';ch.innerHTML='<span></span><span></span>';ch.firstChild.textContent=c;ch.lastChild.textContent=byCity[c].length;list.appendChild(ch);it.cityHeads.push({el:ch,city:c});}
+          if(c){ch=document.createElement('div');ch.className='br-ct';ch.innerHTML='<span></span><span></span>';ch.firstChild.textContent=c;ch.lastChild.textContent=byCity[c].length;list.appendChild(ch);it.cityHeads.push({el:ch,city:c});}
           byCity[c].forEach(function(card){
             var title=cardTitle(card);var m=title.match(/^\s*(\d{2,6})\s*[-–—]\s*(.*)$/);
             var row=document.createElement('div');row.className='br-it';
