@@ -332,12 +332,12 @@ tr:last-child td{border-bottom:none}
 .ref-subj-complaint-tag{font-size:11px;background:#fef2f2;color:#c0272d;border:1px solid #fcc;border-radius:6px;padding:2px 8px;font-weight:600}
 
 /* Link cards */
-.ref-link-card{background:#f9fbff;border-radius:10px;padding:10px 14px;border:1px solid #e8eaed;display:flex;align-items:center;gap:10px;transition:.15s;margin-bottom:6px}
-.ref-link-card:hover{border-color:#1565c0;background:#FEFEFD}
+.ref-link-card{background:#1565c012;border-radius:10px;padding:10px 14px;border:1px solid transparent;display:flex;align-items:center;gap:10px;transition:.15s;margin-bottom:6px}
+.ref-link-card:hover{border-color:#1565c02E}
 .ref-link-card-name{font-size:13px;font-weight:700;color:#2b2b2b;flex:1}
-.ref-link-open-btn{padding:5px 14px;background:#1565c0;color:#fff;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap}
-.ref-link-open-btn:hover{background:#0d47a1}
-.ref-link-file{font-size:11px;color:#888;background:#f0f2f7;padding:4px 10px;border-radius:8px;white-space:nowrap}
+.ref-link-open-btn{padding:4px 14px;background:#FDFDFC;color:#1565c0;border:1px solid #1565c0;border-radius:8px;font-size:11px;font-weight:600;text-decoration:none;white-space:nowrap}
+.ref-link-open-btn:hover{background:#1565c012}
+.ref-link-file{font-size:11px;color:#1565c0;background:#FDFDFC;border:1px solid #1565c02E;padding:4px 10px;border-radius:8px;white-space:nowrap}
 .ref-link-pass{font-size:11px;color:#bbb;margin-top:2px}
 
 /* Brand accordion */
@@ -4694,8 +4694,8 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
   const body=order.map(g=>{
     const its=groups[g];
     const gid='peLoc_'+kind+'_'+g.replace(/[^A-Za-z0-9]/g,'');
-    const table='<div style="overflow-x:auto;background:#FEFEFD;border:1px solid #f0e6c8;border-top:0;border-radius:0 0 8px 8px"><table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;word-break:break-word"><thead><tr style="background:'+color+'0f">'+cols.map(th).join('')+'</tr></thead><tbody>'
-      +its.map((it,i)=>'<tr style="background:'+(i%2?'#FDFBF4':'#fff')+'">'+rowFor(it)+'</tr>').join('')
+    const table='<div style="overflow-x:auto;background:#FDFDFC;border:1px solid #EFEDE9;border-top:0;border-radius:0 0 8px 8px"><table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;word-break:break-word"><thead><tr style="background:'+color+'0f">'+cols.map(th).join('')+'</tr></thead><tbody>'
+      +its.map((it,i)=>'<tr style="background:'+(i%2?'#FAF8F5':'#FDFDFC')+'">'+rowFor(it)+'</tr>').join('')
       +'</tbody></table></div>';
     return '<div style="margin-bottom:10px">'
       +'<div onclick="toggleRegion(\''+gid+'\')" style="display:flex;align-items:center;gap:10px;padding:9px 14px;background:'+color+'12;border-radius:0 8px 8px 0;border-left:4px solid '+color+';cursor:pointer;margin-bottom:6px"><span style="font-size:13px;font-weight:800;color:'+color+'">'+icon+' '+g+'</span><span style="font-size:11px;color:#aaa">('+its.length+')</span><span id="ico_'+gid+'" style="margin-left:auto;color:'+color+'">▼</span></div>'
@@ -6746,7 +6746,7 @@ async function renderInstructionTab(brand, cfg){
             +'<div style="font-size:11px;font-weight:700;color:'+c+';margin-bottom:6px">'+col1Header+'</div>'
             +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+w.c1+'</div>'
             +'</div>'
-            +'<div style="padding:12px 14px;border-left:4px solid '+color+';direction:rtl;text-align:center">'
+            +'<div style="padding:12px 14px;border-left:4px solid '+color+'66;direction:rtl;text-align:center">'
             +'<div style="font-size:11px;font-weight:700;color:'+color+';margin-bottom:6px">'+col2Header+'</div>'
             +'<div style="font-size:12px;color:#555;line-height:1.9;white-space:pre-wrap">'+w.c2+'</div>'
             +'</div>'
@@ -8693,8 +8693,8 @@ async function renderRef(){
         const _ccRaw=(_emailCell.match(/CC\s*:?\s*([\s\S]*)$/i)||[])[1]||'';
         const _list=z=>z.split(/[,;\s]+/).map(x=>x.trim()).filter(x=>/@/.test(x));
         const _toL=_list(_toRaw), _ccL=_list(_ccRaw);
-        const _pill=x=>'<span style="font-size:11px;color:#1565c0;background:#eef4fb;border:1px solid #dbe7f5;padding:2px 8px;border-radius:6px">'+x+'</span>';
-        const _tag=(t,c)=>'<span style="font-size:11px;font-weight:800;padding:2px 7px;border-radius:4px;color:#fff;background:'+c+'">'+t+'</span>';
+        const _pill=x=>'<span style="font-size:11px;color:#1565c0;background:#FDFDFC;border:1px solid #1565c02E;padding:2px 8px;border-radius:6px">'+x+'</span>';
+        const _tag=(t,c)=>'<span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;color:#0d47a1;background:#1565c02E">'+t+'</span>';
         const _mailto='mailto:'+encodeURIComponent(_toL.join(','))+(_ccL.length?'?cc='+encodeURIComponent(_ccL.join(',')):'');
         return '<div class="ref-link-card"><div style="flex:1"><div class="ref-link-card-name">'+name+'</div>'
           +(_toL.length?'<div style="display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-top:5px">'+_tag('TO','#c0272d')+_toL.map(_pill).join('')+'</div>':'')
@@ -8803,7 +8803,7 @@ async function renderRef(){
       +'</div>'
 
       // LINKS PANEL - hidden, toggled by blue circle, opens BELOW circles
-      +(linkCards?('<div id="refLinksPanel" style="display:none;margin-top:8px;margin-bottom:4px;background:#FEFEFD;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)"><div onclick="toggleLinksPanel()" title="اضغطي للإغلاق" style="background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;padding:14px 20px;min-height:53px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:700;cursor:pointer;user-select:none">🔗 Links & Systems <span id="refLinksIco" style="font-size:12px;opacity:.85">▲</span></div><div class="ref-panel-body">'+linkCards+'</div></div>'):'')
+      +(linkCards?('<div id="refLinksPanel" style="display:none;margin-top:8px;margin-bottom:4px;background:#FEFEFD;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)"><div onclick="toggleLinksPanel()" title="اضغطي للإغلاق" style="background:#1565c02E;color:#1565c0;padding:14px 20px;min-height:53px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:700;cursor:pointer;user-select:none">🔗 Links & Systems <span id="refLinksIco" style="font-size:12px">▲</span></div><div class="ref-panel-body">'+linkCards+'</div></div>'):'')
 
       // CONTACT NUMBERS — merged single panel
       +'<div class="ref-info-panel">'
