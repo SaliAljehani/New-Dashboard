@@ -142,6 +142,8 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .br-list::-webkit-scrollbar-track{background:transparent}
 .br-list::-webkit-scrollbar-thumb{background:var(--brc,#c0272d);border-radius:10px;opacity:.7}
 .br-it .ds{display:block;font-size:11px;color:#aaa;padding-left:40px;margin-top:1px}
+.ref-cards-grid:has(> .sms-card){grid-template-columns:repeat(3,minmax(0,1fr))!important}
+@media(max-width:900px){.ref-cards-grid:has(> .sms-card){grid-template-columns:1fr!important}}
 .br-hidden{display:none!important}
 .br-md{display:grid;grid-template-columns:320px minmax(0,1fr);gap:14px;align-items:start;margin-bottom:16px}
 .br-list{scrollbar-width:thin;scrollbar-color:var(--brc,#c0272d) transparent;text-align:left;background:#FDFDFC;border:0.5px solid #eee;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:10px;max-height:72vh;overflow-y:auto;position:sticky;top:10px}
@@ -3241,6 +3243,39 @@ function brandLineIcon(key,col){
   var d=P[K[key]||'link'];
   return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="'+col+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+d+'"/></svg>';
 }
+function smsCardHTML(city,apptAR,apptEN,locAR,locEN,id,c){
+  if(!apptAR&&!apptEN&&!locAR&&!locEN)return'';
+  var esc=function(t){return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+  var bm=String(apptEN||locEN||'').match(/Branch\s*:\s*([^\n]+)/i)||String(apptAR||locAR||'').match(/الفرع\s*[:：]\s*([^\n]+)/);
+  var branch=bm?bm[1].trim():'';var cityClean=String(city||'').replace(/\s+/g,' ').trim();
+  var title=branch||cityClean||'—',sub=branch&&cityClean&&branch.toLowerCase()!==cityClean.toLowerCase()?cityClean:'';
+  var M={appt:{ar:apptAR,en:apptEN},loc:{ar:locAR,en:locEN}};
+  var t0=(apptAR||apptEN)?'appt':'loc',l0=M[t0].ar?'ar':'en';
+  var data=' data-appt-ar="'+esc(apptAR)+'" data-appt-en="'+esc(apptEN)+'" data-loc-ar="'+esc(locAR)+'" data-loc-en="'+esc(locEN)+'"';
+  var tab=function(grp,v,lbl,on,dis){return '<span class="smsT" data-g="'+grp+'" data-v="'+v+'" style="display:inline-block;padding:7px 0;margin-right:14px;font-size:11px;font-weight:600;cursor:'+(dis?'default':'pointer')+';color:'+(on?c:(dis?'#ddd':'#aaa'))+';box-shadow:'+(on?'inset 0 -2px '+c:'none')+'">'+lbl+'</span>';};
+  var txt=M[t0][l0]||'';var ar=l0==='ar';
+  return '<div class="ref-card sms-card" id="smsc_'+id+'" data-c="'+c+'" data-t="'+t0+'" data-l="'+l0+'"'+data+' style="padding:0;overflow:hidden;text-align:left;background:#FDFDFC;border:1px solid #F1EAE3;border-radius:12px;display:flex;flex-direction:column">'
+    +'<div style="padding:10px 14px;border-bottom:1px solid #F4EDE6"><b style="font-size:13px;font-weight:700;color:'+c+'">'+esc(title)+'</b>'+(sub?'<span style="color:#aaa;font-size:11px;margin-left:6px">'+esc(sub)+'</span>':'')+'</div>'
+    +'<div style="display:flex;justify-content:space-between;padding:0 14px;border-bottom:1px solid #F4EDE6">'
+    +'<div>'+tab('t','appt','Appointment',t0==='appt',!(apptAR||apptEN))+tab('t','loc','Location',t0==='loc',!(locAR||locEN))+'</div>'
+    +'<div>'+tab('l','ar','AR',l0==='ar',false)+tab('l','en','EN',l0==='en',false).replace('margin-right:14px','margin-right:0')+'</div></div>'
+    +'<div class="smsX" style="padding:10px 14px;font-size:12px;line-height:1.85;color:#666;white-space:pre-wrap;flex:1;direction:'+(ar?'rtl':'ltr')+';text-align:'+(ar?'right':'left')+'">'+esc(txt)+'</div>'
+    +'<div style="display:flex;justify-content:flex-end;padding:0 14px 10px"><button class="smsCp" style="border:1px solid #F1EAE3;background:#FDFDFC;border-radius:6px;padding:3px 12px;color:'+c+';font-size:11px;font-weight:600;cursor:pointer">Copy</button></div></div>';
+}
+document.addEventListener('click',function(ev){
+  var t=ev.target.closest&&ev.target.closest('.smsT');var cp=ev.target.closest&&ev.target.closest('.smsCp');
+  var card=(t||cp)&&(t||cp).closest('.sms-card');if(!card)return;
+  var c=card.getAttribute('data-c');
+  if(t){var g=t.getAttribute('data-g'),v=t.getAttribute('data-v');
+    var tt=g==='t'?v:card.getAttribute('data-t'),ll=g==='l'?v:card.getAttribute('data-l');
+    if(!card.getAttribute('data-'+tt+'-'+ll)&&g==='t'){ll=card.getAttribute('data-'+tt+'-ar')?'ar':'en';}
+    if(!card.getAttribute('data-'+tt+'-'+ll))return;
+    card.setAttribute('data-t',tt);card.setAttribute('data-l',ll);
+    card.querySelectorAll('.smsT').forEach(function(x){var on=(x.getAttribute('data-g')==='t'?tt:ll)===x.getAttribute('data-v');x.style.color=on?c:'#aaa';x.style.boxShadow=on?'inset 0 -2px '+c:'none';});
+    var box=card.querySelector('.smsX');box.textContent=card.getAttribute('data-'+tt+'-'+ll);var ar=ll==='ar';box.style.direction=ar?'rtl':'ltr';box.style.textAlign=ar?'right':'left';return;}
+  if(cp){var v2=card.querySelector('.smsX').textContent;var done=function(){cp.textContent='Copied ✓';setTimeout(function(){cp.textContent='Copy';},1200);};
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(v2).then(done,done);else{var ta=document.createElement('textarea');ta.value=v2;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}ta.remove();done();}}
+});
 function sheetPersonLabel(h){var _h=String(h||'').replace(/\s*(name|#)\s*$/i,'').trim();var _ab={BM:'Branch Manager',AM:'Area Manager',RM:'Regional Manager',SM:'Station Manager',GM:'General Manager'};if(_ab[_h.toUpperCase()])return _ab[_h.toUpperCase()];if(/advisor/i.test(String(h||'')))return'Branch Manager';h=String(h||'').replace(/\s*(name|#)\s*$/i,'').replace(/managers\b/i,'Manager').replace(/\s+/g,' ').trim();return h||'Branch Manager';}
 const NISSAN_AM_FALLBACK={West:{name:'Ahmed Ateeq',phone:'545733753',email:'ahmed.ateeq@petromin.com'},South:{name:'Ahmed Ateeq',phone:'545733753',email:'ahmed.ateeq@petromin.com'},Central:{name:'Simon White',phone:'',email:'simon.white@petromin.com'},North:{name:'Simon White',phone:'',email:'simon.white@petromin.com'},East:{name:'Zuhair Bakhurji',phone:'',email:'z.bakhurji@petromin.com'}};
 window.__NISSAN_RM=window.__NISSAN_RM||null;
@@ -4130,20 +4165,20 @@ function renderBaicShowroomTab(arr){
   });
   if(!rows.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 
-  const banner=sharedHours?'<div style="max-width:560px;margin:0 auto 18px;background:'+color+'10;border:1px solid '+color+'30;border-radius:10px;padding:10px 16px;text-align:center;font-size:12px;color:#8a5a2b;font-weight:600">🕐 '+sharedHours+'</div>':'';
+  const banner=sharedHours?'<div style="max-width:560px;margin:0 auto 18px;background:'+color+'10;border:1px solid '+color+'30;border-radius:10px;padding:10px 16px;text-align:center;font-size:13px;color:#555;font-weight:600">'+brFormatHours(sharedHours,color)+'</div>':'';
 
   const cards='<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:16px;align-items:flex-start;padding-top:4px">'+rows.map(r=>{
     const reg=String(r[regionCol]||'').trim();
     const city=String(r[cityCol]||'').trim();
     const name=String(r[nameCol]||'').replace(/\n/g,' ').trim();
     const gps=String(r[gpsCol]||'').trim();
-    return '<div style="position:relative;margin-top:11px;width:240px;max-width:100%">'
+    return '<div style="position:relative;margin-top:11px;width:320px;max-width:100%">'
       +'<div style="position:absolute;top:-11px;left:50%;transform:translateX(-50%);z-index:2;background:'+color+';color:#fff;font-size:11px;font-weight:700;padding:3px 18px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.12)">'+regClean(reg)+'</div>'
       +'<div style="background:#FEFEFD;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07)">'
       +'<div style="background:'+color+'12;padding:16px 14px 12px;text-align:center">'
-      +'<div style="font-size:14px;font-weight:700;color:#2b2b2b">'+name+'</div>'
-      +(city?'<div style="font-size:11px;color:#888;margin-top:5px">📍 '+city+'</div>':'')
-      +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600;text-decoration:none">🗺️ Location</a></div>':'')
+      +'<div style="font-size:16px;font-weight:700;color:#2b2b2b;padding-top:6px">'+name+'</div>'
+      +(city?'<div style="font-size:13px;color:#888;margin-top:6px">📍 '+city+'</div>':'')
+      +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:'+color+';font-size:12px;font-weight:600;text-decoration:none">🗺️ Location</a></div>':'')
       +'</div>'
       +'</div>'
       +'</div>';
@@ -4330,17 +4365,7 @@ function renderBaicLocationTab(arr, brand){
     sections[current].push(r);
   });
   function mkCard(city, apptAR, apptEN, locAR, locEN, prefix, c){
-    if(!apptAR&&!apptEN&&!locAR&&!locEN) return '';
-    return '<div class="ref-card" style="padding:0;overflow:hidden;text-align:left">'
-      +(city?'<div style="background:'+c+'18;border-bottom:2px solid '+c+'22;padding:8px 14px;border-radius:10px 10px 0 0;text-align:center"><div style="font-size:13px;font-weight:700;color:'+c+'">'+city+'</div></div>':'')
-      +'<div style="padding:10px 14px">'
-      +((apptAR||apptEN)?'<div style="font-size:11px;font-weight:700;color:#555;margin-bottom:6px;letter-spacing:.05em">📅 Appointment SMS</div>':'')
-      +mkSmsBox(prefix+'_appt_ar','AR',apptAR,c)
-      +mkSmsBox(prefix+'_appt_en','EN',apptEN,c)
-      +((locAR||locEN)?'<div style="font-size:11px;font-weight:700;color:#555;margin:10px 0 6px;letter-spacing:.05em">📍 Location SMS</div>':'')
-      +mkSmsBox(prefix+'_loc_ar','AR',locAR,c)
-      +mkSmsBox(prefix+'_loc_en','EN',locEN,c)
-      +'</div></div>';
+    return smsCardHTML(city,apptAR,apptEN,locAR,locEN,'b'+prefix,c);
   }
   function mkCards(rows, prefix, c){
     return rows.map((r,i)=>{
@@ -6248,20 +6273,7 @@ function renderSMSTab(arr, sheetName, brand){
   }
 
   function mkCard(branch, apptEN, apptAR, locEN, locAR, prefix, color){
-    if(!apptEN&&!apptAR&&!locEN&&!locAR) return '';
-    var branchClean=branch?branch.replace(/\n/g,' ').replace(/\s+/g,' '):'—';
-    return '<div class="ref-card" style="padding:0;overflow:hidden;text-align:left">'
-      +'<div style="background:'+color+'18;border-bottom:2px solid '+color+'22;padding:10px 14px;border-radius:10px 10px 0 0;text-align:center">'
-      +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+branchClean+'</div>'
-      +'</div>'
-      +'<div style="padding:10px 14px">'
-      +((apptEN||apptAR)?'<div style="font-size:11px;font-weight:700;color:#555;margin-bottom:6px;letter-spacing:.05em">&#128197; Appointment SMS</div>':'')
-      +mkSmsBox(prefix+'a_ar','AR',apptAR,color)
-      +mkSmsBox(prefix+'a_en','EN',apptEN,color)
-      +((locEN||locAR)?'<div style="font-size:11px;font-weight:700;color:#555;margin:10px 0 6px;letter-spacing:.05em">&#128205; Location SMS</div>':'')
-      +mkSmsBox(prefix+'l_ar','AR',locAR,color)
-      +mkSmsBox(prefix+'l_en','EN',locEN,color)
-      +'</div></div>';
+    return smsCardHTML(branch,apptAR,apptEN,locAR,locEN,'g'+prefix,color);
   }
 
   var cards3S = sections.s3.map(function(r,i){
@@ -6481,21 +6493,19 @@ function showRefBrandPage(brand){
     +'<button onclick="renderRef()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:#f5f5f5;border:1.5px solid #ddd;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;color:#555">'
     +'← Back to References</button></div>'
     +'<div class="ref-brand-section">'
-    +'<div style="padding:14px 20px;min-height:53px;background:'+bannerBg+';filter:brightness(1.12) saturate(.9);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.15);border-radius:12px 12px 0 0;display:flex;align-items:center;gap:12px;position:relative">'
-    +'<div style="position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:10px;pointer-events:none">'
-    +'<span style="font-size:22px">'+meta.icon+'</span>'
-    +'<span style="font-size:15px;font-weight:700">'+meta.label+'</span>'
-    +'</div>'
+    +'<div style="padding:12px 20px;min-height:53px;background:'+tabActive+'1F;color:'+tabActive+';border-radius:12px 12px 0 0;display:flex;align-items:center;gap:12px;position:relative">'
+    +'<span style="width:32px;height:32px;border-radius:50%;background:#FDFDFC;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">'+brandLineIcon(brand,tabActive).replace('width="24" height="24"','width="18" height="18"')+'</span>'
+    +'<span style="font-size:16px;font-weight:700">'+meta.label+'</span>'
     +'<span style="margin-left:auto"></span>'
-    +(brand==='stellantis'?'<button onclick="loadVehicleModels(\'stellantis\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.92);color:'+tabActive+';border:1px solid rgba(255,255,255,.5);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Vehicle <span id="ico_stellantisModels">▼</span></button>':'')
-    +(brand==='nissan'?'<button onclick="loadVehicleModels(\'nissan\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.92);color:'+tabActive+';border:1px solid rgba(255,255,255,.5);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Vehicle <span id="ico_nissanModels">▼</span></button>':'')
-    +(brand==='baic'?'<button onclick="loadVehicleModels(\'baic\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.92);color:'+tabActive+';border:1px solid rgba(255,255,255,.5);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Vehicles <span id="ico_baicModels">▼</span></button>':'')
+    +(brand==='stellantis'?'<button onclick="loadVehicleModels(\'stellantis\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:#FDFDFC;color:'+tabActive+';border:1px solid '+tabActive+'40;border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Vehicle <span id="ico_stellantisModels">▼</span></button>':'')
+    +(brand==='nissan'?'<button onclick="loadVehicleModels(\'nissan\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:#FDFDFC;color:'+tabActive+';border:1px solid '+tabActive+'40;border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Vehicle <span id="ico_nissanModels">▼</span></button>':'')
+    +(brand==='baic'?'<button onclick="loadVehicleModels(\'baic\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:#FDFDFC;color:'+tabActive+';border:1px solid '+tabActive+'40;border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🚗 Vehicles <span id="ico_baicModels">▼</span></button>':'')
     +''
-    +(brand==='nissan'?'<button onclick="toggleRegion(\'nissanWebsite\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.92);color:'+tabActive+';border:1px solid rgba(255,255,255,.5);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🌐 Website <span id="ico_nissanWebsite">▼</span></button>':'')
-    +(brand==='petromin'?'<button onclick="toggleRegion(\'petrominNoAnswer\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.92);color:'+tabActive+';border:1px solid rgba(255,255,255,.5);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">📨 No Answer SMS <span id="ico_petrominNoAnswer">▶</span></button>':'')
-    +(brand==='petromin'?'<button onclick="toggleRegion(\'petrominWebsite\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.92);color:'+tabActive+';border:1px solid rgba(255,255,255,.5);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🌐 Website <span id="ico_petrominWebsite">▼</span></button>':'')
-    +(brand==='baic'?'<button onclick="toggleRegion(\'baicWebsite\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.92);color:'+tabActive+';border:1px solid rgba(255,255,255,.5);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🌐 Website <span id="ico_baicWebsite">▼</span></button>':'')
-    +(brand==='foton'?'<button onclick="toggleRegion(\'fotonWebsite\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.92);color:'+tabActive+';border:1px solid rgba(255,255,255,.5);border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🌐 Website <span id="ico_fotonWebsite">▼</span></button>':'')
+    +(brand==='nissan'?'<button onclick="toggleRegion(\'nissanWebsite\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:#FDFDFC;color:'+tabActive+';border:1px solid '+tabActive+'40;border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🌐 Website <span id="ico_nissanWebsite">▼</span></button>':'')
+    +(brand==='petromin'?'<button onclick="toggleRegion(\'petrominNoAnswer\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:#FDFDFC;color:'+tabActive+';border:1px solid '+tabActive+'40;border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">📨 No Answer SMS <span id="ico_petrominNoAnswer">▶</span></button>':'')
+    +(brand==='petromin'?'<button onclick="toggleRegion(\'petrominWebsite\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:#FDFDFC;color:'+tabActive+';border:1px solid '+tabActive+'40;border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🌐 Website <span id="ico_petrominWebsite">▼</span></button>':'')
+    +(brand==='baic'?'<button onclick="toggleRegion(\'baicWebsite\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:#FDFDFC;color:'+tabActive+';border:1px solid '+tabActive+'40;border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🌐 Website <span id="ico_baicWebsite">▼</span></button>':'')
+    +(brand==='foton'?'<button onclick="toggleRegion(\'fotonWebsite\')" style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:#FDFDFC;color:'+tabActive+';border:1px solid '+tabActive+'40;border-radius:16px;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px">🌐 Website <span id="ico_fotonWebsite">▼</span></button>':'')
     
     +'</div>'
 
@@ -6811,23 +6821,23 @@ async function renderInstructionTab(brand, cfg){
         }).join('')
         +'</div>';
     } else {
-      apptBody='<div style="overflow-x:auto;border-radius:12px;background:#FEFEFD;box-shadow:0 2px 8px rgba(0,0,0,.07)"><table style="width:100%;border-collapse:collapse;font-size:12px">'
-      +'<thead><tr style="background:'+color+'12">'
-      +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">Service</th>'
-      +(hasSource?'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">Source</th><th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">Service Advisor</th>':'')
-      +'<th style="padding:9px 14px;color:'+color+';font-weight:700;border-bottom:2px solid '+color+'22;text-align:center">Description</th>'
+      apptBody='<div style="overflow-x:auto;border-radius:12px;background:#FDFDFC;border:1px solid #EFEAE4"><table style="width:100%;border-collapse:collapse;font-size:12px">'
+      +'<thead><tr style="background:#FAF8F5">'
+      +'<th style="padding:9px 14px;color:#5f5a55;font-weight:700;border-bottom:1px solid #EFEAE4;text-align:center">Service</th>'
+      +(hasSource?'<th style="padding:9px 14px;color:#5f5a55;font-weight:700;border-bottom:1px solid #EFEAE4;text-align:center">Source</th><th style="padding:9px 14px;color:#5f5a55;font-weight:700;border-bottom:1px solid #EFEAE4;text-align:center">Service Advisor</th>':'')
+      +'<th style="padding:9px 14px;color:#5f5a55;font-weight:700;border-bottom:1px solid #EFEAE4;text-align:center">Description</th>'
       +'</tr></thead><tbody>'
       +apptRows.map((r,i)=>{
         if(hasSource){
           const srcColor=SRC_COLOR[r.a]||'#555', srcBg=SRC_BG[r.a]||'#f5f5f5';
-          return '<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'">'
+          return '<tr style="background:'+(i%2===0?'#FDFDFC':'#FAF8F5')+'">'
             +'<td style="padding:7px 12px;font-weight:700;text-align:center"><span style="background:'+color+'15;color:'+color+';padding:2px 8px;border-radius:6px;font-size:11px">'+r.svc+'</span></td>'
             +'<td style="padding:7px 12px;text-align:center"><span style="background:'+srcBg+';color:'+srcColor+';padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600">'+r.a+'</span></td>'
             +'<td style="padding:7px 12px;text-align:center;color:#555">'+r.b+'</td>'
             +'<td style="padding:7px 12px;text-align:center;font-family:monospace;font-size:11px">'+r.c+'</td>'
             +'</tr>';
         }
-        return '<tr style="background:'+(i%2===0?'#fff':'#fafafa')+'">'
+        return '<tr style="background:'+(i%2===0?'#FDFDFC':'#FAF8F5')+'">'
           +'<td style="padding:7px 12px;font-weight:700;text-align:center"><span style="background:'+color+'15;color:'+color+';padding:2px 8px;border-radius:6px;font-size:11px">'+r.svc+'</span></td>'
           +'<td style="padding:7px 12px;text-align:center">'+r.a+'</td>'
           +'</tr>';
@@ -8876,11 +8886,10 @@ async function loadVehicleModels(brand){
       if(vk) arr.forEach(r=>{ String(r[vk]||'').split('/').forEach(m=>{const t=m.trim();if(t)models.push(t);}); });
     }
     if(!models.length){document.getElementById(contentId).innerHTML='<div style="text-align:center;color:#aaa;font-size:12px">No models — أضيفي صف "Vehicle Model" في تبويب Instruction</div>';return;}
-    const PALETTE=['#c0272d','#1565c0','#2e7d32','#6a1b9a','#e65100','#00695c','#ad1457','#37474f','#558b2f','#4527a0','#d84315','#0277bd'];
-    let html='<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center">'
-      +models.map((m,i)=>{
-        const c=PALETTE[i%PALETTE.length];
-        return '<span style="display:inline-flex;background:'+c+'15;color:'+c+';padding:4px 12px;border-radius:14px;font-size:12px;font-weight:700;border:1px solid '+c+'33">'+m+'</span>';
+    const c={nissan:'#c0272d',stellantis:'#1565c0',baic:'#C86E35',foton:'#546e7a',volvo:'#003057'}[brand]||'#c0272d';
+    let html='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px">'
+      +models.map((m)=>{
+        return '<div style="background:#FDFDFC;border:1px solid #EFEAE4;border-radius:10px;padding:10px 8px;text-align:center;color:'+c+';font-size:12px;font-weight:600">'+m+'</div>';
       }).join('')
       +'</div>';
     VEHICLE_CACHE[brand]=true;
