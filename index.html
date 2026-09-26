@@ -142,7 +142,8 @@ select#agSel{font-size:14px;font-weight:600;color:#c0272d;min-width:180px}
 .br-list::-webkit-scrollbar-track{background:transparent}
 .br-list::-webkit-scrollbar-thumb{background:var(--brc,#c0272d);border-radius:10px;opacity:.7}
 .br-it .ds{display:block;font-size:11px;color:#aaa;padding-left:40px;margin-top:1px}
-.ref-cards-grid:has(> .sms-card){grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.ref-cards-grid:has(> .sms-card){grid-template-columns:repeat(4,minmax(0,1fr))!important}
+@media(max-width:1300px){.ref-cards-grid:has(> .sms-card){grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media(max-width:900px){.ref-cards-grid:has(> .sms-card){grid-template-columns:1fr!important}}
 .br-hidden{display:none!important}
 .br-md{display:grid;grid-template-columns:320px minmax(0,1fr);gap:14px;align-items:start;margin-bottom:16px}
@@ -347,7 +348,8 @@ tr:last-child td{border-bottom:none}
 .ref-chevron.open{transform:rotate(180deg)}
 .ref-sub-tabs{display:flex;gap:6px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid #f0f0f0;background:#FDFDFC}
 .ref-sub-tab{padding:7px 15px;border-radius:10px;border:1.5px solid transparent;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:#2b2b2b;transition:.15s;white-space:nowrap;text-align:center}
-.ref-sub-tab.active{border-color:transparent;font-weight:800}
+.ref-sub-tab.active{border-color:transparent;font-weight:700}
+.ref-sub-tab:focus,.ref-sub-tab:focus-visible,.ref-sub-tab:active{outline:none!important;box-shadow:none!important;border-color:transparent!important}
 .ref-sub-tab:hover:not(.active){background:#f2f2f2;color:#555}
 .ref-tab-content{padding:14px}
 
@@ -3576,13 +3578,13 @@ function renderTristarTab(arr){
 
   const warrantyHTML=warrantyRows.length?
     '<div style="margin-bottom:16px">'
-    +'<div style="font-size:12px;font-weight:700;color:#1565c0;padding:6px 12px;background:#eef4fb;border-radius:6px;margin-bottom:8px;border-left:3px solid #1565c0">✅ Warranty ('+warrantyRows.length+')</div>'
+    +'<div style="font-size:12px;font-weight:700;color:#1565c0;padding:6px 12px;background:#eef4fb;border-radius:6px;margin-bottom:8px;border-left:1px solid #1565c033">✅ Warranty ('+warrantyRows.length+')</div>'
     +'<div class="ref-cards-grid">'+warrantyRows.map(r=>makeCard(r,'#1565c0')).join('')+'</div></div>'
     :'';
 
   const noWarrantyHTML=noWarrantyRows.length?
     '<div style="margin-bottom:16px">'
-    +'<div style="font-size:12px;font-weight:700;color:#1565c0;padding:6px 12px;background:#eef4fb;border-radius:6px;margin-bottom:8px;border-left:3px solid #1565c0">❌ No Warranty ('+noWarrantyRows.length+')</div>'
+    +'<div style="font-size:12px;font-weight:700;color:#1565c0;padding:6px 12px;background:#eef4fb;border-radius:6px;margin-bottom:8px;border-left:1px solid #1565c033">❌ No Warranty ('+noWarrantyRows.length+')</div>'
     +'<div class="ref-cards-grid">'+noWarrantyRows.map(r=>makeCard(r,'#1565c0')).join('')+'</div></div>'
     :'';
 
@@ -3629,9 +3631,9 @@ function renderApptScriptSection(arr){
         +(svc?'<td style="padding:8px 14px;font-weight:700;color:'+color+'">'
           +'<span style="background:'+color+'15;color:'+color+';padding:2px 8px;border-radius:6px;font-size:11px">'+svc+'</span></td>'
           :'<td style="padding:8px 14px"></td>')
-        +'<td style="padding:8px 14px"><span style="background:'+srcBg+';color:'+srcColor+';padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600">'+src+'</span></td>'
+        +'<td style="padding:8px 14px"><span style="background:transparent;color:'+srcColor+';padding:2px 0;font-size:12px;font-weight:600">'+src+'</span></td>'
         +'<td style="padding:8px 14px;color:#555">'+adv+'</td>'
-        +'<td style="padding:8px 14px;color:#2b2b2b;font-family:monospace;font-size:11px">'+desc+'</td>'
+        +'<td style="padding:8px 14px;color:#2b2b2b;font-size:11px">'+desc+'</td>'
         +'</tr>';
     }).join('')
     +'</tbody></table></div>';
@@ -3691,9 +3693,9 @@ function renderStellantisAppointmentTab(arr){
         +(svc?'<td style="padding:8px 14px;font-weight:700;color:'+color+'">'
           +'<span style="background:'+color+'15;color:'+color+';padding:2px 8px;border-radius:6px;font-size:11px">'+svc+'</span></td>'
           :'<td style="padding:8px 14px"></td>')
-        +'<td style="padding:8px 14px"><span style="background:'+srcBg+';color:'+srcColor+';padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600">'+src+'</span></td>'
+        +'<td style="padding:8px 14px"><span style="background:transparent;color:'+srcColor+';padding:2px 0;font-size:12px;font-weight:600">'+src+'</span></td>'
         +'<td style="padding:8px 14px;color:#555">'+adv+'</td>'
-        +'<td style="padding:8px 14px;color:#2b2b2b;font-family:monospace;font-size:11px">'+desc+'</td>'
+        +'<td style="padding:8px 14px;color:#2b2b2b;font-size:11px">'+desc+'</td>'
         +'</tr>';
     }).join('')
     +'</tbody></table></div></div>';
@@ -6413,16 +6415,7 @@ function renderApptSMSTab(arr){
       else { if(!city) city=v; }
     });
     if(!ar && !en) return '';
-    const title = city || 'Branch '+(i+1);
-    return '<div class="ref-card" style="padding:0;overflow:hidden;text-align:left">'
-      +'<div style="background:'+color+'18;border-bottom:2px solid '+color+'22;padding:10px 14px;border-radius:10px 10px 0 0;text-align:center">'
-      +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+title+'</div>'
-      +'</div>'
-      +'<div style="padding:10px 14px">'
-      +'<div style="font-size:11px;font-weight:700;color:#555;margin-bottom:6px;letter-spacing:.05em">&#128197; Appointment SMS</div>'
-      +mkSmsBox('appt'+i+'_ar','AR',ar,color,true)
-      +mkSmsBox('appt'+i+'_en','EN',en,color,false)
-      +'</div></div>';
+    return smsCardHTML(city,ar,en,'','','st'+i,color);
   }).join('');
 
   return '<div>'
@@ -6492,8 +6485,8 @@ function showRefBrandPage(brand){
     '<div style="margin-bottom:14px">'
     +'<button onclick="renderRef()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:#f5f5f5;border:1.5px solid #ddd;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;color:#555">'
     +'← Back to References</button></div>'
-    +'<div class="ref-brand-section">'
-    +'<div style="padding:12px 20px;min-height:53px;background:'+tabActive+'1F;color:'+tabActive+';border-radius:12px 12px 0 0;display:flex;align-items:center;gap:12px;position:relative">'
+    +'<div class="ref-brand-section" data-brand-color="'+tabActive+'" style="--brand:'+tabActive+';--brand-tint:'+tabActive+'2E;--brand-soft:'+tabActive+'14">'
+    +'<div style="padding:12px 20px;min-height:53px;background:'+tabActive+'2E;color:'+tabActive+';border-radius:12px 12px 0 0;display:flex;align-items:center;gap:12px;position:relative">'
     +'<span style="width:32px;height:32px;border-radius:50%;background:#FDFDFC;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">'+brandLineIcon(brand,tabActive).replace('width="24" height="24"','width="18" height="18"')+'</span>'
     +'<span style="font-size:16px;font-weight:700">'+meta.label+'</span>'
     +'<span style="margin-left:auto"></span>'
@@ -6832,9 +6825,9 @@ async function renderInstructionTab(brand, cfg){
           const srcColor=SRC_COLOR[r.a]||'#555', srcBg=SRC_BG[r.a]||'#f5f5f5';
           return '<tr style="background:'+(i%2===0?'#FDFDFC':'#FAF8F5')+'">'
             +'<td style="padding:7px 12px;font-weight:700;text-align:center"><span style="background:'+color+'15;color:'+color+';padding:2px 8px;border-radius:6px;font-size:11px">'+r.svc+'</span></td>'
-            +'<td style="padding:7px 12px;text-align:center"><span style="background:'+srcBg+';color:'+srcColor+';padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600">'+r.a+'</span></td>'
+            +'<td style="padding:7px 12px;text-align:center"><span style="background:transparent;color:'+srcColor+';padding:2px 0;font-size:12px;font-weight:600">'+r.a+'</span></td>'
             +'<td style="padding:7px 12px;text-align:center;color:#555">'+r.b+'</td>'
-            +'<td style="padding:7px 12px;text-align:center;font-family:monospace;font-size:11px">'+r.c+'</td>'
+            +'<td style="padding:7px 12px;text-align:center;font-size:11px">'+r.c+'</td>'
             +'</tr>';
         }
         return '<tr style="background:'+(i%2===0?'#FDFDFC':'#FAF8F5')+'">'
@@ -7321,7 +7314,7 @@ function renderRecallTab(arr, sheetName){
     +'<span id="vinCount_'+vinId+'" style="font-size:11px;color:#888;white-space:nowrap">'+vinRows.length+' VINs</span>'
     +'</div>'
     +'<div id="'+vinId+'" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px;max-height:300px;overflow-y:auto;padding:4px">'
-    +vinRows.map(v=>'<div class="vin-item-'+vinId+'" style="background:#FAF8F2;color:#6a1b9a;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;font-family:monospace;text-align:center">'+v+'</div>').join('')
+    +vinRows.map(v=>'<div class="vin-item-'+vinId+'" style="background:#FAF8F2;color:#6a1b9a;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;text-align:center">'+v+'</div>').join('')
     +'</div></div>';
 
   const detailSection=mkCollapsible('📋 تفاصيل الاستدعاء — '+sheetName, detailHTML, 'recall_detail_'+vinId, color);
@@ -8569,7 +8562,7 @@ function renderRecallTab(arr, sheetName, color){
     +'<span id="vinCount_'+vinId+'" style="font-size:11px;color:#888;white-space:nowrap">'+vinRows.length+' VINs</span>'
     +'</div>'
     +'<div id="'+vinId+'" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px;max-height:320px;overflow-y:auto">'
-    +vinRows.map(v=>'<div class="vin-item-'+vinId+'" style="background:#f5f5f5;color:#2b2b2b;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;font-family:monospace;text-align:center;border:1px solid #e0e0e0">'+v+'</div>').join('')
+    +vinRows.map(v=>'<div class="vin-item-'+vinId+'" style="background:#f5f5f5;color:#2b2b2b;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;text-align:center;border:1px solid #e0e0e0">'+v+'</div>').join('')
     +'</div></div>'
     ,'vin_'+vinId, vinColor);
 
@@ -8887,9 +8880,9 @@ async function loadVehicleModels(brand){
     }
     if(!models.length){document.getElementById(contentId).innerHTML='<div style="text-align:center;color:#aaa;font-size:12px">No models — أضيفي صف "Vehicle Model" في تبويب Instruction</div>';return;}
     const c={nissan:'#c0272d',stellantis:'#1565c0',baic:'#C86E35',foton:'#546e7a',volvo:'#003057'}[brand]||'#c0272d';
-    let html='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px">'
+    let html='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px">'
       +models.map((m)=>{
-        return '<div style="background:#FDFDFC;border:1px solid #EFEAE4;border-radius:10px;padding:10px 8px;text-align:center;color:'+c+';font-size:12px;font-weight:600">'+m+'</div>';
+        return '<div style="background:#FDFDFC;border:1px solid #EFEAE4;border-radius:8px;padding:6px 6px;text-align:center;color:'+c+';font-size:11.5px;font-weight:600">'+m+'</div>';
       }).join('')
       +'</div>';
     VEHICLE_CACHE[brand]=true;
@@ -10250,6 +10243,44 @@ window.addEventListener('DOMContentLoaded', () => {
   function run(){try{styleEmailCards();}catch(e){console.warn('email style',e);}try{iconize();}catch(e){console.warn('icons',e);}}
   var t=null;new MutationObserver(function(){clearTimeout(t);t=setTimeout(run,150);}).observe(document.body,{childList:true,subtree:true,characterData:false});
   if(document.readyState!=='loading')run();else document.addEventListener('DOMContentLoaded',run);
+})();
+</script>
+
+<script>
+/* ── Section-wide consistency: light buttons, brand-tinted table heads, no grey e-mail chips ── */
+(function(){
+  function hexA(h,a){h=h.replace('#','');return'rgba('+parseInt(h.slice(0,2),16)+','+parseInt(h.slice(2,4),16)+','+parseInt(h.slice(4,6),16)+','+a+')';}
+  function pass(){
+    [].slice.call(document.querySelectorAll('.ref-brand-section[data-brand-color]')).forEach(function(sec){
+      var c=sec.getAttribute('data-brand-color');if(!/^#[0-9a-fA-F]{6}$/.test(c))return;
+      var tint=hexA(c,.18),soft=hexA(c,.08);
+      // table heads + section title bars tinted with the brand
+      [].slice.call(sec.querySelectorAll('thead tr:not([data-cs]),thead th:not([data-cs])')).forEach(function(el){
+        if(el.closest('.br-md,.sms-card,.wk-tbl'))return;el.setAttribute('data-cs','1');el.style.background=tint;});
+      var tintRe=new RegExp('background:\\s*'+c+'(0[89a-f]|1[0-9a-f])','i');
+      [].slice.call(sec.querySelectorAll('div[style]:not([data-cs])')).forEach(function(el){
+        var st=el.getAttribute('style');if(tintRe.test(st)&&!el.closest('.br-md,.sms-card')){el.setAttribute('data-cs','1');el.style.background=tint;}});
+      // strong solid buttons / pills → light style in section colour
+      [].slice.call(sec.querySelectorAll('a[style],button[style],span[style],div[style]')).forEach(function(el){
+        if(el.hasAttribute('data-cs2')||el.closest('.ref-email-card,.br-md,.sms-card,.ref-sub-tabs'))return;
+        var st=(el.getAttribute('style')||'').replace(/\s+/g,'');
+        if(!/color:#fff(fff)?(;|$)/i.test(st))return;
+        var m=st.match(/background:(#[0-9a-fA-F]{6})(?![0-9a-fA-F])/);if(!m)return;
+        if(el.classList.contains('ref-email-tag'))return;
+        el.setAttribute('data-cs2','1');
+        var isBtn=el.tagName==='A'||el.tagName==='BUTTON'||/border-radius:(1[4-9]|[2-9][0-9])px/.test(st);
+        el.style.background=isBtn?'#FDFDFC':soft;el.style.color=c;el.style.boxShadow='none';
+        el.style.border='1px solid '+hexA(c,.25);
+        [].slice.call(el.querySelectorAll('svg')).forEach(function(sv){sv.setAttribute('stroke',c);});
+      });
+      // e-mails in tables/cards: no grey chip, section colour text
+      [].slice.call(sec.querySelectorAll('a[href^="mailto:"]:not([data-cs3])')).forEach(function(a){
+        if(a.closest('.ref-email-card,.bd-box,.sms-card'))return;a.setAttribute('data-cs3','1');
+        a.style.background='transparent';a.style.boxShadow='none';a.style.border='none';a.style.color=c;a.style.paddingLeft='0';a.style.paddingRight='0';});
+    });
+  }
+  var t=null;new MutationObserver(function(){clearTimeout(t);t=setTimeout(pass,160);}).observe(document.body,{childList:true,subtree:true});
+  if(document.readyState!=='loading')pass();else document.addEventListener('DOMContentLoaded',pass);
 })();
 </script>
 </body>
