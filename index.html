@@ -18,6 +18,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--accent:#8A6A4A;--accent-rgb:138,106,74;--text:#33291F}
+#recallVinInput{font-family:inherit}#recallVinInput:not(:placeholder-shown){font-family:monospace;letter-spacing:.06em}#recallVinInput::placeholder{direction:rtl}
 .pf-ar{font-style:normal;font-size:9px;margin-right:4px;opacity:.8}
 .ref-home{background:#FDFDFC;border-radius:12px;padding:22px 20px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:8px}
 .ref-home .ref-brand-circles{background:transparent;box-shadow:none;padding:0;gap:22px}
@@ -2756,7 +2757,7 @@ function refGlobalFilter(q){
 
 function switchRefTab(brand, idx, btn){
   REF_ACTIVE_TABS[brand] = idx;
-  const color = {nissan:'#c0272d', stellantis:'#1565c0', baic:'#C86E35', baicRecall:'#6A5818',petromin:'#D98E45',foton:'#546e7a',nos:'#2e7d32'}[brand] || '#c0272d';
+  const color = {nissan:'#c0272d', stellantis:'#1565c0', baic:'#C86E35', baicRecall:'#B7791F',petromin:'#D98E45',foton:'#546e7a',nos:'#2e7d32'}[brand] || '#c0272d';
   btn.parentElement.querySelectorAll('.ref-sub-tab').forEach((t,i) => {
     t.classList.toggle('active', i===idx);
     t.style.background = i===idx ? color : '';
@@ -3323,7 +3324,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
   if(brand==='nissan'){var _rmS=nissanRMFromSheet(arr);if(_rmS)window.__NISSAN_RM=_rmS;}
   const NISSAN_AM=(brand==='nissan')?(window.__NISSAN_RM||NISSAN_AM_FALLBACK):{};
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#C86E35',baicRecall:'#6A5818',petromin:'#D98E45',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
+  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#C86E35',baicRecall:'#B7791F',petromin:'#D98E45',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
   const fmtNum = n => {
     const s=String(n||'').trim();
     if(!s||s==='-') return '';
@@ -6254,7 +6255,7 @@ function copyNissanAppForm(){
 
 function renderSMSTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#C86E35',baicRecall:'#6A5818',petromin:'#D98E45',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
+  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#C86E35',baicRecall:'#B7791F',petromin:'#D98E45',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
   // All data comes under 3S keys — sections separated by header rows
   // Header rows: values equal their key names (e.g. "PAC Appointment SMS EN" == key "3S Appointment SMS EN")
   var sections = {s3:[], pac:[], body:[]};
@@ -6490,7 +6491,7 @@ function showRefBrandPage(brand){
     stellantis:{label:'Stellantis',icon:'🚙',color:'#1565c0'},
     bodyshop:  {label:'Body Shop', icon:'🔧',color:'#7b0000'},
     baic:      {label:'BAIC',      icon:'🚙',color:'#C86E35'},
-    baicRecall:{label:'BAIC Recall — VIN Search',icon:'🔎',color:'#6A5818'},
+    baicRecall:{label:'BAIC Recall — VIN Search',icon:'🔎',color:'#B7791F'},
     petromin:  {label:'Petromin',  icon:'<svg viewBox="0 0 36 36" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="14" width="20" height="16" rx="3" fill="#c0272d"/><rect x="8" y="10" width="12" height="6" rx="2" fill="#1a1a2e"/><rect x="24" y="16" width="8" height="4" rx="2" fill="#1a1a2e"/><rect x="13" y="6" width="4" height="6" rx="1" fill="#c0272d"/><circle cx="10" cy="20" r="2" fill="#fff" opacity=".4"/></svg>',color:'#D98E45'},
     foton:     {label:'Foton',     icon:'🚛',color:'#546e7a'},
     nos:       {label:'National Oil', icon:'🟢',color:'#2e7d32'},
@@ -6552,7 +6553,7 @@ function showRefBrandPage(brand){
 
 function switchRefTab(brand,idx,btn){
   REF_ACTIVE_TABS[brand]=idx;
-  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#C86E35',baicRecall:'#6A5818',petromin:'#D98E45',foton:'#546e7a',nos:'#2e7d32',electromin:'#3A6048',volvo:'#003057'}[brand]||'#c0272d';
+  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#C86E35',baicRecall:'#B7791F',petromin:'#D98E45',foton:'#546e7a',nos:'#2e7d32',electromin:'#3A6048',volvo:'#003057'}[brand]||'#c0272d';
   const container=btn?btn.parentElement:document.querySelector('#refSubTabs_'+brand);
   if(container){
     container.querySelectorAll('.ref-sub-tab').forEach((t,i)=>{
@@ -7300,7 +7301,7 @@ async function renderRefBrand(brand,tabIdx){
 
 function renderRecallTab(arr, sheetName){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#6A5818';
+  const color='#B7791F';
 
   // Parse: first section = recall details (until empty row then "VIN")
   const detailRows=[], vinRows=[];
@@ -8228,7 +8229,7 @@ function renderRecallInRef(){
   const refContent = document.getElementById('refContent');
   if(!refContent) return;
   refContent.innerHTML =
-    '<div style="margin-bottom:12px;text-align:left"><button onclick="renderRef()" style="background:#FDFDFC;border:1px solid #6A5818;padding:8px 22px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;color:#6A5818">← Back to References</button></div>'
+    '<div style="margin-bottom:12px;text-align:left"><button onclick="renderRef()" style="background:#FDFDFC;border:1px solid #B7791F;padding:8px 22px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;color:#B7791F">← Back to References</button></div>'
     +'<div id="recallContent"></div>';
   RECALL_ACTIVE_BRAND = 'BAIC Search';
   RECALL_ACTIVE_TAB = 0;
@@ -8281,18 +8282,15 @@ function renderRecallPage(){
   if(!el) return;
 
   // دوائر أصغر
-  const circlesHTML = '<div style="display:flex;gap:44px;flex-wrap:wrap;justify-content:center;margin:26px 0 10px">'
+  const circlesHTML = '<div style="display:flex;justify-content:center;margin:22px 0 6px"><div style="display:inline-flex;gap:3px;border:1px solid #E8E2DA;border-radius:12px;padding:4px;background:#FDFDFC">'
     +Object.entries(RECALL_BRANDS).map(([name,cfg])=>
-      '<div onclick="selectRecallBrand(\''+name+'\')" id="rcircle_'+name.replace(/\s/g,'_')+'" style="display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer">'
-      +'<div id="rcirc_inner_'+name.replace(/\s/g,'_')+'" style="width:78px;height:78px;border-radius:50%;background:'+cfg.color+'1F;display:flex;align-items:center;justify-content:center;font-size:34px;box-shadow:0 4px 14px rgba(0,0,0,.18);transition:.2s;'+(name===RECALL_ACTIVE_BRAND?'box-shadow:0 0 0 2px #fff,0 0 0 4px '+cfg.color:'')+'">'+cfg.icon+'</div>'
-      +'<div style="font-size:14px;font-weight:800;margin-top:6px;color:'+cfg.color+'">'+name+'</div>'
-      +'</div>'
-    ).join('')+'</div>';
+      '<span onclick="selectRecallBrand(\''+name+'\')" id="rcirc_inner_'+name.replace(/\s/g,'_')+'" style="padding:9px 22px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;user-select:none;color:'+cfg.color+';background:'+(name===RECALL_ACTIVE_BRAND?cfg.color+'14':'transparent')+';transition:.15s">'+name.replace(' Search','')+'</span>'
+    ).join('')+'</div></div>';
 
   el.innerHTML =
     // هيدر رمادي مع وزارة التجارة
-    '<div style="background:#6A58182E;border-radius:12px 12px 0 0;padding:12px 20px;min-height:53px;display:flex;align-items:center;gap:12px;position:relative">'
-    +'<span style="width:32px;height:32px;border-radius:50%;background:#FDFDFC;display:inline-flex;align-items:center;justify-content:center">'+brandLineIcon('baicRecall','#6A5818').replace('width="24" height="24"','width="18" height="18"')+'</span><span style="font-size:16px;font-weight:700;color:#6A5818">Recall</span>'
+    '<div style="background:#B7791F2E;border-radius:12px 12px 0 0;padding:12px 20px;min-height:53px;display:flex;align-items:center;gap:12px;position:relative">'
+    +'<span style="width:32px;height:32px;border-radius:50%;background:#FDFDFC;display:inline-flex;align-items:center;justify-content:center">'+brandLineIcon('baicRecall','#B7791F').replace('width="24" height="24"','width="18" height="18"')+'</span><span style="font-size:16px;font-weight:700;color:#B7791F">Recall</span>'
     +'<a href="https://recalls.sa/" target="_blank" style="position:absolute;right:12px;display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(255,255,255,.92);color:#757575;border:1px solid rgba(255,255,255,.5);border-radius:14px;font-size:11px;font-weight:700;text-decoration:none">🏛️ وزارة التجارة</a>'
     +'</div>'
     +'<div style="background:#FEFEFD;border-radius:0 0 12px 12px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:16px">'
@@ -8310,9 +8308,7 @@ function selectRecallBrand(name){
   Object.entries(RECALL_BRANDS).forEach(([n,cfg])=>{
     const inner = document.getElementById('rcirc_inner_'+n.replace(/\s/g,'_'));
     if(!inner) return;
-    inner.style.boxShadow = n===name
-      ? '0 0 0 3px #fff, 0 0 0 5px '+cfg.color
-      : '0 2px 8px rgba(0,0,0,.15)';
+    inner.style.background = n===name ? cfg.color+'14' : 'transparent';
   });
   loadRecallBrand(name);
 }
@@ -8406,7 +8402,7 @@ async function loadRecallBrand(name){
     cont.innerHTML = '<div class="ref-brand-section" style="margin-top:8px">'
       +'<div style="padding:24px 16px">'
       +'<div style="max-width:500px;margin:0 auto 16px;position:relative">'
-      +'<input id="recallVinInput" type="text" placeholder="🔍 ابحث برقم الهيكل (VIN)..." oninput="searchRecallByVIN(\''+brandFilter+'\')" style="width:100%;padding:12px 18px;border-radius:24px;border:2px solid '+color+'44;font-size:14px;outline:none;direction:ltr;text-align:center;font-family:monospace" maxlength="17">'
+      +'<input id="recallVinInput" type="text" placeholder="🔍 ابحث برقم الهيكل (VIN)..." oninput="searchRecallByVIN(\''+brandFilter+'\')" style="width:100%;box-sizing:border-box;padding:12px 18px;border-radius:12px;border:1px solid '+color+'66;background:#fff;font-size:14px;outline:none;direction:ltr;text-align:center" maxlength="17">'
       +'</div>'
       +'<div id="recallSearchStatus" style="text-align:center;font-size:12px;color:#999;margin-bottom:12px">⏳ تحميل بيانات الاستدعاء...</div>'
       +'<div id="recallSearchResults"></div>'
@@ -8547,7 +8543,7 @@ function toggleStellRecall(id){
 }
 
 function renderRecallTab(arr, sheetName, color){
-  color = color || '#6A5818';
+  color = color || '#B7791F';
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 
   const detailRows=[], vinRows=[];
@@ -8635,7 +8631,7 @@ async function renderRef(){
       {key:'nos',        label:'National Oil', icon:'🟢', color:'#2e7d32'},
       {key:'electromin', label:'Energy',           icon:'⚡', color:'#3A6048'},
       {key:'volvo',      label:'Volvo',            icon:'<svg viewBox="0 0 36 36" width="22" height="22" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="21" r="8.5" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M21 15 L29 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M23.5 7 H29 V12.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>', color:'#003057'},
-      {key:'baicRecall', label:'Recall', icon:'⚠️', color:'#6A5818', onclick:'renderRecallInRef()'},
+      {key:'baicRecall', label:'Recall', icon:'⚠️', color:'#B7791F', onclick:'renderRecallInRef()'},
     ];
 
     // CONTACT NUMBERS
