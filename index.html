@@ -529,7 +529,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 
 /* ── ATTENDANCE TAB STYLES ── */
 .att-date-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
-.att-today-btn{padding:8px 16px;border-radius:10px;border:1.5px solid var(--accent);background:rgba(var(--accent-rgb),.07);color:var(--accent);font-size:12px;font-weight:700;cursor:pointer}
+.att-today-btn{padding:5px 12px;border-radius:9px;border:1px solid var(--accent);background:#FDFDFC;color:var(--accent);font-size:11.5px;font-weight:600;cursor:pointer}
 .att-today-btn:hover{background:var(--accent);color:#fff}
 .att-summary-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 .att-pill{font-size:11px;font-weight:700;padding:4px 12px;border-radius:12px}
@@ -587,16 +587,16 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .ag-k .v{font-size:17px;font-weight:600}
 .ag-k .l{font-size:11px}
 .ag-k .p{font-size:10.5px;color:#A8A29A}
-.hero.ag-hero{background:rgba(var(--accent-rgb),.06);align-items:center;gap:12px;padding:12px 18px;justify-content:flex-start}
+.hero.ag-hero{background:rgba(var(--accent-rgb),.06);align-items:center;gap:12px;padding:12px 18px;justify-content:center;position:relative}
 .ag-av{width:40px;height:40px;border-radius:50%;background:#FDFDFC;border:1px solid rgba(var(--accent-rgb),.25);color:var(--accent);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex:none}
 .ag-name{font-size:16px;font-weight:600}
 .ag-sub{font-size:12.5px;color:#6A645C}
 .ag-sep{color:#D6CFC6}
-.ag-seg{margin-left:auto;display:flex;gap:2px;border:1px solid rgba(var(--accent-rgb),.2);border-radius:10px;padding:3px;background:#FDFDFC}
+.ag-seg{position:absolute;right:16px;top:50%;transform:translateY(-50%);display:flex;gap:2px;border:1px solid rgba(var(--accent-rgb),.2);border-radius:10px;padding:3px;background:#FDFDFC}
 .ag-seg .tab{border:none!important;border-radius:8px;padding:5px 12px;background:transparent;color:#6A645C}
 .ag-seg .tab.active{background:rgba(var(--accent-rgb),.1);color:var(--accent)}
 .ag-seg .tab:hover:not(.active){background:rgba(var(--accent-rgb),.05);color:var(--accent)}
-@media(max-width:760px){.ag-seg{margin-left:0;width:100%;justify-content:center}}
+@media(max-width:1100px){.ag-seg{position:static;transform:none;width:100%;justify-content:center}}
 </style>
 </head>
 <body>
@@ -746,9 +746,9 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
           <div class="tw"><table><thead>
             <tr>
               <th rowspan="2" style="color:var(--text);font-size:11px;font-weight:700;text-align:center;vertical-align:middle;background:#FDFDFC;border-bottom:1px solid #E0D8D0;padding:8px 10px">Date</th>
-              <th colspan="4" style="text-align:center;background:#FDFDFC;color:#7A3A3A;font-weight:700;font-size:11px;border-bottom:2px solid #E8C8C8;padding:6px">⏱ Time</th>
-              <th colspan="3" style="text-align:center;background:#FDFDFC;color:#7A6848;font-weight:700;font-size:11px;border-bottom:2px solid #E0D0C0;padding:6px">📊 Quality</th>
-              <th colspan="4" style="text-align:center;background:#FDFDFC;color:#5A6A58;font-weight:700;font-size:11px;border-bottom:2px solid #C8D0C0;padding:6px">📞 Volume</th>
+              <th colspan="4" style="text-align:center;background:rgba(var(--accent-rgb),.06);color:#7A3A3A;font-weight:700;font-size:11px;border-bottom:2px solid #E8C8C8;border-left:2px solid #E4DDD4;padding:6px">⏱ Time</th>
+              <th colspan="3" style="text-align:center;background:rgba(var(--accent-rgb),.06);color:#7A6848;font-weight:700;font-size:11px;border-bottom:2px solid #E0D0C0;border-left:2px solid #E4DDD4;padding:6px">📊 Quality</th>
+              <th colspan="4" style="text-align:center;background:rgba(var(--accent-rgb),.06);color:#5A6A58;font-weight:700;font-size:11px;border-bottom:2px solid #C8D0C0;border-left:2px solid #E4DDD4;padding:6px">📞 Volume</th>
             </tr>
             <tr style="background:#FDFDFC">
               <th class="tr" style="color:#7A3A3A;font-size:11px;font-weight:600;white-space:nowrap">Login Time<br><span style="color:var(--accent);font-size:11px;font-weight:400">9:00:00</span></th>
@@ -1321,16 +1321,16 @@ function renderAttWeekStrip(){
   for(var i=0;i<7;i++){
     var d=new Date(base);d.setDate(base.getDate()+i);var iso=attFmtD(d);
     var on=(iso===picker.value);
-    cells+='<div onclick="attPickDay(\''+iso+'\')" style="background:#FEFEFD;border:'+(on?'2px solid rgba(var(--accent-rgb),.25)':'1px solid #F0E7DA')+';'+(on?'box-shadow:0 2px 6px rgba(var(--accent-rgb),.08);padding:6px 0;':'padding:7px 0;')+'border-radius:10px;text-align:center;cursor:pointer">'
-      +'<div style="font-size:11px;font-weight:700;color:'+(on?'var(--accent)':'#5D4037')+'">'+DOW[d.getDay()]+'</div>'
-      +'<div style="font-size:15px;font-weight:800;color:'+(on?'var(--accent)':'#5D4037')+';margin-top:1px">'+d.getDate()+'</div></div>';
+    cells+='<div onclick="attPickDay(\''+iso+'\')" style="background:#FEFEFD;border:'+(on?'2px solid rgba(var(--accent-rgb),.25)':'1px solid #F0E7DA')+';'+(on?'box-shadow:0 2px 6px rgba(var(--accent-rgb),.08);padding:4px 0;':'padding:5px 0;')+'border-radius:9px;text-align:center;cursor:pointer">'
+      +'<div style="font-size:10px;font-weight:600;color:'+(on?'var(--accent)':'#8A857C')+'">'+DOW[d.getDay()]+'</div>'
+      +'<div style="font-size:13px;font-weight:700;color:'+(on?'var(--accent)':'#5D4037')+'">'+d.getDate()+'</div></div>';
   }
   var e=new Date(base);e.setDate(base.getDate()+6);
   var wlbl='\u25C6 Week: '+base.getDate()+' '+MON[base.getMonth()]+' \u2013 '+e.getDate()+' '+MON[e.getMonth()]+' '+e.getFullYear();
   strip.innerHTML='<div style="display:flex;align-items:center;gap:10px">'
-    +'<div onclick="attWeekNav(-1)" title="Previous week" style="width:38px;height:38px;flex:0 0 38px;border-radius:10px;border:1px solid #E2D6C8;background:#FEFEFD;color:#8A6D5A;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">\u2039</div>'
+    +'<div onclick="attWeekNav(-1)" title="Previous week" style="width:30px;height:30px;flex:0 0 30px;border-radius:9px;border:1px solid #E2D6C8;background:#FEFEFD;color:#8A6D5A;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center">\u2039</div>'
     +'<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;flex:1">'+cells+'</div>'
-    +'<div onclick="attWeekNav(1)" title="Next week" style="width:38px;height:38px;flex:0 0 38px;border-radius:10px;border:1px solid #E2D6C8;background:#FEFEFD;color:#8A6D5A;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">\u203A</div>'
+    +'<div onclick="attWeekNav(1)" title="Next week" style="width:30px;height:30px;flex:0 0 30px;border-radius:9px;border:1px solid #E2D6C8;background:#FEFEFD;color:#8A6D5A;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center">\u203A</div>'
     +'</div>';
 }
 function attPickDay(iso){var p=document.getElementById('attDatePicker');if(p)p.value=iso;window.__attWeekOff__=0;renderAttendanceTab();}
@@ -1434,9 +1434,9 @@ function renderAttendanceTab(){
     const body = isAbsent
       ? rows.map(mkNameBadge).join('')
       : rows.map(mkName).join('');
-    return '<div style="background:'+bg+';border-radius:14px;overflow:hidden">'
-      +'<div style="padding:14px;text-align:center">'
-      +'<div style="font-size:40px;font-weight:500;color:'+borderColor+';line-height:1">'+count+'</div>'
+    return '<div style="background:'+bg+';border-radius:12px;overflow:hidden">'
+      +'<div style="padding:9px 10px;text-align:center">'
+      +'<div style="font-size:22px;font-weight:600;color:'+borderColor+';line-height:1.1">'+count+'</div>'
       +'<div style="font-size:11px;color:'+borderColor+';margin-top:5px;opacity:.85">'+icon+' '+label+'</div>'
       +'</div>'
       +'<div style="border-top:1px solid '+borderColor+'33;padding:8px 12px">'
@@ -1688,11 +1688,13 @@ function initUI(silent){
   // Date range
   const allD=Object.values(D).flat().map(r=>r[0]).filter(Boolean).sort();
   if(allD.length){
-    document.getElementById('df').value=allD[allD.length-1];
-    document.getElementById('dt').value=allD[allD.length-1];
-    var _dfp1=document.getElementById('df_p1');if(_dfp1)_dfp1.value=allD[allD.length-1];
-    var _dtp1=document.getElementById('dt_p1');if(_dtp1)_dtp1.value=allD[allD.length-1];
-    document.getElementById('ptag').textContent=allD[allD.length-1]+' → '+allD[allD.length-1];
+    var _last=allD[allD.length-1], _first=String(_last).slice(0,8)+'01';
+    if(_first<allD[0]) _first=allD[0];
+    document.getElementById('df').value=_first;
+    document.getElementById('dt').value=_last;
+    var _dfp1=document.getElementById('df_p1');if(_dfp1)_dfp1.value=_first;
+    var _dtp1=document.getElementById('dt_p1');if(_dtp1)_dtp1.value=_last;
+    document.getElementById('ptag').textContent=_first+' → '+_last;
   }
   // Agent select
   const s=document.getElementById('agSel');
@@ -2245,11 +2247,11 @@ async function renderCaseHandling(){
     var S=
       '#caseHandlingContent .chw{max-width:1040px;margin:0 auto;direction:rtl}'+
       '#caseHandlingContent .chh{text-align:center;margin-bottom:6px}'+
-      '#caseHandlingContent .chh h1{font-size:22px;font-weight:700;color:var(--text);margin:0}'+
+      '#caseHandlingContent .chh h1{font-size:18px;font-weight:700;color:var(--text);margin:0}'+
       '#caseHandlingContent .chh .lb{font-weight:600;color:var(--accent);margin-top:6px;font-size:13px}'+
       '#caseHandlingContent .chh .gl{font-size:12.5px;color:#6A645C;max-width:860px;margin:4px auto 0;line-height:1.8}'+
-      '#caseHandlingContent .ctabs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:18px 0 14px}'+
-      '#caseHandlingContent .ctab{padding:8px 16px;border-radius:10px;border:1px solid #EDE4DA;background:#FDFDFC;font-weight:600;font-size:13px;cursor:pointer;color:var(--t);transition:.15s}'+
+      '#caseHandlingContent .ctabs{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:18px 0 16px}'+
+      '#caseHandlingContent .ctab{padding:9px 20px;line-height:1.5;white-space:nowrap;border-radius:10px;border:1px solid #EDE4DA;background:#FDFDFC;font-weight:600;font-size:13px;cursor:pointer;color:var(--t);transition:.15s}'+
       '#caseHandlingContent .ctab.on{background:color-mix(in srgb,var(--c) 9%,#FDFDFC);border-color:color-mix(in srgb,var(--c) 40%,#FDFDFC)}'+
       '#caseHandlingContent .ctab:hover:not(.on){background:color-mix(in srgb,var(--c) 5%,#FDFDFC)}'+
       '#caseHandlingContent .cp{display:none;border:1px solid #EFEDE9;border-radius:14px;overflow:hidden;background:#FDFDFC}'+
@@ -2282,8 +2284,9 @@ async function renderCaseHandling(){
     window.chTab=function(k){ [].forEach.call(document.querySelectorAll('#caseHandlingContent .ctab'),function(t,x){t.classList.toggle('on',x===k);}); [].forEach.call(document.querySelectorAll('#caseHandlingContent .cp'),function(t,x){t.classList.toggle('on',x===k);}); };
 
     var html='<style>'+S+'</style><div class="chw">';
-    html+='<div class="chh"><h1>'+esc(title)+'</h1>'+(goalLabel?'<div class="lb">'+esc(goalLabel)+'</div>':'')+(goal?'<div class="gl">'+esc(goal)+'</div>':'')+'</div>';
-    html+='<div class="ctabs">'+secsArr.map(function(sc,k){ return '<div class="ctab'+(k===0?' on':'')+'" style="'+stv(sc.col)+'" onclick="chTab('+k+')">'+esc(sc.num)+' · '+esc(sc.title)+'</div>'; }).join('')+'</div>';
+    html+='<div class="chh"><h1>'+esc(title)+'</h1>'+(goal?'<div class="gl">'+(goalLabel?'<b style="color:var(--accent)">'+esc(goalLabel.replace(/[:：]\s*$/,''))+':</b> ':'')+esc(goal)+'</div>':'')+'</div>';
+    html+='<div class="ctabs">'+secsArr.map(function(sc,k){ return '<div class="ctab'+(k===0?' on':'')+'" style="'+stv(sc.col)+'" onclick="chTab('+k+')">'+esc(sc.num)+' · '+esc(sc.title)+'</div>'; }).join('')
+      +(results?'<div class="ctab" style="--c:#8A6A4A;--t:#8A6A4A" onclick="chTab('+secsArr.length+')">✓ '+esc(results.title||'النتائج المتوقعة')+'</div>':'')+'</div>';
     secsArr.forEach(function(sc,k){
       html+='<div class="cp'+(k===0?' on':'')+'" style="'+stv(sc.col)+'">';
       html+='<div class="cph">'+esc(sc.num)+' · '+esc(sc.title)+(sc.sla?'<span class="sla">'+esc(sc.sla)+'</span>':'')+'</div>';
@@ -2311,7 +2314,7 @@ async function renderCaseHandling(){
     });
 
     if(results){
-      html+='<div class="res"><h3>'+esc(results.title||'النتائج المتوقعة')+'</h3><div class="rchips">'+results.items.map(function(r){return '<div class="rchip">'+esc(r)+'</div>';}).join('')+'</div></div>';
+      html+='<div class="cp" style="--c:#8A6A4A;--t:#8A6A4A"><div class="cph">✓ '+esc(results.title||'النتائج المتوقعة')+'</div><div style="padding:14px 20px"><div class="rchips">'+results.items.map(function(r){return '<div class="rchip">'+esc(r)+'</div>';}).join('')+'</div></div></div>';
     }
     html+='</div>';
     host.innerHTML=html; host.dataset.loaded='1';
@@ -7693,15 +7696,15 @@ function renderRoster(){
 
   el.innerHTML = '<div style="padding:4px">'
     +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;max-width:560px;margin-left:auto;margin-right:auto">'
-    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(var(--accent-rgb),.08);color:var(--accent);border:1.5px solid rgba(var(--accent-rgb),.25)">\uD83D\uDCCB Attendance</button>'
-    +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#FEFEFD;color:#6A5A4A;border:1.5px solid #EDE4DA">\uD83D\uDCC5 Weekly Schedule</button>'
-    +'<button onclick="switchScheduleTab(&apos;vacation2026&apos;)" id="stab_vacation2026" style="padding:9px 8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#FEFEFD;color:#6A5A4A;border:1.5px solid #EDE4DA">\uD83C\uDF34 Vacation</button>'
+    +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:6px 8px;border-radius:9px;font-size:11.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(var(--accent-rgb),.08);color:var(--accent);border:1.5px solid rgba(var(--accent-rgb),.25)">\uD83D\uDCCB Attendance</button>'
+    +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:6px 8px;border-radius:9px;font-size:11.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#FEFEFD;color:#6A5A4A;border:1.5px solid #EDE4DA">\uD83D\uDCC5 Weekly Schedule</button>'
+    +'<button onclick="switchScheduleTab(&apos;vacation2026&apos;)" id="stab_vacation2026" style="padding:6px 8px;border-radius:9px;font-size:11.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#FEFEFD;color:#6A5A4A;border:1.5px solid #EDE4DA">\uD83C\uDF34 Vacation</button>'
     +'</div>'
     
     +'<div id="schedule_dailyoff" style="display:none"></div>'    +'<div id="schedule_vacation2026" style="display:none"></div>'        +'<div id="schedule_attendance" style="display:block">'
     +'<div style="margin-bottom:12px">'
     +'<div style="display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;position:relative">'
-    +'<div id="attDateTitle" onclick="toggleAttCal()" style="display:inline-flex;align-items:center;gap:8px;font-size:16px;font-weight:700;color:#5D4037;cursor:pointer;padding:6px 4px"></div>'
+    +'<div id="attDateTitle" onclick="toggleAttCal()" style="display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:#5D4037;cursor:pointer;padding:4px"></div>'
     +'<input type="date" id="attDatePicker" style="display:none" onchange="renderAttendanceTab()">'
     +'<div id="attCal" style="display:none;position:absolute;top:44px;left:50%;transform:translateX(-50%);z-index:20;background:#FEFEFD;border:1px solid #EFE7DC;border-radius:14px;box-shadow:0 8px 24px rgba(93,64,55,.10);padding:14px;width:300px"></div>'
     +'<button class="att-today-btn" onclick="setAttToday()">📍 Today</button>'
