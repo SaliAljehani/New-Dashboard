@@ -370,7 +370,7 @@ tr:last-child td{border-bottom:none}
 .ref-brand-circles{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;background:#FDFDFC;border-radius:12px;padding:16px 20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .ref-brand-circle{display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;transition:.2s}
 .ref-brand-circle:hover{}
-.ref-brand-circle-icon{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 2px 6px rgba(0,0,0,.08);filter:brightness(1.12) saturate(.9)}
+.ref-brand-circle-icon{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px}
 .ref-brand-circle-label{font-size:11px;font-weight:700;text-align:center}
 
 /* VIN */
@@ -3232,6 +3232,12 @@ function brFormatHours(raw,color){
   var main=[days,times].filter(Boolean).join(' ');
   if(!days&&!fri)return esc(String(raw).replace(/[⏰🕐]/gu,'').trim());
   return esc(main)+(fri?(main?' <span style="color:#ccc">|</span> ':'')+'<span style="color:'+(color||'var(--brc,#c0272d)')+';font-weight:600">'+esc(fri)+'</span>':'');
+}
+function brandLineIcon(key,col){
+  var P={gas:'M14 11h1a2 2 0 0 1 2 2v3a1.5 1.5 0 0 0 3 0V9l-3-3M4 20V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v14M3 20h12M4 11h10',car:'M5 17a2 2 0 1 0 4 0a2 2 0 1 0-4 0M15 17a2 2 0 1 0 4 0a2 2 0 1 0-4 0M5 17H3v-6l2-5h9l4 5h1a2 2 0 0 1 2 2v4h-2M15 17H9M3 11h15',tool:'M7 10h3V7L6.5 3.5a6 6 0 0 1 8 8l6 6a2 2 0 0 1-3 3l-6-6a6 6 0 0 1-8-8L7 10',truck:'M5 17a2 2 0 1 0 4 0a2 2 0 1 0-4 0M15 17a2 2 0 1 0 4 0a2 2 0 1 0-4 0M5 17H3V6a1 1 0 0 1 1-1h9v12M9 17h6M13 9h5l3 4v4h-2',drop:'M12 3l5.7 7.1a7 7 0 1 1-11.4 0z',bolt:'M13 3v7h6l-8 11v-7H5z',volvo:'M10 14m-6 0a6 6 0 1 0 12 0a6 6 0 1 0-12 0M19 5l-5.4 5.4M15 5h4v4',warn:'M12 9v4M10.4 3.6L2.3 17.1a1.9 1.9 0 0 0 1.6 2.9h16.2a1.9 1.9 0 0 0 1.6-2.9L13.6 3.6a1.9 1.9 0 0 0-3.2 0zM12 16h.01',link:'M9 15l6-6M11 6l.5-.5a5 5 0 0 1 7 7l-.5.5M13 18l-.4.5a5 5 0 0 1-7-7l.4-.5'};
+  var K={petromin:'gas',baic:'car',nissan:'car',stellantis:'car',bodyshop:'tool',foton:'truck',nos:'drop',electromin:'bolt',volvo:'volvo',baicRecall:'warn',links:'link'};
+  var d=P[K[key]||'link'];
+  return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="'+col+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+d+'"/></svg>';
 }
 function sheetPersonLabel(h){var _h=String(h||'').replace(/\s*(name|#)\s*$/i,'').trim();var _ab={BM:'Branch Manager',AM:'Area Manager',RM:'Regional Manager',SM:'Station Manager',GM:'General Manager'};if(_ab[_h.toUpperCase()])return _ab[_h.toUpperCase()];if(/advisor/i.test(String(h||'')))return'Branch Manager';h=String(h||'').replace(/\s*(name|#)\s*$/i,'').replace(/managers\b/i,'Manager').replace(/\s+/g,' ').trim();return h||'Branch Manager';}
 const NISSAN_AM_FALLBACK={West:{name:'Ahmed Ateeq',phone:'545733753',email:'ahmed.ateeq@petromin.com'},South:{name:'Ahmed Ateeq',phone:'545733753',email:'ahmed.ateeq@petromin.com'},Central:{name:'Simon White',phone:'',email:'simon.white@petromin.com'},North:{name:'Simon White',phone:'',email:'simon.white@petromin.com'},East:{name:'Zuhair Bakhurji',phone:'',email:'z.bakhurji@petromin.com'}};
@@ -8631,10 +8637,12 @@ async function renderRef(){
         if(r){used.add(rows.indexOf(r));r.wa=w.num;}else rows.push({name:w.name.replace(/whats\s*app/i,'').trim(),num:'',wa:w.num});
       });
       rows.sort((a,b)=>(b.wa?1:0)-(a.wa?1:0));
-      return rows.map(e=>'<div class="ref-contact-pill"><div class="ref-contact-icon" style="background:#dc6b70">📞</div><div><div class="ref-contact-pill-label">'+e.name+'</div>'
-        +(e.num?'<div class="ref-contact-pill-val">'+e.num+'</div>':'')
-        +(e.wa?'<div style="font-size:12px;font-weight:700;color:#2e7d4f;margin-top:1px">💬 '+e.wa+'</div>':'')
-        +'</div></div>').join('');
+      const PH='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c0272d" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>';
+      const WA='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2e7d4f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>';
+      const row=(ic,bg,val,col,fs)=>'<div style="display:grid;grid-template-columns:22px 1fr;align-items:center;gap:8px;margin-top:4px"><span style="width:22px;height:22px;border-radius:50%;background:'+bg+';display:flex;align-items:center;justify-content:center">'+ic+'</span>'+(val?'<b style="font-size:'+fs+'px;font-weight:700;color:'+col+';letter-spacing:.02em">'+val+'</b>':'<span style="color:#ccc;font-size:12px">—</span>')+'</div>';
+      return rows.map(e=>'<div style="background:#fff;border:1px solid #eee;border-radius:12px;padding:10px 12px;box-shadow:0 1px 4px rgba(0,0,0,.04);text-align:left">'
+        +'<div style="font-size:11px;font-weight:600;color:#777;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+e.name+'</div>'
+        +row(PH,'#FBE4E5',e.num,'#1a1a2e',15)+row(WA,'#E3F3E8',e.wa,'#2e7d4f',13)+'</div>').join('');
     };
     const deptTable=(toll,wa)=>{
       const DOT=[['express','#E08A3C'],['baic','#D0763A'],['nissan','#c0272d'],['stellantis','#1f6fc4'],['foton','#6b7b8c'],['energy','#3f7a56'],['national','#2e8b57'],['volvo','#1f2a44']];
@@ -8780,9 +8788,9 @@ async function renderRef(){
 
       // BRAND CIRCLES — Order: Petromin, BAIC, Nissan, Stellantis, Body Shop, Foton, National Oil, Electromin, Recall, Links
       +'<div class="ref-brand-circles" style="justify-content:center">'
-      +['petromin','baic','nissan','stellantis','bodyshop','foton','nos','electromin','volvo','baicRecall'].map(k=>{const c=BRAND_CONFIGS.find(b=>b.key===k);if(!c)return'';return'<div class="ref-brand-circle" onclick="'+(c.onclick||'showRefBrandPage(\''+c.key+'\')')+'"><div class="ref-brand-circle-icon" style="background:'+c.color+'">'+c.icon+'</div><div class="ref-brand-circle-label" style="color:'+c.color+'">'+c.label+'</div></div>';}).join('')
+      +['petromin','baic','nissan','stellantis','bodyshop','foton','nos','electromin','volvo','baicRecall'].map(k=>{const c=BRAND_CONFIGS.find(b=>b.key===k);if(!c)return'';return'<div class="ref-brand-circle" onclick="'+(c.onclick||'showRefBrandPage(\''+c.key+'\')')+'"><div class="ref-brand-circle-icon" style="background:'+c.color+'1F">'+brandLineIcon(c.key,c.color)+'</div><div class="ref-brand-circle-label" style="color:'+c.color+'">'+c.label+'</div></div>';}).join('')
       +(linkCards?'<div class="ref-brand-circle" onclick="toggleLinksPanel()">'
-        +'<div class="ref-brand-circle-icon" style="background:#1565c0">🔗</div>'
+        +'<div class="ref-brand-circle-icon" style="background:#1565c01F">'+brandLineIcon('links','#1565c0')+'</div>'
         +'<div class="ref-brand-circle-label" style="color:#1565c0">Links</div>'
         +'</div>':'')
       +'</div>'
@@ -8793,7 +8801,7 @@ async function renderRef(){
       // CONTACT NUMBERS — merged single panel
       +'<div class="ref-info-panel">'
       +'<div class="ref-panel-header">📞 Contact Numbers</div>'
-      +'<div class="ref-panel-body"><div class="ref-contacts-grid">'+deptPills(tollFree,waNums)+'</div></div>'
+      +'<div class="ref-panel-body"><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px">'+deptPills(tollFree,waNums)+'</div></div>'
       +'</div>'
 
 
@@ -9121,27 +9129,27 @@ async function renderDailyOff(){
       var _td=new Date();var _tdStr=_td.getDate()+' '+_td.toLocaleString('en-US',{month:'short'});
       var t='<div style="overflow:auto;max-height:72vh;border:1px solid #ECE8E3;border-radius:10px"><table class="no-border wk-tbl" style="width:100%;border-collapse:collapse;font-size:12px;background:#FDFDFC">';
       t+='<thead><tr>';
-      t+='<th style="padding:9px 12px;text-align:left;border-bottom:2px solid #EDEAE6;min-width:150px;font-weight:600;color:#8a8580;background:#FDFDFC;font-size:12px;position:sticky;top:0;z-index:2">Agent Name</th>';
+      t+='<th style="padding:9px 12px;text-align:left;border-bottom:1px solid #EFEAE4;min-width:150px;font-weight:700;color:#5f5a55;background:#FAF8F5;font-size:12px;position:sticky;top:0;z-index:2">Agent Name</th>';
       DAY_COLS.forEach(function(d){
         var wknd=d==='Friday';
         var _isT=w.dates&&String(w.dates[d]||'').replace(/\s+/g,' ').trim().toLowerCase()===_tdStr.toLowerCase();
-        var dateStr=w.dates&&w.dates[d]?'<div style="font-size:11px;font-weight:400;color:'+(_isT?'#c0272d':'#aaa')+';margin-top:2px">'+w.dates[d]+(_isT?' · Today':'')+'</div>':'';
-        t+='<th style="padding:9px 6px;text-align:center;border-bottom:2px solid #EDEAE6;min-width:90px;font-weight:600;font-size:12px;color:'+(_isT?'#c0272d':'#8a8580')+';background:'+(_isT?'#FBF1F1':'#FDFDFC')+';position:sticky;top:0;z-index:2">'+d+dateStr+'</th>';
+        var dateStr=w.dates&&w.dates[d]?'<div style="font-size:11px;font-weight:400;color:#a09a94;margin-top:2px">'+w.dates[d]+(_isT?' · Today':'')+'</div>':'';
+        t+='<th style="padding:9px 6px;text-align:center;border-bottom:1px solid #EFEAE4;min-width:90px;font-weight:700;font-size:12px;color:#5f5a55;background:#FAF8F5;position:sticky;top:0;z-index:2">'+d+dateStr+'</th>';
       });
-      t+='<th style="padding:9px 6px;text-align:center;border-bottom:2px solid #EDEAE6;border-left:2px solid #F0DCDC;min-width:88px;font-weight:600;font-size:12px;color:#c0272d;background:#FBF1F1;position:sticky;top:0;z-index:2">Weekly Break</th>';
-      t+='<th style="padding:9px 6px;text-align:center;border-bottom:2px solid #EDEAE6;min-width:96px;font-weight:600;font-size:12px;color:#c0272d;background:#FBF1F1;position:sticky;top:0;z-index:2">Saturday Break</th>';
+      t+='<th style="padding:9px 6px;text-align:center;border-bottom:1px solid #EFEAE4;border-left:2px solid #F0EBE5;min-width:88px;font-weight:700;font-size:12px;color:#5f5a55;background:#FAF8F5;position:sticky;top:0;z-index:2">Weekly Break</th>';
+      t+='<th style="padding:9px 6px;text-align:center;border-bottom:1px solid #EFEAE4;min-width:96px;font-weight:700;font-size:12px;color:#5f5a55;background:#FAF8F5;position:sticky;top:0;z-index:2">Saturday Break</th>';
       t+='</tr></thead><tbody style="border:none">';
       w.agents.forEach(function(ag,ai){
-        var rowBg='#FFFFFF';
+        var rowBg=ai%2?'#FAF8F5':'#FDFDFC';
         t+='<tr data-bg="'+rowBg+'" style="background:'+rowBg+';cursor:pointer" '
           +'onmouseover="if(this.getAttribute(\'data-sel\')!==\'1\'){this.querySelectorAll(\'td\').forEach(function(td){td.style.background=\'#F7F3EE\';});}" '
           +'onmouseout="if(this.getAttribute(\'data-sel\')!==\'1\'){this.querySelectorAll(\'td\').forEach(function(td){td.style.background=\'\';});this.querySelectorAll(\'span.bdg\').forEach(function(s){s.style.background=s.getAttribute(\'data-bg\');});}" '
           +'onclick="(function(row){var tbl=row.closest(\'table\');tbl.querySelectorAll(\'tr[data-sel=\\\"1\\\"]\').forEach(function(r){r.setAttribute(\'data-sel\',\'0\');r.style.outline=\'\';r.querySelectorAll(\'td\').forEach(function(td){td.style.background=\'\';td.style.fontWeight=\'\';});r.querySelectorAll(\'span.bdg\').forEach(function(s){s.style.background=s.getAttribute(\'data-bg\');});});row.setAttribute(\'data-sel\',\'1\');row.style.outline=\'2px solid #c0272d\';row.querySelectorAll(\'td\').forEach(function(td){td.style.background=\'#FCCCCF\';td.style.fontWeight=\'700\';});row.querySelectorAll(\'span.bdg\').forEach(function(s){s.style.background=\'#F5A0A5\';});})(this)">';
         var _nc=getAvatarColor(ag.name);
-        t+='<td style="padding:6px 12px;text-align:left;font-size:12px;font-weight:600;color:#2b2b2b;border-bottom:1px solid #F3F0EC">'+ag.name+'</td>';
+        t+='<td style="padding:7px 12px;text-align:left;font-size:12px;font-weight:600;color:#2b2b2b">'+ag.name+'</td>';
         DAY_COLS.forEach(function(d){
           var _isT=w.dates&&String(w.dates[d]||'').replace(/\s+/g,' ').trim().toLowerCase()===_tdStr.toLowerCase();
-          t+='<td style="padding:6px;text-align:center;border-bottom:1px solid #F3F0EC;background:'+(_isT?'#FDF7F7':'')+'">'+badge(ag[d])+'</td>';
+          t+='<td style="padding:7px 6px;text-align:center">'+badge(ag[d])+'</td>';
         });
         var _bt=breakTint(ag);
         var _tBg=_bt?_bt.bg:'#F6F4F0';
@@ -9151,7 +9159,7 @@ async function renderDailyOff(){
           v=String(v||'').trim().replace(/^(\d{1,2}):(\d{2}):\d{2}\s*(AM|PM)$/i,'$1:$2 $3');
           var _empty=!v||v==='-'||v==='—';
           var col=v.toLowerCase()==='off'?'#D6D1CB':_tCol;
-          return '<td style="padding:6px;text-align:center;border-bottom:1px solid #F3F0EC;background:#FDF7F7'+(_first?';border-left:2px solid #F0DCDC':'')+'"><span style="color:'+(_empty?'#D6D1CB':col)+';font-size:12px;font-weight:'+(_empty?'400':'700')+';white-space:nowrap">'+(v||'—')+'</span></td>';
+          return '<td style="padding:7px 6px;text-align:center'+(_first?';border-left:2px solid #F0EBE5':'')+'"><span style="color:'+(_empty?'#D6D1CB':col)+';font-size:12px;font-weight:'+(_empty?'400':'700')+';white-space:nowrap">'+(v||'—')+'</span></td>';
         };
         t+=_brkCell(ag[BREAK_COL],true);
         t+=_brkCell(ag[SAT_BREAK_COL]);
@@ -9392,7 +9400,7 @@ async function renderVacation2026(){
     }
     var _yr=_today.getFullYear();
     var html='<div style="background:#FDFDFC;border-radius:14px;padding:4px 16px 12px">';
-    html+='<div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-bottom:14px;margin-top:2px">';
+    html+='<div style="display:flex;justify-content:flex-start;align-items:center;gap:8px;margin-bottom:14px;margin-top:2px">';
     var _navBtn='width:36px;height:36px;flex:none;border-radius:8px;border:1px solid #E2D6C8;background:#FEFEFD;color:#8A6D5A;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center';
     html+='<button type="button" onclick="stepVacMonth(-1)" aria-label="Previous month" style="'+_navBtn+'">\u2039</button>';
     html+='<div id="vac_label" data-idx="'+activeMonth+'" style="padding:9px 24px;border-radius:8px;border:2px solid rgba(192,39,45,.25);background:#FEFEFD;color:#c0272d;font-size:13px;font-weight:700;box-shadow:0 2px 6px rgba(192,39,45,.08);min-width:220px;text-align:center">'+months[activeMonth].month+' '+_yr+'</div>';
