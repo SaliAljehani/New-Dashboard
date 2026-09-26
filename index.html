@@ -8254,15 +8254,15 @@ function renderRecallPage(){
   const circlesHTML = '<div style="display:flex;gap:44px;flex-wrap:wrap;justify-content:center;margin:26px 0 10px">'
     +Object.entries(RECALL_BRANDS).map(([name,cfg])=>
       '<div onclick="selectRecallBrand(\''+name+'\')" id="rcircle_'+name.replace(/\s/g,'_')+'" style="display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer">'
-      +'<div id="rcirc_inner_'+name.replace(/\s/g,'_')+'" style="width:78px;height:78px;border-radius:50%;background:'+cfg.color+';display:flex;align-items:center;justify-content:center;font-size:34px;box-shadow:0 4px 14px rgba(0,0,0,.18);transition:.2s;'+(name===RECALL_ACTIVE_BRAND?'box-shadow:0 0 0 2px #fff,0 0 0 4px '+cfg.color:'')+'">'+cfg.icon+'</div>'
+      +'<div id="rcirc_inner_'+name.replace(/\s/g,'_')+'" style="width:78px;height:78px;border-radius:50%;background:'+cfg.color+'1F;display:flex;align-items:center;justify-content:center;font-size:34px;box-shadow:0 4px 14px rgba(0,0,0,.18);transition:.2s;'+(name===RECALL_ACTIVE_BRAND?'box-shadow:0 0 0 2px #fff,0 0 0 4px '+cfg.color:'')+'">'+cfg.icon+'</div>'
       +'<div style="font-size:14px;font-weight:800;margin-top:6px;color:'+cfg.color+'">'+name+'</div>'
       +'</div>'
     ).join('')+'</div>';
 
   el.innerHTML =
     // هيدر رمادي مع وزارة التجارة
-    '<div style="background:linear-gradient(135deg,#757575,#9e9e9e);border-radius:12px 12px 0 0;padding:14px 20px;min-height:53px;display:flex;align-items:center;justify-content:center;position:relative">'
-    +'<span style="font-size:15px;font-weight:800;color:#fff">🔁 Recall</span>'
+    '<div style="background:#6A58182E;border-radius:12px 12px 0 0;padding:12px 20px;min-height:53px;display:flex;align-items:center;gap:12px;position:relative">'
+    +'<span style="width:32px;height:32px;border-radius:50%;background:#FDFDFC;display:inline-flex;align-items:center;justify-content:center">'+brandLineIcon('baicRecall','#6A5818').replace('width="24" height="24"','width="18" height="18"')+'</span><span style="font-size:16px;font-weight:700;color:#6A5818">Recall</span>'
     +'<a href="https://recalls.sa/" target="_blank" style="position:absolute;right:12px;display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(255,255,255,.92);color:#757575;border:1px solid rgba(255,255,255,.5);border-radius:14px;font-size:11px;font-weight:700;text-decoration:none">🏛️ وزارة التجارة</a>'
     +'</div>'
     +'<div style="background:#FEFEFD;border-radius:0 0 12px 12px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:16px">'
@@ -10252,7 +10252,8 @@ window.addEventListener('DOMContentLoaded', () => {
   function hexA(h,a){h=h.replace('#','');return'rgba('+parseInt(h.slice(0,2),16)+','+parseInt(h.slice(2,4),16)+','+parseInt(h.slice(4,6),16)+','+a+')';}
   function pass(){
     var rc=document.getElementById('refContent');
-    if(rc&&!rc.querySelector('.ref-brand-section')){var g=[].slice.call(rc.querySelectorAll('[style*="linear-gradient"]'))[0];
+    var _sub=rc&&/Back to References/.test((rc.firstElementChild&&rc.firstElementChild.textContent)||'');
+    if(rc&&_sub&&!rc.querySelector('.ref-brand-section')){var g=[].slice.call(rc.querySelectorAll('[style*="linear-gradient"]'))[0];
       var hx=g&&(g.getAttribute('style')||'').match(/#[0-9a-fA-F]{6}/);if(hx)rc.setAttribute('data-brand-color',hx[0]);else rc.removeAttribute('data-brand-color');}
     else if(rc)rc.removeAttribute('data-brand-color');
     [].slice.call(document.querySelectorAll('.ref-brand-section[data-brand-color],#refContent[data-brand-color]')).forEach(function(sec){
@@ -10278,15 +10279,18 @@ window.addEventListener('DOMContentLoaded', () => {
         [].slice.call(el.querySelectorAll('svg')).forEach(function(sv){sv.setAttribute('stroke',c);});
       });
       // any other hue used as a light tint/heading inside the section → section colour
-      [].slice.call(sec.querySelectorAll('div[style]:not([data-cs4]),th[style]:not([data-cs4]),span[style]:not([data-cs4])')).forEach(function(el){
-        if(el.closest('.br-md,.sms-card,.ref-email-card,.wk-tbl,.bd-box,.ref-sub-tabs'))return;el.setAttribute('data-cs4','1');
+      var foreign={};
+      [].slice.call(sec.querySelectorAll('div[style]:not([data-cs4]),th[style]:not([data-cs4]),span[style]:not([data-cs4]),tr[style]:not([data-cs4]),td[style]:not([data-cs4])')).forEach(function(el){
+        if(el.closest('.br-md,.sms-card,.ref-email-card,.wk-tbl,.bd-box,.ref-sub-tabs,.ref-brand-circles'))return;el.setAttribute('data-cs4','1');
         var st=(el.getAttribute('style')||'').replace(/\s+/g,'');
         var bg=st.match(/background(-color)?:(#[0-9a-fA-F]{6})([0-9a-fA-F]{2})(?![0-9a-fA-F])/);
         if(bg&&bg[2].toLowerCase()!==c.toLowerCase()){el.style.background=tint;var tc=st.match(/(^|;)color:(#[0-9a-fA-F]{6})/);if(tc&&tc[2].toLowerCase()===bg[2].toLowerCase())el.style.color=c;}
         if(/background:#(f0e6c8|fdfbf4|fff8e1|fff3cd|fef9e7|fffde7)/i.test(st))el.style.background=soft;
-        if(/border-left:[3-6]px solid (#[0-9a-fA-F]{6})/i.test(st)){var bl=st.match(/border-left:[3-6]px solid (#[0-9a-fA-F]{6})/i)[1];if(bl.toLowerCase()!==c.toLowerCase())el.style.borderLeftColor=c;}
+        var blm=st.match(/border-left:[3-6]px\s*solid\s*(#[0-9a-fA-F]{6})/i);if(blm&&blm[1].toLowerCase()!==c.toLowerCase()){el.style.borderLeftColor=c;foreign[blm[1].toLowerCase()]=1;}
+        if(/background:#(fdfbf4|fffdf5|fefcf3|fdf8ec)/i.test(st))el.style.background='#FAF8F5';
         if(/^(TH)$/.test(el.tagName)){el.style.color=c;}
       });
+      if(Object.keys(foreign).length)[].slice.call(sec.querySelectorAll('[style]')).forEach(function(el){if(el.closest('.br-md,.sms-card,.ref-email-card,.ref-brand-circles'))return;var st=(el.getAttribute('style')||'').replace(/\s+/g,'');var tc=st.match(/(^|;)color:(#[0-9a-fA-F]{6})/);if(tc&&foreign[tc[2].toLowerCase()])el.style.color=c;});
       [].slice.call(sec.querySelectorAll('th')).forEach(function(th){if(!th.closest('.br-md,.sms-card,.wk-tbl'))th.style.color=c;});
       // old SMS cards (AR/EN boxes) → new SMS card
       if(typeof smsCardHTML==='function'){
