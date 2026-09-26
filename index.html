@@ -1259,16 +1259,16 @@ function renderAttWeekStrip(){
   for(var i=0;i<7;i++){
     var d=new Date(base);d.setDate(base.getDate()+i);var iso=attFmtD(d);
     var on=(iso===picker.value);
-    cells+='<div onclick="attPickDay(\''+iso+'\')" style="background:'+(on?'#fbe3e3':'#FEFEFD')+';border:1px solid '+(on?'#f3c9c9':'#F0E7DA')+';border-radius:10px;padding:7px 0;text-align:center;cursor:pointer">'
-      +'<div style="font-size:11px;font-weight:700;color:#5D4037">'+DOW[d.getDay()]+'</div>'
-      +'<div style="font-size:15px;font-weight:800;color:#5D4037;margin-top:1px">'+d.getDate()+'</div></div>';
+    cells+='<div onclick="attPickDay(\''+iso+'\')" style="background:#FEFEFD;border:'+(on?'2px solid rgba(192,39,45,.25)':'1px solid #F0E7DA')+';'+(on?'box-shadow:0 2px 6px rgba(192,39,45,.08);padding:6px 0;':'padding:7px 0;')+'border-radius:10px;text-align:center;cursor:pointer">'
+      +'<div style="font-size:11px;font-weight:700;color:'+(on?'#c0272d':'#5D4037')+'">'+DOW[d.getDay()]+'</div>'
+      +'<div style="font-size:15px;font-weight:800;color:'+(on?'#c0272d':'#5D4037')+';margin-top:1px">'+d.getDate()+'</div></div>';
   }
   var e=new Date(base);e.setDate(base.getDate()+6);
   var wlbl='\u25C6 Week: '+base.getDate()+' '+MON[base.getMonth()]+' \u2013 '+e.getDate()+' '+MON[e.getMonth()]+' '+e.getFullYear();
   strip.innerHTML='<div style="display:flex;align-items:center;gap:10px">'
-    +'<div onclick="attWeekNav(-1)" title="Previous week" style="width:38px;height:38px;flex:0 0 38px;border-radius:10px;border:1px solid #f3c9c9;background:#fbe3e3;color:#5D4037;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">\u2039</div>'
+    +'<div onclick="attWeekNav(-1)" title="Previous week" style="width:38px;height:38px;flex:0 0 38px;border-radius:10px;border:1px solid #E2D6C8;background:#FEFEFD;color:#8A6D5A;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">\u2039</div>'
     +'<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;flex:1">'+cells+'</div>'
-    +'<div onclick="attWeekNav(1)" title="Next week" style="width:38px;height:38px;flex:0 0 38px;border-radius:10px;border:1px solid #f3c9c9;background:#fbe3e3;color:#5D4037;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">\u203A</div>'
+    +'<div onclick="attWeekNav(1)" title="Next week" style="width:38px;height:38px;flex:0 0 38px;border-radius:10px;border:1px solid #E2D6C8;background:#FEFEFD;color:#8A6D5A;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">\u203A</div>'
     +'</div>';
 }
 function attPickDay(iso){var p=document.getElementById('attDatePicker');if(p)p.value=iso;window.__attWeekOff__=0;renderAttendanceTab();}
@@ -4904,13 +4904,13 @@ function renderPetrominTireBatteryTab(arr){
   // helpers
   const secHead=txt=>'<div style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:800;padding:10px 14px;border-radius:8px 8px 0 0;background:'+color+'12;color:'+color+';border-bottom:2px solid '+color+'66">'+txt+'</div>';
   const th=h=>'<th style="padding:8px 12px;color:#bd7530;font-weight:800;border-bottom:2px solid #f0dca8;text-align:center">'+h+'</th>';
-  const tbl=(headers,rows)=>'<div style="overflow-x:auto;background:#FEFEFD;border:1px solid #f0e6c8;border-top:0;border-radius:0 0 8px 8px"><table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;word-break:break-word"><thead><tr style="background:'+color+'0f">'+headers.map(th).join('')+'</tr></thead><tbody>'+rows+'</tbody></table></div>';
+  const tbl=(headers,rows)=>'<div style="overflow-x:auto;background:#FDFDFC;border:1px solid #EFEDE9;border-top:0;border-radius:0 0 8px 8px"><table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;word-break:break-word"><thead><tr style="background:'+color+'0f">'+headers.map(th).join('')+'</tr></thead><tbody>'+rows+'</tbody></table></div>';
   const emailCell=v=>String(v||'').split(/[,;]/).map(x=>{const s=x.trim();if(!s)return'';return '<a href="mailto:'+s+'" style="display:block;width:fit-content;margin:2px auto;background:#f5f5f5;color:#616161;padding:2px 7px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:1px;white-space:normal;word-break:break-all;max-width:100%">'+s+'</a>';}).filter(Boolean).join('');
 
   // Pirelli — OPEN table (Region · Manager · Email · Phone)
   const pirelliHTML=pirelli.length?'<div style="margin-bottom:18px">'+secHead('🛞 Pirelli Tire — Sales Supervisors')
     +tbl(['🗺️ Region','👤 Manager','📞 Phone','✉️ Email'],
-      pirelli.map((p,i)=>'<tr style="background:'+(i%2?'#FDFBF4':'#fff')+'">'
+      pirelli.map((p,i)=>'<tr style="background:'+(i%2?'#FAF8F5':'#FDFDFC')+'">'
         +'<td style="padding:7px 12px;text-align:center;font-weight:700;color:'+color+'">'+p.region+'</td>'
         +'<td style="padding:7px 12px;text-align:center">'+p.manager+'</td>'
         +'<td style="padding:7px 12px;text-align:center">'+(p.phone||'')+'</td>'
@@ -4920,7 +4920,7 @@ function renderPetrominTireBatteryTab(arr){
   // Powertech Battery — table (Area · Employee · Mobile · Email)
   const powertechHTML=powertech.length?'<div style="margin-bottom:18px">'+secHead('🔋 Powertech Battery')
     +tbl(['📍 Area','👤 Employee','📞 Mobile','✉️ Email'],
-      powertech.map((p,i)=>'<tr style="background:'+(i%2?'#FDFBF4':'#fff')+'">'
+      powertech.map((p,i)=>'<tr style="background:'+(i%2?'#FAF8F5':'#FDFDFC')+'">'
         +'<td style="padding:7px 12px;text-align:center;direction:rtl">'+(p.area||'')+'</td>'
         +'<td style="padding:7px 12px;text-align:center">'+(p.employee||'')+'</td>'
         +'<td style="padding:7px 12px;text-align:center">'+(p.mobile||'')+'</td>'
@@ -4950,7 +4950,7 @@ function renderPetrominTireBatteryTab(arr){
       const parts=String(l.station||'').split(' - ');
       const code=parts[0]||'', name=parts.slice(1).join(' - ')||l.station;
       const map=(l.link&&/^https?:/.test(l.link))?'<a href="'+l.link+'" target="_blank" style="color:'+color+';font-weight:700;text-decoration:none">🗺️ Location</a>':'—';
-      return '<tr style="background:'+(i%2?'#FDFBF4':'#fff')+'">'
+      return '<tr style="background:'+(i%2?'#FAF8F5':'#FDFDFC')+'">'
         +'<td style="padding:7px 10px;text-align:center;font-weight:800;color:'+color+'">'+code+'</td>'
         +'<td style="padding:7px 10px;text-align:center">'+name+'</td>'
         +(_hasArea?'<td style="padding:7px 10px;text-align:center;direction:rtl">'+(l.area||'')+'</td>':'')
@@ -8649,7 +8649,7 @@ async function renderRef(){
       const row=(ic,bg,val,col,fs)=>'<div style="display:grid;grid-template-columns:22px 1fr;align-items:center;gap:8px;margin-top:4px"><span style="width:22px;height:22px;border-radius:50%;background:'+bg+';display:flex;align-items:center;justify-content:center">'+ic+'</span>'+(val?'<b style="font-size:'+fs+'px;font-weight:700;color:'+col+';letter-spacing:.02em">'+val+'</b>':'<span style="color:#ccc;font-size:12px">—</span>')+'</div>';
       return rows.map(e=>'<div style="flex:0 0 calc(20% - 7px);min-width:180px;box-sizing:border-box;background:#fff;border:1px solid #eee;border-radius:12px;padding:10px 12px;box-shadow:0 1px 4px rgba(0,0,0,.04);text-align:left">'
         +'<div style="font-size:11px;font-weight:600;color:#777;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+e.name+'</div>'
-        +row(PH,'#FBE4E5',e.num,'#1a1a2e',15)+row(WA,'#E3F3E8',e.wa,'#2e7d4f',13)+'</div>').join('');
+        +row(PH,'#FBE4E5',e.num,'#1a1a2e',15)+(e.wa?row(WA,'#E3F3E8',e.wa,'#2e7d4f',13):'')+'</div>').join('');
     };
     const deptTable=(toll,wa)=>{
       const DOT=[['express','#D98E45'],['baic','#C86E35'],['nissan','#c0272d'],['stellantis','#1f6fc4'],['foton','#6b7b8c'],['energy','#3f7a56'],['national','#2e8b57'],['volvo','#1f2a44']];
