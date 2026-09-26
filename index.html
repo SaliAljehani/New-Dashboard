@@ -3321,16 +3321,37 @@ function brandLineIcon(key,col){
 function smsCardHTML(city,apptAR,apptEN,locAR,locEN,id,c){
   if(!apptAR&&!apptEN&&!locAR&&!locEN)return'';
   var esc=function(t){return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
-  var bm=String(apptEN||locEN||'').match(/Branch\s*:\s*([^\n]+)/i)||String(apptAR||locAR||'').match(/الفرع\s*[:：]\s*([^\n]+)/);
-  var branch=bm?bm[1].trim():'';var cityClean=String(city||'').replace(/\s+/g,' ').trim();
-  var title=branch||cityClean||'—',sub=branch&&cityClean&&branch.toLowerCase()!==cityClean.toLowerCase()?cityClean:'';
+  var EN=String(apptEN||locEN||''),AR=String(apptAR||locAR||''),AR2=String(locAR||apptAR||''),EN2=String(locEN||apptEN||'');
+  var CAN={Riaydh:'Riyadh',Ryiadh:'Riyadh',Riyad:'Riyadh',Mecca:'Makkah',Makka:'Makkah',Madina:'Madinah',Medina:'Madinah',Jazan:'Jizan','Al Khobar':'Khobar',Hofuf:'Al Hassa',Hufouf:'Al Hassa',Hofouf:'Al Hassa',Ahsa:'Al Hassa'};
+  var CITIES=['Khamis Mushait','Al Khobar','Al Hassa','Jeddah','Makkah','Mecca','Makka','Madinah','Madina','Medina','Riyadh','Riaydh','Ryiadh','Riyad','Dammam','Khobar','Qassim','Buraydah','Hufouf','Hofuf','Hofouf','Ahsa','Abha','Jizan','Jazan','Tabuk','Taif','Yanbu','Jubail','Hail','Najran','Khamis'];
+  var ARC=[['مكة المكرمة','Makkah'],['المدينة المنورة','Madinah'],['خميس مشيط','Khamis Mushait'],['جدة','Jeddah'],['جده','Jeddah'],['مكة','Makkah'],['مكه','Makkah'],['المدينه','Madinah'],['الرياض','Riyadh'],['الدمام','Dammam'],['الخبر','Khobar'],['القصيم','Qassim'],['بريدة','Buraydah'],['الأحساء','Al Hassa'],['الاحساء','Al Hassa'],['الهفوف','Al Hassa'],['أبها','Abha'],['ابها','Abha'],['جازان','Jizan'],['جيزان','Jizan'],['تبوك','Tabuk'],['الطائف','Taif'],['ينبع','Yanbu'],['الجبيل','Jubail'],['حائل','Hail'],['نجران','Najran']];
+  var can=function(x){x=String(x||'').trim();return CAN[x]||x;};
+  var arCity=function(x){x=String(x||'').trim();for(var i=0;i<ARC.length;i++){if(x===ARC[i][0]||x.indexOf(ARC[i][0])===0)return ARC[i][1];}return '';};
+  var isLatin=function(x){return x&&!/[\u0600-\u06FF]/.test(x);};
+  var cityClean=String(city||'').replace(/\s+/g,' ').trim();
+  var pc='',pb='';
+  for(var ci=0;ci<CITIES.length;ci++){var cc=CITIES[ci];if(cityClean.toLowerCase().indexOf(cc.toLowerCase())===0&&(cityClean.length===cc.length||/[\s\-–]/.test(cityClean.charAt(cc.length)))){pc=can(cc);pb=cityClean.slice(cc.length).replace(/^[\s\-–]+/,'').trim();break;}}
+  if(!pc&&cityClean){var ac=arCity(cityClean);if(ac&&ac.length){pc=ac;}else pb=cityClean;}
+  var bm=EN.match(/Branch\s*:\s*([^\n]+)/i)||AR.match(/الفرع\s*[:：]\s*([^\n]+)/);
+  var mBranch=bm?bm[1].trim():'';
+  var cm=EN.match(/City\s*:\s*([^\n]+)/i)||AR.match(/المدينة\s*[:：]\s*([^\n]+)/);
+  var mCity=cm?(isLatin(cm[1].trim())?can(cm[1].trim()):(arCity(cm[1])||cm[1].trim())):'';
+  var scB='';
+  var se=EN2.match(/service\s*cent(?:er|re)\s*[-–]\s*([^\n]+?)\s*(?:https?:|\n|$)/i);
+  if(se){var sp=se[1].split(',').map(function(x){return x.trim();}).filter(Boolean);if(sp.length>1)scB=sp[sp.length-1];}
+  if(!scB){var sa=AR2.match(/مركز\s*خدمة\s*[-–]\s*([^\n]+)/);if(sa){var spa=sa[1].split('،').map(function(x){return x.trim();}).filter(Boolean);if(spa.length>1)scB=spa[spa.length-1];}}
+  var cityF=pc||mCity;
+  var mbIsCity=mBranch&&(arCity(mBranch)===cityF||can(mBranch).toLowerCase()===String(cityF).toLowerCase());
+  var branch=pb||(isLatin(mBranch)&&!mbIsCity?mBranch:'')||scB||(!mbIsCity?mBranch:'');
+  if(!branch){branch=cityF;cityF='';}
+  var title=branch||'—',sub=cityF&&branch&&cityF.toLowerCase()!==branch.toLowerCase()?cityF:'';
   var M={appt:{ar:apptAR,en:apptEN},loc:{ar:locAR,en:locEN}};
   var t0=(apptAR||apptEN)?'appt':'loc',l0=M[t0].ar?'ar':'en';
   var data=' data-appt-ar="'+esc(apptAR)+'" data-appt-en="'+esc(apptEN)+'" data-loc-ar="'+esc(locAR)+'" data-loc-en="'+esc(locEN)+'"';
   var tab=function(grp,v,lbl,on,dis){return '<span class="smsT" data-g="'+grp+'" data-v="'+v+'" style="display:inline-block;padding:7px 0;margin-right:14px;font-size:11px;font-weight:600;cursor:'+(dis?'default':'pointer')+';color:'+(on?c:(dis?'#ddd':'#aaa'))+';box-shadow:'+(on?'inset 0 -2px '+c:'none')+'">'+lbl+'</span>';};
   var txt=M[t0][l0]||'';var ar=l0==='ar';
   return '<div class="ref-card sms-card" id="smsc_'+id+'" data-c="'+c+'" data-t="'+t0+'" data-l="'+l0+'"'+data+' style="padding:0;overflow:hidden;text-align:left;background:#FDFDFC;border:1px solid #F1EAE3;border-radius:12px;display:flex;flex-direction:column">'
-    +'<div style="padding:10px 14px;border-bottom:1px solid #F4EDE6"><b style="font-size:13px;font-weight:700;color:'+c+'">'+esc(title)+'</b>'+(sub?'<span style="color:#aaa;font-size:11px;margin-left:6px">'+esc(sub)+'</span>':'')+'</div>'
+    +'<div style="padding:10px 14px;border-bottom:1px solid #F4EDE6"><b style="font-size:13.5px;font-weight:700;color:'+c+'">'+esc(title)+'</b>'+(sub?'<span style="color:#A8A29A;font-size:11.5px;font-weight:500;margin-left:6px">'+esc(sub)+'</span>':'')+'</div>'
     +'<div style="display:flex;justify-content:space-between;padding:0 14px;border-bottom:1px solid #F4EDE6">'
     +'<div>'+tab('t','appt','Appointment',t0==='appt',!(apptAR||apptEN))+tab('t','loc','Location',t0==='loc',!(locAR||locEN))+'</div>'
     +'<div>'+tab('l','ar','AR',l0==='ar',false)+tab('l','en','EN',l0==='en',false).replace('margin-right:14px','margin-right:0')+'</div></div>'
@@ -4686,8 +4707,9 @@ function renderPetrominWarrantyTab(arr){
 function renderPetrominLocationListTab(arr, kind, brandColor){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color=brandColor||'#D98E45';
+  const CLEAN=!!brandColor && brandColor!=='#D98E45';
   const ICONS={ecowash:'🧼',fuel:'⛽',diesel:'🛢️'};
-  const icon=ICONS[kind]||'📍';
+  const icon=CLEAN?'':(ICONS[kind]||'📍');
 
   // DIESEL يقرأ بأسماء الأعمدة (الشيت الجديد: Regions|City|Station Name-Code|Address 1|Address 2|Contact|Mobile|Email|GPS|Working Hours)
   const _dk=Object.keys(arr[0]||{});
@@ -4782,13 +4804,17 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
   const cols = kind==='fuel' ? ['City','Site Code','Station','Area Manager','Mobile','Regional Manager'].concat(fuelHasLoc?['Location']:[])
     : kind==='ecowash' ? ['Code','Station','City','Area Manager','Location']
     : ['Code','Station','City','Contact','Mobile','Email','Location'];
-  const th=h=>'<th style="padding:8px 10px;color:'+color+';font-weight:800;border-bottom:2px solid '+color+'44;text-align:center;white-space:nowrap">'+h+'</th>';
-  const cell=v=>'<td style="padding:7px 10px;text-align:center">'+(v||'—')+'</td>';
+  const th=h=>CLEAN?'<th style="padding:9px 10px;text-align:center;color:#888;font-weight:600;border-bottom:1px solid #e6e2de;white-space:nowrap">'+h+'</th>'
+    :'<th style="padding:8px 10px;color:'+color+';font-weight:800;border-bottom:2px solid '+color+'44;text-align:center;white-space:nowrap">'+h+'</th>';
+  const cell=v=>'<td style="padding:'+(CLEAN?'9px 10px;border-bottom:1px solid #f0edea;color:#555':'7px 10px')+';text-align:center">'+(v||'—')+'</td>';
   const rowFor=it=>{
     const locHref = kind==='diesel' ? mapLink(it.coord,it.link) : mapLink(it.coord,it.link);
     const locCell='<td style="padding:7px 10px;text-align:center">'+(locHref?'<a href="'+locHref+'" target="_blank" style="color:'+color+';font-weight:700;text-decoration:none">🗺️ Location</a>':'—')+'</td>';
-    const codeCell='<td style="padding:7px 10px;text-align:center;font-weight:800;color:'+color+';white-space:nowrap">'+(it.code||'—')+'</td>';
-    if(kind==='fuel') return cell(it.city)+codeCell+cell(it.name)+cell(it.am)+cell(it.mobile)+cell(it.rm)+(fuelHasLoc?locCell:'');
+    const codeCell=CLEAN?'<td style="padding:9px 10px;border-bottom:1px solid #f0edea;text-align:center;color:#555;white-space:nowrap">'+(it.code||'—')+'</td>'
+      :'<td style="padding:7px 10px;text-align:center;font-weight:800;color:'+color+';white-space:nowrap">'+(it.code||'—')+'</td>';
+    const nameCell=CLEAN?'<td style="padding:9px 10px;border-bottom:1px solid #f0edea;text-align:center;font-weight:600;color:var(--text)">'+(it.name||'—')+'</td>':cell(it.name);
+    const locC=CLEAN?locCell.replace('padding:7px 10px;','padding:6px 10px;border-bottom:1px solid #f0edea;'):locCell;
+    if(kind==='fuel') return cell(it.city)+codeCell+nameCell+cell(it.am)+cell(it.mobile)+cell(it.rm)+(fuelHasLoc?locC:'');
     if(kind==='ecowash') return codeCell+cell(it.name)+cell(it.city)+cell(it.mgr)+locCell;
     // diesel
     const mobileCell='<td style="padding:7px 10px;text-align:center">'+(it.mobile?'<a href="tel:'+String(it.mobile).replace(/\s/g,'')+'" style="color:#2e7d32;font-weight:700;text-decoration:none">📞 '+it.mobile+'</a>':'—')+'</td>';
@@ -4799,11 +4825,11 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
   const body=order.map(g=>{
     const its=groups[g];
     const gid='peLoc_'+kind+'_'+g.replace(/[^A-Za-z0-9]/g,'');
-    const table='<div style="overflow-x:auto;background:#FDFDFC;border:1px solid #EFEDE9;border-top:0;border-radius:0 0 8px 8px"><table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;word-break:break-word"><thead><tr style="background:'+color+'0f">'+cols.map(th).join('')+'</tr></thead><tbody>'
-      +its.map((it,i)=>'<tr style="background:'+(i%2?'#FAF8F5':'#FDFDFC')+'">'+rowFor(it)+'</tr>').join('')
+    const table='<div style="overflow-x:auto;background:#FDFDFC;'+(CLEAN?'border:0.5px solid #eee;border-radius:12px;margin-bottom:6px':'border:1px solid #EFEDE9;border-top:0;border-radius:0 0 8px 8px')+'"><table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;word-break:break-word"><thead><tr style="background:'+color+'0f">'+cols.map(th).join('')+'</tr></thead><tbody>'
+      +its.map((it,i)=>'<tr style="background:'+(CLEAN?'#FDFDFC':(i%2?'#FAF8F5':'#FDFDFC'))+'">'+rowFor(it)+'</tr>').join('')
       +'</tbody></table></div>';
     return '<div style="margin-bottom:10px">'
-      +'<div onclick="toggleRegion(\''+gid+'\')" style="display:flex;align-items:center;gap:10px;padding:9px 14px;background:'+color+'12;border-radius:0 8px 8px 0;border-left:4px solid '+color+';cursor:pointer;margin-bottom:6px"><span style="font-size:13px;font-weight:800;color:'+color+'">'+icon+' '+g+'</span><span style="font-size:11px;color:#aaa">('+its.length+')</span><span id="ico_'+gid+'" style="margin-left:auto;color:'+color+'">▼</span></div>'
+      +'<div onclick="toggleRegion(\''+gid+'\')" style="display:flex;align-items:center;gap:10px;padding:'+(CLEAN?'8px 14px':'9px 14px')+';background:'+color+'12;border-radius:'+(CLEAN?'8px':'0 8px 8px 0')+';border-left:4px solid '+color+';cursor:pointer;margin-bottom:6px"><span style="font-size:13px;font-weight:'+(CLEAN?'700':'800')+';color:'+color+'">'+(icon?icon+' ':'')+g+'</span><span style="font-size:11px;color:#aaa">('+its.length+(CLEAN?(its.length===1?' station':' stations'):'')+')</span><span id="ico_'+gid+'" style="margin-left:auto;color:'+color+'">▼</span></div>'
       +'<div id="'+gid+'">'+table+'</div></div>';
   }).join('');
 
@@ -5216,13 +5242,17 @@ function renderNosFranchiseTab(arr){
     const v0=v[0]||'';
     if(idx===0 && v0==='City')return; // header
     if(!v0||!v[1])return;
-    rows.push({city:v0,branch:v[1],district:v[2]||'',supervisor:v[3]||'',mobile:fmtNum(v[4]),owner:v[5]||'',company:v[6]||'',email:v[7]||''});
+    let br=String(v[1]).trim(), code='', closed=false;
+    const cm=br.match(/^(\d{2,10})\s*[-–—]?\s*(.*)$/);
+    if(cm){ code=cm[1]; br=cm[2].replace(new RegExp('^'+code+'\\s*[-–—]?\\s*'),'').trim(); }
+    if(/temporar(il)?y\s*closed/i.test(br)){ closed=true; br=br.replace(/\s*[\/(\-–]*\s*temporar(il)?y\s*closed\s*\)?\s*$/i,'').trim(); }
+    rows.push({city:v0,branch:(code?code+' - ':'')+br,closed:closed,district:v[2]||'',supervisor:v[3]||'',mobile:fmtNum(v[4]),owner:v[5]||'',company:v[6]||'',email:v[7]||''});
   });
 
   // Group by REGION (unified order: West · Central · East · North · South)
   const SUPP={'Rastanura':'East','Ras Tanura':'East','Al Hufuf':'East','Hufuf':'East',
     'Majmah':'Central','Al Majmaah':'Central','Al Majma\'ah':'Central','Hutat Sudair':'Central','Hotat Sudair':'Central','Dawadamy':'Central','Al Dawadmi':'Central',
-    'Qunfidha':'West','Al Qunfudhah':'West','Rania':'West','Khoar':'West',
+    'Qunfidha':'West','Al Qunfudhah':'West','Rania':'West','Khoar':'East',
     'Bisha':'South','Jizan':'South','Jazan':'South','Najran':'South','Abha':'South','Khamis Mushait':'South','Al Bahah':'South','Baljurashi':'South','Sharorah':'South',
     'Sakaka':'North','Al Qurayyat':'North','Arar':'North','Turaif':'North','Hail':'North','Tabuk':'North'};
   const _nz=x=>String(x||'').toUpperCase().replace(/[^A-Z]/g,'');const _SUPPN={};Object.keys(SUPP).forEach(k=>_SUPPN[_nz(k)]=SUPP[k]);const _ELMN={};Object.keys(ELM_CITY_REGION).forEach(k=>_ELMN[_nz(k)]=ELM_CITY_REGION[k]);
@@ -5242,7 +5272,7 @@ function renderNosFranchiseTab(arr){
       +'<span style="font-size:11px;color:#aaa">('+items.length+')</span>'
       +'<span id="ico_'+gid+'" style="margin-left:auto;color:'+color+'">▼</span></div>'
       +'<div id="'+gid+'"><div class="ref-cards-grid">'+items.map(it=>{
-        return '<div data-plabel="Owner" style="background:#FEFEFD;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
+        return '<div data-plabel="Owner"'+(it.closed?' data-closed="1"':'')+' style="background:#FEFEFD;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
           +'<div style="background:'+color+'12;padding:10px 14px;text-align:center;border-bottom:2px solid '+color+'22">'
           +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+it.branch+'</div>'
           +'<div style="font-size:11px;color:#888;margin-top:3px;font-weight:700;letter-spacing:.03em">📌 '+it.city+'</div>'
@@ -5252,7 +5282,7 @@ function renderNosFranchiseTab(arr){
           +(it.owner?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+it.owner+'</div>':'')
           +(it.supervisor?'<div style="font-size:11px;color:#666;margin-bottom:5px">🧑‍💼 '+it.supervisor+(it.mobile?' · '+it.mobile:'')+'</div>':'')
           +(it.company?'<div style="font-size:11px;color:#999;margin-bottom:5px">🏢 '+it.company+'</div>':'')
-          +(it.email?'<div style="font-size:11px;margin-top:4px"><a href="mailto:'+it.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+it.email+'</a></div>':'')
+          +(it.email?'<div style="font-size:11px;margin-top:4px"><div>Station Email</div><a href="mailto:'+it.email+'" style="color:'+color+';font-weight:700;text-decoration:none">✉️ '+it.email+'</a></div>':'')
           +'</div></div>';
       }).join('')+'</div></div></div>';
   }).join('');
@@ -10133,7 +10163,7 @@ window.addEventListener('DOMContentLoaded', () => {
     var titleEl=h.firstElementChild||h;var title=(titleEl.textContent||'').replace(/\s+/g,' ').trim();
     var map=null,mapTxt='';[].slice.call(h.querySelectorAll('a[href]')).forEach(function(a){if(/^https?:/.test(a.getAttribute('href'))&&!map){map=a.getAttribute('href');mapTxt=clean(a.textContent);}});
     var subs=[];[].slice.call(h.querySelectorAll('span,div')).forEach(function(el){if(el===titleEl||el.contains(titleEl)||el.children.length)return;if(el.closest('a'))return;var t=clean(el.textContent);if(t&&t!==clean(title)&&subs.indexOf(t)<0)subs.push(t);});
-    var d={title:title,map:map,mapTxt:mapTxt,subs:subs,sections:{branch:[],regional:[],gov:[]},station:[],chips:[],hours:'',more:[]};
+    var d={title:title,map:map,mapTxt:mapTxt,subs:subs,sections:{branch:[],regional:[],gov:[]},station:[],chips:[],hours:'',more:[],company:''};
     var sec='branch',cur=null,stationNext=false,role='';
     function person(){cur={name:'',phones:[],emails:[],role:''};d.sections[sec].push(cur);return cur;}
     var body=[].slice.call(card.children,1);
@@ -10167,6 +10197,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if(href.indexOf('tel:')===0||/^📞|^📱|^☎/u.test(raw)){var ph=href.indexOf('tel:')===0?href.slice(4):t;if(!cur||cur.emails.length)person();cur.phones.push(ph);return;}
         if(/^👤/u.test(raw)){person().name=t;return;}
         if(/^🧑/u.test(raw)){var pp2=t.split(/\s*·\s*/);cur={name:pp2[0]||'',phones:pp2[1]?[pp2[1]]:[],emails:[],role:'Supervisor'};d.sections[sec].push(cur);return;}
+        if(/^🏢/u.test(raw)){d.company=t;return;}
         if(isA)return;
         if(t&&d.more.indexOf(t)<0)d.more.push(t);
       });
@@ -10188,6 +10219,7 @@ window.addEventListener('DOMContentLoaded', () => {
     var box=document.createElement('div');box.className='bd-box';
     var hours=info.hours||d.hours;
     var h='<div class="bd-head"><div class="bd-title">'+(m?'<b>'+esc(m[1])+'</b>'+esc(m[2]):esc(d.title))+'</div>'
+      +(card.getAttribute('data-closed')==='1'?'<div style="margin-top:6px"><span style="display:inline-block;font-size:11px;font-weight:600;padding:2px 10px;border-radius:10px;background:rgba(168,90,90,.1);color:#8E4848">Temporarily closed</span></div>':'')
       +(function(){var cty=cardCity(card);var sb=d.subs.slice();if(cty&&!sb.some(function(x){return x.toLowerCase().indexOf(cty.toLowerCase())>-1;}))sb.unshift(cty);sb=sb.filter(function(x){var xl=x.toLowerCase();return !sb.some(function(y){return y!==x&&y.toLowerCase().indexOf(xl)===0;});});return sb.length?'<div class="bd-sub">'+esc(sb.join(' · '))+'</div>':'';})()
       +(d.map?(function(){var coords=/-?\d{1,3}\.\d+\s*,\s*-?\d{1,3}\.\d+/.test(d.mapTxt)?d.mapTxt.match(/-?\d{1,3}\.\d+\s*,\s*-?\d{1,3}\.\d+/)[0]:'';var txt=coords||d.map;return'<div class="bd-loc"><a href="'+esc(d.map)+'" target="_blank">'+esc(txt)+'</a>'+cpBtn(txt)+'</div>';})():'')
       +'</div>';
@@ -10199,6 +10231,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if(d.station.length)h+='<div class="bd-sec"><div class="bd-lbl">Station email</div>'+d.station.map(function(em){return'<div class="bd-rw"><span class="ic">✉️</span><a class="em" href="mailto:'+esc(em)+'">'+esc(em)+'</a> '+cpBtn(em)+'</div>';}).join('')+'</div>';
     if(d.sections.gov.length)h+='<div class="bd-sec"><div class="bd-lbl">Government sales</div><div class="bd-pp">'+peopleHtml(d.sections.gov)+'</div></div>';
     if(d.chips.length)h+='<div class="bd-sec"><div class="bd-lbl">Services</div>'+d.chips.map(function(c){return'<span class="bd-chip'+(c.ok?'':' no')+'">'+esc(c.t)+(c.ok?' ✓':'')+'</span>';}).join('')+'</div>';
+    if(d.company)h+='<div class="bd-sec"><div class="bd-lbl">Company</div><div class="bd-more">'+esc(d.company)+'</div></div>';
     if(d.more.length)h+='<div class="bd-sec"><div class="bd-lbl">More info</div><div class="bd-more">'+d.more.map(esc).join('<br>')+'</div></div>';
     box.innerHTML=h;return box;
   }
@@ -10242,6 +10275,7 @@ window.addEventListener('DOMContentLoaded', () => {
             var row=document.createElement('div');row.className='br-it';
             row.innerHTML='<span><b></b><span class="n"></span></span><span class="ds"></span>';
             row.querySelector('b').textContent=m?m[1]:'';row.querySelector('.n').textContent=m?m[2]:title;
+            if(card.getAttribute('data-closed')==='1'){var _cb=document.createElement('span');_cb.textContent='Closed';_cb.style.cssText='margin-left:6px;font-size:10px;font-weight:600;padding:0 7px;border-radius:9px;background:rgba(168,90,90,.1);color:#8E4848';row.querySelector('.n').appendChild(_cb);}
             var _ds=cardLoc(card).dist;if(_ds&&_ds.toLowerCase()!==c.toLowerCase())row.querySelector('.ds').textContent=_ds;else row.querySelector('.ds').remove();
             var e={row:row,card:card,info:it.info,rg:rg,city:c};row.onclick=function(){select(e);};
             list.appendChild(row);entries.push(e);rEntries.push(e);
