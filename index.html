@@ -6517,8 +6517,8 @@ function showRefBrandPage(brand){
     +'<div class="ref-sub-tabs" id="refSubTabs_'+brand+'" style="justify-content:center;border-bottom:2px solid '+tabActive+'55">'
     +tabs.map((t,i)=>{
       const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📅 Appointment SMS','SMS & Location':'📅 Appointment & Location SMS','BAIC Location':'📅 Appointment & Location SMS','Showrooms':'Showroom','PMS':'PMS - Spare Parts','Location SMS':'SMS Location','Emails':'📧 Emails','EV Maintenance Branches':'🔧 Maintenance Branches','EV Charging Stations':'⚡ Charging Stations','FAQ':'❓ FAQ','SMS':'📨 SMS','Sales Prices':'🏷️ Sales Prices'};
-      const BRAND_TAB_LABELS={baic:{'Service':'Service & Spare Parts'},petromin:{'Autocare':'AutoCare','Petromin Express Stations':'Express Stations','Petromin Tristar':'Tristar','Complaints Emails':'PE Complaints','PE-Emailz':'PE Emails'}};
-      const label=(BRAND_TAB_LABELS[brand]&&BRAND_TAB_LABELS[brand][t])||TAB_LABELS[t]||t;
+      const BRAND_TAB_LABELS={bodyshop:{'Location':'SMS Location','Location ':'SMS Location'},foton:{'Location SMS':'SMS Location'},electromin:{'Emails':'Complaints','SMS':'SMS Location'},baic:{'Service':'Service & Spare Parts'},petromin:{'Autocare':'AutoCare','Petromin Express Stations':'Express Stations','Petromin Tristar':'Tristar','Complaints Emails':'PE Complaints','PE-Emailz':'PE Emails'}};
+      const label=(BRAND_TAB_LABELS[brand]&&(BRAND_TAB_LABELS[brand][t]||BRAND_TAB_LABELS[brand][String(t).trim()]))||TAB_LABELS[t]||t;
       return '<button class="ref-sub-tab'+(i===0?' active':'')+'" '
         +'style="'+(i===0?'background:'+tabActive+'1f;color:'+tabActive:'color:'+tabActive)+'" '
         +'onclick="switchRefTab(\''+brand+'\','+i+',this)">'+label+'</button>';
@@ -6824,14 +6824,14 @@ async function renderInstructionTab(brand, cfg){
         if(hasSource){
           const srcColor=SRC_COLOR[r.a]||'#555', srcBg=SRC_BG[r.a]||'#f5f5f5';
           return '<tr style="background:'+(i%2===0?'#FDFDFC':'#FAF8F5')+'">'
-            +'<td style="padding:7px 12px;font-weight:700;text-align:center"><span style="background:'+color+'15;color:'+color+';padding:2px 8px;border-radius:6px;font-size:11px">'+r.svc+'</span></td>'
+            +'<td style="padding:7px 12px;font-weight:700;text-align:center"><span style="color:'+color+';font-weight:700;font-size:12px">'+r.svc+'</span></td>'
             +'<td style="padding:7px 12px;text-align:center"><span style="background:transparent;color:'+srcColor+';padding:2px 0;font-size:12px;font-weight:600">'+r.a+'</span></td>'
             +'<td style="padding:7px 12px;text-align:center;color:#555">'+r.b+'</td>'
             +'<td style="padding:7px 12px;text-align:center;font-size:11px">'+r.c+'</td>'
             +'</tr>';
         }
         return '<tr style="background:'+(i%2===0?'#FDFDFC':'#FAF8F5')+'">'
-          +'<td style="padding:7px 12px;font-weight:700;text-align:center"><span style="background:'+color+'15;color:'+color+';padding:2px 8px;border-radius:6px;font-size:11px">'+r.svc+'</span></td>'
+          +'<td style="padding:7px 12px;font-weight:700;text-align:center"><span style="color:'+color+';font-weight:700;font-size:12px">'+r.svc+'</span></td>'
           +'<td style="padding:7px 12px;text-align:center">'+r.a+'</td>'
           +'</tr>';
       }).join('')
@@ -8794,7 +8794,7 @@ async function renderRef(){
 
       // BRAND CIRCLES — Order: Petromin, BAIC, Nissan, Stellantis, Body Shop, Foton, National Oil, Electromin, Recall, Links
       +'<div class="ref-brand-circles" style="justify-content:center">'
-      +['petromin','baic','nissan','stellantis','bodyshop','foton','nos','electromin','volvo','baicRecall'].map(k=>{const c=BRAND_CONFIGS.find(b=>b.key===k);if(!c)return'';return'<div class="ref-brand-circle" onclick="'+(c.onclick||'showRefBrandPage(\''+c.key+'\')')+'"><div class="ref-brand-circle-icon" style="background:'+c.color+'1F">'+brandLineIcon(c.key,c.color)+'</div><div class="ref-brand-circle-label" style="color:'+c.color+'">'+c.label+'</div></div>';}).join('')
+      +['petromin','baic','nissan','stellantis','bodyshop','foton','electromin','volvo','nos','baicRecall'].map(k=>{const c=BRAND_CONFIGS.find(b=>b.key===k);if(!c)return'';return'<div class="ref-brand-circle" onclick="'+(c.onclick||'showRefBrandPage(\''+c.key+'\')')+'"><div class="ref-brand-circle-icon" style="background:'+c.color+'1F">'+brandLineIcon(c.key,c.color)+'</div><div class="ref-brand-circle-label" style="color:'+c.color+'">'+c.label+'</div></div>';}).join('')
       +(linkCards?'<div class="ref-brand-circle" onclick="toggleLinksPanel()">'
         +'<div class="ref-brand-circle-icon" style="background:#1565c01F">'+brandLineIcon('links','#1565c0')+'</div>'
         +'<div class="ref-brand-circle-label" style="color:#1565c0">Links</div>'
@@ -8880,9 +8880,9 @@ async function loadVehicleModels(brand){
     }
     if(!models.length){document.getElementById(contentId).innerHTML='<div style="text-align:center;color:#aaa;font-size:12px">No models — أضيفي صف "Vehicle Model" في تبويب Instruction</div>';return;}
     const c={nissan:'#c0272d',stellantis:'#1565c0',baic:'#C86E35',foton:'#546e7a',volvo:'#003057'}[brand]||'#c0272d';
-    let html='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px">'
+    let html='<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px">'
       +models.map((m)=>{
-        return '<div style="background:#FDFDFC;border:1px solid #EFEAE4;border-radius:8px;padding:6px 6px;text-align:center;color:'+c+';font-size:11.5px;font-weight:600">'+m+'</div>';
+        return '<div style="background:#FDFDFC;border:1px solid #EFEAE4;border-radius:8px;padding:6px 6px;width:120px;text-align:center;color:'+c+';font-size:11.5px;font-weight:600">'+m+'</div>';
       }).join('')
       +'</div>';
     VEHICLE_CACHE[brand]=true;
@@ -10251,7 +10251,11 @@ window.addEventListener('DOMContentLoaded', () => {
 (function(){
   function hexA(h,a){h=h.replace('#','');return'rgba('+parseInt(h.slice(0,2),16)+','+parseInt(h.slice(2,4),16)+','+parseInt(h.slice(4,6),16)+','+a+')';}
   function pass(){
-    [].slice.call(document.querySelectorAll('.ref-brand-section[data-brand-color]')).forEach(function(sec){
+    var rc=document.getElementById('refContent');
+    if(rc&&!rc.querySelector('.ref-brand-section')){var g=[].slice.call(rc.querySelectorAll('[style*="linear-gradient"]'))[0];
+      var hx=g&&(g.getAttribute('style')||'').match(/#[0-9a-fA-F]{6}/);if(hx)rc.setAttribute('data-brand-color',hx[0]);else rc.removeAttribute('data-brand-color');}
+    else if(rc)rc.removeAttribute('data-brand-color');
+    [].slice.call(document.querySelectorAll('.ref-brand-section[data-brand-color],#refContent[data-brand-color]')).forEach(function(sec){
       var c=sec.getAttribute('data-brand-color');if(!/^#[0-9a-fA-F]{6}$/.test(c))return;
       var tint=hexA(c,.07),soft=hexA(c,.06);
       // table heads + section title bars tinted with the brand
@@ -10273,6 +10277,35 @@ window.addEventListener('DOMContentLoaded', () => {
         el.style.border='1px solid '+hexA(c,.25);
         [].slice.call(el.querySelectorAll('svg')).forEach(function(sv){sv.setAttribute('stroke',c);});
       });
+      // any other hue used as a light tint/heading inside the section → section colour
+      [].slice.call(sec.querySelectorAll('div[style]:not([data-cs4]),th[style]:not([data-cs4]),span[style]:not([data-cs4])')).forEach(function(el){
+        if(el.closest('.br-md,.sms-card,.ref-email-card,.wk-tbl,.bd-box,.ref-sub-tabs'))return;el.setAttribute('data-cs4','1');
+        var st=(el.getAttribute('style')||'').replace(/\s+/g,'');
+        var bg=st.match(/background(-color)?:(#[0-9a-fA-F]{6})([0-9a-fA-F]{2})(?![0-9a-fA-F])/);
+        if(bg&&bg[2].toLowerCase()!==c.toLowerCase()){el.style.background=tint;var tc=st.match(/(^|;)color:(#[0-9a-fA-F]{6})/);if(tc&&tc[2].toLowerCase()===bg[2].toLowerCase())el.style.color=c;}
+        if(/background:#(f0e6c8|fdfbf4|fff8e1|fff3cd|fef9e7|fffde7)/i.test(st))el.style.background=soft;
+        if(/border-left:[3-6]px solid (#[0-9a-fA-F]{6})/i.test(st)){var bl=st.match(/border-left:[3-6]px solid (#[0-9a-fA-F]{6})/i)[1];if(bl.toLowerCase()!==c.toLowerCase())el.style.borderLeftColor=c;}
+        if(/^(TH)$/.test(el.tagName)){el.style.color=c;}
+      });
+      [].slice.call(sec.querySelectorAll('th')).forEach(function(th){if(!th.closest('.br-md,.sms-card,.wk-tbl'))th.style.color=c;});
+      // old SMS cards (AR/EN boxes) → new SMS card
+      if(typeof smsCardHTML==='function'){
+        [].slice.call(sec.querySelectorAll('.ref-card:not(.sms-card)')).forEach(function(card,ci){
+          var boxes=[].slice.call(card.querySelectorAll('[id^="sms_"]'));if(!boxes.length)return;
+          var M={appt:{},loc:{}},mode='';
+          var walker=[].slice.call(card.querySelectorAll('*'));
+          walker.forEach(function(el){
+            if(el.children.length===0){var tx=(el.textContent||'').trim();
+              if(/appointment/i.test(tx)&&tx.length<40)mode='appt';else if(/location/i.test(tx)&&tx.length<40)mode='loc';}
+            if(el.id&&el.id.indexOf('sms_')===0){var txt=el.textContent||'';var isAR=/[\u0600-\u06FF]/.test(txt.slice(0,40));
+              var m=mode||(/loc/i.test(el.id)?'loc':(/appt|a_/i.test(el.id)?'appt':'loc'));M[m][isAR?'ar':'en']=txt;}
+          });
+          var head=card.firstElementChild;var title=head&&!head.querySelector('[id^="sms_"]')?(head.textContent||'').replace(/\s+/g,' ').trim():'';
+          if(/^(ar|en|appointment sms|location sms)$/i.test(title))title='';
+          var html=smsCardHTML(title,M.appt.ar||'',M.appt.en||'',M.loc.ar||'',M.loc.en||'','x'+Date.now()+ci,c);
+          if(!html)return;var w=document.createElement('div');w.innerHTML=html;card.parentNode.replaceChild(w.firstChild,card);
+        });
+      }
       // e-mails in tables/cards: no grey chip, section colour text
       [].slice.call(sec.querySelectorAll('a[href^="mailto:"]:not([data-cs3])')).forEach(function(a){
         if(a.closest('.ref-email-card,.bd-box,.sms-card'))return;a.setAttribute('data-cs3','1');
