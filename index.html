@@ -10253,7 +10253,7 @@ window.addEventListener('DOMContentLoaded', () => {
   function pass(){
     [].slice.call(document.querySelectorAll('.ref-brand-section[data-brand-color]')).forEach(function(sec){
       var c=sec.getAttribute('data-brand-color');if(!/^#[0-9a-fA-F]{6}$/.test(c))return;
-      var tint=hexA(c,.18),soft=hexA(c,.08);
+      var tint=hexA(c,.07),soft=hexA(c,.06);
       // table heads + section title bars tinted with the brand
       [].slice.call(sec.querySelectorAll('thead tr:not([data-cs]),thead th:not([data-cs])')).forEach(function(el){
         if(el.closest('.br-md,.sms-card,.wk-tbl'))return;el.setAttribute('data-cs','1');el.style.background=tint;});
@@ -10265,7 +10265,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if(el.hasAttribute('data-cs2')||el.closest('.ref-email-card,.br-md,.sms-card,.ref-sub-tabs'))return;
         var st=(el.getAttribute('style')||'').replace(/\s+/g,'');
         if(!/color:#fff(fff)?(;|$)/i.test(st))return;
-        var m=st.match(/background:(#[0-9a-fA-F]{6})(?![0-9a-fA-F])/);if(!m)return;
+        var m=st.match(/background:(#[0-9a-fA-F]{6})(?![0-9a-fA-F])/)||st.match(/background:linear-gradient/i);if(!m)return;
         if(el.classList.contains('ref-email-tag'))return;
         el.setAttribute('data-cs2','1');
         var isBtn=el.tagName==='A'||el.tagName==='BUTTON'||/border-radius:(1[4-9]|[2-9][0-9])px/.test(st);
