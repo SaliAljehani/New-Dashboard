@@ -579,10 +579,10 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
       🔔
       <span id="notifBadge" style="display:none;position:absolute;top:-4px;right:-4px;min-width:14px;height:14px;background:var(--accent);border-radius:7px;font-size:11px;font-weight:700;color:#fff;text-align:center;line-height:14px;border:1.5px solid var(--accent);padding:0 3px;box-sizing:border-box"></span>
     </span>
-    <div id="notifPanel" style="display:none;position:absolute;top:calc(100% + 8px);right:0;background:#FFFDFB;border:1px solid #eee;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.13);width:300px;max-height:380px;overflow-y:auto;z-index:200;text-align:left">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #f0e8e8;position:sticky;top:0;background:#FFFDFB;z-index:1">
-        <span style="font-size:12px;font-weight:700;color:#6B3636">📢 Announcements</span>
-        <span onclick="markAllNotifRead()" style="font-size:11px;color:var(--accent);cursor:pointer;text-decoration:underline">Mark all read</span>
+    <div id="notifPanel" style="display:none;position:absolute;top:calc(100% + 8px);right:0;background:#FDFDFC;border:1px solid rgba(var(--accent-rgb),.2);border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.08);width:330px;max-height:380px;overflow-y:auto;z-index:200;text-align:left">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid #EFEDE9;position:sticky;top:0;background:#FDFDFC;z-index:1">
+        <span style="font-size:13px;font-weight:600;color:var(--accent)">Announcements</span>
+        <span onclick="markAllNotifRead()" style="font-size:11px;color:#8A857C;cursor:pointer;text-decoration:underline">Mark all read</span>
       </div>
       <div id="notifList" style="font-size:12px;color:#555"></div>
     </div>
@@ -2115,8 +2115,8 @@ function showPage(n,btn){CP=n;
   if(n===4){renderRef();}
   if(n===5)renderRoster();
   if(n===6)renderAnnouncements();
-  document.getElementById('page8').style.display=n===8?'block':'none';
-  document.getElementById('page10').style.display=n===10?'block':'none';
+  var _p8=document.getElementById('page8'); if(_p8) _p8.style.display=n===8?'block':'none';
+  var _p10=document.getElementById('page10'); if(_p10) _p10.style.display=n===10?'block':'none';
   if(n===10) renderRecallPage();
   var _p11=document.getElementById('page11'); if(_p11) _p11.style.display=n===11?'block':'none';
   if(n===11) renderCaseHandling();
@@ -8186,29 +8186,37 @@ function annBrandColor(txt){
 }
 function annTint(hex,a){var h=hex.replace('#','');if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];var r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);return 'rgba('+r+','+g+','+b+','+a+')';}
 function annHL(txt,accent){return String(txt||'').replace(/(\d[\d,\.]*\s*(?:ألف\s*)?(?:ريال|%))/g,'<b style="color:'+accent+'">$1</b>');}
+function annBrandName(c){return {'#003057':'Volvo','#c0272d':'Nissan','#1565c0':'Stellantis','#C86E35':'BAIC','#7b0000':'Body Shop','#546e7a':'Foton','#2e7d32':'National Oil','#3A6048':'Energy','#D98E45':'Petromin'}[c]||'General';}
+var ANN_SEQ=0;
+function annToggle(id,btn){var b=document.getElementById(id);if(!b)return;var open=b.getAttribute('data-open')==='1';b.setAttribute('data-open',open?'0':'1');b.style.maxHeight=open?'112px':'none';btn.textContent=open?'Show more ▾':'Show less ▴';}
 function annCard(it){
   var accent=annBrandColor((it.tag||'')+' '+(it.type||'')+' '+(it.text||''));
-  var tint=annTint(accent,0.10);
-  var isRTL=/[\u0600-\u06FF]/.test(String(it.text||'').substring(0,15))||/[\u0600-\u06FF]/.test(String(it.tag||''));
-  var dir=isRTL?'rtl':'ltr', ta=isRTL?'right':'left', side=isRTL?'right':'left';
+  var brand=annBrandName(accent);
+  var isRTL=/[؀-ۿ]/.test(String(it.text||'').substring(0,15))||/[؀-ۿ]/.test(String(it.tag||''));
+  var dir=isRTL?'rtl':'ltr', ta=isRTL?'right':'left';
   var lines=String(it.text||'').split('\n').map(function(l){return l.trim();}).filter(Boolean);
   var subRe=/^(جيب|رام|دودج|نيسان|Jeep|RAM|Dodge|Nissan)\s*[:：،\-]\s*(.*)$/i;
-  var hasSub=lines.some(function(l){return subRe.test(l);});
-  var body;
-  if(hasSub){
-    body='<div style="display:flex;flex-direction:column;gap:9px">'+lines.map(function(l){
-      var m=l.match(subRe);
-      if(m){return '<div style="display:flex;gap:11px;align-items:flex-start;background:#fafbfc;border-radius:10px;padding:11px 14px;direction:'+dir+';text-align:'+ta+'"><span style="background:'+tint+';color:'+accent+';font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;white-space:nowrap;margin-top:2px">'+m[1]+'</span><span style="font-size:12px;color:#4a515b;line-height:2">'+annHL(m[2],accent)+'</span></div>';}
-      return '<div style="font-size:13px;color:#3f4650;line-height:2.1;direction:'+dir+';text-align:'+ta+'">'+annHL(l,accent)+'</div>';
-    }).join('')+'</div>';
-  } else {
-    body=lines.map(function(l){return '<div style="font-size:13px;color:#3f4650;line-height:2.1;direction:'+dir+';text-align:'+ta+'">'+annHL(l,accent)+'</div>';}).join('');
-  }
-  return '<div style="background:#FAFAFA;border:1px solid #e6e6e6;border-'+side+':3px solid '+accent+';border-radius:14px;padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,.03)">'
-    +(it.tag?'<div style="margin-bottom:12px;direction:'+dir+';text-align:'+ta+'"><span style="background:'+tint+';color:'+accent+';font-size:13px;font-weight:800;padding:6px 14px;border-radius:8px">'+it.tag+'</span>'+(it.type?' <span style="font-size:11px;color:'+accent+';font-weight:600;opacity:.8">'+it.type+'</span>':'')+'</div>':'')
-    +body
-    +(it.extra?'<div style="margin-top:12px;font-size:12px;color:#8a909a;background:#fafafb;border-radius:9px;padding:9px 13px;direction:'+dir+';text-align:'+ta+'">'+annHL(it.extra,accent)+'</div>':'')
-    +'</div>';
+  var body=lines.map(function(l){
+    var m=l.match(subRe);
+    if(m) return '<div style="font-size:13px;color:#4A4440;line-height:2;direction:'+dir+';text-align:'+ta+'"><span style="color:'+accent+';font-weight:700">'+m[1]+':</span> '+annHL(m[2],accent)+'</div>';
+    return '<div style="font-size:13px;color:#4A4440;line-height:2;direction:'+dir+';text-align:'+ta+'">'+annHL(l,accent)+'</div>';
+  }).join('');
+  var id='annb_'+(ANN_SEQ++);
+  var long=lines.length>4;
+  var title=it.tag||brand;
+  return '<div class="ann-it" style="position:relative;margin-bottom:14px">'
+    +'<span style="position:absolute;'+(isRTL?'right:-25px':'left:-25px')+';top:12px;width:12px;height:12px;border-radius:50%;background:'+accent+';border:2px solid #FDFDFC"></span>'
+    +'<div style="border:1px solid #EFEDE9;border-radius:12px;overflow:hidden;background:#FDFDFC">'
+    +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 16px;background:'+annTint(accent,0.07)+';direction:'+dir+'">'
+      +'<span style="font-size:14px;font-weight:700;color:'+accent+'">'+title+'</span>'
+      +'<span style="font-size:10.5px;font-weight:600;padding:1px 9px;border-radius:10px;background:#FDFDFC;color:'+accent+';border:1px solid '+annTint(accent,0.18)+'">'+brand+'</span>'
+      +(it.type?'<span style="font-size:10.5px;color:#8A857C">'+it.type+'</span>':'')
+    +'</div>'
+    +'<div style="padding:12px 16px">'
+      +'<div id="'+id+'" data-open="0" style="'+(long?'max-height:112px;overflow:hidden':'')+'">'+body+'</div>'
+      +(long?'<div onclick="annToggle(\''+id+'\',this)" style="font-size:12px;font-weight:600;color:'+accent+';cursor:pointer;margin-top:4px;direction:ltr;text-align:'+ta+'">Show more ▾</div>':'')
+      +(it.extra?'<div style="margin-top:10px;font-size:12px;color:#8A857C;direction:'+dir+';text-align:'+ta+'">'+annHL(it.extra,accent)+'</div>':'')
+    +'</div></div></div>';
 }
 
 function renderAnnouncements(){
@@ -8242,23 +8250,25 @@ function renderAnnouncements(){
 
   const dateStr = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
+  ANN_SEQ=0;
   let html = '<div style="max-width:1200px;margin:0 auto;padding:8px">'
 
     // Header
-    +'<div style="text-align:center;background:#FAFAFA;border:1px solid #e6e6e6;border-radius:14px;padding:16px 20px;margin-bottom:20px;border-bottom:3px solid var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.05)">'
-    +'<div style="font-size:11px;color:#999;letter-spacing:.2em;margin-bottom:4px">'+dateStr+'</div>'
-    +'<div style="font-size:20px;font-weight:800;color:#3A352B">📢 Latest Updates</div>'
-    +'<div style="font-size:11px;color:#999;margin-top:4px">Recent updates and news for the team</div>'
+    +'<div style="text-align:center;padding:6px 20px 18px">'
+    +'<div style="font-size:11px;color:#A8A29A;letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px">'+dateStr+'</div>'
+    +'<div style="font-size:20px;font-weight:700;color:var(--text)">Latest Updates</div>'
+    +'<div style="font-size:11.5px;color:#8A857C;margin-top:3px">Recent updates and news for the team</div>'
     +'</div>';
 
-  html += '<div style="display:flex;flex-direction:column;gap:14px">';
+  html += '<div style="max-width:980px;margin:0 auto;direction:rtl"><div style="border-right:2px solid #EFEDE9;padding-right:22px">';
 
   items.forEach(function(it){
     html += annCard(it);
   });
 
   // كروت فاضية إضافية (Coming Soon) بنفس الستايل الهادئ
-  const EMPTY_SLOTS = 3;
+  const EMPTY_SLOTS = 0;
+  html += '</div>';
   for(let i=0;i<EMPTY_SLOTS;i++){
     const p = ANN_PALETTE[(items.length+i)%ANN_PALETTE.length];
     html += '<div style="display:flex;align-items:center;justify-content:center;gap:10px;background:'+p.bg+';border-radius:12px;padding:18px 16px;border:1.5px dashed '+p.border+'">'
@@ -9578,17 +9588,18 @@ function renderNotifPanel(){
     return { i, tag: String(r[keys[0]]||'').trim(), text: String(r[keys[1]]||'').trim() };
   });
   if(!items.length){ list.innerHTML = '<div style="padding:20px;text-align:center;color:#aaa;font-size:12px">📭 No announcements</div>'; return; }
-  const PC = { high:'#c0272d', urgent:'#c0272d', medium:'#D98E45', low:'#2e7d32' };
+  const openAnn="var ab=null;document.querySelectorAll('.pnav').forEach(function(b){if(b.textContent.indexOf('Announcements')>-1)ab=b;});document.getElementById('notifPanel').style.display='none';showPage(6,ab||document.querySelector('.pnav'));";
   list.innerHTML = items.map(it => {
     const isRead = NOTIF_READ_IDS.includes(it.i);
-    const tc = PC[(it.tag||'').toLowerCase()] || '#c0272d';
-    const isRTL = /[\u0600-\u06FF]/.test((it.text||'').substring(0,15));
-    return '<div onclick="markNotifRead('+it.i+')" style="padding:10px 14px;border-bottom:1px solid #f0e8e8;cursor:pointer;background:'+(isRead?'#fff':'#fef9f9')+'" onmouseover="this.style.background=\'#f5f5f5\'" onmouseout="this.style.background=\''+(isRead?'#fff':'#fef9f9')+'\'">'
-      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">'
+    const isRTL = /[؀-ۿ]/.test((it.text||'')+(it.tag||''));
+    const bg = isRead ? '#FDFDFC' : 'rgba(var(--accent-rgb),.05)';
+    const prev = String(it.text||'').replace(/\s*\n+\s*/g,' ').replace(/</g,'&lt;');
+    return '<div onclick="markNotifRead('+it.i+');'+openAnn+'" style="padding:10px 14px;border-bottom:1px solid #F3F1EE;cursor:pointer;background:'+bg+';direction:'+(isRTL?'rtl':'ltr')+';text-align:'+(isRTL?'right':'left')+'" onmouseover="this.style.background=\'rgba(var(--accent-rgb),.09)\'" onmouseout="this.style.background=\''+bg+'\'">'
+      +'<div style="display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:'+(isRead?'#6A645C':'var(--text)')+'">'
       +(isRead?'':'<span style="width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0"></span>')
-      +(it.tag?'<span style="font-size:11px;font-weight:700;background:'+tc+'18;color:'+tc+';padding:1px 8px;border-radius:8px">'+it.tag+'</span>':'')
-      +'</div><div style="font-size:12px;color:var(--text);line-height:1.6;direction:'+(isRTL?'rtl':'ltr')+'">'+it.text+'</div></div>';
-  }).join('') + '<div onclick="var ab=document.querySelector(\'.pnav\');document.querySelectorAll(\'.pnav\').forEach(b=>{if(b.textContent.includes(\'Announcements\')){ab=b;}});document.getElementById(\'notifPanel\').style.display=\'none\';showPage(6,ab);" style="padding:10px;text-align:center;font-size:11px;color:var(--accent);cursor:pointer;font-weight:700;border-top:1px solid #f0e8e8">View all announcements →</div>';
+      +(it.tag||'Announcement')+'</div>'
+      +'<div style="font-size:11.5px;color:#6A645C;margin-top:3px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">'+prev+'</div></div>';
+  }).join('') + '<div onclick="'+openAnn+'" style="padding:10px;text-align:center;font-size:12px;font-weight:600;color:var(--accent);cursor:pointer">View all announcements →</div>';
 }
 
 function markNotifRead(idx){
