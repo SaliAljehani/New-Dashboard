@@ -5615,12 +5615,27 @@ function renderFotonSMSLocationTab(arr){
       +'</div>';
   };
 
-  const rows=arr.map(r=>Object.values(r).map(x=>String(x||'').trim())).filter(v=>v[0] && v[1]);
+  const all=arr.map(r=>Object.values(r).map(x=>String(x||'').trim()));
+  // New layout: City | Arabic SMS | English SMS  (old layout: EN | AR)
+  const hasCity=all.some(v=>/^city$/i.test(v[0]||''));
+  const rows=all.filter(v=>{
+    if(/^city$/i.test(v[0]||'')||/PCVC Branches/i.test(v[1]||'')) return false;
+    return hasCity ? (v[1]||v[2]) : (v[0]&&v[1]);
+  });
+  const enName=t=>{const m=String(t||'').match(/service center\s*-\s*(?:Petromin\s+)?([^\n]+?)\s*(?:https?:|\n|$)/i);return m?m[1].trim():'';};
 
   return '<div class="ref-cards-grid">'+rows.map((v,i)=>{
-    const en=v[0]||'', ar=v[1]||'';
-    const m=en.match(/\(([^)\n]+)/);
-    const branch=m?m[1].trim():('Branch '+(i+1));
+    let en, ar, branch;
+    if(hasCity){
+      const a=v[1]||'', b=v[2]||'';
+      ar=/[\u0600-\u06FF]/.test(a)?a:b; en=ar===a?b:a;
+      const nm=enName(en);
+      branch=(v[0]||'')+(nm?' · '+nm:'')||('Branch '+(i+1));
+    }else{
+      en=v[0]||''; ar=v[1]||'';
+      const m=en.match(/\(([^)\n]+)/);
+      branch=m?m[1].trim():('Branch '+(i+1));
+    }
     return '<div class="ref-card" style="padding:10px 14px;">'
       +'<div style="text-align:center;margin-bottom:8px"><span style="font-size:13px;font-weight:700;color:'+color+'">📍 '+branch+'</span></div>'
       +mkBox(en,'fotonSms_en_'+i,'EN')
