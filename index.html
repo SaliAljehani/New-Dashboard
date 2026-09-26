@@ -3336,13 +3336,18 @@ function smsCardHTML(city,apptAR,apptEN,locAR,locEN,id,c){
   var mBranch=bm?bm[1].trim():'';
   var cm=EN.match(/City\s*:\s*([^\n]+)/i)||AR.match(/المدينة\s*[:：]\s*([^\n]+)/);
   var mCity=cm?(isLatin(cm[1].trim())?can(cm[1].trim()):(arCity(cm[1])||cm[1].trim())):'';
+  var enP='',enPC='';
+  var pm=EN2.match(/Petromin[^(\n]*\(\s*([^)\n]+?)\s*\)/i)||EN.match(/Petromin[^(\n]*\(\s*([^)\n]+?)\s*\)/i);
+  if(pm){var inner=pm[1];var ix=inner.search(/\s*,\s*|\s+[-–]\s+/);if(ix>-1){enPC=inner.slice(0,ix).trim();enP=inner.slice(ix).replace(/^\s*[,\-–]\s*/,'').trim();}else{enPC=inner.trim();}}
   var scB='';
   var se=EN2.match(/service\s*cent(?:er|re)\s*[-–]\s*([^\n]+?)\s*(?:https?:|\n|$)/i);
   if(se){var sp=se[1].split(',').map(function(x){return x.trim();}).filter(Boolean);if(sp.length>1)scB=sp[sp.length-1];}
   if(!scB){var sa=AR2.match(/مركز\s*خدمة\s*[-–]\s*([^\n]+)/);if(sa){var spa=sa[1].split('،').map(function(x){return x.trim();}).filter(Boolean);if(spa.length>1)scB=spa[spa.length-1];}}
-  var cityF=pc||mCity;
+  var cityF=pc||mCity||(enPC?can(enPC.replace(/\s+Al\s+Mukar+amah$/i,'')):'');
   var mbIsCity=mBranch&&(arCity(mBranch)===cityF||can(mBranch).toLowerCase()===String(cityF).toLowerCase());
-  var branch=pb||(isLatin(mBranch)&&!mbIsCity?mBranch:'')||scB||(!mbIsCity?mBranch:'');
+  var enIsCity=enP&&(can(enP).toLowerCase()===String(cityF).toLowerCase());
+  var branch=pb||(enP&&!enIsCity?enP:'')||(isLatin(mBranch)&&!mbIsCity?mBranch:'')||(isLatin(scB)?scB:'')||(enPC&&!pc&&!mCity?'':'')||(!mbIsCity&&isLatin(mBranch)?mBranch:'');
+  if(!branch&&!enP&&!pb){var arB=scB||(!mbIsCity?mBranch:'');if(arB&&!cityF)branch=arB;}
   if(!branch){branch=cityF;cityF='';}
   var title=branch||'—',sub=cityF&&branch&&cityF.toLowerCase()!==branch.toLowerCase()?cityF:'';
   var M={appt:{ar:apptAR,en:apptEN},loc:{ar:locAR,en:locEN}};
@@ -3350,7 +3355,7 @@ function smsCardHTML(city,apptAR,apptEN,locAR,locEN,id,c){
   var data=' data-appt-ar="'+esc(apptAR)+'" data-appt-en="'+esc(apptEN)+'" data-loc-ar="'+esc(locAR)+'" data-loc-en="'+esc(locEN)+'"';
   var tab=function(grp,v,lbl,on,dis){return '<span class="smsT" data-g="'+grp+'" data-v="'+v+'" style="display:inline-block;padding:7px 0;margin-right:14px;font-size:11px;font-weight:600;cursor:'+(dis?'default':'pointer')+';color:'+(on?c:(dis?'#ddd':'#aaa'))+';box-shadow:'+(on?'inset 0 -2px '+c:'none')+'">'+lbl+'</span>';};
   var txt=M[t0][l0]||'';var ar=l0==='ar';
-  return '<div class="ref-card sms-card" id="smsc_'+id+'" data-c="'+c+'" data-t="'+t0+'" data-l="'+l0+'"'+data+' style="padding:0;overflow:hidden;text-align:left;background:#FDFDFC;border:1px solid #F1EAE3;border-radius:12px;display:flex;flex-direction:column">'
+  return '<div class="ref-card sms-card" id="smsc_'+id+'" data-city="'+esc(sub||(!sub&&title!=='—'?title:''))+'" data-hasbranch="'+(sub?'1':'0')+'" data-c="'+c+'" data-t="'+t0+'" data-l="'+l0+'"'+data+' style="padding:0;overflow:hidden;text-align:left;background:#FDFDFC;border:1px solid #F1EAE3;border-radius:12px;display:flex;flex-direction:column">'
     +'<div style="padding:10px 14px;border-bottom:1px solid #F4EDE6"><b style="font-size:13.5px;font-weight:700;color:'+c+'">'+esc(title)+'</b>'+(sub?'<span style="color:#A8A29A;font-size:11.5px;font-weight:500;margin-left:6px">'+esc(sub)+'</span>':'')+'</div>'
     +'<div style="display:flex;justify-content:space-between;padding:0 14px;border-bottom:1px solid #F4EDE6">'
     +'<div>'+tab('t','appt','Appointment',t0==='appt',!(apptAR||apptEN))+tab('t','loc','Location',t0==='loc',!(locAR||locEN))+'</div>'
@@ -10125,8 +10130,9 @@ window.addEventListener('DOMContentLoaded', () => {
 /* ── Branch pages: list on the left, selected branch details on the right ── */
 (function(){
   var CODE_RE=/^\s*\d{2,10}\s*[-–—]\s*\S/;
-  function cardTitle(card){var h=card.firstElementChild;if(!h)return'';var t=h.firstElementChild||h;return (t.textContent||'').replace(/\s+/g,' ').trim();}
-  function cardLoc(card){var h0=card.firstElementChild;var r={city:'',dist:''};if(!h0)return r;var h=h0.cloneNode(true);[].slice.call(h.querySelectorAll('a')).forEach(function(a){a.remove();});var t=h.textContent||'';
+  function deIcon(card){if(!card||!card.querySelector||!card.querySelector('.ic-done[data-emo]'))return card;var c=card.cloneNode(true);[].slice.call(c.querySelectorAll('.ic-done[data-emo]')).forEach(function(sp){sp.parentNode.replaceChild(document.createTextNode(sp.getAttribute('data-emo')+' '),sp);});return c;}
+  function cardTitle(card){card=deIcon(card);var h=card.firstElementChild;if(!h)return'';var t=h.firstElementChild||h;return (t.textContent||'').replace(/\s+/g,' ').trim();}
+  function cardLoc(card){card=deIcon(card);var h0=card.firstElementChild;var r={city:'',dist:''};if(!h0)return r;var h=h0.cloneNode(true);[].slice.call(h.querySelectorAll('a')).forEach(function(a){a.remove();});var t=h.textContent||'';
     var c=t.match(/📌\s*([^\n]*?)\s*(?=📍|🗺|$)/u);var d=t.match(/📍\s*([^\n]*?)\s*(?=📌|🗺|$)/u);
     if(c)r.city=c[1].trim();
     if(d){var dv=d[1].trim();var _pp=dv.split(/\s[-–]\s/);if(!r.city&&_pp.length>1&&/^[A-Za-z][A-Za-z .'-]*$/.test(_pp[_pp.length-1].trim())){r.city=_pp.pop().trim();r.dist=_pp.join(' - ').trim();}else r.dist=dv;}
@@ -10145,7 +10151,7 @@ window.addEventListener('DOMContentLoaded', () => {
     return'';}
   function cardCity(card){var l=cardLoc(card);if(l.city)return l.city.split(/\s[-–]\s/)[0].trim();var h=card.firstElementChild;var t=cardTitle(card);
     return findCityIn(t)||findCityIn(l.dist)||findCityIn(h?h.textContent:'')||'';}
-  function looksBranch(c){if(CODE_RE.test(cardTitle(c)))return true;var h=c.firstElementChild;if(!h||c.children.length<2)return false;var ht=h.textContent||'';
+  function looksBranch(c){c=deIcon(c);if(CODE_RE.test(cardTitle(c)))return true;var h=c.firstElementChild;if(!h||c.children.length<2)return false;var ht=h.textContent||'';
     var hasLoc=/📍|📌/u.test(ht)||!!h.querySelector('a[href^="http"]');var bt=[].slice.call(c.children,1).map(function(x){return x.textContent||'';}).join(' ');
     var hasPerson=/👤/u.test(bt)||!!c.querySelector('a[href^="mailto:"]');return hasLoc&&hasPerson;}
   function isBranchGrid(g){var cards=[].slice.call(g.children);if(!cards.length)return false;var n=cards.filter(looksBranch).length;return n/cards.length>=0.5;}
@@ -10159,7 +10165,7 @@ window.addEventListener('DOMContentLoaded', () => {
   var EMAIL_RE=/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/;
   function clean(t){return String(t||'').replace(/[👤📞📱✉️📧📌📍🗺️🕐⏰🏢☎🧑💼]/gu,'').replace(/[\uFE0F\u200D]/g,'').replace(/\s+/g,' ').trim();}
   function parseCard(card){
-    var h=card.firstElementChild;if(!h)return null;
+    card=deIcon(card);var h=card.firstElementChild;if(!h)return null;
     var titleEl=h.firstElementChild||h;var title=(titleEl.textContent||'').replace(/\s+/g,' ').trim();
     var map=null,mapTxt='';[].slice.call(h.querySelectorAll('a[href]')).forEach(function(a){if(/^https?:/.test(a.getAttribute('href'))&&!map){map=a.getAttribute('href');mapTxt=clean(a.textContent);}});
     var subs=[];[].slice.call(h.querySelectorAll('span,div')).forEach(function(el){if(el===titleEl||el.contains(titleEl)||el.children.length)return;if(el.closest('a'))return;var t=clean(el.textContent);if(t&&t!==clean(title)&&subs.indexOf(t)<0)subs.push(t);});
@@ -10411,7 +10417,7 @@ window.addEventListener('DOMContentLoaded', () => {
         var k=null;for(var i=0;i<KEYS.length;i++){if(t.indexOf(KEYS[i])===0){k=KEYS[i];break;}}
         if(!k)return;
         var rest=t.slice(k.length).replace(/^[\uFE0F\u200D]+/,'');
-        var sp=document.createElement('span');sp.className='ic-done';sp.style.display='inline-flex';sp.style.marginRight='.35em';sp.innerHTML=svg(k,INFO[E[k]]?brandOf(tn):null);
+        var sp=document.createElement('span');sp.className='ic-done';sp.setAttribute('data-emo',k);sp.style.display='inline-flex';sp.style.marginRight='.35em';sp.innerHTML=svg(k,INFO[E[k]]?brandOf(tn):null);
         tn.parentNode.insertBefore(sp,tn);tn.nodeValue=lead+rest.replace(/^\s+/,'');
       });
     });
@@ -10431,7 +10437,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if(!k)return;
         var col=brandOf(tn);if(!col)return;
         var rest=t.slice(k.length).replace(/^[\uFE0F\u200D]+/,'');
-        var sp=document.createElement('span');sp.className='ic-done';sp.style.display='inline-flex';sp.style.marginRight='.35em';sp.innerHTML=svg(k,col);
+        var sp=document.createElement('span');sp.className='ic-done';sp.setAttribute('data-emo',k);sp.style.display='inline-flex';sp.style.marginRight='.35em';sp.innerHTML=svg(k,col);
         par.insertBefore(sp,tn);tn.nodeValue=lead+rest.replace(/^\s+/,'');
       });
       // recolour info icons already drawn in fixed colours
@@ -10470,7 +10476,14 @@ window.addEventListener('DOMContentLoaded', () => {
     if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(v).then(done,done);
     else{var ta=document.createElement('textarea');ta.value=v;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(x){}document.body.removeChild(ta);done();}
   },true);
-  function run(){try{styleEmailCards();}catch(e){console.warn('email style',e);}try{iconize();}catch(e){console.warn('icons',e);}try{iconizeInfo();}catch(e){console.warn('info icons',e);}try{locButtons();}catch(e){console.warn('loc btn',e);}}
+  function smsCityOnly(){
+    [].slice.call(document.querySelectorAll('.ref-cards-grid')).forEach(function(g){
+      var cards=[].slice.call(g.querySelectorAll('.sms-card[data-hasbranch="1"]:not([data-co])'));if(!cards.length)return;
+      var all=[].slice.call(g.querySelectorAll('.sms-card'));var cnt={};all.forEach(function(c){var k=(c.getAttribute('data-city')||'').toLowerCase();if(k)cnt[k]=(cnt[k]||0)+1;});
+      cards.forEach(function(c){c.setAttribute('data-co','1');var city=c.getAttribute('data-city')||'';if(cnt[city.toLowerCase()]===1){var h=c.firstElementChild;var b=h&&h.querySelector('b');var sp=b&&b.nextElementSibling;if(b){b.textContent=city;}if(sp)sp.remove();}});
+    });
+  }
+  function run(){try{smsCityOnly();}catch(e){}try{styleEmailCards();}catch(e){console.warn('email style',e);}try{iconize();}catch(e){console.warn('icons',e);}try{iconizeInfo();}catch(e){console.warn('info icons',e);}try{locButtons();}catch(e){console.warn('loc btn',e);}}
   var t=null;new MutationObserver(function(){clearTimeout(t);t=setTimeout(run,150);}).observe(document.body,{childList:true,subtree:true,characterData:false});
   if(document.readyState!=='loading')run();else document.addEventListener('DOMContentLoaded',run);
 })();
