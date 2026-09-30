@@ -2501,8 +2501,10 @@ async function loadSchedule(){
   // silently losing the "Week" column's data. Reading by column index
   // (9=Week, 10=Agent Name, 11=Break Time) avoids that collision entirely.
   let weeklyRows = [];
+  let schedArr2d = null;
+  try{ schedArr2d = await fetchCSVRawByGid(SHEET_ID, '920710775'); }catch(e){ console.warn('schedule sheet fetch failed', e); }
   try{
-    const arr2d = await fetchCSVRawByGid(SHEET_ID, '920710775');
+    const arr2d = schedArr2d;
     if(arr2d && arr2d.length > 1){
       const dataRows = arr2d.slice(1);
       let wSection = 'call';
@@ -2523,7 +2525,7 @@ async function loadSchedule(){
 
   // New combined sheet: Daily Off Schedule & Weekly Calls & Breakk (gid 920710775)
   try{
-    const newArr2d = await fetchCSVRawByGid(SHEET_ID, '920710775');
+    const newArr2d = schedArr2d; // same sheet, already downloaded above
     await loadVacationData();
     if(newArr2d && newArr2d.length > 1){
       NEW_WEEKLY_DATA = newArr2d;
@@ -10127,6 +10129,16 @@ window.addEventListener('DOMContentLoaded', () => {
 <div class="to-toast" id="toToast"></div>
 
 <script>
+/* Shared watcher: only #mainContent, and ignores changes inside the branch detail panel / header. */
+window.__watchDom=function(fn,delay){
+  var t=null,IGN='.br-detail,#motivationText,#notifPanel,.to-toast,.hcard';
+  function relevant(muts){for(var i=0;i<muts.length;i++){var n=muts[i].target;var el=n.nodeType===1?n:n.parentNode;if(!el||!el.closest||!el.closest(IGN))return true;}return false;}
+  function start(){var root=document.getElementById('mainContent')||document.body;
+    new MutationObserver(function(m){if(!relevant(m))return;clearTimeout(t);t=setTimeout(fn,delay);}).observe(root,{childList:true,subtree:true});}
+  if(document.readyState!=='loading')start();else document.addEventListener('DOMContentLoaded',start);
+};
+</script>
+<script>
 /* ── Branch pages: list on the left, selected branch details on the right ── */
 (function(){
   var CODE_RE=/^\s*\d{2,10}\s*[-–—]\s*\S/;
@@ -10146,9 +10158,14 @@ window.addEventListener('DOMContentLoaded', () => {
     CITY_EN.sort(function(a,b){return b.length-a.length;});CITY_ARL.sort(function(a,b){return b.ar.length-a.ar.length;});})();
   function canonCity(c){c=String(c||'').trim();return CITY_CANON[c]||c;}
   function findCityIn(text){text=String(text||'');
-    for(var i=0;i<CITY_EN.length;i++){var k=CITY_EN[i];var re=new RegExp('(^|[^A-Za-z])'+k.replace(/[-\/\\^$*+?.()|[\]{}]/g,'\\$&')+'([^A-Za-z]|$)','i');if(re.test(text))return canonCity(k);}
-    for(var j=0;j<CITY_ARL.length;j++){if(text.indexOf(CITY_ARL[j].ar)>-1)return canonCity(CITY_ARL[j].en);}
-    return'';}
+    // The LAST city named wins, so "706 - Madinah Road - Jeddah" -> Jeddah (Madinah is a road name there).
+    var best='',bestPos=-1;
+    for(var i=0;i<CITY_EN.length;i++){var k=CITY_EN[i];var re=new RegExp('(^|[^A-Za-z])'+k.replace(/[-\/\\^$*+?.()|[\]{}]/g,'\\$&')+'(?=[^A-Za-z]|$)','ig');var m;
+      while((m=re.exec(text))){var p=m.index+m[1].length;if(p>bestPos){bestPos=p;best=k;}if(re.lastIndex===m.index)re.lastIndex++;}}
+    if(best)return canonCity(best);
+    var bestA='',posA=-1;
+    for(var j=0;j<CITY_ARL.length;j++){var pa=text.lastIndexOf(CITY_ARL[j].ar);if(pa>posA){posA=pa;bestA=CITY_ARL[j].en;}}
+    return bestA?canonCity(bestA):'';}
   function cardCity(card){var l=cardLoc(card);if(l.city)return l.city.split(/\s[-–]\s/)[0].trim();var h=card.firstElementChild;var t=cardTitle(card);
     return findCityIn(t)||findCityIn(l.dist)||findCityIn(h?h.textContent:'')||'';}
   function looksBranch(c){c=deIcon(c);if(CODE_RE.test(cardTitle(c)))return true;var h=c.firstElementChild;if(!h||c.children.length<2)return false;var ht=h.textContent||'';
@@ -10326,7 +10343,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if(groups.length)build(groups);
   }
   var t=null;
-  new MutationObserver(function(){clearTimeout(t);t=setTimeout(scan,120);}).observe(document.body,{childList:true,subtree:true});
+  window.__watchDom(scan,120);
   document.addEventListener('DOMContentLoaded',scan);
 })();
 </script>
@@ -10484,7 +10501,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
   function run(){try{smsCityOnly();}catch(e){}try{styleEmailCards();}catch(e){console.warn('email style',e);}try{iconize();}catch(e){console.warn('icons',e);}try{iconizeInfo();}catch(e){console.warn('info icons',e);}try{locButtons();}catch(e){console.warn('loc btn',e);}}
-  var t=null;new MutationObserver(function(){clearTimeout(t);t=setTimeout(run,150);}).observe(document.body,{childList:true,subtree:true,characterData:false});
+  window.__watchDom(run,150);
   if(document.readyState!=='loading')run();else document.addEventListener('DOMContentLoaded',run);
 })();
 </script>
@@ -10533,8 +10550,8 @@ window.addEventListener('DOMContentLoaded', () => {
         if(/background:#(fdfbf4|fffdf5|fefcf3|fdf8ec)/i.test(st))el.style.background='#FAF8F5';
         if(/^(TH)$/.test(el.tagName)){el.style.color=c;}
       });
-      if(Object.keys(foreign).length)[].slice.call(sec.querySelectorAll('[style]')).forEach(function(el){if(el.closest('.br-md,.sms-card,.ref-email-card,.ref-brand-circles'))return;var st=(el.getAttribute('style')||'').replace(/\s+/g,'');var tc=st.match(/(^|;)color:(#[0-9a-fA-F]{6})/);if(tc&&foreign[tc[2].toLowerCase()])el.style.color=c;});
-      [].slice.call(sec.querySelectorAll('th')).forEach(function(th){if(!th.closest('.br-md,.sms-card,.wk-tbl'))th.style.color=c;});
+      if(Object.keys(foreign).length)[].slice.call(sec.querySelectorAll('[style]:not([data-cs5])')).forEach(function(el){el.setAttribute('data-cs5','1');if(el.closest('.br-md,.sms-card,.ref-email-card,.ref-brand-circles'))return;var st=(el.getAttribute('style')||'').replace(/\s+/g,'');var tc=st.match(/(^|;)color:(#[0-9a-fA-F]{6})/);if(tc&&foreign[tc[2].toLowerCase()])el.style.color=c;});
+      [].slice.call(sec.querySelectorAll('th:not([data-cs6])')).forEach(function(th){th.setAttribute('data-cs6','1');if(!th.closest('.br-md,.sms-card,.wk-tbl'))th.style.color=c;});
       // old SMS cards (AR/EN boxes) → new SMS card
       if(typeof smsCardHTML==='function'){
         [].slice.call(sec.querySelectorAll('.ref-card:not(.sms-card)')).forEach(function(card,ci){
@@ -10559,7 +10576,7 @@ window.addEventListener('DOMContentLoaded', () => {
         a.style.background='transparent';a.style.boxShadow='none';a.style.border='none';a.style.color=c;a.style.paddingLeft='0';a.style.paddingRight='0';});
     });
   }
-  var t=null;new MutationObserver(function(){clearTimeout(t);t=setTimeout(pass,160);}).observe(document.body,{childList:true,subtree:true});
+  window.__watchDom(pass,160);
   if(document.readyState!=='loading')pass();else document.addEventListener('DOMContentLoaded',pass);
 })();
 </script>
