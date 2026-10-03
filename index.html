@@ -9377,7 +9377,9 @@ async function renderDailyOff(){
         h+='<table class="no-border" style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed"><thead><tr>'
           +'<th style="'+th+';width:38%">Agent Name</th><th style="'+th+';width:34%">'+(sat?'Saturday Role':'Weekly Role')+'</th><th style="'+th+';text-align:center">'+(sat?'Saturday Break':'Weekly Break')+'</th></tr></thead><tbody>';
         list.forEach(function(x,i){
-          h+='<tr style="background:'+(i%2?'#FAF8F5':'#FDFDFC')+'">'
+          h+='<tr class="rl-row" style="background:'+(i%2?'#FAF8F5':'#FDFDFC')+'" '
+            +'onmouseover="this.querySelectorAll(\'td\').forEach(function(td){td.style.background=\'#FDF5F5\';})" '
+            +'onmouseout="this.querySelectorAll(\'td\').forEach(function(td){td.style.background=\'\';})">'
             +'<td style="padding:8px 12px;text-align:left;font-weight:600;color:var(--text)">'+x.ag.name
             +(!sat&&x.notes.length?'<div style="font-size:11px;font-weight:500;color:#a09a94;margin-top:2px">'+x.notes.join(' \u00b7 ')+'</div>':'')+'</td>'
             +'<td style="padding:8px 12px;text-align:left">'+pill(sat?String(x.ag.Saturday||'').trim():x.role)+'</td>'
