@@ -9397,14 +9397,14 @@ async function renderDailyOff(){
 
     function buildTable(w){
       var _td=new Date();var _tdStr=_td.getDate()+' '+_td.toLocaleString('en-US',{month:'short'});
-      var t='<div style="overflow:auto;max-height:72vh;border:1px solid #ECE8E3;border-radius:10px"><table class="no-border wk-tbl" style="width:100%;border-collapse:collapse;font-size:12px;background:#FDFDFC">';
+      var t='<div style="overflow-x:auto;border:1px solid #ECE8E3;border-radius:10px"><table class="no-border wk-tbl" style="width:100%;border-collapse:collapse;font-size:12px;background:#FDFDFC">';
       t+='<thead><tr>';
       t+='<th style="padding:9px 12px;text-align:left;border-bottom:1px solid #EFEAE4;min-width:150px;font-weight:700;color:#5f5a55;background:#FAF8F5;font-size:12px;position:sticky;top:0;z-index:2">Agent Name</th>';
       var _ord=(w.order&&w.order.length)?w.order:DAY_COLS.concat([BREAK_COL,SAT_BREAK_COL]);
       _ord.forEach(function(d){
         if(d===BREAK_COL||d===SAT_BREAK_COL){
           var _bl=(d===BREAK_COL);
-          t+='<th style="padding:9px 6px;text-align:center;border-bottom:1px solid #EFEAE4;border-left:2px solid #F0EBE5;border-right:2px solid #F0EBE5;min-width:'+(_bl?88:96)+'px;font-weight:700;font-size:12px;color:#5f5a55;background:#FAF8F5;position:sticky;top:0;z-index:2">'+(_bl?'Weekly Break':'Saturday Break')+'</th>';
+          t+='<th class="brkcol" style="padding:9px 6px;text-align:center;border-bottom:1px solid #EFEAE4;border-left:2px solid #F0EBE5;border-right:2px solid #F0EBE5;min-width:'+(_bl?88:96)+'px;font-weight:700;font-size:12px;color:#5f5a55;background:#FAF8F5;position:sticky;top:0;z-index:2">'+(_bl?'Weekly Break':'Saturday Break')+'</th>';
           return;
         }
         var wknd=d==='Friday';
@@ -9430,7 +9430,7 @@ async function renderDailyOff(){
           v=String(v||'').trim().replace(/^(\d{1,2}):(\d{2}):\d{2}\s*(AM|PM)$/i,'$1:$2 $3');
           var _empty=!v||v==='-'||v==='—';
           var col=v.toLowerCase()==='off'?'#D6D1CB':_tCol;
-          return '<td class="dc"'+(_isOff(v)?' data-off="1"':'')+' style="padding:7px 6px;text-align:center;border-left:2px solid #F0EBE5;border-right:2px solid #F0EBE5"><span class="dv" style="color:'+(_empty?'#D6D1CB':col)+';font-size:12px;font-weight:'+(_empty?'400':'700')+';white-space:nowrap">'+(v||'—')+'</span>'+_alt+'</td>';
+          return '<td class="dc brkcol"'+(_isOff(v)?' data-off="1"':'')+' style="padding:7px 6px;text-align:center;border-left:2px solid #F0EBE5;border-right:2px solid #F0EBE5"><span class="dv" style="color:'+(_empty?'#D6D1CB':col)+';font-size:12px;font-weight:'+(_empty?'400':'700')+';white-space:nowrap">'+(v||'—')+'</span>'+_alt+'</td>';
         };
         _ord.forEach(function(d){
           if(d===BREAK_COL||d===SAT_BREAK_COL){ t+=_brkCell(ag[d]); return; }
@@ -9463,6 +9463,7 @@ async function renderDailyOff(){
     html+='<style>#dow_tables .dd,#dow_tables .do{display:none}'
       +'#dow_tables .dd{color:#D6D1CB;font-size:12px}'
       +'#dow_tables .do{background:#FCE4E6;color:#a02030;font-weight:700;font-size:12px;padding:3px 14px;border-radius:6px;letter-spacing:.3px}'
+      +'#dow_tables.m-all .brkcol{display:none}'
       +'#dow_tables.m-all td.dc .dv{display:none}'
       +'#dow_tables .dvac{display:none;background:#FBF3E0;color:#9A6A00;font-weight:700;font-size:12px;padding:3px 10px;border-radius:6px}'
       +'#dow_tables.m-all td.dc:not([data-off]):not([data-vac]) .dd{display:inline}'
