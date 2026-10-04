@@ -5922,177 +5922,115 @@ function filterExpressStations(q){
 function renderPetrominExpressStationsTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#D98E45';
-  const rowsArr=arr.map(r=>Object.values(r).map(v=>String(v==null?'':v).trim()));
-  const keys=Object.keys(arr[0]||{});
-  const kFind=(...names)=>keys.find(k=>{const kl=k.toLowerCase();return names.some(n=>kl.includes(n));})||'';
-  const kCity=kFind('city'), kBe=kFind('be#','be '), kStation=kFind('station name'), kDist=kFind('district');
-  const kAmName=keys.find(k=>{const kl=k.toLowerCase();return kl.includes('area manager')&&kl.includes('name');})||'';
-  const kAmEmail=keys.find(k=>{const kl=k.toLowerCase();return kl.includes('area manager')&&kl.includes('email');})||'';
-  const kMobile=kFind('mobile');
-  const kStEmail=keys.find(k=>{const kl=k.toLowerCase();return kl.includes('station')&&kl.includes('email');})||'';
-  const kAc=kFind('ac available','ac avail'), kPms=kFind('pms'), kBatt=kFind('batter'), kEco=kFind('eco');
-  const kCoord=kFind('coordinate','coordinates','gps','lat');
-  const kWH=kFind('working hours','working hour');
-  const gv=(r,k)=>k?String(r[k]==null?'':r[k]).trim():'';
-  // ── Second table (rows ~727+) reuses the same header keys but shifted one
-  // column right: what's really "Station Name" lands under kDist, and the
-  // Regional Manager's Name/Email land under kAmName/kAmEmail. Build a
-  // station-name → regional-manager lookup from those rows.
-  const regByStation={};
-  arr.forEach(r=>{
-    const distV=gv(r,kDist), amNameV=gv(r,kAmName), amEmailV=gv(r,kAmEmail), mobV=gv(r,kMobile);
-    const isPhantomRow=!gv(r,kCity)&&!gv(r,kBe)&&!gv(r,kStation)&&distV&&amNameV
-      &&!/^(station name|regional manager name)$/i.test(distV)
-      &&!/^(regional manager name)$/i.test(amNameV)
-      &&amEmailV.includes('@')&&mobV&&mobV!=='0';
-    if(isPhantomRow){
-      regByStation[distV]={name:amNameV, mobile:mobV, email:amEmailV};
-    }
+  // Raw rows (array of arrays). Columns are found by their header name, so the sheet can change freely.
+  const rows=arr.map(r=>(Array.isArray(r)?r:Object.values(r)).map(v=>String(v==null?'':v).trim()));
+  const hIdx=rows.findIndex(v=>v.some(c=>/station\s*name/i.test(c))&&v.some(c=>/^be\s*#?$/i.test(c)||/city/i.test(c)));
+  if(hIdx<0) return '<div style="text-align:center;padding:24px;color:#aaa">No header row found</div>';
+  const H=rows[hIdx].map(h=>h.replace(/\s+/g,' ').trim());
+  // Every column belongs to a person block (Area Manager / Regional Manager) when it comes after that person's name column
+  const col={reg:-1,city:-1,be:-1,station:-1,dist:-1,coord:-1,wh:-1,stEmail:-1,am:{name:-1,mob:-1,email:-1},rm:{name:-1,mob:-1,email:-1},services:[],extra:[]};
+  let owner=null;
+  H.forEach((h,i)=>{
+    const l=h.toLowerCase();
+    if(!h)return;
+    if(/^regions?$/.test(l)){col.reg=i;return;}
+    if(/^city/.test(l)){col.city=i;return;}
+    if(/^be\s*#?$/.test(l)||/branch\s*code/.test(l)){col.be=i;return;}
+    if(/station\s*name/.test(l)){col.station=i;return;}
+    if(/district/.test(l)){col.dist=i;return;}
+    if(/coordinat|gps|location|map/.test(l)){if(col.coord<0)col.coord=i;return;}
+    if(/working\s*hour/.test(l)){col.wh=i;return;}
+    if(/station/.test(l)&&/email/.test(l)){col.stEmail=i;return;}
+    if(/regional\s*manager/.test(l)&&/name/.test(l)){owner=col.rm;owner.name=i;return;}
+    if(/area\s*manager/.test(l)&&/name/.test(l)){owner=col.am;owner.name=i;return;}
+    if(/regional\s*manager/.test(l)&&/email/.test(l)){col.rm.email=i;return;}
+    if(/area\s*manager/.test(l)&&/email/.test(l)){col.am.email=i;return;}
+    if(/mobile|phone|contact/.test(l)){const o=owner||col.am;if(o.mob<0)o.mob=i;return;}
+    if(/available|active|batter|eco\s*wash/.test(l)){col.services.push(i);return;}
+    col.extra.push(i);
   });
+  const g=(v,i)=>i>=0?(v[i]||''):'';
+  const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
+  const phones=s=>String(s||'').split(/[,\/]/).map(x=>fmtNum(x.trim())).filter(x=>x&&x!=='0').join(' / ');
+  const emailOf=s=>{const m=String(s||'').replace(/^mailto:/i,'').match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/);return m?m[0]:'';};
+  const tc=s=>String(s||'').toLowerCase().replace(/(^|[\s\-\/(])([a-z])/g,(m,a,b)=>a+b.toUpperCase());
+  const svcLabel=h=>h.replace(/\b(available|active)\b/ig,'').replace(/\s+/g,' ').trim().toUpperCase();
+  const normMainReg=s=>{const u=String(s||'').toUpperCase().trim();if(/^WR|WESTERN|^WEST/.test(u))return'West';if(/^CR|CENTRAL|^CENT/.test(u))return'Central';if(/^ER|EASTERN|^EAST/.test(u))return'East';if(/SOUTH|^SR/.test(u))return'South';if(/NORTH|^NR/.test(u))return'North';return'Other';};
 
-  const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s.replace(/\.0$/,'');};
-  const yes=v=>/^y/i.test(String(v||'').trim());
-  const badge=(label,v)=>{const y=yes(v);return '<span style="display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:700;color:'+(y?'#2e7d32':'#bbb')+';background:'+(y?'#e8f5e9':'#f5f5f5')+';padding:2px 7px;border-radius:5px;margin:2px">'+label+' '+(y?'✓':'✗')+'</span>';};
-
-  // ── Detect Request/Complaint TO/CC email routing rows anywhere in the sheet ──
+  // ── Request / Complaint TO/CC rows (optional, same as Autocare) ──
   const fmtE=v=>String(v||'').split(/,|;|\+/).map(e=>{const s=e.trim().replace(/,$/,'');if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
-  const emRows={};
-  let emMode='';
-  rowsArr.forEach(v=>{
-    const forIdx=v.findIndex(c=>/^for\s+(request|complaint)$/i.test(c.trim()));
-    if(forIdx>=0){
-      emMode=/request/i.test(v[forIdx])?'Request':'Complaint';
-      if(!emRows[emMode])emRows[emMode]={to:'',cc:''};
-      return;
-    }
-    const idxTO=v.findIndex(c=>/^TO$/i.test(c.trim()));
-    const idxCC=v.findIndex(c=>/^CC$/i.test(c.trim()));
-    if(emMode&&(idxTO>=0||idxCC>=0)){
-      if(idxTO>=0){const v2=v.slice(idxTO+1).find(c=>c.trim()!=='')||'';emRows[emMode].to=v2;}
-      if(idxCC>=0){const v2=v.slice(idxCC+1).find(c=>c.trim()!=='')||'';emRows[emMode].cc=v2;}
-    }
+  const emRows={};let emMode='';
+  rows.forEach(v=>{
+    const f=v.findIndex(c=>/^for\s+(request|complaint)$/i.test(c));
+    if(f>=0){emMode=/request/i.test(v[f])?'Request':'Complaint';if(!emRows[emMode])emRows[emMode]={to:'',cc:''};return;}
+    const t=v.findIndex(c=>/^TO$/i.test(c)),c2=v.findIndex(c=>/^CC$/i.test(c));
+    if(emMode&&t>=0)emRows[emMode].to=v.slice(t+1).find(x=>x)||'';
+    if(emMode&&c2>=0)emRows[emMode].cc=v.slice(c2+1).find(x=>x)||'';
   });
-  const emCard=(label,data)=>'<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center">'
+  const emCard=(label,d)=>'<div class="ref-email-card" style="border:1.5px solid '+color+'55;text-align:center">'
     +'<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px">📧 '+label+'</div>'
-    +(data?.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fmtE(data.to)+'</div>':'')
-    +(data?.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(data.cc)+'</div>':'')
+    +(d&&d.to?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px;margin-bottom:5px"><span class="ref-email-tag to">TO</span>'+fmtE(d.to)+'</div>':'')
+    +(d&&d.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+fmtE(d.cc)+'</div>':'')
     +'</div>';
-  const searchBox='<div style="margin-bottom:14px;text-align:center"><input type="text" id="peExpSearch" placeholder="🔍 Search by branch number or name..." oninput="filterExpressStations(this.value)" style="width:100%;max-width:360px;padding:8px 14px;border:1px solid #ddd;border-radius:20px;font-size:13px;text-align:center"><div id="peExpSearchCount" style="font-size:11px;color:#999;margin-top:6px">TOTAL_PLACEHOLDER branches</div></div>';
+  const emailHtml=(emRows.Request||emRows.Complaint)?'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'+emCard('Request',emRows.Request)+emCard('Complaint',emRows.Complaint)+'</div>':'';
 
-  const emailHtml=(emRows.Request||emRows.Complaint)?'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
-    +emCard('Request', emRows.Request)+emCard('Complaint', emRows.Complaint)+'</div>':'';
-
-  // ── Group stations by city ──
-  const cities={}; const cityOrder=[];
-  const isJunkStationRow=(station,be)=>/^(for\s+(request|complaint)|TO|CC)$/i.test(station.trim())||/^(TO|CC)$/i.test(be.trim());
-  arr.forEach(r=>{
-    const station=gv(r,kStation);
-    const be=gv(r,kBe);
-    if(!station && !be)return;
-    if(isJunkStationRow(station,be))return;
-    const city=gv(r,kCity)||'Other';
-    if(!cities[city]){cities[city]=[];cityOrder.push(city);}
-    cities[city].push(r);
+  // ── Stations, grouped by the sheet's Regions column ──
+  const regions={},regionOrder=[];
+  rows.slice(hIdx+1).forEach(v=>{
+    const be=g(v,col.be),station=g(v,col.station);
+    if(!station&&!be)return;
+    if(v.some(c=>/^(to|cc|for\s+(request|complaint))$/i.test(c)))return; // email routing rows
+    if(/\btest\b/i.test(station+' '+g(v,col.am.name)))return; // test rows
+    const reg=col.reg>=0?normMainReg(g(v,col.reg)):((window.__brRegionOf&&window.__brRegionOf(g(v,col.city)))||'Other');
+    if(!regions[reg]){regions[reg]=[];regionOrder.push(reg);}
+    regions[reg].push(v);
   });
+  const MAIN_ORDER={West:0,Central:1,East:2,North:3,South:4,Other:5};
+  regionOrder.sort((a,b)=>(MAIN_ORDER[a]??9)-(MAIN_ORDER[b]??9));
+  const leaf=(txt,st)=>'<div style="font-size:11px;color:#555;margin-bottom:3px'+(st||'')+'">'+txt+'</div>';
+  const mail=e=>'<div style="font-size:11px;margin-bottom:3px"><a href="mailto:'+e+'" style="color:#616161;font-weight:700;text-decoration:none;word-break:break-all">'+e+'</a></div>';
 
-  // ── True regional managers, aggregated from the second table (regByStation) ──
-  const rmMap={};
-  Object.values(regByStation).forEach(rm=>{
-    if(!rm.email)return;
-    if(!rmMap[rm.email])rmMap[rm.email]={name:rm.name,email:rm.email,mobile:fmtNum(rm.mobile),branches:0};
-    rmMap[rm.email].branches++;
-  });
-
-  const rmList=Object.values(rmMap).sort((a,b)=>b.branches-a.branches);
-  const rmRowsHTML=(function(){
-    const n=rmList.length, top=Math.floor(n/2);
-    const rows=[rmList.slice(0,top), rmList.slice(top)].filter(r=>r.length);
-    const cardOf=rm=>'<div style="flex:1 1 0;min-width:0;background:#FDFCFB;border:1px solid '+color+'25;border-radius:12px;padding:10px 14px;text-align:center">'
-      +'<div style="font-size:13px;font-weight:700;color:var(--text)">'+rm.name+'</div>'
-      +'<div style="font-size:11px;color:#999;margin:4px 0">🏢 '+rm.branches+' branches</div>'
-      +(rm.mobile?'<div style="font-size:12px;color:#555;margin-bottom:3px">📞 '+rm.mobile+'</div>':'')
-      +'<a href="mailto:'+rm.email+'" style="font-size:11px;color:#C86E35;font-weight:700;text-decoration:none;word-break:break-all">'+rm.email+'</a>'
-      +'</div>';
-    return rows.map((r,i)=>'<div style="display:flex;gap:10px'+(i?';margin-top:10px':'')+'">'+r.map(cardOf).join('')+'</div>').join('');
-  })();
-  const rmHTML=rmList.length?mkCollapsible('🗺️ Regional Manager',
-    rmRowsHTML
-    ,'peExpRM',color):'';
-
-  const normCity=s=>String(s||'').toUpperCase().replace(/[^A-Z]/g,'');
-  const NORM_CITY_REGION={};
-  Object.keys(ELM_CITY_REGION).forEach(k=>{NORM_CITY_REGION[normCity(k)]=ELM_CITY_REGION[k];});
-  const cityToRegionLoose=city=>NORM_CITY_REGION[normCity(city)]||'Other';
-
-  const html=Object.keys(cities).length?(()=>{
-    const regions={}; 
-    cityOrder.forEach(city=>{
-      const reg=cityToRegionLoose(city);
-      if(!regions[reg])regions[reg]=[];
-      regions[reg].push(city);
-    });
-    const regOrder=ELM_STATION_REGION_ORDER.filter(r=>regions[r]);
-    const REG_DISPLAY_LABEL={Other:'Other'};
-    return regOrder.map(reg=>{
-      const regCities=regions[reg];
-      const rc='#D98E45';
-      const allStations=regCities.flatMap(city=>cities[city]);
-      const regTotal=allStations.length;
-      const regHours=(allStations.find(v=>gv(v,kWH))||{});
-      const regWH=gv(regHours,kWH);
-      const cards=allStations.map(v=>{
-        const be=gv(v,kBe);
-        const station=gv(v,kStation);
-        const dist=gv(v,kDist);
-        const city=gv(v,kCity);
-        const wh=gv(v,kWH);
-        const am=gv(v,kAmName);
-        const amEmail=gv(v,kAmEmail);
-        const mob=gv(v,kMobile).split(',').map(s=>fmtNum(s.trim())).filter(Boolean).join(' / ');
-        const stEmail=gv(v,kStEmail);
-        const rmData=regByStation[station]||null;
-        const regName=rmData?rmData.name:'';
-        const regMob=rmData?fmtNum(rmData.mobile):'';
-        const regEmail=rmData?rmData.email:'';
-        const locLine=[dist,city].filter(Boolean).join(' - ');
-        const coord=gv(v,kCoord);
-        const coordLink=coord?(/^https?:\/\//i.test(coord)?coord:'https://www.google.com/maps?q='+encodeURIComponent(coord)):'';
-        const coordHTML=coord?'<a href="'+coordLink+'" target="_blank" style="display:inline-block;font-size:11px;color:'+rc+';opacity:.9;margin-top:3px;text-decoration:none;border-bottom:1px dotted '+rc+'">🗺️ '+coord+'</a>':'';
-        return '<div data-plabel="'+sheetPersonLabel(kAmName||'Area Manager')+'" style="background:#FEFEFD;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);">'
-          +'<div style="background:'+rc+'12;padding:8px 12px;text-align:center">'
+  const regHTML=regionOrder.map(reg=>{
+    const rc=color, regId='peExpReg_'+reg.replace(/\W+/g,'_');
+    const cards=regions[reg].map(v=>{
+      const be=g(v,col.be),station=g(v,col.station),city=tc(g(v,col.city)),dist=g(v,col.dist);
+      const coord=g(v,col.coord);
+      const link=coord?(/^https?:\/\//i.test(coord)?coord:'https://www.google.com/maps?q='+encodeURIComponent(coord)):'';
+      const am=g(v,col.am.name),amMob=phones(g(v,col.am.mob)),amEm=emailOf(g(v,col.am.email));
+      const rm=g(v,col.rm.name),rmMob=phones(g(v,col.rm.mob)),rmEm=emailOf(g(v,col.rm.email));
+      const stEm=emailOf(g(v,col.stEmail));
+      const wh=g(v,col.wh).replace(/\s*\n\s*/g,' ');
+      const chips=col.services.map(i=>{const val=g(v,i);if(!val)return'';const ok=/^y/i.test(val);if(!ok&&!/^n/i.test(val))return'';return'<span>'+svcLabel(H[i])+' '+(ok?'✓':'✗')+'</span>';}).filter(Boolean);
+      const extra=col.extra.map(i=>{const val=g(v,i);return val&&val!=='0'?leaf(H[i]+': '+val):'';}).join('');
+      return '<div data-plabel="Area Manager" style="background:#FEFEFD;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)">'
+        +'<div style="background:'+rc+'12;padding:8px 12px;text-align:center">'
           +'<div style="font-size:12px;font-weight:700;color:'+rc+'">'+(be?be+' - ':'')+station+'</div>'
-          +(locLine?'<div style="font-size:11px;color:#6b4a2e;font-weight:600;margin-top:2px">📍 '+locLine+'</div>':'')
-          +coordHTML
-          +'</div>'
-          +'<div style="padding:8px 12px;text-align:center;background:#FDFCFB">'
-          +(am?'<div style="font-size:11px;color:#555;margin-bottom:3px">👤 '+am+'</div>':'')
-          +(mob?'<div style="font-size:11px;color:#555;margin-bottom:3px">📞 '+mob+'</div>':'')
-          +(amEmail?'<div style="font-size:11px;margin-bottom:3px"><a href="mailto:'+amEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px;word-break:break-all;white-space:normal">✉️ '+amEmail+'</a></div>':'')
-          +(stEmail&&stEmail!==amEmail?'<div style="font-size:11px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap"><span style="background:#daeaf8;color:#185fa5;font-weight:800;padding:1px 6px;border-radius:4px;font-size:11px;white-space:nowrap">Station Email</span><a href="mailto:'+stEmail+'" style="background:#f5f5f5;color:#616161;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px;word-break:break-all;white-space:normal;max-width:100%">'+stEmail+'</a></div>':'')
-          +'<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:2px;margin-bottom:2px">'+badge('AC',gv(v,kAc))+badge('PMS',gv(v,kPms))+badge('BATTERIES',gv(v,kBatt))+badge('ECO WASH',gv(v,kEco))+'</div>'
-          +(regName?'<div style="border-top:1px solid #C86E3522;padding-top:6px;margin-top:6px">'
-            +'<div style="font-size:11px;color:#C86E35;letter-spacing:.03em;margin-bottom:3px;font-weight:700">Regional Manager</div>'
-            +'<div style="font-size:11px;color:#555">👤 '+regName+'</div>'
-            +(regMob?'<div style="font-size:11px;color:#555;margin-top:2px">📞 '+regMob+'</div>':'')
-            +(regEmail?'<div style="font-size:11px;margin-top:2px"><a href="mailto:'+regEmail+'" style="background:#C86E3515;color:#C86E35;font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px;word-break:break-all;white-space:normal">'+regEmail+'</a></div>':'')
-            +'</div>':'')
-          +'</div></div>';
-      }).join('');
-      const regId='peExpReg_'+reg.replace(/\W+/g,'_');
-      return '<div style="margin-bottom:16px">'
-        +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:9px 16px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px">'
-        +'<span style="font-size:14px;font-weight:700;color:'+rc+'">'+(REG_DISPLAY_LABEL[reg]||reg)+'</span>'
-        +(regWH?'<span style="font-size:11px;color:'+rc+';margin-left:auto;white-space:pre-line">⏰ '+regWH.replace(/\n/g,' · ')+'</span>':'<span style="margin-left:auto"></span>')
-        +'<span id="ico_'+regId+'" style="color:'+rc+'">▼</span>'
+          +(city?'<div style="font-size:11px;color:#888;margin-top:2px">📌 '+city+'</div>':'')
+          +(dist?'<div style="font-size:11px;color:#888;margin-top:2px">📍 '+dist+'</div>':'')
+          +(link?'<div style="margin-top:3px"><a href="'+link+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ '+coord+'</a></div>':'')
         +'</div>'
-        +'<div id="'+regId+'"><div class="ref-cards-grid">'+cards+'</div></div>'
-        +'</div>';
+        +'<div style="padding:8px 12px;text-align:center;background:#FDFCFB">'
+          +(am?leaf('👤 '+am):'')+(amMob?leaf('📞 '+amMob):'')+(amEm?mail(amEm):'')
+          +(stEm?'<div style="font-size:11px;color:#185fa5;font-weight:700">Station Email</div>'+mail(stEm):'')
+          +(chips.length?'<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px;font-size:11px">'+chips.join('')+'</div>':'')
+          +(wh?leaf('⏰ '+wh):'')
+          +extra
+          +(rm||rmMob||rmEm?'<div style="border-top:1px solid #C86E3522;padding-top:6px;margin-top:6px">'
+            +'<div style="font-size:11px;color:#C86E35;font-weight:700;margin-bottom:3px">Regional Manager</div>'
+            +(rm?leaf('👤 '+rm):'')+(rmMob?leaf('📞 '+rmMob):'')+(rmEm?mail(rmEm):'')
+            +'</div>':'')
+        +'</div></div>';
     }).join('');
-  })():'';
-
-  const total=cityOrder.reduce((s,c)=>s+cities[c].length,0);
-  const searchBoxFinal=searchBox.replace('TOTAL_PLACEHOLDER',total);
-  return '<div>'+searchBoxFinal+emailHtml+html+'</div>';
+    return '<div style="margin-bottom:16px">'
+      +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:9px 16px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px">'
+      +'<span style="font-size:14px;font-weight:700;color:'+rc+'">'+reg+'</span>'
+      +'<span id="ico_'+regId+'" style="color:'+rc+';margin-left:auto">▼</span>'
+      +'</div>'
+      +'<div id="'+regId+'"><div class="ref-cards-grid">'+cards+'</div></div>'
+      +'</div>';
+  }).join('');
+  const searchBox='<div style="margin-bottom:14px;text-align:center"><input type="text" id="peExpSearch" placeholder="🔍 Search by branch number or name..." oninput="filterExpressStations(this.value)" style="width:100%;max-width:360px;padding:8px 14px;border:1px solid #ddd;border-radius:20px;font-size:13px;text-align:center"></div>';
+  return '<div>'+searchBox+emailHtml+regHTML+'</div>';
 }
 
 function renderPetrominTristarTab(arr){
@@ -7101,7 +7039,7 @@ async function renderRefBrand(brand,tabIdx){
     container.innerHTML='<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading '+sheetName+'...</div>';
     try{
       const t=sheetName.trim();
-      const FORCE_RAW=['Tire&Battery','Petromin Tristar'];
+      const FORCE_RAW=['Tire&Battery','Petromin Tristar','Petromin Express Stations'];
       const data=await fetchSheet(cfg.id, sheetName);
       let arr=Array.isArray(data)?data:(data.rows||[]);
       if(FORCE_RAW.includes(t) || (arr.length && Object.keys(arr[0]).length<4)){
