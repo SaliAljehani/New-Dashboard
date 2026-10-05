@@ -60,9 +60,57 @@ select#agSel{font-size:14px;font-weight:600;color:var(--accent);min-width:180px}
 .rfbtn{padding:6px 14px;border-radius:8px;border:1.5px solid var(--accent);background:rgba(var(--accent-rgb),.07);color:var(--accent);font-size:12px;cursor:pointer;font-weight:600}
 .rfbtn:hover{background:var(--accent);color:#fff}
 .ptag{display:inline-block;background:rgba(var(--accent-rgb),.07);color:var(--accent);border:1px solid #fcc;border-radius:8px;padding:3px 10px;font-size:11px;font-weight:600}
-.page-nav{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;width:calc(100% - 48px);max-width:1552px;margin:20px auto 2px;padding:0;background:transparent}
-@media(max-width:900px){.page-nav{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.page-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;width:calc(100% - 48px);max-width:1180px;margin:20px auto 2px;padding:0;background:transparent}
+@media(max-width:900px){.page-nav{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .pnav{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:12px 6px;border-radius:12px;border:1px solid #EDE4DA;font-size:13px;font-weight:600;cursor:pointer;background:#FDFDFC;color:var(--text);transition:.15s;text-align:center;line-height:1.2}
+.team-subnav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:620px;margin:14px auto 6px;padding:0 16px}
+.tsub{padding:9px 6px;border-radius:10px;border:1.5px solid #EDE4DA;background:#fff;color:#6A5A4A;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.tsub:hover{border-color:rgba(var(--accent-rgb),.2)}
+.tsub.on{background:rgba(var(--accent-rgb),.08);color:var(--accent);border-color:rgba(var(--accent-rgb),.25)}
+/* ===== Agent Profile ===== */
+.ap-wrap{max-width:1100px;margin:0 auto}
+.ap-search{position:relative;display:flex;align-items:center;gap:8px;max-width:420px;margin:4px auto 18px;background:#fff;border:1px solid #EDE4DA;border-radius:12px;padding:0 12px}
+.ap-search:focus-within{border-color:rgba(var(--accent-rgb),.35)}
+.ap-search input{flex:1;border:none;outline:none;background:transparent;height:42px;font-size:14px;color:var(--text);font-family:inherit}
+.ap-s-ic,.ap-clear{display:inline-flex;color:#8A857C}.ap-clear{cursor:pointer;padding:4px;border-radius:6px}.ap-clear:hover{background:#F6F4F0;color:var(--accent)}
+.ap-sug{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid #EDE4DA;border-radius:12px;box-shadow:0 8px 22px rgba(0,0,0,.08);z-index:30;overflow:hidden;max-height:300px;overflow-y:auto}
+.ap-sug-it{padding:9px 14px;font-size:13px;cursor:pointer;border-top:1px solid #F3ECE6}.ap-sug-it:first-child{border-top:none}
+.ap-sug-it:hover,.ap-sug-it.hi{background:rgba(var(--accent-rgb),.06);color:var(--accent)}
+.ap-sug-none{padding:10px 14px;font-size:12px;color:#8A857C}
+.ap-grid-names{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.ap-chip{display:flex;align-items:center;gap:10px;padding:9px 12px;background:#fff;border:1px solid #EDE4DA;border-radius:12px;font-size:13px;font-weight:600;color:var(--text);cursor:pointer}
+.ap-chip:hover{border-color:rgba(var(--accent-rgb),.25);background:rgba(var(--accent-rgb),.04)}
+.ap-card{background:#FEFEFD;border:1px solid #EDE4DA;border-radius:14px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.ap-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.ap-av{width:46px;height:46px;border-radius:50%;background:#F3EEE9;color:#4A3528;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex:none}
+.ap-av.sm{width:30px;height:30px;font-size:11px}
+.ap-hn{flex:1;min-width:0}.ap-name{font-size:18px;font-weight:700;color:#4A3528}.ap-meta{font-size:12.5px;color:#8A857C;margin-top:2px}
+.ap-periods{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 4px}
+.ap-pchip{padding:5px 12px;border:1px solid #EDE4DA;border-radius:8px;font-size:12px;font-weight:600;background:#fff;color:#6A5A4A;cursor:pointer}
+.ap-pchip.on{background:rgba(var(--accent-rgb),.08);border-color:rgba(var(--accent-rgb),.25);color:var(--accent)}
+.ap-sec{margin-top:16px}
+.ap-sh{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:#4A3528;background:#F8F5F1;border-radius:9px;padding:8px 12px;margin-bottom:10px}
+.ap-sh svg{color:var(--accent)}.ap-sh-x{margin-left:auto;font-size:11.5px;font-weight:600;color:#8A857C}
+.ap-g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.ap-st{border:1px solid #EDE4DA;border-radius:10px;padding:10px 12px;background:#fff}
+.ap-k{font-size:11.5px;color:#8A857C}.ap-v{font-size:20px;font-weight:700;color:#4A3528;margin-top:2px}
+.ap-st.off .ap-v{color:#a02030}.ap-st.vac .ap-v{color:#8A5A10}
+.ap-note{font-size:12px;color:#8A857C;margin-top:8px}.ap-note b{color:#4A3528}
+.ap-sub{font-size:11.5px;font-weight:600;color:#8A857C;margin:10px 0 4px}
+.ap-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.ap-b{display:inline-block;padding:3px 10px;border-radius:6px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.ap-b.off{background:#FCE8EA;color:#a02030}.ap-b.vac{background:#FBF1DC;color:#8A5A10}.ap-b.lc{background:#FAECE7;color:#993C1D}
+.ap-b.mc{background:#FBF9F4;color:#6B5A3A;border:1px solid #EFE8DC}.ap-b.ok{background:#EEF4E8;color:#3B6D11}.ap-b.gr{background:#F6F4F0;color:#8A857C}
+.ap-b.call{background:#F6F4F0;color:#6A5A4A}.ap-today{font-size:12px;padding:5px 12px}
+.ap-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;text-align:center}
+.ap-day{border:1px solid #F0E9E1;border-radius:10px;padding:8px 4px;background:#fff;min-width:0}
+.ap-day .ap-b{max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.ap-dn{font-size:12px;font-weight:700;color:#4A3528}.ap-dd{font-size:11px;color:#8A857C;margin-bottom:6px;min-height:14px}
+.ap-2col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}
+.ap-li{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12.5px;padding:7px 2px;border-bottom:1px solid #F3ECE6;color:#4A3528}
+.ap-tot{color:#8A857C;font-weight:600;border-bottom:none}
+.ap-empty{font-size:12.5px;color:#aaa;padding:10px 2px}
+@media(max-width:760px){.ap-g4{grid-template-columns:repeat(2,minmax(0,1fr))}.ap-2col{grid-template-columns:1fr}.ap-week{grid-template-columns:repeat(4,minmax(0,1fr))}}
 .pnav .ic-done{margin-right:0!important;font-size:22px}
 .pnav.active{background:rgba(var(--accent-rgb),.07);color:var(--accent);border-color:rgba(var(--accent-rgb),.3)}
 .pnav:hover:not(.active){background:rgba(var(--accent-rgb),.04);border-color:rgba(var(--accent-rgb),.2);color:var(--accent)}
@@ -637,10 +685,13 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <button class="pnav" onclick="showPage(6,this)">📢 Announcements</button>
     <button class="pnav active" onclick="showPage(4,this)">📁 Daily Reference</button>
     <button class="pnav" onclick="window.open('https://docs.google.com/spreadsheets/d/16ZzTUvIDmJnokaNJCTLb3AHXm7x_n2Kx_537H2gcCCI/edit','_blank')">🎫 Ticket Quality</button>
-    <button class="pnav" onclick="showPage(1,this)">📊 Team Performance</button>
-    <button class="pnav" onclick="showPage(5,this)">📅 Team Schedules</button>
+    <button class="pnav" id="navTeam" onclick="showTeamTab(TEAM_TAB||'profile')">👥 Team</button>
     <button class="pnav" onclick="showPage(12,this)" style="position:relative">🕐 Permissions<span id="toNavBadge" style="display:none;position:absolute;top:-6px;right:-6px;min-width:16px;height:16px;background:var(--accent);border-radius:8px;font-size:11px;font-weight:700;color:#fff;text-align:center;line-height:16px;padding:0 4px;box-sizing:border-box"></span></button>
-    <button class="pnav" onclick="showPage(11,this)">📋 Case Handling</button>
+  </div>
+  <div id="teamSubNav" class="team-subnav" style="display:none">
+    <button class="tsub" data-t="profile" onclick="showTeamTab('profile')">Agent Profile</button>
+    <button class="tsub" data-t="perf" onclick="showTeamTab('perf')">Performance</button>
+    <button class="tsub" data-t="sched" onclick="showTeamTab('sched')">Schedules</button>
   </div>
 
 <div id="nameModalOverlay" style="display:none;position:fixed;inset:0;background:rgba(40,30,30,.35);z-index:200;align-items:center;justify-content:center">
@@ -801,8 +852,11 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 <div id="page10" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
   <div id="recallContent"><div style="text-align:center;padding:40px;color:#aaa">Loading...</div></div>
 </div>
+<div id="page13" style="display:none;max-width:1200px;margin:0 auto;padding:18px 24px">
+  <div id="agentProfileContent"></div>
+</div>
 <div id="page11" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
-  <div id="caseHandlingContent"><div style="text-align:center;padding:40px;color:#aaa">Loading...</div></div>
+  <div id="caseHandlingContent_page"><div style="text-align:center;padding:40px;color:#aaa">Loading...</div></div>
 </div>
 <div id="page12" style="display:none;max-width:1100px;margin:0 auto;padding:18px 24px" class="to-wrap">
 
@@ -2170,7 +2224,272 @@ function showPage(n,btn){CP=n;
   if(n===11) renderCaseHandling();
   var _p12=document.getElementById('page12'); if(_p12) _p12.style.display=n===12?'block':'none';
   if(n===12) renderTimeOff();
+  var _p13=document.getElementById('page13'); if(_p13) _p13.style.display=n===13?'block':'none';
+  teamSync(n);
 }
+
+/* ===== TEAM (Agent Profile · Performance · Schedules) ===== */
+var TEAM_TAB='profile';
+var TEAM_PAGE={profile:13,perf:1,sched:5};
+function teamSync(n){
+  var sub=document.getElementById('teamSubNav');
+  var t=null; Object.keys(TEAM_PAGE).forEach(function(k){ if(TEAM_PAGE[k]===n) t=k; });
+  if(sub) sub.style.display=t?'grid':'none';
+  if(!t) return;
+  TEAM_TAB=t;
+  var tb=document.getElementById('navTeam');
+  if(tb){ document.querySelectorAll('.pnav').forEach(function(b){b.classList.remove('active');}); tb.classList.add('active'); }
+  document.querySelectorAll('#teamSubNav .tsub').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-t')===t); });
+}
+function showTeamTab(t){
+  if(!TEAM_PAGE[t]) t='profile';
+  showPage(TEAM_PAGE[t], document.getElementById('navTeam'));
+  if(t==='profile') renderAgentProfilePage();
+}
+
+/* ===== AGENT PROFILE — everything about one agent from every section of the dashboard ===== */
+var AP_NAME='', AP_PERIOD='', AP_EXTRA={training:null};
+var AP_MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var AP_MONFULL=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var AP_IC={chart:'M3 13a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM15 9a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1zM9 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1zM4 20h14',
+ att:'M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 3h6v4H9zM9 14l2 2l4-4',
+ cal:'M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zM16 3v4M8 3v4M4 11h16',
+ sun:'M8 12a4 4 0 1 0 8 0a4 4 0 1 0-8 0M3 12h1M12 3v1M20 12h1M12 20v1M5.6 5.6l.7.7M18.4 5.6l-.7.7M17.7 17.7l.7.7M6.3 17.7l-.7.7',
+ clock:'M3 12a9 9 0 1 0 18 0a9 9 0 0 0-18 0M12 7v5l3 3',
+ school:'M22 9L12 5L2 9l10 4l10-4v6M6 10.6V16a6 3 0 0 0 12 0v-5.4',
+ search:'M3 10a7 7 0 1 0 14 0a7 7 0 1 0-14 0M21 21l-6-6',
+ x:'M18 6L6 18M6 6l12 12'};
+function apIc(k,sz){return '<svg viewBox="0 0 24 24" width="'+(sz||16)+'" height="'+(sz||16)+'" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="'+AP_IC[k]+'"/></svg>';}
+function apEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function apNorm(s){return String(s||'').toLowerCase().replace(/[^a-z\u0600-\u06FF]+/g,' ').trim();}
+function apSame(a,b){
+  var x=apNorm(a), y=apNorm(b); if(!x||!y) return false; if(x===y) return true;
+  var xa=x.split(' '), ya=y.split(' ');
+  return xa[0]===ya[0] && xa[xa.length-1]===ya[ya.length-1];
+}
+function apFind(obj,name){ if(!obj) return null; if(obj[name]) return obj[name]; var k=Object.keys(obj).find(function(k){return apSame(k,name);}); return k?obj[k]:null; }
+function apNames(){
+  var set={}; var out=[];
+  var add=function(n){ n=String(n||'').trim(); if(!n) return; var hit=out.find(function(o){return apSame(o,n);}); if(!hit){ out.push(n); } };
+  (typeof TO_ROSTER!=='undefined'?TO_ROSTER:[]).forEach(function(p){add(p[0]);});
+  Object.keys(D||{}).forEach(add);
+  return out.sort(function(a,b){return a.localeCompare(b);});
+}
+function apBadge(name){
+  if(typeof TO_ROSTER!=='undefined'){ var p=TO_ROSTER.find(function(p){return apSame(p[0],name);}); if(p) return p[1]; }
+  var a=(typeof AGENTS_DIR!=='undefined'?AGENTS_DIR:[]).find(function(x){return apSame(x.name,name);});
+  return a&&a.badge?a.badge:'';
+}
+function apInitials(n){return String(n||'').split(/\s+/).filter(Boolean).slice(0,2).map(function(w){return w[0];}).join('').toUpperCase();}
+function apToday(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+function apInPeriod(iso){ if(!iso) return false; if(AP_PERIOD==='all') return String(iso).slice(0,4)===apToday().slice(0,4); return String(iso).slice(0,7)===AP_PERIOD; }
+function apFmtDate(iso){var p=String(iso).split('-');return p.length===3?(+p[2])+' '+AP_MON[+p[1]-1]:iso;}
+function apFmtS(s){s=Math.round(s||0);return Math.floor(s/60)+':'+('0'+(s%60)).slice(-2);}
+function apMonths(){
+  var t=apToday(), y=+t.slice(0,4), m=+t.slice(5,7), out=[];
+  for(var i=m;i>=1;i--) out.push(y+'-'+('0'+i).slice(-2));
+  return out;
+}
+
+async function apEnsureData(){
+  var jobs=[];
+  // Weekly schedule + Vacation are parsed by their own tabs — run them off-screen once if not loaded yet
+  async function offscreen(id,fn){
+    if(document.getElementById(id)) { await fn(); return; }
+    var tmp=document.createElement('div'); tmp.id=id; tmp.style.display='none'; document.body.appendChild(tmp);
+    try{ await fn(); }catch(e){} tmp.remove();
+  }
+  if(!window.__DO_WEEKS__ && typeof renderDailyOff==='function') jobs.push(offscreen('schedule_dailyoff',renderDailyOff));
+  if(!window.__VAC_MONTHS__ && typeof renderVacation2026==='function') jobs.push(offscreen('schedule_vacation2026',renderVacation2026));
+  if(typeof TO_LOADED!=='undefined' && !TO_LOADED){
+    jobs.push(toFetchRows(false).then(function(r){ TO_ROWS=r; TO_LOADED=true; try{toUpdateNavBadge();}catch(e){} }).catch(function(){}));
+  }
+  if(AP_EXTRA.training===null){
+    jobs.push(loadSheet('Campaign Training').then(function(r){AP_EXTRA.training=r||[];}).catch(function(){AP_EXTRA.training=[];}));
+  }
+  await Promise.all(jobs);
+}
+
+function renderAgentProfilePage(){
+  var el=document.getElementById('agentProfileContent'); if(!el) return;
+  if(!AP_PERIOD) AP_PERIOD=apToday().slice(0,7);
+  if(!el.dataset.built){
+    el.dataset.built='1';
+    el.innerHTML='<div class="ap-wrap">'
+      +'<div class="ap-search"><span class="ap-s-ic">'+apIc('search')+'</span>'
+      +'<input id="apInput" type="text" autocomplete="off" placeholder="Search agent name…" oninput="apSuggest()" onkeydown="apKey(event)">'
+      +'<span class="ap-clear" onclick="apClear()" title="Clear">'+apIc('x',14)+'</span>'
+      +'<div id="apSug" class="ap-sug" style="display:none"></div></div>'
+      +'<div id="apBody"></div></div>';
+  }
+  apRenderBody();
+}
+function apSuggest(){
+  var q=apNorm(document.getElementById('apInput').value), box=document.getElementById('apSug');
+  if(!q){ box.style.display='none'; return; }
+  var list=apNames().filter(function(n){return apNorm(n).indexOf(q)>=0;});
+  if(!list.length){ box.innerHTML='<div class="ap-sug-none">No agent found</div>'; box.style.display='block'; return; }
+  box.innerHTML=list.map(function(n,i){return '<div class="ap-sug-it'+(i===0?' hi':'')+'" onmousedown="apPick(\''+n.replace(/'/g,"\\'")+'\')">'+apEsc(n)+'</div>';}).join('');
+  box.style.display='block';
+}
+function apKey(e){
+  if(e.key==='Enter'){ var f=document.querySelector('#apSug .ap-sug-it'); if(f) f.dispatchEvent(new MouseEvent('mousedown')); }
+  if(e.key==='Escape'){ document.getElementById('apSug').style.display='none'; }
+}
+function apPick(n){
+  AP_NAME=n; var i=document.getElementById('apInput'); i.value=n; i.blur();
+  document.getElementById('apSug').style.display='none';
+  apRenderBody();
+}
+function apClear(){ AP_NAME=''; var i=document.getElementById('apInput'); i.value=''; document.getElementById('apSug').style.display='none'; apRenderBody(); i.focus(); }
+function apSetPeriod(p){ AP_PERIOD=p; apRenderBody(); }
+
+async function apRenderBody(){
+  var body=document.getElementById('apBody'); if(!body) return;
+  if(!AP_NAME){
+    body.innerHTML='<div class="ap-grid-names">'+apNames().map(function(n){
+      return '<div class="ap-chip" onclick="apPick(\''+n.replace(/'/g,"\\'")+'\')"><span class="ap-av sm">'+apInitials(n)+'</span>'+apEsc(n)+'</div>';
+    }).join('')+'</div>';
+    return;
+  }
+  body.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">⏳ Loading '+apEsc(AP_NAME)+'…</div>';
+  try{ await apEnsureData(); }catch(e){}
+  if(!AP_NAME) return;
+  body.innerHTML=apBuild(AP_NAME);
+}
+
+function apBuild(name){
+  var today=apToday();
+  /* ---- Weekly schedule (current week) ---- */
+  var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var wk=null, wkRow=null;
+  if(window.__DO_WEEKS__&&window.__DO_WEEKS__.length){
+    wk=window.__DO_WEEKS__[window.__DO_ACTIVE__||0];
+    wkRow=wk&&wk.agents.find(function(a){return apSame(a.name,name);});
+  }
+  var shiftKind=function(v){var vl=String(v||'').toLowerCase().trim();
+    if(!vl||vl==='-'||vl==='–'||vl==='—') return {c:'call',t:'Calls'};
+    if(vl==='off') return {c:'off',t:'OFF'};
+    if(vl==='vacation'||vl==='v'||vl==='vaction') return {c:'vac',t:'Vacation'};
+    if(vl.indexOf('live')===0||vl==='livechat') return {c:'lc',t:v};
+    if(vl.indexOf('multi')>=0) return {c:'mc',t:v};
+    return {c:'gr',t:v};};
+  var shiftMain='', brk='';
+  if(wkRow){
+    var cnt={};
+    DAYS.forEach(function(d){var k=shiftKind(wkRow[d]); if(k.c==='off'||k.c==='vac') return; var key=k.c==='call'?'Calls':k.t; cnt[key]=(cnt[key]||0)+1;});
+    shiftMain=Object.keys(cnt).sort(function(a,b){return cnt[b]-cnt[a];})[0]||'';
+    brk=wkRow['Break Time']||'';
+  }
+
+  /* ---- Today ---- */
+  var todayStat='';
+  var att=apFind(ATT,name)||{};
+  if(att[today]) todayStat=att[today];
+  else if(wkRow){ var dn=DAYS[new Date().getDay()]; todayStat=shiftKind(wkRow[dn]).t; }
+  var todayCls={'Off':'off','OFF':'off','Vacation':'vac','Sick':'off','Absent':'off','Office':'ok','Remote':'ok','Calls':'ok'}[todayStat]||(/live/i.test(todayStat)?'lc':/multi/i.test(todayStat)?'mc':'gr');
+
+  /* ---- Period chips ---- */
+  var chips=apMonths().map(function(k){return '<span class="ap-pchip'+(AP_PERIOD===k?' on':'')+'" onclick="apSetPeriod(\''+k+'\')">'+AP_MONFULL[+k.slice(5)-1]+'</span>';}).join('')
+    +'<span class="ap-pchip'+(AP_PERIOD==='all'?' on':'')+'" onclick="apSetPeriod(\'all\')">All '+today.slice(0,4)+'</span>';
+  var periodLbl=AP_PERIOD==='all'?('All '+today.slice(0,4)):AP_MONFULL[+AP_PERIOD.slice(5)-1];
+
+  /* ---- Performance ---- */
+  var rowsOf=function(n){return (apFind(D,n)||[]).filter(function(r){return apInPeriod(r[0]);});};
+  var pr=rowsOf(name), I=0,T=0,W=0,tS=0,tN=0,hS=0,hN=0;
+  pr.forEach(function(r){I+=r[1]||0;T+=r[2]||0;W+=r[3]||0;if(r[5]>0){tS+=r[5];tN++;}if(r[7]>0){hS+=r[7];hN++;}});
+  var rank='', teamN=0;
+  if(pr.length){
+    var arr=Object.keys(D||{}).map(function(n){return {n:n,v:rowsOf(n).reduce(function(s,r){return s+(r[1]||0);},0)};}).filter(function(x){return x.v>0;}).sort(function(a,b){return b.v-a.v;});
+    teamN=arr.length; var ix=arr.findIndex(function(x){return apSame(x.n,name);}); if(ix>=0) rank=(ix+1);
+  }
+  var perfHTML=pr.length
+    ? '<div class="ap-g4">'+apStat('Inbound Calls',I.toLocaleString())+apStat('Tickets',T.toLocaleString())+apStat('WhatsApp',W.toLocaleString())+apStat('Avg Handling Time',hN?apFmtS(hS/hN):'—')+'</div>'
+      +'<div class="ap-note">'+(rank?'Rank by inbound <b>'+rank+' / '+teamN+'</b> · ':'')+'Avg talk '+(tN?apFmtS(tS/tN):'—')+' · '+pr.length+' days with data</div>'
+    : '<div class="ap-empty">No performance data for '+periodLbl+'</div>';
+
+  /* ---- Attendance ---- */
+  var cntA={Office:0,Remote:0,Off:0,Vacation:0,Sick:0,Absent:0,EL:0,'Saturday Shift':0}, offDates=[], absDates=[];
+  var camp=apFind(window.__ATT_CAMP__,name)||{};
+  Object.keys(att).sort().forEach(function(d){ if(!apInPeriod(d)) return; var s=att[d]; if(cntA[s]!==undefined) cntA[s]++;
+    if(s==='Off') offDates.push(d); if(s==='Absent'||s==='Sick'||s==='EL') absDates.push(d+'|'+s); });
+  var work=cntA.Office+cntA.Remote+cntA['Saturday Shift'];
+  var anyAtt=Object.keys(att).some(apInPeriod);
+  var campCnt={}; Object.keys(camp).forEach(function(d){ if(apInPeriod(d)&&camp[d]) campCnt[camp[d]]=(campCnt[camp[d]]||0)+1; });
+  var attHTML=anyAtt
+    ? '<div class="ap-g4">'+apStat('Working days',work)+apStat('OFF',cntA.Off,'off')+apStat('Vacation',cntA.Vacation,'vac')+apStat('Absent / Sick',cntA.Absent+cntA.Sick+cntA.EL)+'</div>'
+      +'<div class="ap-tags">'+(cntA.Office?'<span class="ap-b gr">Office '+cntA.Office+'</span>':'')+(cntA.Remote?'<span class="ap-b gr">Remote '+cntA.Remote+'</span>':'')+(cntA['Saturday Shift']?'<span class="ap-b gr">Saturday shift '+cntA['Saturday Shift']+'</span>':'')
+      +Object.keys(campCnt).map(function(c){return '<span class="ap-b gr">'+apEsc(c)+' '+campCnt[c]+'</span>';}).join('')+'</div>'
+      +(offDates.length&&AP_PERIOD!=='all'?'<div class="ap-sub">OFF days</div><div class="ap-tags">'+offDates.map(function(d){return '<span class="ap-b off">'+apFmtDate(d)+'</span>';}).join('')+'</div>':'')
+      +(absDates.length?'<div class="ap-sub">Absent / Sick</div><div class="ap-tags">'+absDates.map(function(x){var p=x.split('|');return '<span class="ap-b off">'+apFmtDate(p[0])+' · '+p[1]+'</span>';}).join('')+'</div>':'')
+    : '<div class="ap-empty">No attendance data for '+periodLbl+'</div>';
+
+  /* ---- Weekly schedule ---- */
+  var wkHTML;
+  if(wkRow){
+    wkHTML='<div class="ap-week">'+DAYS.map(function(d){var k=shiftKind(wkRow[d]); var dt=wk.dates&&wk.dates[d]?wk.dates[d]:'';
+      return '<div class="ap-day"><div class="ap-dn">'+d.slice(0,3)+'</div><div class="ap-dd">'+apEsc(dt)+'</div><span class="ap-b '+k.c+'">'+apEsc(k.t)+'</span></div>';}).join('')+'</div>'
+      +(brk||wkRow['Saturday Break']?'<div class="ap-note">Break '+apEsc(brk||'—')+(wkRow['Saturday Break']?' · Saturday break '+apEsc(wkRow['Saturday Break']):'')+'</div>':'');
+  } else wkHTML='<div class="ap-empty">Not in this week\'s schedule</div>';
+
+  /* ---- Vacation 2026 ---- */
+  var vacRanges=[];
+  (window.__VAC_MONTHS__||[]).forEach(function(m){
+    var mi=AP_MONFULL.indexOf(m.month); if(mi<0) return;
+    var key=today.slice(0,4)+'-'+('0'+(mi+1)).slice(-2);
+    if(AP_PERIOD!=='all'&&AP_PERIOD!==key) return;
+    var ag=m.agents.find(function(a){return apSame(a.name,name);}); if(!ag) return;
+    var days=[]; ag.cells.forEach(function(v,ci){var vv=String(v||'').trim().toLowerCase(); if(vv==='v'||vv==='vacation'||vv==='vaction'){var dn=parseInt(m.days[ci]&&m.days[ci].num,10)||(ci+1); days.push(dn);}});
+    days.sort(function(a,b){return a-b;});
+    var s=null,p=null;
+    days.forEach(function(d){ if(s===null){s=p=d;return;} if(d===p+1){p=d;return;} vacRanges.push({m:mi,s:s,e:p}); s=p=d; });
+    if(s!==null) vacRanges.push({m:mi,s:s,e:p});
+  });
+  var vacDays=vacRanges.reduce(function(t,r){return t+(r.e-r.s+1);},0);
+  var vacHTML=vacRanges.length
+    ? vacRanges.map(function(r){var n=r.e-r.s+1;return '<div class="ap-li"><span>'+(r.s===r.e?r.s:r.s+'–'+r.e)+' '+AP_MON[r.m]+'</span><span class="ap-b vac">'+n+(n===1?' day':' days')+'</span></div>';}).join('')
+      +'<div class="ap-li ap-tot"><span>Total</span><span>'+vacDays+' days</span></div>'
+    : '<div class="ap-empty">No vacation in '+periodLbl+'</div>';
+
+  /* ---- Permissions ---- */
+  var perms=(typeof TO_ROWS!=='undefined'?TO_ROWS:[]).filter(function(r){return apSame(r.Employee,name)&&apInPeriod(String(r.Date).slice(0,10));})
+    .sort(function(a,b){return String(b.Date).localeCompare(String(a.Date));});
+  var stCls={Approved:'ok',Pending:'vac',Rejected:'off'};
+  var apprH=perms.filter(function(r){return r.Status==='Approved';}).reduce(function(s,r){return s+(Number(r.Hours)||0);},0);
+  var permHTML=(perms.length
+    ? perms.map(function(r){return '<div class="ap-li"><span>'+apFmtDate(String(r.Date).slice(0,10))+(r.From?' · '+apEsc(r.From)+'–'+apEsc(r.To||''):'')+(r.Hours?' · '+toFmtHrs(r.Hours)+'h':'')+'</span><span class="ap-b '+(stCls[r.Status]||'gr')+'">'+apEsc(r.Status||'')+'</span></div>';}).join('')
+    : '<div class="ap-empty">No permissions in '+periodLbl+'</div>')
+    +(AP_PERIOD!=='all'&&typeof TO_MONTHLY_LIMIT!=='undefined'?'<div class="ap-li ap-tot"><span>Approved '+toFmtHrs(apprH)+'h of '+TO_MONTHLY_LIMIT+'h</span><span>Remaining '+toFmtHrs(Math.max(0,TO_MONTHLY_LIMIT-apprH))+'h</span></div>':'<div class="ap-li ap-tot"><span>Approved total</span><span>'+toFmtHrs(apprH)+'h</span></div>');
+
+  /* ---- Campaign training ---- */
+  var trHTML='';
+  var tr=AP_EXTRA.training||[];
+  if(tr.length){
+    var keys=Object.keys(tr[0]).filter(function(k){return k&&!/^__col/.test(k);}); var st=/^(#|no\.?|s\/?n|num?)$/i.test(String(keys[0]).trim())?1:0;
+    var ak=keys[st], camps=keys.slice(st+1).filter(function(k){return String(k).trim()&&!/^total$/i.test(String(k).trim());});
+    var row=tr.find(function(r){return apSame(r[ak],name);});
+    if(row) trHTML=camps.map(function(c){var v=row[c]; var s=String(v==null?'':v).trim(), lo=s.toLowerCase();
+      var done=v===true||lo==='true'||lo==='yes'||s==='✓'||s==='✔'||s==='1';
+      var no=!done&&(s===''||lo==='false'||lo==='no'||s==='0');
+      return '<span class="ap-b '+(done?'ok':no?'gr':'vac')+'">'+apEsc(String(c).trim())+(done?' ✓':no?'':' · '+apEsc(s))+'</span>';}).join('');
+  }
+
+  var sec=function(ic,t,inner,extra){return '<div class="ap-sec"><div class="ap-sh">'+ic+'<span>'+t+'</span>'+(extra?'<span class="ap-sh-x">'+extra+'</span>':'')+'</div>'+inner+'</div>';};
+  return '<div class="ap-card">'
+    +'<div class="ap-head"><span class="ap-av">'+apInitials(name)+'</span><div class="ap-hn"><div class="ap-name">'+apEsc(name)+'</div>'
+    +'<div class="ap-meta">'+[apBadge(name)?'Badge '+apBadge(name):'',shiftMain,brk?'Break '+apEsc(brk):''].filter(Boolean).join(' · ')+'</div></div>'
+    +(todayStat?'<span class="ap-b '+todayCls+' ap-today">Today · '+apEsc(todayStat)+'</span>':'')+'</div>'
+    +'<div class="ap-periods">'+chips+'</div>'
+    +sec(apIc('chart'),'Team Performance',perfHTML,periodLbl)
+    +sec(apIc('att'),'Attendance',attHTML,periodLbl)
+    +sec(apIc('cal'),'Weekly Schedule',wkHTML,wk?apEsc(wk.label||''):'')
+    +'<div class="ap-2col">'+sec(apIc('sun'),'Vacation',vacHTML,periodLbl)+sec(apIc('clock'),'Permissions',permHTML,periodLbl)+'</div>'
+    +(trHTML?sec(apIc('school'),'Campaign Training','<div class="ap-tags">'+trHTML+'</div>'):'')
+    +'</div>';
+}
+function apStat(k,v,cls){return '<div class="ap-st'+(cls?' '+cls:'')+'"><div class="ap-k">'+k+'</div><div class="ap-v">'+v+'</div></div>';}
+document.addEventListener('click',function(e){var b=document.getElementById('apSug'); if(b&&!e.target.closest('.ap-search')) b.style.display='none';});
+
 
 /* ===== CASE HANDLING — reads the "Case Handling" tab dynamically ===== */
 async function renderCaseHandling(){
@@ -8327,10 +8646,11 @@ function closeRecallInRef(){
 // Links & Systems — مقفلة افتراضياً. تُفتح بالضغط على الدائرة الزرقاء 🔗
 // وتُقفل بالضغط على الدائرة مرة ثانية أو على الهيدر نفسه.
 function refTool(id){
-  ['refContactsPanel','refTicketPanel','refLinksPanel'].forEach(function(x){
+  ['refContactsPanel','refTicketPanel','refCasePanel','refLinksPanel'].forEach(function(x){
     var p=document.getElementById(x); if(!p) return;
     var open=(x===id)&&p.style.display==='none';
     p.style.display=open?'block':'none';
+    if(open&&x==='refCasePanel') renderCaseHandling();
     var b=document.querySelector('.ref-tool[data-p="'+x+'"]'); if(b) b.classList.toggle('on',open);
     if(open) setTimeout(function(){p.scrollIntoView({behavior:'smooth',block:'nearest'});},50);
   });
@@ -8440,6 +8760,7 @@ async function loadRecallSearchData(brandFilter){
       desc: s(r[iDesc])
     })).filter(r=>r.vin && r.vin!=='VIN' && !/^vin/i.test(r.vin));
     RECALL_BRAND_DATA[brandFilter] = data;
+    if(RECALL_ACTIVE_BRAND!==brandFilter+' Search') return; // user already switched brand
     RECALL_SEARCH_DATA = data;
     if(statusEl) statusEl.innerHTML = '✅ '+data.length.toLocaleString()+' سجل '+brandFilter+' جاهز للبحث';
   }catch(e){
@@ -8464,27 +8785,46 @@ function searchRecallByVIN(brandFilter){
     return;
   }
 
-  const BRAND_COLORS = {dodge:'#1565c0',jeep:'#2e7d32',ram:'#7b4f00',chrysler:'#6a1b9a',fiat:'#e65100',nissan:'#c0272d',baic:'#C86E35'};
-  function brandColor(b){
-    const k=(b||'').toLowerCase();
-    for(const [key,col] of Object.entries(BRAND_COLORS)){if(k.includes(key))return col;}
-    return '#6a1b9a';
-  }
-
-  resultsEl.innerHTML = '<div style="font-size:12px;color:#888;text-align:center;margin-bottom:10px">'+matches.length+' نتيجة</div>'
-    + matches.map(r=>{
-      const bc = brandColor(r.brand);
-      return '<div style="background:#FEFEFD;border-radius:10px;margin-bottom:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08);border-left:4px solid '+bc+'">'
-        +'<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:'+bc+'0d">'
-        +'<div style="min-width:44px;height:36px;border-radius:8px;background:'+bc+';display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0">'+r.code+'</div>'
-        +'<div style="flex:1">'
-        +'<div style="font-size:13px;font-weight:700;color:var(--text)">'+r.brand+' · '+r.model+'</div>'
-        +'<div style="font-size:11px;color:#999;margin-top:2px;font-family:monospace">'+r.vin+' &nbsp;·&nbsp; '+r.year+'</div>'
+  const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const bc = (RECALL_BRANDS[brandFilter+' Search']||{}).color || '#B7791F';
+  // Group by VIN — one card per vehicle, each recall once (duplicates in the sheet are merged)
+  const groups=[], byVin={};
+  matches.forEach(r=>{
+    let g=byVin[r.vin];
+    if(!g){ g=byVin[r.vin]={vin:r.vin,brand:r.brand,model:r.model,year:r.year,items:[],seen:{}}; groups.push(g); }
+    if(!g.model&&r.model) g.model=r.model; if(!g.year&&r.year) g.year=r.year;
+    const key=(r.code+'|'+r.desc).toLowerCase().replace(/[\s,.]+/g,'');
+    if(g.seen[key]) return; g.seen[key]=1;
+    g.items.push(r);
+  });
+  const MAXV=25, shown=groups.slice(0,MAXV);
+  const hl=v=>{const i=v.indexOf(q); return i<0?esc(v):esc(v.slice(0,i))+'<mark style="background:'+bc+'22;color:inherit;border-radius:3px;padding:0 1px">'+esc(v.slice(i,i+q.length))+'</mark>'+esc(v.slice(i+q.length));};
+  resultsEl.innerHTML = '<div style="font-size:12px;color:#8A857C;text-align:center;margin-bottom:12px">'
+    + (groups.length===1?'سيارة واحدة':groups.length+' سيارات')
+    + (groups.length>MAXV?' · يظهر أول '+MAXV+' — كمّلي كتابة رقم الهيكل':'')+'</div>'
+    + shown.map(g=>{
+      const sub=[g.brand,g.model,g.year].filter(Boolean).map(esc).join(' · ');
+      const n=g.items.length;
+      return '<div style="max-width:860px;margin:0 auto 12px;border:1px solid '+bc+'2E;border-radius:12px;overflow:hidden;background:#FEFEFD">'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:'+bc+'0D;flex-wrap:wrap">'
+        +'<div style="min-width:0"><div style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:15px;font-weight:700;letter-spacing:.05em;color:var(--text);direction:ltr">'+hl(g.vin)+'</div>'
+        +(sub?'<div style="font-size:12px;color:#8A857C;margin-top:3px">'+sub+'</div>':'')+'</div>'
+        +'<span style="font-size:12px;font-weight:700;color:'+bc+';background:#fff;border:1px solid '+bc+'33;padding:4px 12px;border-radius:999px;white-space:nowrap">'+n+(n===1?' Recall':' Recalls')+'</span>'
         +'</div>'
-        +'</div>'
-        +(r.desc?'<div style="padding:14px 16px;direction:rtl;text-align:right;font-size:12px;color:var(--text);line-height:1.9;white-space:pre-wrap;border-top:1px solid #f0f0f0">'+r.desc+'</div>':'')
+        +g.items.map(r=>{
+          const ar=/[\u0600-\u06FF]/.test(r.desc);
+          return '<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-top:1px solid #F3ECE6">'
+            +(r.code?'<span style="flex:none;display:inline-block;padding:3px 11px;border-radius:999px;font-size:12px;font-weight:700;background:'+bc+'14;color:'+bc+';white-space:nowrap;direction:ltr">'+esc(r.code)+'</span>':'')
+            +'<div style="flex:1;min-width:0;font-size:13px;line-height:1.75;color:var(--text);white-space:pre-wrap;direction:'+(ar?'rtl':'ltr')+';text-align:'+(ar?'right':'left')+'">'+(esc(r.desc)||'<span style="color:#aaa">—</span>')+'</div>'
+            +'</div>';
+        }).join('')
         +'</div>';
     }).join('');
+}
+
+function clearRecallVin(brandFilter){
+  const i=document.getElementById('recallVinInput'); if(!i) return;
+  i.value=''; searchRecallByVIN(brandFilter); i.focus();
 }
 
 async function loadRecallBrand(name){
@@ -8508,7 +8848,8 @@ async function loadRecallBrand(name){
     cont.innerHTML = '<div class="ref-brand-section" style="margin-top:8px">'
       +'<div style="padding:24px 16px">'
       +'<div style="max-width:500px;margin:0 auto 16px;position:relative">'
-      +'<input id="recallVinInput" type="text" placeholder="🔍 ابحث برقم الهيكل (VIN)..." oninput="searchRecallByVIN(\''+brandFilter+'\')" style="width:100%;box-sizing:border-box;padding:12px 18px;border-radius:12px;border:1px solid '+color+'66;background:#fff;font-size:14px;outline:none;direction:ltr;text-align:center" maxlength="24">'
+      +'<input id="recallVinInput" type="text" placeholder="🔍 ابحث برقم الهيكل (VIN)..." oninput="searchRecallByVIN(\''+brandFilter+'\')" style="width:100%;box-sizing:border-box;padding:12px 42px;border-radius:12px;border:1px solid '+color+'66;background:#fff;font-size:14px;outline:none;direction:ltr;text-align:center" maxlength="24">'
+      +'<span onclick="clearRecallVin(\''+brandFilter+'\')" title="مسح" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;color:#8A857C;cursor:pointer;font-size:14px">✕</span>'
       +'</div>'
       +'<div id="recallSearchStatus" style="text-align:center;font-size:12px;color:#999;margin-bottom:12px">⏳ تحميل بيانات الاستدعاء...</div>'
       +'<div id="recallSearchResults"></div>'
@@ -8931,6 +9272,7 @@ async function renderRef(){
       +'<div class="ref-tools">'
       +'<div class="ref-tool" data-p="refContactsPanel" onclick="refTool(\'refContactsPanel\')"><span class="ref-tool-ic">📞</span>Contact Numbers</div>'
       +'<div class="ref-tool" data-p="refTicketPanel" onclick="refTool(\'refTicketPanel\')"><span class="ref-tool-ic">📋</span>Ticket Type</div>'
+      +'<div class="ref-tool" data-p="refCasePanel" onclick="refTool(\'refCasePanel\')"><span class="ref-tool-ic">📝</span>Case Handling</div>'
       +(linkCards?'<div class="ref-tool lk" data-p="refLinksPanel" onclick="refTool(\'refLinksPanel\')"><span class="ref-tool-ic" style="background:#1565c01F">'+brandLineIcon('links','#1565c0')+'</span>Links & Systems</div>':'')
       +'</div></div>'
 
@@ -8943,6 +9285,12 @@ async function renderRef(){
       +'<div class="ref-panel-body"><div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px">'+deptPills(tollFree,waNums)+'</div></div>'
       +'</div>'
 
+
+      // CASE HANDLING — moved here from the top bar
+      +'<div class="ref-info-panel" id="refCasePanel" style="display:none;margin-top:8px">'
+      +'<div class="ref-panel-header" style="cursor:pointer;justify-content:center" onclick="refTool(\'refCasePanel\')">📝 Case Handling <span style="margin-left:8px;font-size:12px">▲</span></div>'
+      +'<div class="ref-panel-body"><div id="caseHandlingContent"><div style="text-align:center;padding:30px;color:#aaa">Loading...</div></div></div>'
+      +'</div>'
 
       // SUBJECT 2-COL
       +'<div class="ref-info-panel" id="refTicketPanel" style="display:none;margin-top:8px">'
@@ -9251,6 +9599,7 @@ async function renderDailyOff(){
       }
     });
 
+    window.__DO_WEEKS__=weeks; window.__DO_ACTIVE__=activeIdx;
     function badge(v){
       if(!v) return '<span style="color:#ccc">—</span>';
       var vl=v.toLowerCase().trim();
@@ -9621,6 +9970,7 @@ async function renderVacation2026(){
       el.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">Could not parse vacation data</div>';
       return;
     }
+    window.__VAC_MONTHS__=months;
     var today=new Date();
     var curMonthName=today.toLocaleString('en-US',{month:'long'});
     var activeMonth=months.findIndex(function(m){return m.month===curMonthName;});
