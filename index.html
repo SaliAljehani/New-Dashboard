@@ -34,13 +34,13 @@
 body{font-family:'Inter',system-ui,sans-serif;font-size:12px;background:#FDFDFC;color:var(--text);min-height:100vh;display:flex;flex-direction:column}
 #loadingDiv,#errDiv,#mainContent{flex:1 0 auto}
 .hcard{width:100%;margin:0 0 6px;border:0;border-bottom:1px solid rgba(var(--accent-rgb),.18);border-radius:0;background:#FDFDFC;position:relative;z-index:50}
-.quotes-bar{background:transparent;border-top:1px solid rgba(var(--accent-rgb),.10);border-bottom:1px solid rgba(var(--accent-rgb),.10);padding:7px 20px;display:flex;align-items:center;justify-content:space-around;gap:10px}
+.quotes-bar{background:transparent;border-top:1px solid rgba(var(--accent-rgb),.10);border-bottom:1px solid rgba(var(--accent-rgb),.10);padding:11px 20px;display:flex;align-items:center;justify-content:space-around;gap:10px}
 .quotes-bar .q-item{font-size:12px;color:var(--accent);font-weight:600;text-align:center;direction:rtl}
 .quotes-bar .q-sep{width:1px;height:18px;background:rgba(var(--accent-rgb),.2);flex-shrink:0}
-.header{background:rgba(var(--accent-rgb),.04);padding:10px 20px;display:flex;align-items:center;justify-content:center;;position:relative}
+.header{background:rgba(var(--accent-rgb),.04);padding:16px 24px;display:flex;align-items:center;justify-content:center;;position:relative}
 .header h1{color:var(--accent);font-size:16px;font-weight:700}
 .page-nav-line{height:3px;background:var(--accent)}
-.lupd{font-size:14px;color:var(--accent);background:#FDFDFC;padding:6px 15px;border-radius:20px;cursor:pointer;border:1px solid rgba(var(--accent-rgb),.25)}
+.lupd{font-size:15px;color:var(--accent);background:#FDFDFC;padding:8px 17px;border-radius:20px;cursor:pointer;border:1px solid rgba(var(--accent-rgb),.25)}
 .lupd:hover{background:rgba(var(--accent-rgb),.07)}
 #notifBtn svg,#lupd svg{stroke:#c0272d!important}
 .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px}
@@ -60,7 +60,7 @@ select#agSel{font-size:14px;font-weight:600;color:var(--accent);min-width:180px}
 .rfbtn{padding:6px 14px;border-radius:8px;border:1.5px solid var(--accent);background:rgba(var(--accent-rgb),.07);color:var(--accent);font-size:12px;cursor:pointer;font-weight:600}
 .rfbtn:hover{background:var(--accent);color:#fff}
 .ptag{display:inline-block;background:rgba(var(--accent-rgb),.07);color:var(--accent);border:1px solid #fcc;border-radius:8px;padding:3px 10px;font-size:11px;font-weight:600}
-.page-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;width:calc(100% - 48px);max-width:1552px;margin:20px auto 2px;padding:0;background:transparent}
+.page-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;width:calc(100% - 48px);max-width:1352px;margin:20px auto 2px;padding:0;background:transparent}
 @media(max-width:900px){.page-nav{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .pnav{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:12px 6px;border-radius:12px;border:1px solid #EDE4DA;font-size:13px;font-weight:600;cursor:pointer;background:#FDFDFC;color:var(--text);transition:.15s;text-align:center;line-height:1.2}
 .team-subnav{display:flex;width:fit-content;margin:14px auto 6px;gap:3px;border:1px solid #E8E2DA;border-radius:12px;padding:4px;background:#FDFDFC}
@@ -129,8 +129,8 @@ select#agSel{font-size:14px;font-weight:600;color:var(--accent);min-width:180px}
 .pnav .ic-done{margin-right:0!important;font-size:22px}
 .pnav.active{background:rgba(var(--accent-rgb),.07);color:var(--accent);border-color:rgba(var(--accent-rgb),.3)}
 .pnav:hover:not(.active){background:rgba(var(--accent-rgb),.04);border-color:rgba(var(--accent-rgb),.2);color:var(--accent)}
-.main{max-width:1600px;margin:0 auto;padding:18px 24px}
-.page2{display:none;max-width:1600px;margin:0 auto;padding:18px 24px}
+.main{max-width:1400px;margin:0 auto;padding:18px 24px}
+.page2{display:none;max-width:1400px;margin:0 auto;padding:18px 24px}
 .hero{background:#FDFDFC;border-radius:14px;padding:18px 22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;align-items:center;justify-content:center;gap:18px;border:0.5px solid #eee;transition:border-color .3s}
 .av{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#e0e0e0,#eeeeee);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:18px;font-weight:700;flex-shrink:0;border:2px solid #bdbdbd}
 .hi2{font-size:18px;font-weight:700;color:var(--text)}
@@ -666,9 +666,9 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 
 <div class="hcard">
 <div class="header">
-  <img src="data:image/png;base64,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" style="height:30px;object-fit:contain;flex-shrink:0" alt="Petromin">
+  <img src="data:image/png;base64,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" style="height:38px;object-fit:contain;flex-shrink:0" alt="Petromin">
   <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center">
-    <h1 style="margin:0;font-size:18px;text-align:center">Inbound Daily Dashboard · Petromin Group</h1>
+    <h1 style="margin:0;font-size:22px;text-align:center">Inbound Daily Dashboard · Petromin Group</h1>
   </div>
   <div style="position:relative;flex-shrink:0">
     <span class="lupd" id="onlineBtn" onclick="toggleOnlinePanel()" title="Who's online" style="display:none;font-size:11px;cursor:pointer">👥 <span id="onlineCount">—</span></span>
@@ -679,7 +679,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     </div>
   </div>
   <div style="position:relative;flex-shrink:0">
-    <span class="lupd" id="notifBtn" onclick="toggleNotifPanel()" title="Announcements" style="font-size:13px;cursor:pointer;position:relative;padding:6px 12px">
+    <span class="lupd" id="notifBtn" onclick="toggleNotifPanel()" title="Announcements" style="font-size:15px;cursor:pointer;position:relative;padding:8px 14px">
       🔔
       <span id="notifBadge" style="display:none;position:absolute;top:-4px;right:-4px;min-width:14px;height:14px;background:var(--accent);border-radius:7px;font-size:11px;font-weight:700;color:#fff;text-align:center;line-height:14px;border:1.5px solid var(--accent);padding:0 3px;box-sizing:border-box"></span>
     </span>
@@ -842,7 +842,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     </div>
   </div>
 
-<div id="page3" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
+<div id="page3" style="display:none;max-width:1400px;margin:0 auto;padding:18px 24px">
   <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
     
     <span style="font-size:12px;color:#aaa" id="dirCount"></span>
@@ -850,14 +850,14 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
   <div class="dir-grid" id="dirGrid"></div>
 </div>
 
-<div id="page4" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
+<div id="page4" style="display:none;max-width:1400px;margin:0 auto;padding:18px 24px">
   <div id="refContent"><div style="text-align:center;padding:30px;color:#aaa">⏳ Loading reference data...</div></div>
 </div>
 
-<div id="page5" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px"></div>
+<div id="page5" style="display:none;max-width:1400px;margin:0 auto;padding:18px 24px"></div>
 
 
-<div id="page6" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
+<div id="page6" style="display:none;max-width:1400px;margin:0 auto;padding:18px 24px">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
     <div style="font-size:16px;font-weight:700;color:var(--text)">📢 Announcement Board</div>
     <div style="font-size:12px;color:#888">Updates from Google Sheets automatically</div>
@@ -868,10 +868,10 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 
 <!-- page9 merged into Team Schedules -->
 
-<div id="page10" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
+<div id="page10" style="display:none;max-width:1400px;margin:0 auto;padding:18px 24px">
   <div id="recallContent"><div style="text-align:center;padding:40px;color:#aaa">Loading...</div></div>
 </div>
-<div id="page12" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px" class="to-wrap">
+<div id="page12" style="display:none;max-width:1400px;margin:0 auto;padding:18px 24px" class="to-wrap">
 
   <div class="to-hero">
     <div>
@@ -969,10 +969,9 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 
 </div>
 </div>
-<footer style="border-top:2px solid var(--accent);background:#FEFEFD;display:flex;align-items:center;justify-content:space-between;padding:10px 18px">
-  <span id="lupd_footer" style="font-size:11px;font-weight:600;color:#555">🔄 Loading...</span>
-  <span style="font-size:11px;color:#aaa;text-align:center">Inbound Daily Dashboard · Petromin Group · Connected to Google Sheets · Auto-updates on refresh</span>
-  <span style="font-size:11px;color:#888">By: <b style="color:var(--accent)">Sali Aljehani</b></span>
+<footer style="border-top:2px solid var(--accent);background:#FEFEFD;display:flex;align-items:center;justify-content:space-between;padding:12px 24px">
+  <span id="lupd_footer" style="font-size:13px;color:var(--accent)">Loading...</span>
+  <span style="font-size:13px;color:var(--accent)">Designed &amp; developed by Sali Aljehani</span>
 </footer>
 
 <script>
@@ -1242,7 +1241,7 @@ function showMotivation(){
     el.style.opacity='0';
     setTimeout(function(){
       el.innerHTML=g.map(function(q,qi){
-        return '<div style="flex:1;text-align:center;padding:0 20px;direction:rtl;font-size:13px;font-weight:700;color:var(--accent);'+(qi<2?'border-right:1px solid rgba(var(--accent-rgb),.2)':'')+'">'
+        return '<div style="flex:1;text-align:center;padding:0 20px;direction:rtl;font-size:15px;font-weight:700;color:var(--accent);'+(qi<2?'border-right:1px solid rgba(var(--accent-rgb),.2)':'')+'">'
           +q+'</div>';
       }).join('');
       el.style.opacity='1';
@@ -1743,7 +1742,7 @@ async function loadAllData(silent){
     const niceDate = DAY_NAMES[now.getDay()]+', '+now.getDate()+' '+MON_NAMES[now.getMonth()]+' '+now.getFullYear()+' · '+h12+':'+mins+' '+ampm;
     document.getElementById('lupd').textContent='🔄';
     const footerEl=document.getElementById('lupd_footer');
-    if(footerEl) footerEl.innerHTML='📅 <b>'+niceDate+'</b>';
+    if(footerEl) footerEl.textContent=niceDate;
     // "من متصل" removed. initPresence();
 
   }catch(err){
