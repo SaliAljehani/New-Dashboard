@@ -68,60 +68,32 @@ select#agSel{font-size:14px;font-weight:600;color:var(--accent);min-width:180px}
 .tsub:hover{color:var(--accent)}
 .tsub.on{background:rgba(var(--accent-rgb),.08);color:var(--accent)}
 /* ===== Agent Profile ===== */
-.ap-yrow{display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-size:12.5px;font-weight:600;color:#8A857C}
-.ap-months{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px;margin:16px 0 4px}
-.ap-months .ap-pchip{text-align:center;padding:7px 2px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ap-pchip.ap-all{padding:6px 14px}
-.ap-pchip.dis{color:#CFC6BC;background:#FAF8F5;cursor:default}
-.ap-ptitle{font-size:17px;font-weight:700;color:#4A3528}
-.ag-kpis.ap-kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
-.ap-2col{gap:14px}.ap-panel .ref-panel-header svg{color:var(--accent)}
 @media(max-width:1000px){.ap-months{grid-template-columns:repeat(6,minmax(0,1fr))}}
 @media(max-width:760px){.ap-months{grid-template-columns:repeat(4,minmax(0,1fr))}.ag-kpis.ap-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
-.ap-wrap{max-width:1100px;margin:0 auto}
-.ap-search{position:relative;display:flex;align-items:center;gap:8px;max-width:420px;margin:4px auto 18px;background:#fff;border:1px solid #EDE4DA;border-radius:12px;padding:0 12px}
-.ap-search:focus-within{border-color:rgba(var(--accent-rgb),.35)}
-.ap-search input{flex:1;border:none;outline:none;background:transparent;height:42px;font-size:14px;color:var(--text);font-family:inherit}
-.ap-s-ic,.ap-clear{display:inline-flex;color:#8A857C}.ap-clear{cursor:pointer;padding:4px;border-radius:6px}.ap-clear:hover{background:#F6F4F0;color:var(--accent)}
-.ap-sug{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid #EDE4DA;border-radius:12px;box-shadow:0 8px 22px rgba(0,0,0,.08);z-index:30;overflow:hidden;max-height:300px;overflow-y:auto}
-.ap-sug-it{padding:9px 14px;font-size:13px;cursor:pointer;border-top:1px solid #F3ECE6}.ap-sug-it:first-child{border-top:none}
-.ap-sug-it:hover,.ap-sug-it.hi{background:rgba(var(--accent-rgb),.06);color:var(--accent)}
-.ap-sug-none{padding:10px 14px;font-size:12px;color:#8A857C}
-.ap-grid-names{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
-.ap-chip{display:flex;align-items:center;gap:10px;padding:9px 12px;background:#fff;border:1px solid #EDE4DA;border-radius:12px;font-size:13px;font-weight:600;color:var(--text);cursor:pointer}
-.ap-chip:hover{border-color:rgba(var(--accent-rgb),.25);background:rgba(var(--accent-rgb),.04)}
-.ap-card{background:#FEFEFD;border:1px solid #EDE4DA;border-radius:14px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-.ap-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.ap-av{width:46px;height:46px;border-radius:50%;background:#F3EEE9;color:#4A3528;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex:none}
-.ap-av.sm{width:30px;height:30px;font-size:11px}
-.ap-hn{flex:1;min-width:0}.ap-name{font-size:18px;font-weight:700;color:#4A3528}.ap-meta{font-size:12.5px;color:#8A857C;margin-top:2px}
-.ap-periods{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 4px}
-.ap-pchip{padding:5px 12px;border:1px solid #EDE4DA;border-radius:8px;font-size:12px;font-weight:600;background:#fff;color:#6A5A4A;cursor:pointer}
-.ap-pchip.on{background:rgba(var(--accent-rgb),.08);border-color:rgba(var(--accent-rgb),.25);color:var(--accent)}
-.ap-sec{margin-top:16px}
-.ap-sh{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700;color:#4A3528;background:#F8F5F1;border-radius:9px;padding:8px 12px;margin-bottom:10px}
-.ap-sh svg{color:var(--accent)}.ap-sh-x{margin-left:auto;font-size:11.5px;font-weight:600;color:#8A857C}
-.ap-g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.ap-st{border:1px solid #EDE4DA;border-radius:10px;padding:10px 12px;background:#fff}
-.ap-k{font-size:11.5px;color:#8A857C}.ap-v{font-size:20px;font-weight:700;color:#4A3528;margin-top:2px}
-.ap-st.off .ap-v{color:#a02030}.ap-st.vac .ap-v{color:#8A5A10}
-.ap-note{font-size:12px;color:#8A857C;margin-top:8px}.ap-note b{color:#4A3528}
 .ap-sub{font-size:11.5px;font-weight:600;color:#8A857C;margin:10px 0 4px}
 .ap-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
 .ap-b{display:inline-block;padding:3px 10px;border-radius:6px;font-size:11.5px;font-weight:600;white-space:nowrap}
 .ap-b.off{background:#FCE8EA;color:#a02030}.ap-b.vac{background:#FBF1DC;color:#8A5A10}.ap-b.lc{background:#FAECE7;color:#993C1D}
 .ap-b.mc{background:#FBF9F4;color:#6B5A3A;border:1px solid #EFE8DC}.ap-b.ok{background:#EEF4E8;color:#3B6D11}.ap-b.gr{background:#F6F4F0;color:#8A857C}
 .ap-b.call{background:#F6F4F0;color:#6A5A4A}.ap-today{font-size:12px;padding:5px 12px}
-.ap-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;text-align:center}
-.ap-day{border:1px solid #F0E9E1;border-radius:10px;padding:8px 4px;background:#fff;min-width:0}
-.ap-day .ap-b{max-width:100%;overflow:hidden;text-overflow:ellipsis}
-.ap-dn{font-size:12px;font-weight:700;color:#4A3528}.ap-dd{font-size:11px;color:#8A857C;margin-bottom:6px;min-height:14px}
-.ap-2col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .ap-li{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12.5px;padding:7px 2px;border-bottom:1px solid #F3ECE6;color:#4A3528}
 .ap-tot{color:#8A857C;font-weight:600;border-bottom:none}
 .ap-empty{font-size:12.5px;color:#aaa;padding:10px 2px}
 @media(max-width:760px){.ap-g4{grid-template-columns:repeat(2,minmax(0,1fr))}.ap-2col{grid-template-columns:1fr}.ap-week{grid-template-columns:repeat(4,minmax(0,1fr))}}
 /* ===== Monthly Summary ===== */
+.ms-box{border:1px solid #F0E9E1;border-radius:10px;overflow:hidden;margin-top:10px;background:#FEFEFD}
+.ms-two .ms-box{margin-top:0}
+.ms-br{display:grid;grid-template-columns:120px minmax(0,1fr);border-top:1px solid #F3ECE6}.ms-br:first-child{border-top:none}
+.ms-bk{padding:9px 14px;font-size:12px;font-weight:700;color:#8A857C;background:#FAF8F5;display:flex;align-items:center}
+.ms-bv{padding:8px 14px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ms-pr{display:grid;grid-template-columns:70px minmax(0,1fr) 44px 92px;align-items:center;gap:6px;font-size:12.5px;padding:9px 14px;border-top:1px solid #F3ECE6;color:#4A3528}
+.ms-vr{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;font-size:12.5px;padding:9px 14px;border-top:1px solid #F3ECE6;color:#4A3528}
+.ms-pr:first-child,.ms-vr:first-child{border-top:none}
+.ms-mu{color:#8A857C}
+.ms-tot{display:flex;justify-content:space-between;font-size:12px;padding:9px 14px;background:#FAF8F5;color:#6A5A4A;font-weight:600;border-top:1px solid #F3ECE6}
+.ms-em{padding:12px 14px;font-size:12.5px;color:#aaa}
+
 #amonthlyContent{padding:14px 16px}
 .ms-sel{display:flex;align-items:center;gap:6px}
 .ms-ab{width:30px;height:30px;border:1px solid #EDE4DA;border-radius:8px;background:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:15px;color:#6A5A4A;cursor:pointer;user-select:none}
@@ -890,12 +862,6 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 
 <div id="page10" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
   <div id="recallContent"><div style="text-align:center;padding:40px;color:#aaa">Loading...</div></div>
-</div>
-<div id="page13" style="display:none;max-width:1200px;margin:0 auto;padding:18px 24px">
-  <div id="agentProfileContent"></div>
-</div>
-<div id="page11" style="display:none;max-width:1600px;margin:0 auto;padding:18px 24px">
-  <div id="caseHandlingContent_page"><div style="text-align:center;padding:40px;color:#aaa">Loading...</div></div>
 </div>
 <div id="page12" style="display:none;max-width:1100px;margin:0 auto;padding:18px 24px" class="to-wrap">
 
@@ -2313,29 +2279,8 @@ function apSame(a,b){
   return xa[0]===ya[0] && xa[xa.length-1]===ya[ya.length-1];
 }
 function apFind(obj,name){ if(!obj) return null; if(obj[name]) return obj[name]; var k=Object.keys(obj).find(function(k){return apSame(k,name);}); return k?obj[k]:null; }
-function apNames(){
-  var set={}; var out=[];
-  var add=function(n){ n=String(n||'').trim(); if(!n) return; var hit=out.find(function(o){return apSame(o,n);}); if(!hit){ out.push(n); } };
-  (typeof TO_ROSTER!=='undefined'?TO_ROSTER:[]).forEach(function(p){add(p[0]);});
-  Object.keys(D||{}).forEach(add);
-  return out.sort(function(a,b){return a.localeCompare(b);});
-}
-function apBadge(name){
-  if(typeof TO_ROSTER!=='undefined'){ var p=TO_ROSTER.find(function(p){return apSame(p[0],name);}); if(p) return p[1]; }
-  var a=(typeof AGENTS_DIR!=='undefined'?AGENTS_DIR:[]).find(function(x){return apSame(x.name,name);});
-  return a&&a.badge?a.badge:'';
-}
-function apInitials(n){return String(n||'').split(/\s+/).filter(Boolean).slice(0,2).map(function(w){return w[0];}).join('').toUpperCase();}
 function apToday(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
-function apInPeriod(iso){ if(!iso) return false; if(AP_PERIOD==='all') return String(iso).slice(0,4)===apToday().slice(0,4); return String(iso).slice(0,7)===AP_PERIOD; }
 function apFmtDate(iso){var p=String(iso).split('-');return p.length===3?(+p[2])+' '+AP_MON[+p[1]-1]:iso;}
-function apFmtS(s){s=Math.round(s||0);return Math.floor(s/60)+':'+('0'+(s%60)).slice(-2);}
-function apMonths(){
-  var t=apToday(), y=+t.slice(0,4), m=+t.slice(5,7), out=[];
-  for(var i=m;i>=1;i--) out.push(y+'-'+('0'+i).slice(-2));
-  return out;
-}
-
 async function apEnsureData(){
   var jobs=[];
   // Weekly schedule + Vacation are parsed by their own tabs — run them off-screen once if not loaded yet
@@ -2354,156 +2299,6 @@ async function apEnsureData(){
   await Promise.all(jobs);
 }
 
-function renderAgentProfilePage(){
-  var el=document.getElementById('agentProfileContent'); if(!el) return;
-  if(!AP_PERIOD) AP_PERIOD=apToday().slice(0,7);
-  if(!el.dataset.built){
-    el.dataset.built='1';
-    el.innerHTML='<div class="ap-wrap">'
-      +'<div class="ap-search"><span class="ap-s-ic">'+apIc('search')+'</span>'
-      +'<input id="apInput" type="text" autocomplete="off" placeholder="Search agent name…" oninput="apSuggest()" onkeydown="apKey(event)">'
-      +'<span class="ap-clear" onclick="apClear()" title="Clear">'+apIc('x',14)+'</span>'
-      +'<div id="apSug" class="ap-sug" style="display:none"></div></div>'
-      +'<div id="apBody"></div></div>';
-  }
-  apRenderBody();
-}
-function apSuggest(){
-  var q=apNorm(document.getElementById('apInput').value), box=document.getElementById('apSug');
-  if(!q){ box.style.display='none'; return; }
-  var list=apNames().filter(function(n){return apNorm(n).indexOf(q)>=0;});
-  if(!list.length){ box.innerHTML='<div class="ap-sug-none">No agent found</div>'; box.style.display='block'; return; }
-  box.innerHTML=list.map(function(n,i){return '<div class="ap-sug-it'+(i===0?' hi':'')+'" onmousedown="apPick(\''+n.replace(/'/g,"\\'")+'\')">'+apEsc(n)+'</div>';}).join('');
-  box.style.display='block';
-}
-function apKey(e){
-  if(e.key==='Enter'){ var f=document.querySelector('#apSug .ap-sug-it'); if(f) f.dispatchEvent(new MouseEvent('mousedown')); }
-  if(e.key==='Escape'){ document.getElementById('apSug').style.display='none'; }
-}
-function apPick(n){
-  AP_NAME=n; var i=document.getElementById('apInput'); i.value=n; i.blur();
-  document.getElementById('apSug').style.display='none';
-  apRenderBody();
-}
-function apClear(){ AP_NAME=''; var i=document.getElementById('apInput'); i.value=''; document.getElementById('apSug').style.display='none'; apRenderBody(); i.focus(); }
-function apSetPeriod(p){ AP_PERIOD=p; apRenderBody(); }
-
-async function apRenderBody(){
-  var body=document.getElementById('apBody'); if(!body) return;
-  if(!AP_NAME){
-    body.innerHTML='<div class="ap-grid-names">'+apNames().map(function(n){
-      return '<div class="ap-chip" onclick="apPick(\''+n.replace(/'/g,"\\'")+'\')"><span class="ap-av sm">'+apInitials(n)+'</span>'+apEsc(n)+'</div>';
-    }).join('')+'</div>';
-    return;
-  }
-  body.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">⏳ Loading '+apEsc(AP_NAME)+'…</div>';
-  try{ await apEnsureData(); }catch(e){}
-  if(!AP_NAME) return;
-  body.innerHTML=apBuild(AP_NAME);
-}
-
-function apBuild(name){
-  var today=apToday(), yr=today.slice(0,4), curM=+today.slice(5,7);
-  var junk=function(v){var s=String(v==null?'':v).trim();return !s||/^[-–—_.\s]+$/.test(s);};
-
-  /* ---- Months: Jan … Dec + All ---- */
-  var chips='<div class="ap-months">'+AP_MONFULL.map(function(m,i){
-      var k=yr+'-'+('0'+(i+1)).slice(-2), fut=(i+1)>curM;
-      return '<span class="ap-pchip'+(AP_PERIOD===k?' on':'')+(fut?' dis':'')+'"'+(fut?'':' onclick="apSetPeriod(\''+k+'\')"')+'>'+m+'</span>';
-    }).join('')+'</div>';
-  var periodLbl=AP_PERIOD==='all'?('All '+yr):AP_MONFULL[+AP_PERIOD.slice(5)-1]+' '+AP_PERIOD.slice(0,4);
-
-  /* ---- Performance ---- */
-  var rowsOf=function(n){return (apFind(D,n)||[]).filter(function(r){return apInPeriod(r[0]);});};
-  var pr=rowsOf(name), I=0,T=0,W=0,tS=0,tN=0,hS=0,hN=0;
-  pr.forEach(function(r){I+=r[1]||0;T+=r[2]||0;W+=r[3]||0;if(r[5]>0){tS+=r[5];tN++;}if(r[7]>0){hS+=r[7];hN++;}});
-  var rank='—';
-  if(pr.length){
-    var arr=Object.keys(D||{}).map(function(n){return {n:n,v:rowsOf(n).reduce(function(s,r){return s+(r[1]||0);},0)};}).filter(function(x){return x.v>0;}).sort(function(a,b){return b.v-a.v;});
-    var ix=arr.findIndex(function(x){return apSame(x.n,name);}); if(ix>=0) rank=(ix+1)+' / '+arr.length;
-  }
-
-  /* ---- Attendance ---- */
-  var att=apFind(ATT,name)||{};
-  var cntA={Office:0,Remote:0,Off:0,Vacation:0,Sick:0,Absent:0,EL:0,'Saturday Shift':0}, offDates=[], absDates=[];
-  var camp=apFind(window.__ATT_CAMP__,name)||{};
-  Object.keys(att).sort().forEach(function(d){ if(!apInPeriod(d)) return; var s=att[d]; if(cntA[s]!==undefined) cntA[s]++;
-    if(s==='Off') offDates.push(d); if(s==='Absent'||s==='Sick'||s==='EL') absDates.push(d+'|'+s); });
-  var work=cntA.Office+cntA.Remote+cntA['Saturday Shift'];
-  var anyAtt=Object.keys(att).some(apInPeriod);
-  var campCnt={}; Object.keys(camp).forEach(function(d){ if(apInPeriod(d)&&!junk(camp[d])) campCnt[camp[d]]=(campCnt[camp[d]]||0)+1; });
-  var attHTML=anyAtt
-    ? '<div class="ap-tags" style="margin-top:0">'+(cntA.Office?'<span class="ap-b gr">Office '+cntA.Office+'</span>':'')+(cntA.Remote?'<span class="ap-b gr">Remote '+cntA.Remote+'</span>':'')+(cntA['Saturday Shift']?'<span class="ap-b gr">Saturday shift '+cntA['Saturday Shift']+'</span>':'')
-      +Object.keys(campCnt).map(function(c){return '<span class="ap-b gr">'+apEsc(c)+' '+campCnt[c]+'</span>';}).join('')+'</div>'
-      +(offDates.length&&AP_PERIOD!=='all'?'<div class="ap-sub">OFF days</div><div class="ap-tags">'+offDates.map(function(d){return '<span class="ap-b off">'+apFmtDate(d)+'</span>';}).join('')+'</div>':'')
-      +(absDates.length?'<div class="ap-sub">Absent / Sick</div><div class="ap-tags">'+absDates.map(function(x){var p=x.split('|');return '<span class="ap-b off">'+apFmtDate(p[0])+' · '+p[1]+'</span>';}).join('')+'</div>':'')
-    : '<div class="ap-empty">No attendance data in '+periodLbl+'</div>';
-
-  /* ---- Vacation (Vacation 2026 tab) ---- */
-  var vacRanges=[];
-  (window.__VAC_MONTHS__||[]).forEach(function(m){
-    var mi=AP_MONFULL.indexOf(m.month); if(mi<0) return;
-    var key=yr+'-'+('0'+(mi+1)).slice(-2);
-    if(AP_PERIOD!=='all'&&AP_PERIOD!==key) return;
-    var ag=m.agents.find(function(a){return apSame(a.name,name);}); if(!ag) return;
-    var days=[]; ag.cells.forEach(function(v,ci){var vv=String(v||'').trim().toLowerCase(); if(vv==='v'||vv==='vacation'||vv==='vaction'){var dn=parseInt(m.days[ci]&&m.days[ci].num,10)||(ci+1); days.push(dn);}});
-    days.sort(function(a,b){return a-b;});
-    var s=null,p=null;
-    days.forEach(function(d){ if(s===null){s=p=d;return;} if(d===p+1){p=d;return;} vacRanges.push({m:mi,s:s,e:p}); s=p=d; });
-    if(s!==null) vacRanges.push({m:mi,s:s,e:p});
-  });
-  var vacDays=vacRanges.reduce(function(t,r){return t+(r.e-r.s+1);},0);
-  var vacHTML=vacRanges.length
-    ? vacRanges.map(function(r){var n=r.e-r.s+1;return '<div class="ap-li"><span>'+(r.s===r.e?r.s:r.s+'–'+r.e)+' '+AP_MON[r.m]+'</span><span class="ap-b vac">'+n+(n===1?' day':' days')+'</span></div>';}).join('')
-      +'<div class="ap-li ap-tot"><span>Total</span><span>'+vacDays+(vacDays===1?' day':' days')+'</span></div>'
-    : '<div class="ap-empty">No vacation in '+periodLbl+'</div>';
-
-  /* ---- Permissions ---- */
-  var perms=(typeof TO_ROWS!=='undefined'?TO_ROWS:[]).filter(function(r){return apSame(r.Employee,name)&&apInPeriod(String(r.Date).slice(0,10));})
-    .sort(function(a,b){return String(b.Date).localeCompare(String(a.Date));});
-  var stCls={Approved:'ok',Pending:'vac',Rejected:'off'};
-  var apprH=perms.filter(function(r){return r.Status==='Approved';}).reduce(function(s,r){return s+(Number(r.Hours)||0);},0);
-  var permHTML=(perms.length
-    ? perms.map(function(r){return '<div class="ap-li"><span>'+apFmtDate(String(r.Date).slice(0,10))+(r.From?' · '+apEsc(r.From)+'–'+apEsc(r.To||''):'')+(r.Hours?' · '+toFmtHrs(r.Hours)+'h':'')+'</span><span class="ap-b '+(stCls[r.Status]||'gr')+'">'+apEsc(r.Status||'')+'</span></div>';}).join('')
-    : '<div class="ap-empty">No permissions in '+periodLbl+'</div>')
-    +(AP_PERIOD!=='all'&&typeof TO_MONTHLY_LIMIT!=='undefined'?'<div class="ap-li ap-tot"><span>Approved '+toFmtHrs(apprH)+'h of '+TO_MONTHLY_LIMIT+'h</span><span>Remaining '+toFmtHrs(Math.max(0,TO_MONTHLY_LIMIT-apprH))+'h</span></div>':'<div class="ap-li ap-tot"><span>Approved total</span><span>'+toFmtHrs(apprH)+'h</span></div>');
-
-  /* ---- Campaign training ---- */
-  var trHTML='';
-  var tr=AP_EXTRA.training||[];
-  if(tr.length){
-    var keys=Object.keys(tr[0]).filter(function(k){return k&&!/^__col/.test(k);}); var st=/^(#|no\.?|s\/?n|num?)$/i.test(String(keys[0]).trim())?1:0;
-    var ak=keys[st], camps=keys.slice(st+1).filter(function(k){return String(k).trim()&&!/^total$/i.test(String(k).trim());});
-    var row=tr.find(function(r){return apSame(r[ak],name);});
-    if(row) trHTML=camps.map(function(c){var v=row[c]; var s=String(v==null?'':v).trim(), lo=s.toLowerCase();
-      var done=v===true||lo==='true'||lo==='yes'||s==='✓'||s==='✔'||s==='1';
-      var no=!done&&(junk(s)||lo==='false'||lo==='no'||s==='0');
-      return '<span class="ap-b '+(done?'ok':no?'gr':'vac')+'">'+apEsc(String(c).trim())+(done?' ✓':no?'':' · '+apEsc(s))+'</span>';}).join('');
-  }
-  if(!trHTML) trHTML='<div class="ap-empty">No training data</div>';
-  else trHTML='<div class="ap-tags" style="margin-top:0">'+trHTML+'</div>';
-
-  var sec=function(ic,t,inner,extra){return '<div class="ap-sec"><div class="ap-sh">'+ic+'<span>'+t+'</span>'+(extra?'<span class="ap-sh-x">'+extra+'</span>':'')+'</div>'+inner+'</div>';};
-  var perfHTML=pr.length
-    ? '<div class="ap-g4">'+apStat('Inbound Calls',I.toLocaleString())+apStat('Tickets',T.toLocaleString())+apStat('WhatsApp',W.toLocaleString())+apStat('Avg Handling Time',hN?apFmtS(hS/hN):'—')+'</div>'
-      +'<div class="ap-note">Rank by inbound <b>'+rank+'</b> · Avg talk '+(tN?apFmtS(tS/tN):'—')+' · '+pr.length+' days with data</div>'
-    : '<div class="ap-empty">No performance data in '+periodLbl+'</div>';
-  var attFull=anyAtt
-    ? '<div class="ap-g4">'+apStat('Working days',work)+apStat('OFF',cntA.Off,'off')+apStat('Vacation',cntA.Vacation,'vac')+apStat('Absent / Sick',cntA.Absent+cntA.Sick+cntA.EL)+'</div>'+attHTML.replace('<div class="ap-tags" style="margin-top:0">','<div class="ap-tags">')
-    : attHTML;
-  return '<div class="ap-card">'
-    +'<div class="ap-head"><span class="ap-av">'+apInitials(name)+'</span><div class="ap-hn"><div class="ap-name">'+apEsc(name)+'</div>'
-    +(apBadge(name)?'<div class="ap-meta">Badge '+apBadge(name)+'</div>':'')+'</div></div>'
-    +chips
-    +'<div class="ap-yrow"><span class="ap-ptitle">'+periodLbl+'</span><span class="ap-pchip ap-all'+(AP_PERIOD==='all'?' on':'')+'" onclick="apSetPeriod(\'all\')">All '+yr+'</span></div>'
-    +sec(apIc('chart'),'Team Performance',perfHTML)
-    +sec(apIc('att'),'Attendance',attFull)
-    +'<div class="ap-2col">'+sec(apIc('sun'),'Vacation',vacHTML)+sec(apIc('clock'),'Permissions',permHTML)+'</div>'
-    +sec(apIc('school'),'Campaign Training',trHTML)
-    +'</div>';
-}
-function apStat(k,v,cls){return '<div class="ap-st'+(cls?' '+cls:'')+'"><div class="ap-k">'+k+'</div><div class="ap-v">'+v+'</div></div>';}
-document.addEventListener('click',function(e){var b=document.getElementById('apSug'); if(b&&!e.target.closest('.ap-search')) b.style.display='none';});
 
 
 /* ===== MONTHLY SUMMARY — tab on the agent page (Daily Performance · Attendance · Monthly Summary) ===== */
@@ -2593,12 +2388,16 @@ function renderMonthlySummary(name){
     .sort(function(a,b){return String(a.Date).localeCompare(String(b.Date));});
   var apprH=perms.filter(function(r){return r.Status==='Approved';}).reduce(function(s,r){return s+(Number(r.Hours)||0);},0);
   var pl=function(l,v,c){return '<div class="ms-pl"><div class="ms-l">'+l+'</div><div class="ms-v"'+(c?' style="color:'+c+'"':'')+'>'+v+'</div></div>';};
+  var dd=function(n){return n+(n===1?' day':' days');};
+  var bx=function(lbl,items){return items.length?'<div class="ms-br"><div class="ms-bk">'+lbl+'</div><div class="ms-bv">'+items.join('')+'</div></div>':'';};
+  var locI=[]; if(cnt.Office) locI.push('<span class="ap-b gr">Office · '+dd(cnt.Office)+'</span>'); if(cnt.Remote) locI.push('<span class="ap-b gr">Remote · '+dd(cnt.Remote)+'</span>'); if(cnt['Saturday Shift']) locI.push('<span class="ap-b gr">Saturday shift · '+dd(cnt['Saturday Shift'])+'</span>');
+  var campI=Object.keys(cc).map(function(c){return '<span class="ap-b gr">'+apEsc(c)+' · '+dd(cc[c])+'</span>';});
+  var offI=offD.map(function(d){return '<span class="ap-b off">'+apFmtDate(d)+'</span>';});
+  var absI=absD.map(function(x){var p=x.split('|');return '<span class="ap-b off">'+apFmtDate(p[0])+' · '+p[1]+'</span>';});
+  var boxRows=bx('Location',locI)+bx('Campaign',campI)+bx('OFF days',offI)+bx('Absent / Sick',absI);
   var attH=any
     ? '<div class="ms-pills">'+pl('Worked',cnt.Office+cnt.Remote+cnt['Saturday Shift'])+pl('OFF',cnt.Off,'#a02030')+pl('Vacation',cnt.Vacation,'#8A5A10')+pl('Absent / Sick',cnt.Absent+cnt.Sick+cnt.EL)+pl('Permissions',toFmtHrs(apprH)+'h')+'</div>'
-      +'<div class="ap-tags">'+(cnt.Office?'<span class="ap-b gr">Office '+cnt.Office+'</span>':'')+(cnt.Remote?'<span class="ap-b gr">Remote '+cnt.Remote+'</span>':'')+(cnt['Saturday Shift']?'<span class="ap-b gr">Saturday shift '+cnt['Saturday Shift']+'</span>':'')
-      +Object.keys(cc).map(function(c){return '<span class="ap-b gr">'+apEsc(c)+' '+cc[c]+'</span>';}).join('')+'</div>'
-      +(offD.length?'<div class="ap-sub">OFF days</div><div class="ap-tags" style="margin-top:0">'+offD.map(function(d){return '<span class="ap-b off">'+apFmtDate(d)+'</span>';}).join('')+'</div>':'')
-      +(absD.length?'<div class="ap-sub">Absent / Sick</div><div class="ap-tags" style="margin-top:0">'+absD.map(function(x){var p=x.split('|');return '<span class="ap-b off">'+apFmtDate(p[0])+' · '+p[1]+'</span>';}).join('')+'</div>':'')
+      +(boxRows?'<div class="ms-box">'+boxRows+'</div>':'')
     : '<div class="ap-empty">No attendance data in '+msLabel(k)+'</div>';
 
   /* ---- Vacation ---- */
@@ -2610,14 +2409,17 @@ function renderMonthlySummary(name){
     days.sort(function(a,b){return a-b;}); var s=null,p=null;
     days.forEach(function(d){ if(s===null){s=p=d;return;} if(d===p+1){p=d;return;} vr.push([s,p,mi]); s=p=d; }); if(s!==null) vr.push([s,p,mi]);
   });
-  var vacH=vr.length?vr.map(function(r){var n=r[1]-r[0]+1;return '<div class="ap-li"><span>'+(r[0]===r[1]?r[0]:r[0]+'–'+r[1])+' '+AP_MON[r[2]]+'</span><span class="ap-b vac">'+n+(n===1?' day':' days')+'</span></div>';}).join('')
-    :'<div class="ap-empty">No vacation in '+msLabel(k)+'</div>';
+  var vTot=vr.reduce(function(t,r){return t+(r[1]-r[0]+1);},0);
+  var vacH='<div class="ms-box">'+(vr.length?vr.map(function(r){var n=r[1]-r[0]+1;return '<div class="ms-vr"><b>'+(r[0]===r[1]?r[0]:r[0]+'–'+r[1])+' '+AP_MON[r[2]]+'</b><span class="ap-b vac">'+dd(n)+'</span></div>';}).join('')
+      +'<div class="ms-tot"><span>Total</span><span>'+dd(vTot)+'</span></div>'
+    :'<div class="ms-em">No vacation in '+msLabel(k)+'</div>')+'</div>';
 
   /* ---- Permissions ---- */
   var stCls={Approved:'ok',Pending:'vac',Rejected:'off'};
-  var permH=(perms.length?perms.map(function(r){return '<div class="ap-li"><span>'+apFmtDate(String(r.Date).slice(0,10))+(r.From?' · '+apEsc(r.From)+'–'+apEsc(r.To||''):'')+'</span><span class="ap-b '+(stCls[r.Status]||'gr')+'">'+apEsc(r.Status||'')+'</span></div>';}).join('')
-    :'<div class="ap-empty">No permissions in '+msLabel(k)+'</div>')
-    +(typeof TO_MONTHLY_LIMIT!=='undefined'?'<div class="ap-li ap-tot"><span>Approved '+toFmtHrs(apprH)+'h of '+TO_MONTHLY_LIMIT+'h</span><span>Remaining '+toFmtHrs(Math.max(0,TO_MONTHLY_LIMIT-apprH))+'h</span></div>':'');
+  var hm=function(t){var p=String(t||'').trim().split(':');return p.length>=2?(('0'+p[0]).slice(-2)+':'+('0'+p[1]).slice(-2)):String(t||'');};
+  var permH='<div class="ms-box">'+(perms.length?perms.map(function(r){return '<div class="ms-pr"><b>'+apFmtDate(String(r.Date).slice(0,10))+'</b><span>'+(r.From?hm(r.From)+' → '+hm(r.To):'—')+'</span><span class="ms-mu">'+(r.Hours?toFmtHrs(r.Hours)+'h':'')+'</span><span class="ap-b '+(stCls[r.Status]||'gr')+'" style="justify-self:end">'+apEsc(r.Status||'')+'</span></div>';}).join('')
+    :'<div class="ms-em">No permissions in '+msLabel(k)+'</div>')
+    +(typeof TO_MONTHLY_LIMIT!=='undefined'?'<div class="ms-tot"><span>Approved '+toFmtHrs(apprH)+'h of '+TO_MONTHLY_LIMIT+'h</span><span>Remaining '+toFmtHrs(Math.max(0,TO_MONTHLY_LIMIT-apprH))+'h</span></div>':'')+'</div>';
 
   /* ---- Training ---- */
   var trH='';
@@ -10732,13 +10534,27 @@ window.addEventListener('DOMContentLoaded', () => {
 
 <script>
 /* Shared watcher: only #mainContent, and ignores changes inside the branch detail panel / header. */
-window.__watchDom=function(fn,delay){
-  var t=null,IGN='.br-detail,#motivationText,#notifPanel,.to-toast,.hcard';
-  function relevant(muts){for(var i=0;i<muts.length;i++){var n=muts[i].target;var el=n.nodeType===1?n:n.parentNode;if(!el||!el.closest||!el.closest(IGN))return true;}return false;}
-  function start(){var root=document.getElementById('mainContent')||document.body;
-    new MutationObserver(function(m){if(!relevant(m))return;clearTimeout(t);t=setTimeout(fn,delay);}).observe(root,{childList:true,subtree:true});}
-  if(document.readyState!=='loading')start();else document.addEventListener('DOMContentLoaded',start);
-};
+window.__watchDom=(function(){
+  // One shared observer for all page "beautifiers" (icons, branch lists, colours).
+  // It ignores the changes those helpers make themselves (icon spans / copy buttons),
+  // waits until the page is idle, and pauses while the tab is hidden — so the page
+  // is no longer re-scanned again and again after every small change.
+  var fns=[],t=null,pending=false,started=false,IGN='.br-detail,#motivationText,#notifPanel,.to-toast,.hcard';
+  function own(n){return n.nodeType===1&&n.classList&&(n.classList.contains('ic-done')||n.classList.contains('loc-cp'));}
+  function relevant(muts){for(var i=0;i<muts.length;i++){var m=muts[i],n=m.target,el=n.nodeType===1?n:n.parentNode;
+    if(!el||!el.closest||el.closest(IGN))continue;
+    var nodes=[].slice.call(m.addedNodes).concat([].slice.call(m.removedNodes));
+    if(nodes.length&&nodes.every(own))continue;
+    return true;}return false;}
+  function runAll(){for(var i=0;i<fns.length;i++){try{fns[i]();}catch(e){console.warn('watchDom',e);}}}
+  function schedule(){clearTimeout(t);t=setTimeout(function(){
+    if(document.hidden){pending=true;return;}
+    (window.requestIdleCallback||function(cb){return setTimeout(cb,1);})(runAll,{timeout:600});},200);}
+  function start(){if(started)return;started=true;var root=document.getElementById('mainContent')||document.body;
+    new MutationObserver(function(m){if(relevant(m))schedule();}).observe(root,{childList:true,subtree:true});
+    document.addEventListener('visibilitychange',function(){if(!document.hidden&&pending){pending=false;schedule();}});}
+  return function(fn){fns.push(fn);if(document.readyState!=='loading')start();else document.addEventListener('DOMContentLoaded',start);};
+})();
 </script>
 <script>
 /* ── Branch pages: list on the left, selected branch details on the right ── */
