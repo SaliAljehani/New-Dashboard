@@ -63,10 +63,10 @@ select#agSel{font-size:14px;font-weight:600;color:var(--accent);min-width:180px}
 .page-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;width:calc(100% - 48px);max-width:1180px;margin:20px auto 2px;padding:0;background:transparent}
 @media(max-width:900px){.page-nav{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .pnav{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:12px 6px;border-radius:12px;border:1px solid #EDE4DA;font-size:13px;font-weight:600;cursor:pointer;background:#FDFDFC;color:var(--text);transition:.15s;text-align:center;line-height:1.2}
-.team-subnav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-width:420px;margin:14px auto 6px;padding:0 16px}
-.tsub{padding:9px 6px;border-radius:10px;border:1.5px solid #EDE4DA;background:#fff;color:#6A5A4A;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
-.tsub:hover{border-color:rgba(var(--accent-rgb),.2)}
-.tsub.on{background:rgba(var(--accent-rgb),.08);color:var(--accent);border-color:rgba(var(--accent-rgb),.25)}
+.team-subnav{display:flex;width:fit-content;margin:14px auto 6px;gap:3px;border:1px solid #E8E2DA;border-radius:12px;padding:4px;background:#FDFDFC}
+.tsub{padding:8px 18px;border-radius:9px;border:none;background:transparent;color:#6A5A4A;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.tsub:hover{color:var(--accent)}
+.tsub.on{background:rgba(var(--accent-rgb),.08);color:var(--accent)}
 /* ===== Agent Profile ===== */
 .ap-yrow{display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-size:12.5px;font-weight:600;color:#8A857C}
 .ap-months{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px;margin:16px 0 4px}
@@ -128,6 +128,7 @@ select#agSel{font-size:14px;font-weight:600;color:var(--accent);min-width:180px}
 .ms-ab:hover{border-color:rgba(var(--accent-rgb),.3);color:var(--accent)}.ms-ab.dis{opacity:.35;cursor:default}
 .ms-ml{min-width:170px;height:30px;border:1.5px solid #E6D8CA;border-radius:8px;background:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#4A3528}
 .ms-sh{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:#4A3528;background:#F8F5F1;border-radius:8px;padding:6px 10px;margin:12px 0 6px}
+.ms-wrap>.ms-sh:first-child{margin-top:0}
 .ms-sh svg{color:var(--accent)}.ms-x{margin-left:auto;font-size:11px;color:#8A857C;font-weight:600}
 .ms-tb{border:1px solid #EDE4DA;border-radius:10px;overflow:hidden;background:#FDFDFC}
 .ms-tr{display:grid;grid-template-columns:86px repeat(4,minmax(0,1fr));border-top:1px solid #F0EAE3}.ms-tr:first-child{border-top:none}
@@ -141,6 +142,10 @@ select#agSel{font-size:14px;font-weight:600;color:var(--accent);min-width:180px}
 .ms-pl{padding:6px;text-align:center}.ms-pl+.ms-pl{border-left:1px solid #F3EEE8}
 .ms-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 @media(max-width:760px){.ms-tr{grid-template-columns:repeat(2,minmax(0,1fr))}.ms-th{grid-column:1/-1}.ms-pills{grid-template-columns:repeat(3,minmax(0,1fr))}.ms-two{grid-template-columns:1fr}}
+/* sizes (Oct 2026): nav 24/14 · brands 24/62/13 · tools 18/36/13 */
+.pnav{font-size:14px!important}.pnav .ic-done svg{width:24px!important;height:24px!important}
+.ref-home .ref-brand-circle-icon{width:62px!important;height:62px!important}.ref-home .ref-brand-circle-label{font-size:13px!important}
+.ref-tool-ic{width:36px!important;height:36px!important}.ref-tool-ic svg{width:18px!important;height:18px!important}
 .pnav .ic-done{margin-right:0!important;font-size:22px}
 .pnav.active{background:rgba(var(--accent-rgb),.07);color:var(--accent);border-color:rgba(var(--accent-rgb),.3)}
 .pnav:hover:not(.active){background:rgba(var(--accent-rgb),.04);border-color:rgba(var(--accent-rgb),.2);color:var(--accent)}
@@ -712,15 +717,16 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 <div id="motivationText" class="quotes-bar"></div>
 </div>
   <div class="page-nav">
+    <button class="pnav" id="navToday" onclick="showToday()">📍 Today</button>
     <button class="pnav" onclick="showPage(6,this)">📢 Announcements</button>
     <button class="pnav active" onclick="showPage(4,this)">📁 Daily Reference</button>
-    <button class="pnav" onclick="window.open('https://docs.google.com/spreadsheets/d/16ZzTUvIDmJnokaNJCTLb3AHXm7x_n2Kx_537H2gcCCI/edit','_blank')">🎫 Ticket Quality</button>
     <button class="pnav" id="navTeam" onclick="showTeamTab(TEAM_TAB||'perf')">👥 Team</button>
     <button class="pnav" onclick="showPage(12,this)" style="position:relative">🕐 Permissions<span id="toNavBadge" style="display:none;position:absolute;top:-6px;right:-6px;min-width:16px;height:16px;background:var(--accent);border-radius:8px;font-size:11px;font-weight:700;color:#fff;text-align:center;line-height:16px;padding:0 4px;box-sizing:border-box"></span></button>
   </div>
   <div id="teamSubNav" class="team-subnav" style="display:none">
-    <button class="tsub" data-t="perf" onclick="showTeamTab('perf')">Performance</button>
-    <button class="tsub" data-t="sched" onclick="showTeamTab('sched')">Schedules</button>
+    <button class="tsub" data-t="perf" onclick="showTeamTab('perf')">Team Performance</button>
+    <button class="tsub" data-t="wk" onclick="showTeamTab('wk')">Weekly Schedule</button>
+    <button class="tsub" data-t="vac" onclick="showTeamTab('vac')">Vacation</button>
   </div>
 
 <div id="nameModalOverlay" style="display:none;position:fixed;inset:0;background:rgba(40,30,30,.35);z-index:200;align-items:center;justify-content:center">
@@ -1407,10 +1413,10 @@ function renderAttWeekStrip(){
   var cells='';
   for(var i=0;i<7;i++){
     var d=new Date(base);d.setDate(base.getDate()+i);var iso=attFmtD(d);
-    var on=(iso===picker.value);
-    cells+='<div onclick="attPickDay(\''+iso+'\')" style="background:#FEFEFD;border:'+(on?'2px solid rgba(var(--accent-rgb),.25)':'1px solid #F0E7DA')+';'+(on?'box-shadow:0 2px 6px rgba(var(--accent-rgb),.08);padding:4px 0;':'padding:5px 0;')+'border-radius:9px;text-align:center;cursor:pointer">'
-      +'<div style="font-size:10px;font-weight:600;color:'+(on?'var(--accent)':'#8A857C')+'">'+DOW[d.getDay()]+'</div>'
-      +'<div style="font-size:13px;font-weight:700;color:'+(on?'var(--accent)':'#5D4037')+'">'+d.getDate()+'</div></div>';
+    var on=(iso===picker.value), isT=(iso===attFmtD(new Date()));
+    cells+='<div onclick="attPickDay(\''+iso+'\')" style="background:'+(isT?'rgba(var(--accent-rgb),.08)':'#FEFEFD')+';border:'+(on?'2px solid rgba(var(--accent-rgb),.3)':(isT?'1.5px solid rgba(var(--accent-rgb),.3)':'1px solid #F0E7DA'))+';'+(on?'box-shadow:0 2px 6px rgba(var(--accent-rgb),.08);padding:4px 0;':'padding:5px 0;')+'border-radius:9px;text-align:center;cursor:pointer">'
+      +'<div style="font-size:10px;font-weight:600;color:'+(on||isT?'var(--accent)':'#8A857C')+'">'+DOW[d.getDay()]+'</div>'
+      +'<div style="font-size:13px;font-weight:700;color:'+(on||isT?'var(--accent)':'#5D4037')+'">'+d.getDate()+'</div></div>';
   }
   var e=new Date(base);e.setDate(base.getDate()+6);
   var wlbl='\u25C6 Week: '+base.getDate()+' '+MON[base.getMonth()]+' \u2013 '+e.getDate()+' '+MON[e.getMonth()]+' '+e.getFullYear();
@@ -1477,7 +1483,7 @@ function renderAttendanceTab(){
   const DAY_NAMES=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const MON_NAMES=['January','February','March','April','May','June','July','August','September','October','November','December'];
   const displayDate=DAY_NAMES[dObj.getDay()]+', '+dObj.getDate()+' '+MON_NAMES[dObj.getMonth()]+' '+dObj.getFullYear();
-  var _tt=document.getElementById('attDateTitle');if(_tt)_tt.innerHTML='🗓️ '+displayDate+' <span style="font-size:11px;color:#5D4037">▾</span>';
+  var _tt=document.getElementById('attDateTitle');if(_tt)_tt.innerHTML='🗓️ '+MON_NAMES[dObj.getMonth()]+' '+dObj.getFullYear()+' <span style="font-size:11px;color:#5D4037">▾</span>';
 
   // Group
   const officeList=[],remoteList=[],liveList=[],multiList=[],absentList=[];
@@ -2262,22 +2268,28 @@ function showPage(n,btn){CP=n;
   teamSync(n);
 }
 
-/* ===== TEAM (Agent Profile · Performance · Schedules) ===== */
+/* ===== TODAY + TEAM (Team Performance · Weekly Schedule · Vacation) ===== */
 var TEAM_TAB='perf';
-var TEAM_PAGE={perf:1,sched:5};
+var SCHED_FOR={wk:'dailyoff',vac:'vacation2026'};
 function teamSync(n){
-  var sub=document.getElementById('teamSubNav');
-  var t=null; Object.keys(TEAM_PAGE).forEach(function(k){ if(TEAM_PAGE[k]===n) t=k; });
-  if(sub) sub.style.display=t?'grid':'none';
-  if(!t) return;
-  TEAM_TAB=t;
-  var tb=document.getElementById('navTeam');
-  if(tb){ document.querySelectorAll('.pnav').forEach(function(b){b.classList.remove('active');}); tb.classList.add('active'); }
-  document.querySelectorAll('#teamSubNav .tsub').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-t')===t); });
+  var sub=document.getElementById('teamSubNav'), navT=document.getElementById('navTeam'), navD=document.getElementById('navToday');
+  var st=window.__SCHED_TAB__||'attendance', t=null, today=false;
+  if(n===1) t='perf';
+  else if(n===5){ if(st==='attendance') today=true; else t=(st==='vacation2026'?'vac':'wk'); }
+  if(sub) sub.style.display=t?'flex':'none';
+  if(t||today){ document.querySelectorAll('.pnav').forEach(function(b){b.classList.remove('active');}); var a=today?navD:navT; if(a) a.classList.add('active'); }
+  if(t){ TEAM_TAB=t; document.querySelectorAll('#teamSubNav .tsub').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-t')===t); }); }
 }
+function showSched(tab,btn){
+  window.__SCHED_TAB__=tab;
+  showPage(5,btn);
+  if(document.getElementById('stab_'+tab)) switchScheduleTab(tab);
+  teamSync(5);
+}
+function showToday(){ showSched('attendance',document.getElementById('navToday')); }
 function showTeamTab(t){
-  if(!TEAM_PAGE[t]) t='perf';
-  showPage(TEAM_PAGE[t], document.getElementById('navTeam'));
+  if(t==='perf'){ showPage(1,document.getElementById('navTeam')); return; }
+  showSched(SCHED_FOR[t]||'dailyoff',document.getElementById('navTeam'));
 }
 
 /* ===== AGENT PROFILE — everything about one agent from every section of the dashboard ===== */
@@ -2526,11 +2538,10 @@ function msDiffTime(d,unit){ // d in minutes (unit 'min') or seconds (unit 'sec'
 }
 function renderMonthlySummary(name){
   var el=document.getElementById('amonthlyContent'); if(!el||!name) return;
-  if(!MS_MONTH) MS_MONTH=msPrevMonth(apToday().slice(0,7));
-  var k=MS_MONTH, pk=msPrevMonth(k), cur=msAgg(name,k), prev=msAgg(name,pk);
-  var canNext=msNextMonth(k)<=apToday().slice(0,7);
-  var head='<div class="ms-sel"><span class="ms-ab" onclick="msStep(-1)">‹</span><span class="ms-ml">'+msLabel(k)+'</span>'
-    +'<span class="ms-ab'+(canNext?'':' dis')+'"'+(canNext?' onclick="msStep(1)"':'')+'>›</span></div>';
+  var _df=document.getElementById('df'), _fv=(_df&&_df.value)||'';
+  var k=/^\d{4}-\d{2}/.test(_fv)?_fv.slice(0,7):msPrevMonth(apToday().slice(0,7));
+  var pk=msPrevMonth(k), cur=msAgg(name,k), prev=msAgg(name,pk);
+  var head='';
 
   /* ---- Performance table (Time · Quality · Volume) ---- */
   var perf;
@@ -2624,7 +2635,7 @@ function renderMonthlySummary(name){
 
   var sh=function(ic,t,x){return '<div class="ms-sh">'+ic+'<span>'+t+'</span>'+(x?'<span class="ms-x">'+x+'</span>':'')+'</div>';};
   el.innerHTML='<div class="ms-wrap">'+head
-    +sh(apIc('chart'),'Performance',prev?'vs '+AP_MONFULL[+pk.slice(5,7)-1]:'')+perf
+    +sh(apIc('chart'),'Performance · '+msLabel(k),prev?'vs '+AP_MONFULL[+pk.slice(5,7)-1]:'')+perf
     +sh(apIc('att'),'Attendance')+attH
     +'<div class="ms-two"><div>'+sh(apIc('sun'),'Vacation')+vacH+'</div><div>'+sh(apIc('clock'),'Permissions')+permH+'</div></div>'
     +(trH?sh(apIc('school'),'Campaign Training')+'<div class="ap-tags" style="margin-top:0">'+trH+'</div>':'')
@@ -8140,7 +8151,7 @@ function renderRoster(){
   }
 
   el.innerHTML = '<div style="padding:4px">'
-    +'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;max-width:560px;margin-left:auto;margin-right:auto">'
+    +'<div id="schedTabBar" style="display:none;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;max-width:560px;margin-left:auto;margin-right:auto">'
     +'<button onclick="switchScheduleTab(&apos;attendance&apos;)" id="stab_attendance" style="padding:6px 8px;border-radius:9px;font-size:11.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(var(--accent-rgb),.08);color:var(--accent);border:1.5px solid rgba(var(--accent-rgb),.25)">\uD83D\uDCCB Attendance</button>'
     +'<button onclick="switchScheduleTab(&apos;dailyoff&apos;)" id="stab_dailyoff" style="padding:6px 8px;border-radius:9px;font-size:11.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#FEFEFD;color:#6A5A4A;border:1.5px solid #EDE4DA">\uD83D\uDCC5 Weekly Schedule</button>'
     +'<button onclick="switchScheduleTab(&apos;vacation2026&apos;)" id="stab_vacation2026" style="padding:6px 8px;border-radius:9px;font-size:11.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:#FEFEFD;color:#6A5A4A;border:1.5px solid #EDE4DA">\uD83C\uDF34 Vacation</button>'
@@ -8161,6 +8172,7 @@ function renderRoster(){
     +'</div>';
   renderAttendanceTab();
   setAttToday();
+  if(window.__SCHED_TAB__&&window.__SCHED_TAB__!=='attendance') switchScheduleTab(window.__SCHED_TAB__);
 }
 
 function highlightScheduleAgent(name){
@@ -9423,6 +9435,7 @@ async function renderRef(){
       +'<div class="ref-tools">'
       +'<div class="ref-tool" data-p="refContactsPanel" onclick="refTool(\'refContactsPanel\')"><span class="ref-tool-ic">📞</span>Contact Numbers</div>'
       +'<div class="ref-tool" data-p="refTicketPanel" onclick="refTool(\'refTicketPanel\')"><span class="ref-tool-ic">📋</span>Ticket Type</div>'
+      +'<div class="ref-tool" onclick="window.open(\'https://docs.google.com/spreadsheets/d/16ZzTUvIDmJnokaNJCTLb3AHXm7x_n2Kx_537H2gcCCI/edit\',\'_blank\')"><span class="ref-tool-ic">🎫</span>Ticket Quality</div>'
       +'<div class="ref-tool" data-p="refCasePanel" onclick="refTool(\'refCasePanel\')"><span class="ref-tool-ic">📝</span>Case Handling</div>'
       +(linkCards?'<div class="ref-tool lk" data-p="refLinksPanel" onclick="refTool(\'refLinksPanel\')"><span class="ref-tool-ic" style="background:#1565c01F">'+brandLineIcon('links','#1565c0')+'</span>Links & Systems</div>':'')
       +'</div></div>'
