@@ -1212,7 +1212,7 @@ async function loadSheet(name, retries){
   }
 
   retries = retries===undefined ? 1 : retries;
-  const url = `https://script.google.com/macros/s/AKfycbwQzgCZ3X-7NNCW9Txinn4wGgwt1yWOn0NGVlPqifdA02sUgzgx0N29v3Jmtv01tufvbw/exec?id=${SHEET_ID}&gid=${gid}` + (FORCE_FRESH ? '&fresh=1' : '');
+  const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${SHEET_ID}&gid=${gid}` + (FORCE_FRESH ? '&fresh=1' : '');
   const controller = new AbortController();
   const timeoutId = setTimeout(()=>controller.abort(), 45000);
   try{
@@ -1346,7 +1346,7 @@ function changeAgentName(){
 
 function sendHeartbeat(){
   if(!currentAgentName) return;
-  const url = `https://script.google.com/macros/s/AKfycbwQzgCZ3X-7NNCW9Txinn4wGgwt1yWOn0NGVlPqifdA02sUgzgx0N29v3Jmtv01tufvbw/exec?id=${SHEET_ID}&ping=1&name=${encodeURIComponent(currentAgentName)}`;
+  const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${SHEET_ID}&ping=1&name=${encodeURIComponent(currentAgentName)}`;
   fetch(url).catch(()=>{}); // best-effort, never block the UI on this
 }
 
@@ -1463,6 +1463,7 @@ function renderAttendanceTab(){
   const dateVal = picker.value;
   if(!dateVal){ container.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">Please select a date.</div>'; return; }
   window.__attWeekOff__=0; renderAttWeekStrip();
+  (function(){var _d=new Date(dateVal+'T12:00:00'),_t=document.getElementById('attDateTitle');var _M=['January','February','March','April','May','June','July','August','September','October','November','December'];if(_t&&!isNaN(_d))_t.innerHTML='🗓️ '+_M[_d.getMonth()]+' '+_d.getFullYear()+' <span style="font-size:11px;color:#5D4037">▾</span>';})();
 
   const rows=[];
   Object.entries(ATT).forEach(([agent,dates])=>{ if(dates[dateVal]) rows.push({name:agent,status:dates[dateVal],campaign:''}); });
@@ -3149,7 +3150,7 @@ async function fetchSheet(spreadsheetId, sheetName, retries){
   if(REF_CACHE[key]) return REF_CACHE[key];
 
   retries = retries===undefined ? 2 : retries;
-  const url = `https://script.google.com/macros/s/AKfycbwQzgCZ3X-7NNCW9Txinn4wGgwt1yWOn0NGVlPqifdA02sUgzgx0N29v3Jmtv01tufvbw/exec?id=${spreadsheetId}&sheetName=${encodeURIComponent(sheetName)}` + ((FORCE_FRESH||REF_FRESH) ? '&fresh=1' : '');
+  const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${spreadsheetId}&sheetName=${encodeURIComponent(sheetName)}` + ((FORCE_FRESH||REF_FRESH) ? '&fresh=1' : '');
   const controller = new AbortController();
   const timeoutId = setTimeout(()=>controller.abort(), 30000);
   try{
@@ -10322,7 +10323,7 @@ function markAllNotifRead(){
 /* ===== TIME-OFF TAB — reads/writes the "Time-Off" sheet via Apps Script ===== */
 const TO_SHEET = 'Time-Off';
 const TO_MONTHLY_LIMIT = 4;
-const TO_API_URL = 'https://script.google.com/macros/s/AKfycbwQzgCZ3X-7NNCW9Txinn4wGgwt1yWOn0NGVlPqifdA02sUgzgx0N29v3Jmtv01tufvbw/exec';
+const TO_API_URL = 'https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec';
 
 let TO_ROWS = [];
 let TO_LOADED = false;
