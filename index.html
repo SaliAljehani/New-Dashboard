@@ -63,7 +63,7 @@ select#agSel{font-size:14px;font-weight:600;color:var(--accent);min-width:180px}
 .page-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;width:calc(100% - 48px);max-width:1180px;margin:20px auto 2px;padding:0;background:transparent}
 @media(max-width:900px){.page-nav{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .pnav{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:12px 6px;border-radius:12px;border:1px solid #EDE4DA;font-size:13px;font-weight:600;cursor:pointer;background:#FDFDFC;color:var(--text);transition:.15s;text-align:center;line-height:1.2}
-.team-subnav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:620px;margin:14px auto 6px;padding:0 16px}
+.team-subnav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-width:420px;margin:14px auto 6px;padding:0 16px}
 .tsub{padding:9px 6px;border-radius:10px;border:1.5px solid #EDE4DA;background:#fff;color:#6A5A4A;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
 .tsub:hover{border-color:rgba(var(--accent-rgb),.2)}
 .tsub.on{background:rgba(var(--accent-rgb),.08);color:var(--accent);border-color:rgba(var(--accent-rgb),.25)}
@@ -121,6 +121,26 @@ select#agSel{font-size:14px;font-weight:600;color:var(--accent);min-width:180px}
 .ap-tot{color:#8A857C;font-weight:600;border-bottom:none}
 .ap-empty{font-size:12.5px;color:#aaa;padding:10px 2px}
 @media(max-width:760px){.ap-g4{grid-template-columns:repeat(2,minmax(0,1fr))}.ap-2col{grid-template-columns:1fr}.ap-week{grid-template-columns:repeat(4,minmax(0,1fr))}}
+/* ===== Monthly Summary ===== */
+#amonthlyContent{padding:14px 16px}
+.ms-sel{display:flex;align-items:center;gap:6px}
+.ms-ab{width:30px;height:30px;border:1px solid #EDE4DA;border-radius:8px;background:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:15px;color:#6A5A4A;cursor:pointer;user-select:none}
+.ms-ab:hover{border-color:rgba(var(--accent-rgb),.3);color:var(--accent)}.ms-ab.dis{opacity:.35;cursor:default}
+.ms-ml{min-width:170px;height:30px;border:1.5px solid #E6D8CA;border-radius:8px;background:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#4A3528}
+.ms-sh{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:#4A3528;background:#F8F5F1;border-radius:8px;padding:6px 10px;margin:12px 0 6px}
+.ms-sh svg{color:var(--accent)}.ms-x{margin-left:auto;font-size:11px;color:#8A857C;font-weight:600}
+.ms-tb{border:1px solid #EDE4DA;border-radius:10px;overflow:hidden;background:#FDFDFC}
+.ms-tr{display:grid;grid-template-columns:86px repeat(4,minmax(0,1fr));border-top:1px solid #F0EAE3}.ms-tr:first-child{border-top:none}
+.ms-th{padding:4px 10px;font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:5px}
+.ms-th.t{background:#F8F1EA;color:#8A5A3A}.ms-th.q{background:#F2F0FB;color:#6a4fb0}.ms-th.v{background:#FCF1F1;color:#a02030}
+.ms-c{padding:5px 6px;text-align:center;border-left:1px solid #F3EEE8;line-height:1.3;display:flex;flex-direction:column;justify-content:center}
+.ms-l{font-size:10.5px;color:#8A857C}.ms-v{font-size:15px;font-weight:700;color:#4A3528}
+.ms-c.bad .ms-v{color:#a02030}
+.ms-p{font-size:10.5px;font-weight:700}.ms-p.up{color:#3B6D11}.ms-p.dn{color:#a02030}.ms-p.eq{color:#B0A79C;font-weight:600}
+.ms-pills{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border:1px solid #EDE4DA;border-radius:10px;overflow:hidden;background:#FDFDFC}
+.ms-pl{padding:6px;text-align:center}.ms-pl+.ms-pl{border-left:1px solid #F3EEE8}
+.ms-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media(max-width:760px){.ms-tr{grid-template-columns:repeat(2,minmax(0,1fr))}.ms-th{grid-column:1/-1}.ms-pills{grid-template-columns:repeat(3,minmax(0,1fr))}.ms-two{grid-template-columns:1fr}}
 .pnav .ic-done{margin-right:0!important;font-size:22px}
 .pnav.active{background:rgba(var(--accent-rgb),.07);color:var(--accent);border-color:rgba(var(--accent-rgb),.3)}
 .pnav:hover:not(.active){background:rgba(var(--accent-rgb),.04);border-color:rgba(var(--accent-rgb),.2);color:var(--accent)}
@@ -695,11 +715,10 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
     <button class="pnav" onclick="showPage(6,this)">📢 Announcements</button>
     <button class="pnav active" onclick="showPage(4,this)">📁 Daily Reference</button>
     <button class="pnav" onclick="window.open('https://docs.google.com/spreadsheets/d/16ZzTUvIDmJnokaNJCTLb3AHXm7x_n2Kx_537H2gcCCI/edit','_blank')">🎫 Ticket Quality</button>
-    <button class="pnav" id="navTeam" onclick="showTeamTab(TEAM_TAB||'profile')">👥 Team</button>
+    <button class="pnav" id="navTeam" onclick="showTeamTab(TEAM_TAB||'perf')">👥 Team</button>
     <button class="pnav" onclick="showPage(12,this)" style="position:relative">🕐 Permissions<span id="toNavBadge" style="display:none;position:absolute;top:-6px;right:-6px;min-width:16px;height:16px;background:var(--accent);border-radius:8px;font-size:11px;font-weight:700;color:#fff;text-align:center;line-height:16px;padding:0 4px;box-sizing:border-box"></span></button>
   </div>
   <div id="teamSubNav" class="team-subnav" style="display:none">
-    <button class="tsub" data-t="profile" onclick="showTeamTab('profile')">Agent Profile</button>
     <button class="tsub" data-t="perf" onclick="showTeamTab('perf')">Performance</button>
     <button class="tsub" data-t="sched" onclick="showTeamTab('sched')">Schedules</button>
   </div>
@@ -798,6 +817,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
         <div class="ag-seg">
           <button class="tab active" onclick="sat('daily',this)">Daily Performance</button>
           <button class="tab" onclick="sat('attendance',this)">Attendance</button>
+          <button class="tab" onclick="sat('monthly',this)">Monthly Summary</button>
         </div>
       </div>
 
@@ -829,6 +849,9 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
       </div>
       <div id="aattendance" style="display:none">
         <div class="att-section" id="attContent"></div>
+      </div>
+      <div id="amonthly" style="display:none">
+        <div class="card" id="amonthlyContent"></div>
       </div>
     </div>
   </div>
@@ -1944,7 +1967,7 @@ function renderAgent(name){
   const _k=(l,cur,prev,isTime,lowerBetter,sub)=>{
     let p;
     if(sub!==undefined)p=sub;
-    else if(!_lm)p=_lmLbl+' —';
+    else if(true)p='';
     else{const dv=cur-prev;const up=dv>0,good=lowerBetter?!up:up;
       const dtxt=!dv?'<span class="tp-eq">● 0</span>':'<span class="'+(good?'tp-up':'tp-dn')+'">'+(up?'▲ +':'▼ −')+(isTime?fmtS(Math.abs(dv)):N(Math.abs(dv)))+'</span>';
       p=_lmLbl+' '+(isTime?fmtS(prev):N(prev))+' · '+dtxt;}
@@ -2035,7 +2058,8 @@ function renderAgent(name){
   // Reset to daily tab
   document.getElementById('adaily').style.display='block';
   document.getElementById('aattendance').style.display='none';
-  document.querySelectorAll('#vAgent .tabs .tab').forEach((b,i)=>{b.classList.toggle('active',i===0);});
+  document.getElementById('amonthly').style.display='none';
+  document.querySelectorAll('#vAgent .tabs .tab, #vAgent .ag-seg .tab').forEach((b,i,all)=>{b.classList.toggle('active',b===all[0]);});
   if(document.getElementById('aattendance').style.display==='block')renderAttendance(name);
 }
 
@@ -2239,8 +2263,8 @@ function showPage(n,btn){CP=n;
 }
 
 /* ===== TEAM (Agent Profile · Performance · Schedules) ===== */
-var TEAM_TAB='profile';
-var TEAM_PAGE={profile:13,perf:1,sched:5};
+var TEAM_TAB='perf';
+var TEAM_PAGE={perf:1,sched:5};
 function teamSync(n){
   var sub=document.getElementById('teamSubNav');
   var t=null; Object.keys(TEAM_PAGE).forEach(function(k){ if(TEAM_PAGE[k]===n) t=k; });
@@ -2252,9 +2276,8 @@ function teamSync(n){
   document.querySelectorAll('#teamSubNav .tsub').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-t')===t); });
 }
 function showTeamTab(t){
-  if(!TEAM_PAGE[t]) t='profile';
+  if(!TEAM_PAGE[t]) t='perf';
   showPage(TEAM_PAGE[t], document.getElementById('navTeam'));
-  if(t==='profile') renderAgentProfilePage();
 }
 
 /* ===== AGENT PROFILE — everything about one agent from every section of the dashboard ===== */
@@ -2268,7 +2291,9 @@ var AP_IC={chart:'M3 13a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H4a1 1 0 0 
  clock:'M3 12a9 9 0 1 0 18 0a9 9 0 0 0-18 0M12 7v5l3 3',
  school:'M22 9L12 5L2 9l10 4l10-4v6M6 10.6V16a6 3 0 0 0 12 0v-5.4',
  search:'M3 10a7 7 0 1 0 14 0a7 7 0 1 0-14 0M21 21l-6-6',
- x:'M18 6L6 18M6 6l12 12'};
+ x:'M18 6L6 18M6 6l12 12',
+ star:'M12 17.75l-6.17 3.24l1.18-6.87l-5-4.86l6.9-1l3.09-6.26l3.09 6.26l6.9 1l-5 4.86l1.18 6.87z',
+ phone:'M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5-2.5l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2'};
 function apIc(k,sz){return '<svg viewBox="0 0 24 24" width="'+(sz||16)+'" height="'+(sz||16)+'" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="'+AP_IC[k]+'"/></svg>';}
 function apEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function apNorm(s){return String(s||'').toLowerCase().replace(/[^a-z\u0600-\u06FF]+/g,' ').trim();}
@@ -2471,6 +2496,150 @@ function apStat(k,v,cls){return '<div class="ap-st'+(cls?' '+cls:'')+'"><div cla
 document.addEventListener('click',function(e){var b=document.getElementById('apSug'); if(b&&!e.target.closest('.ap-search')) b.style.display='none';});
 
 
+/* ===== MONTHLY SUMMARY — tab on the agent page (Daily Performance · Attendance · Monthly Summary) ===== */
+var MS_MONTH='';
+function msPrevMonth(k){var y=+k.slice(0,4),m=+k.slice(5,7)-1;if(m<1){m=12;y--;}return y+'-'+('0'+m).slice(-2);}
+function msNextMonth(k){var y=+k.slice(0,4),m=+k.slice(5,7)+1;if(m>12){m=1;y++;}return y+'-'+('0'+m).slice(-2);}
+function msLabel(k){return AP_MONFULL[+k.slice(5,7)-1]+' '+k.slice(0,4);}
+function msAgg(name,k){
+  var rows=(apFind(D,name)||[]).filter(function(r){return r[0]&&String(r[0]).slice(0,7)===k;});
+  if(!rows.length) return null;
+  var s={n:rows.length,login:0,ready:0,brk:0,acof:0,talk:0,tN:0,acw:0,aN:0,aht:0,hN:0,dials:0,inb:0,tic:0,wa:0};
+  rows.forEach(function(r){s.login+=r[8]||0;s.ready+=r[9]||0;s.brk+=r[10]||0;s.acof+=r[11]||0;
+    if(r[5]>0){s.talk+=r[5];s.tN++;} if(r[6]>0){s.acw+=r[6];s.aN++;} if(r[7]>0){s.aht+=r[7];s.hN++;}
+    s.dials+=r[4]||0;s.inb+=r[1]||0;s.tic+=r[2]||0;s.wa+=r[3]||0;});
+  return {login:s.login/s.n*60, ready:s.ready/s.n*60, acof:s.acof/s.n, brk:s.brk/s.n,      // login/ready/break in minutes, call-off in seconds
+          talk:s.tN?s.talk/s.tN:0, acw:s.aN?s.acw/s.aN:0, aht:s.hN?s.aht/s.hN:0,          // seconds
+          inb:s.inb, tic:s.tic, wa:s.wa, days:s.n};
+}
+function msRank(name,k){
+  var arr=Object.keys(D||{}).map(function(n){var a=msAgg(n,k);return {n:n,v:a?a.inb:0};}).filter(function(x){return x.v>0;}).sort(function(a,b){return b.v-a.v;});
+  var i=arr.findIndex(function(x){return apSame(x.n,name);});
+  return i<0?null:{r:i+1,of:arr.length};
+}
+function msFmtMin(m){var t=Math.round(m),h=Math.floor(t/60),mm=t%60;return h+':'+('0'+mm).slice(-2);}            // minutes → h:mm
+function msFmtSec(s){var t=Math.round(s),m=Math.floor(t/60),ss=t%60;return m+':'+('0'+ss).slice(-2);}            // seconds → m:ss
+function msDiffTime(d,unit){ // d in minutes (unit 'min') or seconds (unit 'sec')
+  var a=Math.abs(d);
+  if(unit==='min'){var r=Math.round(a);return r>=60?(Math.floor(r/60)+'h '+(r%60)+' min'):(r+' min');}
+  var s=Math.round(a);return s>=60?(Math.floor(s/60)+' min '+(s%60)+' sec'):(s+' sec');
+}
+function renderMonthlySummary(name){
+  var el=document.getElementById('amonthlyContent'); if(!el||!name) return;
+  if(!MS_MONTH) MS_MONTH=msPrevMonth(apToday().slice(0,7));
+  var k=MS_MONTH, pk=msPrevMonth(k), cur=msAgg(name,k), prev=msAgg(name,pk);
+  var canNext=msNextMonth(k)<=apToday().slice(0,7);
+  var head='<div class="ms-sel"><span class="ms-ab" onclick="msStep(-1)">‹</span><span class="ms-ml">'+msLabel(k)+'</span>'
+    +'<span class="ms-ab'+(canNext?'':' dis')+'"'+(canNext?' onclick="msStep(1)"':'')+'>›</span></div>';
+
+  /* ---- Performance table (Time · Quality · Volume) ---- */
+  var perf;
+  if(!cur){ perf='<div class="ap-empty">No performance data in '+msLabel(k)+'</div>'; }
+  else{
+    var rk=msRank(name,k), prk=prev?msRank(name,pk):null;
+    // [label, value text, current, previous, lowerIsBetter, unit('min'|'sec'|'n'|'rank'), isBad]
+    var cell=function(l,vt,c,p,lowBetter,unit,bad){
+      var dt='';
+      if(p!==null&&p!==undefined&&!isNaN(p)){
+        var d=c-p, rd=unit==='n'||unit==='rank'?Math.round(d):(unit==='min'?Math.round(d):Math.round(d));
+        if(!rd) dt='<span class="ms-p eq">no change</span>';
+        else{
+          var good=lowBetter?d<0:d>0, ar=d>0?'▲ ':'▼ ', txt;
+          if(unit==='n') txt=Math.abs(rd).toLocaleString()+(d>0?' more':' less');
+          else if(unit==='rank'){ good=d<0; ar=d<0?'▲ ':'▼ '; txt=Math.abs(rd)+(Math.abs(rd)===1?' place':' places'); }
+          else txt=msDiffTime(d,unit);
+          dt='<span class="ms-p '+(good?'up':'dn')+'">'+ar+txt+'</span>';
+        }
+      }
+      return '<div class="ms-c'+(bad?' bad':'')+'"><div class="ms-l">'+l+'</div><div class="ms-v">'+vt+'</div>'+(dt||'<span class="ms-p eq">—</span>')+'</div>';
+    };
+    var P=prev||{};
+    var row=function(n,cls,cells){return '<div class="ms-tr"><div class="ms-th '+cls+'">'+n+'</div>'+cells.join('')+(cells.length<4?'<div class="ms-c"></div>':'')+'</div>';};
+    perf='<div class="ms-tb">'
+      +row(apIc('clock',13)+'Time','t',[
+        cell('Login Time',msFmtMin(cur.login),cur.login,prev?P.login:null,true,'min',cur.login>540),
+        cell('Total Ready Duration',msFmtMin(cur.ready),cur.ready,prev?P.ready:null,false,'min',cur.ready<480),
+        cell('Auto Call-Off',fmtS(cur.acof),cur.acof,prev?P.acof:null,true,'sec',cur.acof>1800),
+        cell('Total Break',msFmtMin(cur.brk),cur.brk,prev?P.brk:null,true,'min',cur.brk>60)])
+      +row(apIc('star',13)+'Quality','q',[
+        cell('Average Talk Time',msFmtSec(cur.talk),cur.talk,prev?P.talk:null,true,'sec',cur.talk>240),
+        cell('Average ACW',msFmtSec(cur.acw),cur.acw,prev?P.acw:null,true,'sec',cur.acw>30),
+        cell('Average Handling Time',msFmtSec(cur.aht),cur.aht,prev?P.aht:null,true,'sec',cur.aht>240)])
+      +row(apIc('phone',13)+'Volume','v',[
+        cell('Connected Inbound',cur.inb.toLocaleString(),cur.inb,prev?P.inb:null,false,'n'),
+        cell('Tickets',cur.tic.toLocaleString(),cur.tic,prev?P.tic:null,false,'n'),
+        cell('WhatsApp',cur.wa.toLocaleString(),cur.wa,prev?P.wa:null,false,'n'),
+        cell('Team Rank',rk?rk.r+' / '+rk.of:'—',rk?rk.r:0,(rk&&prk)?prk.r:null,true,'rank')])
+      +'</div>';
+  }
+
+  /* ---- Attendance ---- */
+  var junk=function(v){var s=String(v==null?'':v).trim();return !s||/^[-–—_.\s]+$/.test(s);};
+  var att=apFind(ATT,name)||{}, camp=apFind(window.__ATT_CAMP__,name)||{};
+  var cnt={Office:0,Remote:0,Off:0,Vacation:0,Sick:0,Absent:0,EL:0,'Saturday Shift':0}, offD=[], absD=[], any=false;
+  Object.keys(att).sort().forEach(function(d){ if(String(d).slice(0,7)!==k) return; any=true; var s=att[d]; if(cnt[s]!==undefined) cnt[s]++;
+    if(s==='Off') offD.push(d); if(s==='Absent'||s==='Sick'||s==='EL') absD.push(d+'|'+s); });
+  var cc={}; Object.keys(camp).forEach(function(d){ if(String(d).slice(0,7)===k&&!junk(camp[d])) cc[camp[d]]=(cc[camp[d]]||0)+1; });
+  var perms=(typeof TO_ROWS!=='undefined'?TO_ROWS:[]).filter(function(r){return apSame(r.Employee,name)&&String(r.Date).slice(0,7)===k;})
+    .sort(function(a,b){return String(a.Date).localeCompare(String(b.Date));});
+  var apprH=perms.filter(function(r){return r.Status==='Approved';}).reduce(function(s,r){return s+(Number(r.Hours)||0);},0);
+  var pl=function(l,v,c){return '<div class="ms-pl"><div class="ms-l">'+l+'</div><div class="ms-v"'+(c?' style="color:'+c+'"':'')+'>'+v+'</div></div>';};
+  var attH=any
+    ? '<div class="ms-pills">'+pl('Worked',cnt.Office+cnt.Remote+cnt['Saturday Shift'])+pl('OFF',cnt.Off,'#a02030')+pl('Vacation',cnt.Vacation,'#8A5A10')+pl('Absent / Sick',cnt.Absent+cnt.Sick+cnt.EL)+pl('Permissions',toFmtHrs(apprH)+'h')+'</div>'
+      +'<div class="ap-tags">'+(cnt.Office?'<span class="ap-b gr">Office '+cnt.Office+'</span>':'')+(cnt.Remote?'<span class="ap-b gr">Remote '+cnt.Remote+'</span>':'')+(cnt['Saturday Shift']?'<span class="ap-b gr">Saturday shift '+cnt['Saturday Shift']+'</span>':'')
+      +Object.keys(cc).map(function(c){return '<span class="ap-b gr">'+apEsc(c)+' '+cc[c]+'</span>';}).join('')+'</div>'
+      +(offD.length?'<div class="ap-sub">OFF days</div><div class="ap-tags" style="margin-top:0">'+offD.map(function(d){return '<span class="ap-b off">'+apFmtDate(d)+'</span>';}).join('')+'</div>':'')
+      +(absD.length?'<div class="ap-sub">Absent / Sick</div><div class="ap-tags" style="margin-top:0">'+absD.map(function(x){var p=x.split('|');return '<span class="ap-b off">'+apFmtDate(p[0])+' · '+p[1]+'</span>';}).join('')+'</div>':'')
+    : '<div class="ap-empty">No attendance data in '+msLabel(k)+'</div>';
+
+  /* ---- Vacation ---- */
+  var vr=[];
+  (window.__VAC_MONTHS__||[]).forEach(function(m){
+    var mi=AP_MONFULL.indexOf(m.month); if(mi<0||(mi+1)!==+k.slice(5,7)) return;
+    var ag=m.agents.find(function(a){return apSame(a.name,name);}); if(!ag) return;
+    var days=[]; ag.cells.forEach(function(v,ci){var vv=String(v||'').trim().toLowerCase(); if(vv==='v'||vv==='vacation'||vv==='vaction'){days.push(parseInt(m.days[ci]&&m.days[ci].num,10)||(ci+1));}});
+    days.sort(function(a,b){return a-b;}); var s=null,p=null;
+    days.forEach(function(d){ if(s===null){s=p=d;return;} if(d===p+1){p=d;return;} vr.push([s,p,mi]); s=p=d; }); if(s!==null) vr.push([s,p,mi]);
+  });
+  var vacH=vr.length?vr.map(function(r){var n=r[1]-r[0]+1;return '<div class="ap-li"><span>'+(r[0]===r[1]?r[0]:r[0]+'–'+r[1])+' '+AP_MON[r[2]]+'</span><span class="ap-b vac">'+n+(n===1?' day':' days')+'</span></div>';}).join('')
+    :'<div class="ap-empty">No vacation in '+msLabel(k)+'</div>';
+
+  /* ---- Permissions ---- */
+  var stCls={Approved:'ok',Pending:'vac',Rejected:'off'};
+  var permH=(perms.length?perms.map(function(r){return '<div class="ap-li"><span>'+apFmtDate(String(r.Date).slice(0,10))+(r.From?' · '+apEsc(r.From)+'–'+apEsc(r.To||''):'')+'</span><span class="ap-b '+(stCls[r.Status]||'gr')+'">'+apEsc(r.Status||'')+'</span></div>';}).join('')
+    :'<div class="ap-empty">No permissions in '+msLabel(k)+'</div>')
+    +(typeof TO_MONTHLY_LIMIT!=='undefined'?'<div class="ap-li ap-tot"><span>Approved '+toFmtHrs(apprH)+'h of '+TO_MONTHLY_LIMIT+'h</span><span>Remaining '+toFmtHrs(Math.max(0,TO_MONTHLY_LIMIT-apprH))+'h</span></div>':'');
+
+  /* ---- Training ---- */
+  var trH='';
+  var tr=AP_EXTRA.training||[];
+  if(tr.length){
+    var keys=Object.keys(tr[0]).filter(function(x){return x&&!/^__col/.test(x);}); var st=/^(#|no\.?|s\/?n|num?)$/i.test(String(keys[0]).trim())?1:0;
+    var ak=keys[st], camps=keys.slice(st+1).filter(function(x){return String(x).trim()&&!/^total$/i.test(String(x).trim());});
+    var rw=tr.find(function(r){return apSame(r[ak],name);});
+    if(rw) trH=camps.map(function(c){var v=rw[c]; var s=String(v==null?'':v).trim(), lo=s.toLowerCase();
+      var done=v===true||lo==='true'||lo==='yes'||s==='✓'||s==='✔'||s==='1'; var no=!done&&(junk(s)||lo==='false'||lo==='no'||s==='0');
+      return '<span class="ap-b '+(done?'ok':no?'gr':'vac')+'">'+apEsc(String(c).trim())+(done?' ✓':no?'':' · '+apEsc(s))+'</span>';}).join('');
+  }
+
+  var sh=function(ic,t,x){return '<div class="ms-sh">'+ic+'<span>'+t+'</span>'+(x?'<span class="ms-x">'+x+'</span>':'')+'</div>';};
+  el.innerHTML='<div class="ms-wrap">'+head
+    +sh(apIc('chart'),'Performance',prev?'vs '+AP_MONFULL[+pk.slice(5,7)-1]:'')+perf
+    +sh(apIc('att'),'Attendance')+attH
+    +'<div class="ms-two"><div>'+sh(apIc('sun'),'Vacation')+vacH+'</div><div>'+sh(apIc('clock'),'Permissions')+permH+'</div></div>'
+    +(trH?sh(apIc('school'),'Campaign Training')+'<div class="ap-tags" style="margin-top:0">'+trH+'</div>':'')
+    +'</div>';
+}
+function msStep(dir){ MS_MONTH=dir<0?msPrevMonth(MS_MONTH):msNextMonth(MS_MONTH); if(CA) renderMonthlySummary(CA); }
+async function openMonthlySummary(){
+  var el=document.getElementById('amonthlyContent'); if(!el||!CA) return;
+  if(!window.__VAC_MONTHS__||AP_EXTRA.training===null||(typeof TO_LOADED!=='undefined'&&!TO_LOADED)){
+    el.innerHTML='<div style="text-align:center;padding:30px;color:#aaa">⏳ Loading…</div>';
+    try{ await apEnsureData(); }catch(e){}
+  }
+  renderMonthlySummary(CA);
+}
+
 /* ===== CASE HANDLING — reads the "Case Handling" tab dynamically ===== */
 async function renderCaseHandling(){
   var host=document.getElementById('caseHandlingContent');
@@ -2632,7 +2801,9 @@ function sat(t,btn){
   btn.parentElement.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
   document.getElementById('adaily').style.display=t==='daily'?'block':'none';
   document.getElementById('aattendance').style.display=t==='attendance'?'block':'none';
+  document.getElementById('amonthly').style.display=t==='monthly'?'block':'none';
   if(t==='attendance'&&CA)renderAttendance(CA);
+  if(t==='monthly'&&CA)openMonthlySummary();
 }
 function resetAll(){['df','dt','df_p1','dt_p1','df2','dt2'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   const all=Object.values(D).flat().map(r=>r[0]).filter(Boolean).sort();
