@@ -8397,10 +8397,28 @@ function selectRecallBrand(name){
   loadRecallBrand(name);
 }
 
+// Recall VIN search: each brand reads ONLY its own tab (Nissan / Stellantis / BAIC).
+// headers=1 stops gviz from merging data rows into the header row (was swallowing VINs).
+async function fetchRecallRows(tabName){
+  const url='https://docs.google.com/spreadsheets/d/'+RECALL_SEARCH_SHEET_ID+'/gviz/tq?tqx=out:csv&headers=1&sheet='+encodeURIComponent(tabName)+'&_='+Date.now();
+  try{
+    const ctl=new AbortController();const t=setTimeout(()=>ctl.abort(),45000);
+    const res=await fetch(url,{signal:ctl.signal});clearTimeout(t);
+    const rows=Papa.parse(await res.text(),{skipEmptyLines:true}).data;
+    if(rows&&rows.length>1) return rows;
+    throw new Error('empty');
+  }catch(e){
+    // fallback: Apps Script proxy (objects keyed by header)
+    const objs=await fetchSheet(RECALL_SEARCH_SHEET_ID, tabName);
+    if(!objs||!objs.length) return [];
+    const hdr=Object.keys(objs[0]);
+    return [hdr, ...objs.map(o=>hdr.map(k=>o[k]))];
+  }
+}
+
 async function loadRecallSearchData(brandFilter){
   const statusEl = document.getElementById('recallSearchStatus');
   const tabName = RECALL_SHEET_TABS[brandFilter] || brandFilter;
-  // Use cached data if available
   if(RECALL_BRAND_DATA[brandFilter]){
     RECALL_SEARCH_DATA = RECALL_BRAND_DATA[brandFilter];
     if(statusEl) statusEl.innerHTML = '✅ '+RECALL_SEARCH_DATA.length.toLocaleString()+' سجل '+brandFilter+' جاهز للبحث';
@@ -8408,15 +8426,19 @@ async function loadRecallSearchData(brandFilter){
   }
   try{
     if(statusEl) statusEl.innerHTML = '⏳ تحميل بيانات '+brandFilter+'...';
-    const arr = await fetchCSVRaw(RECALL_SEARCH_SHEET_ID, tabName);
+    const arr = await fetchRecallRows(tabName);
+    const hdr = (arr[0]||[]).map(x=>String(x||'').toLowerCase());
+    const col = (re, def)=>{const i=hdr.findIndex(x=>re.test(x));return i>=0?i:def;};
+    const iCode=col(/code/,0), iVin=col(/vin/,1), iBrand=col(/brand/,2), iModel=col(/model(?!.*year)/,3), iYear=col(/year/,4), iDesc=col(/desc/,5);
+    const s=v=>String(v===undefined||v===null?'':v).trim();
     const data = arr.slice(1).map(r=>({
-      code: String(r[0]||'').trim(),
-      vin: String(r[1]||'').trim().toUpperCase(),
-      brand: String(r[2]||'').trim()||brandFilter,
-      model: String(r[3]||'').trim(),
-      year: String(r[4]||'').trim(),
-      desc: String(r[5]||'').trim()
-    })).filter(r=>r.vin);
+      code: s(r[iCode]),
+      vin: s(r[iVin]).toUpperCase().replace(/\s+/g,''),
+      brand: s(r[iBrand])||brandFilter,
+      model: s(r[iModel]),
+      year: s(r[iYear]),
+      desc: s(r[iDesc])
+    })).filter(r=>r.vin && r.vin!=='VIN' && !/^vin/i.test(r.vin));
     RECALL_BRAND_DATA[brandFilter] = data;
     RECALL_SEARCH_DATA = data;
     if(statusEl) statusEl.innerHTML = '✅ '+data.length.toLocaleString()+' سجل '+brandFilter+' جاهز للبحث';
@@ -8430,12 +8452,12 @@ function searchRecallByVIN(brandFilter){
   const input = document.getElementById('recallVinInput');
   const resultsEl = document.getElementById('recallSearchResults');
   if(!input || !resultsEl) return;
-  const q = input.value.trim().toUpperCase();
+  const q = input.value.toUpperCase().replace(/\s+/g,'');
   if(!q){ resultsEl.innerHTML=''; return; }
   if(!RECALL_SEARCH_DATA){ resultsEl.innerHTML='<div style="text-align:center;padding:20px;color:#aaa">⏳ البيانات لا تزال تُحمّل...</div>'; return; }
 
   let matches = RECALL_SEARCH_DATA.filter(r=>r.vin.includes(q));
-  if(brandFilter) matches = matches.filter(r=>r.brand.toLowerCase().includes(brandFilter.toLowerCase()));
+  // data already comes from this brand's own tab — no brand-name filter (Stellantis rows say DODGE/JEEP/CHRYSLER...)
 
   if(!matches.length){
     resultsEl.innerHTML = q.length<3 ? '' : '<div style="text-align:center;padding:24px;color:#aaa">❌ لا توجد نتائج لرقم الهيكل المُدخل</div>';
@@ -8486,7 +8508,7 @@ async function loadRecallBrand(name){
     cont.innerHTML = '<div class="ref-brand-section" style="margin-top:8px">'
       +'<div style="padding:24px 16px">'
       +'<div style="max-width:500px;margin:0 auto 16px;position:relative">'
-      +'<input id="recallVinInput" type="text" placeholder="🔍 ابحث برقم الهيكل (VIN)..." oninput="searchRecallByVIN(\''+brandFilter+'\')" style="width:100%;box-sizing:border-box;padding:12px 18px;border-radius:12px;border:1px solid '+color+'66;background:#fff;font-size:14px;outline:none;direction:ltr;text-align:center" maxlength="17">'
+      +'<input id="recallVinInput" type="text" placeholder="🔍 ابحث برقم الهيكل (VIN)..." oninput="searchRecallByVIN(\''+brandFilter+'\')" style="width:100%;box-sizing:border-box;padding:12px 18px;border-radius:12px;border:1px solid '+color+'66;background:#fff;font-size:14px;outline:none;direction:ltr;text-align:center" maxlength="24">'
       +'</div>'
       +'<div id="recallSearchStatus" style="text-align:center;font-size:12px;color:#999;margin-bottom:12px">⏳ تحميل بيانات الاستدعاء...</div>'
       +'<div id="recallSearchResults"></div>'
