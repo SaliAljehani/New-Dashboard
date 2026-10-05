@@ -68,6 +68,16 @@ select#agSel{font-size:14px;font-weight:600;color:var(--accent);min-width:180px}
 .tsub:hover{border-color:rgba(var(--accent-rgb),.2)}
 .tsub.on{background:rgba(var(--accent-rgb),.08);color:var(--accent);border-color:rgba(var(--accent-rgb),.25)}
 /* ===== Agent Profile ===== */
+.ap-yrow{display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-size:12.5px;font-weight:600;color:#8A857C}
+.ap-months{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px;margin:16px 0 4px}
+.ap-months .ap-pchip{text-align:center;padding:7px 2px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ap-pchip.ap-all{padding:6px 14px}
+.ap-pchip.dis{color:#CFC6BC;background:#FAF8F5;cursor:default}
+.ap-ptitle{font-size:17px;font-weight:700;color:#4A3528}
+.ag-kpis.ap-kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+.ap-2col{gap:14px}.ap-panel .ref-panel-header svg{color:var(--accent)}
+@media(max-width:1000px){.ap-months{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media(max-width:760px){.ap-months{grid-template-columns:repeat(4,minmax(0,1fr))}.ag-kpis.ap-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 .ap-wrap{max-width:1100px;margin:0 auto}
 .ap-search{position:relative;display:flex;align-items:center;gap:8px;max-width:420px;margin:4px auto 18px;background:#fff;border:1px solid #EDE4DA;border-radius:12px;padding:0 12px}
 .ap-search:focus-within{border-color:rgba(var(--accent-rgb),.35)}
@@ -106,7 +116,7 @@ select#agSel{font-size:14px;font-weight:600;color:var(--accent);min-width:180px}
 .ap-day{border:1px solid #F0E9E1;border-radius:10px;padding:8px 4px;background:#fff;min-width:0}
 .ap-day .ap-b{max-width:100%;overflow:hidden;text-overflow:ellipsis}
 .ap-dn{font-size:12px;font-weight:700;color:#4A3528}.ap-dd{font-size:11px;color:#8A857C;margin-bottom:6px;min-height:14px}
-.ap-2col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}
+.ap-2col{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
 .ap-li{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12.5px;padding:7px 2px;border-bottom:1px solid #F3ECE6;color:#4A3528}
 .ap-tot{color:#8A857C;font-weight:600;border-bottom:none}
 .ap-empty{font-size:12.5px;color:#aaa;padding:10px 2px}
@@ -2299,7 +2309,6 @@ async function apEnsureData(){
     var tmp=document.createElement('div'); tmp.id=id; tmp.style.display='none'; document.body.appendChild(tmp);
     try{ await fn(); }catch(e){} tmp.remove();
   }
-  if(!window.__DO_WEEKS__ && typeof renderDailyOff==='function') jobs.push(offscreen('schedule_dailyoff',renderDailyOff));
   if(!window.__VAC_MONTHS__ && typeof renderVacation2026==='function') jobs.push(offscreen('schedule_vacation2026',renderVacation2026));
   if(typeof TO_LOADED!=='undefined' && !TO_LOADED){
     jobs.push(toFetchRows(false).then(function(r){ TO_ROWS=r; TO_LOADED=true; try{toUpdateNavBadge();}catch(e){} }).catch(function(){}));
@@ -2359,84 +2368,47 @@ async function apRenderBody(){
 }
 
 function apBuild(name){
-  var today=apToday();
-  /* ---- Weekly schedule (current week) ---- */
-  var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  var wk=null, wkRow=null;
-  if(window.__DO_WEEKS__&&window.__DO_WEEKS__.length){
-    wk=window.__DO_WEEKS__[window.__DO_ACTIVE__||0];
-    wkRow=wk&&wk.agents.find(function(a){return apSame(a.name,name);});
-  }
-  var shiftKind=function(v){var vl=String(v||'').toLowerCase().trim();
-    if(!vl||vl==='-'||vl==='–'||vl==='—') return {c:'call',t:'Calls'};
-    if(vl==='off') return {c:'off',t:'OFF'};
-    if(vl==='vacation'||vl==='v'||vl==='vaction') return {c:'vac',t:'Vacation'};
-    if(vl.indexOf('live')===0||vl==='livechat') return {c:'lc',t:v};
-    if(vl.indexOf('multi')>=0) return {c:'mc',t:v};
-    return {c:'gr',t:v};};
-  var shiftMain='', brk='';
-  if(wkRow){
-    var cnt={};
-    DAYS.forEach(function(d){var k=shiftKind(wkRow[d]); if(k.c==='off'||k.c==='vac') return; var key=k.c==='call'?'Calls':k.t; cnt[key]=(cnt[key]||0)+1;});
-    shiftMain=Object.keys(cnt).sort(function(a,b){return cnt[b]-cnt[a];})[0]||'';
-    brk=wkRow['Break Time']||'';
-  }
+  var today=apToday(), yr=today.slice(0,4), curM=+today.slice(5,7);
+  var junk=function(v){var s=String(v==null?'':v).trim();return !s||/^[-–—_.\s]+$/.test(s);};
 
-  /* ---- Today ---- */
-  var todayStat='';
-  var att=apFind(ATT,name)||{};
-  if(att[today]) todayStat=att[today];
-  else if(wkRow){ var dn=DAYS[new Date().getDay()]; todayStat=shiftKind(wkRow[dn]).t; }
-  var todayCls={'Off':'off','OFF':'off','Vacation':'vac','Sick':'off','Absent':'off','Office':'ok','Remote':'ok','Calls':'ok'}[todayStat]||(/live/i.test(todayStat)?'lc':/multi/i.test(todayStat)?'mc':'gr');
-
-  /* ---- Period chips ---- */
-  var chips=apMonths().map(function(k){return '<span class="ap-pchip'+(AP_PERIOD===k?' on':'')+'" onclick="apSetPeriod(\''+k+'\')">'+AP_MONFULL[+k.slice(5)-1]+'</span>';}).join('')
-    +'<span class="ap-pchip'+(AP_PERIOD==='all'?' on':'')+'" onclick="apSetPeriod(\'all\')">All '+today.slice(0,4)+'</span>';
-  var periodLbl=AP_PERIOD==='all'?('All '+today.slice(0,4)):AP_MONFULL[+AP_PERIOD.slice(5)-1];
+  /* ---- Months: Jan … Dec + All ---- */
+  var chips='<div class="ap-months">'+AP_MONFULL.map(function(m,i){
+      var k=yr+'-'+('0'+(i+1)).slice(-2), fut=(i+1)>curM;
+      return '<span class="ap-pchip'+(AP_PERIOD===k?' on':'')+(fut?' dis':'')+'"'+(fut?'':' onclick="apSetPeriod(\''+k+'\')"')+'>'+m+'</span>';
+    }).join('')+'</div>';
+  var periodLbl=AP_PERIOD==='all'?('All '+yr):AP_MONFULL[+AP_PERIOD.slice(5)-1]+' '+AP_PERIOD.slice(0,4);
 
   /* ---- Performance ---- */
   var rowsOf=function(n){return (apFind(D,n)||[]).filter(function(r){return apInPeriod(r[0]);});};
   var pr=rowsOf(name), I=0,T=0,W=0,tS=0,tN=0,hS=0,hN=0;
   pr.forEach(function(r){I+=r[1]||0;T+=r[2]||0;W+=r[3]||0;if(r[5]>0){tS+=r[5];tN++;}if(r[7]>0){hS+=r[7];hN++;}});
-  var rank='', teamN=0;
+  var rank='—';
   if(pr.length){
     var arr=Object.keys(D||{}).map(function(n){return {n:n,v:rowsOf(n).reduce(function(s,r){return s+(r[1]||0);},0)};}).filter(function(x){return x.v>0;}).sort(function(a,b){return b.v-a.v;});
-    teamN=arr.length; var ix=arr.findIndex(function(x){return apSame(x.n,name);}); if(ix>=0) rank=(ix+1);
+    var ix=arr.findIndex(function(x){return apSame(x.n,name);}); if(ix>=0) rank=(ix+1)+' / '+arr.length;
   }
-  var perfHTML=pr.length
-    ? '<div class="ap-g4">'+apStat('Inbound Calls',I.toLocaleString())+apStat('Tickets',T.toLocaleString())+apStat('WhatsApp',W.toLocaleString())+apStat('Avg Handling Time',hN?apFmtS(hS/hN):'—')+'</div>'
-      +'<div class="ap-note">'+(rank?'Rank by inbound <b>'+rank+' / '+teamN+'</b> · ':'')+'Avg talk '+(tN?apFmtS(tS/tN):'—')+' · '+pr.length+' days with data</div>'
-    : '<div class="ap-empty">No performance data for '+periodLbl+'</div>';
 
   /* ---- Attendance ---- */
+  var att=apFind(ATT,name)||{};
   var cntA={Office:0,Remote:0,Off:0,Vacation:0,Sick:0,Absent:0,EL:0,'Saturday Shift':0}, offDates=[], absDates=[];
   var camp=apFind(window.__ATT_CAMP__,name)||{};
   Object.keys(att).sort().forEach(function(d){ if(!apInPeriod(d)) return; var s=att[d]; if(cntA[s]!==undefined) cntA[s]++;
     if(s==='Off') offDates.push(d); if(s==='Absent'||s==='Sick'||s==='EL') absDates.push(d+'|'+s); });
   var work=cntA.Office+cntA.Remote+cntA['Saturday Shift'];
   var anyAtt=Object.keys(att).some(apInPeriod);
-  var campCnt={}; Object.keys(camp).forEach(function(d){ if(apInPeriod(d)&&camp[d]) campCnt[camp[d]]=(campCnt[camp[d]]||0)+1; });
+  var campCnt={}; Object.keys(camp).forEach(function(d){ if(apInPeriod(d)&&!junk(camp[d])) campCnt[camp[d]]=(campCnt[camp[d]]||0)+1; });
   var attHTML=anyAtt
-    ? '<div class="ap-g4">'+apStat('Working days',work)+apStat('OFF',cntA.Off,'off')+apStat('Vacation',cntA.Vacation,'vac')+apStat('Absent / Sick',cntA.Absent+cntA.Sick+cntA.EL)+'</div>'
-      +'<div class="ap-tags">'+(cntA.Office?'<span class="ap-b gr">Office '+cntA.Office+'</span>':'')+(cntA.Remote?'<span class="ap-b gr">Remote '+cntA.Remote+'</span>':'')+(cntA['Saturday Shift']?'<span class="ap-b gr">Saturday shift '+cntA['Saturday Shift']+'</span>':'')
+    ? '<div class="ap-tags" style="margin-top:0">'+(cntA.Office?'<span class="ap-b gr">Office '+cntA.Office+'</span>':'')+(cntA.Remote?'<span class="ap-b gr">Remote '+cntA.Remote+'</span>':'')+(cntA['Saturday Shift']?'<span class="ap-b gr">Saturday shift '+cntA['Saturday Shift']+'</span>':'')
       +Object.keys(campCnt).map(function(c){return '<span class="ap-b gr">'+apEsc(c)+' '+campCnt[c]+'</span>';}).join('')+'</div>'
       +(offDates.length&&AP_PERIOD!=='all'?'<div class="ap-sub">OFF days</div><div class="ap-tags">'+offDates.map(function(d){return '<span class="ap-b off">'+apFmtDate(d)+'</span>';}).join('')+'</div>':'')
       +(absDates.length?'<div class="ap-sub">Absent / Sick</div><div class="ap-tags">'+absDates.map(function(x){var p=x.split('|');return '<span class="ap-b off">'+apFmtDate(p[0])+' · '+p[1]+'</span>';}).join('')+'</div>':'')
-    : '<div class="ap-empty">No attendance data for '+periodLbl+'</div>';
+    : '<div class="ap-empty">No attendance data in '+periodLbl+'</div>';
 
-  /* ---- Weekly schedule ---- */
-  var wkHTML;
-  if(wkRow){
-    wkHTML='<div class="ap-week">'+DAYS.map(function(d){var k=shiftKind(wkRow[d]); var dt=wk.dates&&wk.dates[d]?wk.dates[d]:'';
-      return '<div class="ap-day"><div class="ap-dn">'+d.slice(0,3)+'</div><div class="ap-dd">'+apEsc(dt)+'</div><span class="ap-b '+k.c+'">'+apEsc(k.t)+'</span></div>';}).join('')+'</div>'
-      +(brk||wkRow['Saturday Break']?'<div class="ap-note">Break '+apEsc(brk||'—')+(wkRow['Saturday Break']?' · Saturday break '+apEsc(wkRow['Saturday Break']):'')+'</div>':'');
-  } else wkHTML='<div class="ap-empty">Not in this week\'s schedule</div>';
-
-  /* ---- Vacation 2026 ---- */
+  /* ---- Vacation (Vacation 2026 tab) ---- */
   var vacRanges=[];
   (window.__VAC_MONTHS__||[]).forEach(function(m){
     var mi=AP_MONFULL.indexOf(m.month); if(mi<0) return;
-    var key=today.slice(0,4)+'-'+('0'+(mi+1)).slice(-2);
+    var key=yr+'-'+('0'+(mi+1)).slice(-2);
     if(AP_PERIOD!=='all'&&AP_PERIOD!==key) return;
     var ag=m.agents.find(function(a){return apSame(a.name,name);}); if(!ag) return;
     var days=[]; ag.cells.forEach(function(v,ci){var vv=String(v||'').trim().toLowerCase(); if(vv==='v'||vv==='vacation'||vv==='vaction'){var dn=parseInt(m.days[ci]&&m.days[ci].num,10)||(ci+1); days.push(dn);}});
@@ -2448,7 +2420,7 @@ function apBuild(name){
   var vacDays=vacRanges.reduce(function(t,r){return t+(r.e-r.s+1);},0);
   var vacHTML=vacRanges.length
     ? vacRanges.map(function(r){var n=r.e-r.s+1;return '<div class="ap-li"><span>'+(r.s===r.e?r.s:r.s+'–'+r.e)+' '+AP_MON[r.m]+'</span><span class="ap-b vac">'+n+(n===1?' day':' days')+'</span></div>';}).join('')
-      +'<div class="ap-li ap-tot"><span>Total</span><span>'+vacDays+' days</span></div>'
+      +'<div class="ap-li ap-tot"><span>Total</span><span>'+vacDays+(vacDays===1?' day':' days')+'</span></div>'
     : '<div class="ap-empty">No vacation in '+periodLbl+'</div>';
 
   /* ---- Permissions ---- */
@@ -2470,21 +2442,29 @@ function apBuild(name){
     var row=tr.find(function(r){return apSame(r[ak],name);});
     if(row) trHTML=camps.map(function(c){var v=row[c]; var s=String(v==null?'':v).trim(), lo=s.toLowerCase();
       var done=v===true||lo==='true'||lo==='yes'||s==='✓'||s==='✔'||s==='1';
-      var no=!done&&(s===''||lo==='false'||lo==='no'||s==='0');
+      var no=!done&&(junk(s)||lo==='false'||lo==='no'||s==='0');
       return '<span class="ap-b '+(done?'ok':no?'gr':'vac')+'">'+apEsc(String(c).trim())+(done?' ✓':no?'':' · '+apEsc(s))+'</span>';}).join('');
   }
+  if(!trHTML) trHTML='<div class="ap-empty">No training data</div>';
+  else trHTML='<div class="ap-tags" style="margin-top:0">'+trHTML+'</div>';
 
   var sec=function(ic,t,inner,extra){return '<div class="ap-sec"><div class="ap-sh">'+ic+'<span>'+t+'</span>'+(extra?'<span class="ap-sh-x">'+extra+'</span>':'')+'</div>'+inner+'</div>';};
+  var perfHTML=pr.length
+    ? '<div class="ap-g4">'+apStat('Inbound Calls',I.toLocaleString())+apStat('Tickets',T.toLocaleString())+apStat('WhatsApp',W.toLocaleString())+apStat('Avg Handling Time',hN?apFmtS(hS/hN):'—')+'</div>'
+      +'<div class="ap-note">Rank by inbound <b>'+rank+'</b> · Avg talk '+(tN?apFmtS(tS/tN):'—')+' · '+pr.length+' days with data</div>'
+    : '<div class="ap-empty">No performance data in '+periodLbl+'</div>';
+  var attFull=anyAtt
+    ? '<div class="ap-g4">'+apStat('Working days',work)+apStat('OFF',cntA.Off,'off')+apStat('Vacation',cntA.Vacation,'vac')+apStat('Absent / Sick',cntA.Absent+cntA.Sick+cntA.EL)+'</div>'+attHTML.replace('<div class="ap-tags" style="margin-top:0">','<div class="ap-tags">')
+    : attHTML;
   return '<div class="ap-card">'
     +'<div class="ap-head"><span class="ap-av">'+apInitials(name)+'</span><div class="ap-hn"><div class="ap-name">'+apEsc(name)+'</div>'
-    +'<div class="ap-meta">'+[apBadge(name)?'Badge '+apBadge(name):'',shiftMain,brk?'Break '+apEsc(brk):''].filter(Boolean).join(' · ')+'</div></div>'
-    +(todayStat?'<span class="ap-b '+todayCls+' ap-today">Today · '+apEsc(todayStat)+'</span>':'')+'</div>'
-    +'<div class="ap-periods">'+chips+'</div>'
-    +sec(apIc('chart'),'Team Performance',perfHTML,periodLbl)
-    +sec(apIc('att'),'Attendance',attHTML,periodLbl)
-    +sec(apIc('cal'),'Weekly Schedule',wkHTML,wk?apEsc(wk.label||''):'')
-    +'<div class="ap-2col">'+sec(apIc('sun'),'Vacation',vacHTML,periodLbl)+sec(apIc('clock'),'Permissions',permHTML,periodLbl)+'</div>'
-    +(trHTML?sec(apIc('school'),'Campaign Training','<div class="ap-tags">'+trHTML+'</div>'):'')
+    +(apBadge(name)?'<div class="ap-meta">Badge '+apBadge(name)+'</div>':'')+'</div></div>'
+    +chips
+    +'<div class="ap-yrow"><span class="ap-ptitle">'+periodLbl+'</span><span class="ap-pchip ap-all'+(AP_PERIOD==='all'?' on':'')+'" onclick="apSetPeriod(\'all\')">All '+yr+'</span></div>'
+    +sec(apIc('chart'),'Team Performance',perfHTML)
+    +sec(apIc('att'),'Attendance',attFull)
+    +'<div class="ap-2col">'+sec(apIc('sun'),'Vacation',vacHTML)+sec(apIc('clock'),'Permissions',permHTML)+'</div>'
+    +sec(apIc('school'),'Campaign Training',trHTML)
     +'</div>';
 }
 function apStat(k,v,cls){return '<div class="ap-st'+(cls?' '+cls:'')+'"><div class="ap-k">'+k+'</div><div class="ap-v">'+v+'</div></div>';}
