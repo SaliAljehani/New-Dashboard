@@ -1026,7 +1026,7 @@ const TEAM_LOGOS={
   'BAIC':'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD//gAQTGF2YzU4LjkxLjEwMAD/2wBDAA4KCw0LCQ4NDA0QDw4RFiQXFhQUFiwgIRokNC43NjMuMjI6QVNGOj1OPjIySGJJTlZYXV5dOEVmbWVabFNbXVn/2wBDAQ8QEBYTFioXFypZOzI7WVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVn/wAARCABQAI4DASIAAhEBAxEB/8QAGwABAAMAAwEAAAAAAAAAAAAAAAQFBgECAwf/xAAyEAABBAADBAgGAgMAAAAAAAAAAQIDBAUREgYhMVQTFBUWIlGR0UFhcZOhsSPwUoKU/8QAGgEBAAMBAQEAAAAAAAAAAAAAAAECBAMFBv/EACQRAQACAQMDBAMAAAAAAAAAAAABAgMEERJBUaETFSGRFDFx/9oADAMBAAIRAxEAPwD6SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8JbdaF+iWxDG7jk56Ip07Rpc5X+633C3C09EoEXtGlzlf7rfcdo0ucr/db7g4W7JQIvaNLnK/3W+47Rpc5X+633Bwt2LmIVKCMW3YZDrz06l45EXvFhHPw+pn9prS2r7GwwyzxRs3PjiV7VVd65Km7yKbTJyVn/mX3KzL0cWipakWtM7ty3aDCnORrb0Kqq5IiLxLQwWB1nT4tXa+rMxrXa1V8GlN2/ib0mGbU4qYrRWoACWUAAAAADg5IWL2upYVasZ5LHGqt+vBPzkE1rNpiI6vme0FrruOW5UXNuvS36JuT9EizsziNaCSVzYXdE1HPYyRFc1PPIgYWkTsTrdZkRkKSIr3O4ZJvU0s20UNjGZIY2QQ1ppWtlsqqqr2N/Wafs5vp8lsmPjTFHxEKifZy5Wc1s0tRj3KiaFmRF3/ACO79lr7JYoldWWSVfC1JUzXcq5/TcT9orVXEL0OVqk+F8yZuZGqPazh4nfFPkSO16Xea5f6ePo69fRXT/NcuCfknaHH18/GJ67T0+lHPs5iEL4Gtjjm6dysYsT0cmacUXy4L6HW9gF2lB0zuhljR/RuWJ6O0u8lNLDjlCPEaWieKKotd3gY3dDKuSqq/wB8zyw7q0deHC607b08k62ZnRp4cm70TNfiqo38idkfk5o+bR4/v1s0OFz1qtFlRqqnVYsnrlu3cfye7MTrvaxU1+N2lPD8f6pXsoTpJGisdoWLVJ81zVcvXI82VLTWx/wvzZG5f9lMfrZe3h5c48dpmd1s3Ea7q6zNVytRyNyy35qSylbhskdqujWr0Ko10nkjkLs04bXtvzhnyVrG3GQAHZyAAAAAAqtocOnxXDuq15GR6norlfnvRPhu+eRagL0vNLRaP3DA9xbnN1/Rw7i3ebr+jjfAjjDZ7lqO/hge4t3m6/o4dxbvN1/RxvgOMHuWo7+GB7i3ebr+ji52a2bkwe1NPPLHI5zNDdCLu35rx+iGlA2hTJrs2Ss0tPxIcHIJYwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH//2Q=='
 };
 
-const SHEET_GIDS={'Agent':1123791969,'Agent Performance':810269545,'Attendance Data':1979596727,'Data Call':95246895,'Call Data':95246895,'Call Data ':95246895,'Reference':910779499,'Weekly Calls & Break':1429234410,'Daily Off Schedule':1979894769,'Daily Off Schedule & Weekly Cal':1979894769,'Announcement Board':536403637,'Subject':124854438,'Emails ':124854438,'Emails':124854438,'Contact Number ':124854438,'Contact Number':124854438,'Vacation Schedule 2026':644438759,'Daily Off Schedule & Weekly Calls & Breakk':920710775,'Campaign Training':700588037};
+const SHEET_GIDS={'Agent':1123791969,'Agent Performance':810269545,'Attendance Data':1979596727,'Data Call':95246895,'Call Data':95246895,'Call Data ':95246895,'Reference':910779499,'Announcement Board':536403637,'Subject':124854438,'Emails ':124854438,'Emails':124854438,'Contact Number ':124854438,'Contact Number':124854438,'Vacation Schedule 2026':644438759,'Daily Off Schedule & Weekly Calls & Breakk':920710775,'Campaign Training':700588037};
 // ---------------------------------------------------------------------------
 // Sheet loading
 //
@@ -1047,7 +1047,7 @@ const SHEET_GIDS={'Agent':1123791969,'Agent Performance':810269545,'Attendance D
 // a row (sessionStorage is per-browser, so it does nothing for the Apps Script
 // concurrency limit across agents). Sheet edits must show up quickly, so this
 // is kept low and the manual refresh button clears it outright.
-const SHEET_CACHE_TTL = 30000; // 30s
+const SHEET_CACHE_TTL = 300000; // 5 min (same as the proxy cache; Refresh button clears it)
 
 function sheetCacheGet(key){
   try{
@@ -1211,10 +1211,10 @@ async function loadSheet(name, retries){
     }
   }
 
-  retries = retries===undefined ? 1 : retries;
+  retries = retries===undefined ? 0 : retries;   // no retry: if the proxy is slow, go straight to gviz
   const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${SHEET_ID}&gid=${gid}` + (FORCE_FRESH ? '&fresh=1' : '');
   const controller = new AbortController();
-  const timeoutId = setTimeout(()=>controller.abort(), 45000);
+  const timeoutId = setTimeout(()=>controller.abort(), 10000);   // was 45s
   try{
     const res = await fetch(url, {signal: controller.signal});
     clearTimeout(timeoutId);
@@ -1568,10 +1568,7 @@ async function loadAllData(silent){
     const [apRows, attRows, callRows] = await Promise.all([
       loadSheet('Agent Performance').catch(e=>{ console.warn('AP failed:',e); return []; }),
       loadSheet('Attendance Data').catch(e=>{ console.warn('Att failed:',e); return []; }),
-      fetchCSVRawByGid(SHEET_ID, '95246895').then(raw=>{
-        if(!raw||raw.length<2) return loadSheet('Call Data');
-        const cols=raw[0]; return raw.slice(1).map(r=>{const o={};cols.forEach((c,i)=>o[c]=r[i]||'');return o;});
-      }).catch(()=>loadSheet('Call Data')).catch(e=>{ console.warn('Call failed:',e); return []; }),
+      Promise.resolve([]), // Call Data page is no longer in the menu — skip loading it at startup
       loadAgentDir().catch(e=>{ console.warn('Dir failed:',e); }),
       loadSchedule().catch(e=>{ console.warn('Schedule failed:', e); }),
       loadRoster().catch(e=>{ console.warn('Roster failed:', e); }),
@@ -3119,22 +3116,7 @@ const REF_SHEETS = {
     id: '1gk4iGJ8Xs6QesKKSzT3bhfRu2qkLeb5VpiR09hptYE0',
     tabs: ['Instruction','Sales Prices','Aftersales']
   },
-  baicRecall: {
-    id: '1FuHyS6n5BxKpSMy2jShFzd0gaq9s8pElFfnwjNfOGf0',
-    tabs: ['D50-1137Units','BJ40-1778Units','BJ40-845Units','X7-2234Units']
-  },
-  recallNissan: {
-    id: '1lXDeN1iUosG_JSADgdWhnkT5J1t3hhwXoSJdbmb4B88',
-    tabs: ['Nissan Recall']
-  },
-  recallStellantis: {
-    id: '104CXGHd1raokgGijhvHgt6AI2gdsqzANBH74Ehm01dM',
-    tabs: ['Stellantis Recall']
-  },
-  recallRemote: {
-    id: '1qOIoWAGNl3-0cha12rjNksUsEapffeZ20Ioz7vm7Rbk',
-    tabs: ['Nissan Recall','Stellantis Recall','BAIC Recall']
-  }
+  baicRecall: { id: '', tabs: [] }   // Recall now uses the Recall Search sheet (old BAIC/Nissan/Stellantis recall sheets removed)
 };
 
 const STELLANTIS_WARRANTY_HTML='<div style="background:#FEFEFD;border-radius:12px;overflow-x:auto;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:16px"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#F4F8F5"><th style="padding:9px 14px;color:#3A6840;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">ضمان</th><th style="padding:9px 14px;color:#3A6840;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">CHRYSLER, DODGE, JEEP, RAM</th><th style="padding:9px 14px;color:#3A6840;font-weight:700;border-bottom:2px solid #a5d6a7;text-align:center">FIAT, ABARTH, ALFA ROMEO</th></tr></thead><tbody><tr style="background:#FEFEFD"><td style="padding:8px 14px;font-weight:600;color:var(--text)">الضمان الأساسي + بطارية المصنع</td><td style="padding:8px 14px;text-align:center">3 years / 60,000 km</td><td style="padding:8px 14px;text-align:center">2 years / unlimited mileage</td></tr><tr style="background:#f9fbff"><td style="padding:8px 14px;font-weight:600;color:var(--text)">الضمان الممتد</td><td style="padding:8px 14px;text-align:center">5 years / 100,000 km</td><td style="padding:8px 14px;text-align:center">5 years / 120,000 km</td></tr><tr style="background:#FEFEFD"><td style="padding:8px 14px;font-weight:600;color:var(--text)">ضمان قطع الغيار</td><td style="padding:8px 14px;text-align:center">1 year / 20,000 km</td><td style="padding:8px 14px;text-align:center">1 year / 20,000 km</td></tr></tbody></table></div>';
@@ -3149,10 +3131,10 @@ async function fetchSheet(spreadsheetId, sheetName, retries){
   const key = `${spreadsheetId}__${sheetName}`;
   if(REF_CACHE[key]) return REF_CACHE[key];
 
-  retries = retries===undefined ? 2 : retries;
+  retries = retries===undefined ? 1 : retries;
   const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${spreadsheetId}&sheetName=${encodeURIComponent(sheetName)}` + ((FORCE_FRESH||REF_FRESH) ? '&fresh=1' : '');
   const controller = new AbortController();
-  const timeoutId = setTimeout(()=>controller.abort(), 30000);
+  const timeoutId = setTimeout(()=>controller.abort(), 12000);
   try{
     const res = await fetch(url, {signal: controller.signal});
     clearTimeout(timeoutId);
