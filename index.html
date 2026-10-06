@@ -9736,7 +9736,7 @@ async function renderDailyOff(){
         var role=mainRole(ag), isPlainMulti=/^multi[\s-]?camp$/i.test(role);
         var wb=nb(ag[BREAK_COL]), sv=String(ag.Saturday||'').trim(), sk=kindOf(sv), sb=nb(ag[SAT_BREAK_COL]);
         var h='<div class="wks-item" data-n="'+esc(ag.name.toLowerCase())+'"><div class="wks-hd"><div class="wks-nm"><b>'+esc(ag.name)+'</b>'
-          +(role&&!(grp==='call'&&isPlainMulti)?'<span class="wks-role wk-'+kindOf(role)+'">'+esc(role)+'</span>':'')+'</div></div><div class="wks-days">';
+          +'</div></div><div class="wks-days">';
         days.forEach(function(d){
           var v=String(ag[d]||'').trim(), k=kindOf(v), dt=w.dates&&w.dates[d]?String(w.dates[d]).trim():'';
           var isT=dt&&dt.replace(/\s+/g,' ').toLowerCase()===_tdStr;
