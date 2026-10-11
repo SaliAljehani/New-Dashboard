@@ -2902,7 +2902,7 @@ const REF_SHEETS = {
   },
   stellantis: {
     id: '104CXGHd1raokgGijhvHgt6AI2gdsqzANBH74Ehm01dM',
-    tabs: ['Instruction','Showroom ','Service','SMS Appointment','Spare Parts ','Showroom Sales Team']
+    tabs: ['Instruction','Showroom ','Service','Appointment & Location SMS','Spare Parts ','Showroom Sales Team']
   },
   bodyshop: {
     id: '1_Z8Ry4-Y7kNFYnhXNvn7QP8jt1S_n9JHdVC2zT6R6WE',
@@ -6777,11 +6777,25 @@ function renderApptSMSTab(arr){
     return m ? m[1].trim() : '';
   }
 
-  // Detect AR / EN / City from raw values by CONTENT rather than column
-  // position, so this works no matter what order the columns end up in on
-  // the Google Sheet (Arabic text = AR message, long non-Arabic text = EN
-  // message, short non-Arabic text = City).
+  // Read columns BY NAME (Appointment SMS AR/EN, City, Location SMS AR/EN),
+  // ignoring extra spaces and column order — same idea as Nissan.
+  const keys = Object.keys(arr[0]||{});
+  const fk = re => keys.find(k => re.test(String(k).trim())) || '';
+  const kAA = fk(/^appointment.*\bar$/i), kAE = fk(/^appointment.*\ben$/i);
+  const kLA = fk(/^location.*\bar$/i),    kLE = fk(/^location.*\ben$/i);
+  const kC  = fk(/^city$/i);
+  const g = (r,k) => k && r[k]!==undefined && r[k]!==null ? String(r[k]).trim() : '';
+  const byName = !!(kAA || kAE);
+
   const cards = arr.map(function(r,i){
+    if(byName){
+      const aAR=g(r,kAA), aEN=g(r,kAE), lAR=g(r,kLA), lEN=g(r,kLE);
+      // skip a header row repeated as data
+      if(aAR===kAA.trim() || aEN===kAE.trim()) return '';
+      if(!aAR && !aEN && !lAR && !lEN) return '';
+      return smsCardHTML(g(r,kC), aAR, aEN, lAR, lEN, 'st'+i, color);
+    }
+    // Fallback: old content-based detection (appointment only)
     const vals = Object.values(r).map(v=> v!==undefined&&v!==null ? String(v).trim() : '').filter(Boolean);
     let ar='', en='', city='';
     vals.forEach(function(v){
@@ -6797,7 +6811,7 @@ function renderApptSMSTab(arr){
   return '<div>'
     +'<div style="margin-bottom:16px">'
     +'<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:'+color+'12;border-radius:8px;border-left:4px solid '+color+';margin-bottom:10px">'
-    +'<span style="font-size:13px;font-weight:700;color:'+color+'">&#128241; Appointment SMS</span>'
+    +'<span style="font-size:13px;font-weight:700;color:'+color+'">&#128241; Appointment &amp; Location SMS</span>'
     +'</div>'
     +'<div class="ref-cards-grid">'+cards+'</div>'
     +'</div></div>';
@@ -6892,7 +6906,7 @@ function showRefBrandPage(brand){
     +'<div id="petrominWarrantyDrawer" style="display:none;background:#FEFEFD;border-bottom:2px solid #eee;padding:16px 20px"></div>'
     +'<div class="ref-sub-tabs" id="refSubTabs_'+brand+'" style="justify-content:center;border-bottom:2px solid '+tabActive+'55">'
     +tabs.map((t,i)=>{
-      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📅 Appointment SMS','SMS & Location':'📅 Appointment & Location SMS','BAIC Location':'📅 Appointment & Location SMS','Showrooms':'Showroom','PMS':'PMS - Spare Parts','Location SMS':'SMS Location','Emails':'📧 Emails','EV Maintenance Branches':'🔧 Maintenance Branches','EV Charging Stations':'⚡ Charging Stations','FAQ':'❓ FAQ','SMS':'📨 SMS','Sales Prices':'🏷️ Sales Prices'};
+      const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📅 Appointment & Location SMS','Appointment & Location SMS':'📅 Appointment & Location SMS','SMS & Location':'📅 Appointment & Location SMS','BAIC Location':'📅 Appointment & Location SMS','Showrooms':'Showroom','PMS':'PMS - Spare Parts','Location SMS':'SMS Location','Emails':'📧 Emails','EV Maintenance Branches':'🔧 Maintenance Branches','EV Charging Stations':'⚡ Charging Stations','FAQ':'❓ FAQ','SMS':'📨 SMS','Sales Prices':'🏷️ Sales Prices'};
       const BRAND_TAB_LABELS={bodyshop:{'Location':'SMS Location','Location ':'SMS Location'},foton:{'Location SMS':'SMS Location'},electromin:{'Emails':'Complaints','SMS':'SMS Location'},baic:{'Service':'Service & Spare Parts'},petromin:{'Autocare':'AutoCare','Petromin Express Stations':'Express Stations','Petromin Tristar':'Tristar','Complaints Emails':'PE Complaints','PE-Emailz':'PE Emails'}};
       const label=(BRAND_TAB_LABELS[brand]&&(BRAND_TAB_LABELS[brand][t]||BRAND_TAB_LABELS[brand][String(t).trim()]))||TAB_LABELS[t]||t;
       return '<button class="ref-sub-tab'+(i===0?' active':'')+'" '
@@ -7621,7 +7635,7 @@ async function renderRefBrand(brand,tabIdx){
       container.innerHTML=noAnsHeader('nissan')+renderSMSTab(arr, sheetName, brand);
       return;
     }
-    if(brand==='stellantis' && sheetName.trim()==='SMS Appointment'){
+    if(brand==='stellantis' && (sheetName.trim()==='Appointment & Location SMS'||sheetName.trim()==='SMS Appointment')){
       container.innerHTML=noAnsHeader('stellantis')+renderApptSMSTab(arr);
       return;
     }
