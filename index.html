@@ -2084,7 +2084,7 @@ function renderAttendance(name){
       +Array(first).fill('<div></div>').join('')
       +Array.from({length:dim},(_,i)=>{const d=i+1,ds=m+'-'+String(d).padStart(2,'0');const st=days[ds];
         if(!st)return'<div class="att-d x">'+d+'</div>';
-        var cc=ACIR[st]||['#F6F4F0','#8A857C','#E2DED8'];return'<div class="att-d" title="'+ds+': '+st+'"><span style="width:30px;height:30px;border-radius:50%;background:'+cc[0]+';color:'+cc[1]+';display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1.5px '+cc[2]+'">'+d+'</span></div>';}).join('')
+        var cc=ACIR[st]||['#F6F4F0','#8A857C','#E2DED8'];return'<div class="att-d" title="'+ds+': '+st+'" style="background:'+cc[0]+';color:'+cc[1]+';border-color:'+cc[2]+'">'+d+'</div>';}).join('')
       +'</div></div>';
   });
   document.getElementById('attContent').innerHTML=html;
