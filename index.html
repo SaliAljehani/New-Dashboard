@@ -621,6 +621,15 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .att-status-badge.absent{background:#FAF1F1;color:#9A6464}
 .att-status-badge.complaints{background:#EDD8E0;color:#6A3050}.att-status-badge.el{background:#F9F6F8;color:#6E5A68}.att-status-badge.satshift{background:#F7F6F9;color:#625E72}.att-status-badge.whatsapp{background:#F6F9F6;color:#3E6545}.att-status-badge.multi{background:#F7F4EF;color:#7C7064}
 .att-campaign-tag{padding:4px 10px;border-radius:8px;font-size:11px;font-weight:600;background:#f0f4ff;color:#3949ab;border:1px solid #c5cae9}
+
+/* Attendance summary strip (option E) */
+.sE{display:grid;grid-template-columns:repeat(var(--n,7),minmax(0,1fr));background:#fff;border:1px solid #EFEBE6;border-radius:14px;margin-bottom:14px}
+.sE>div{padding:12px 8px;text-align:center}
+.sE>div+div{border-left:1px solid #F3F0EC}
+.sE b{display:block;font-size:24px;font-weight:700;line-height:1.2}
+.sE span{font-size:11.5px;color:#888;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.sE i{width:8px;height:8px;border-radius:50%;display:inline-block}
+@media(max-width:900px){.sE{grid-template-columns:repeat(3,1fr)}.sE>div+div{border-left:none}}
 </style>
 <style>
 /* ── batch: permissions / performance / attendance polish ── */
@@ -2068,7 +2077,7 @@ function renderAttendance(name){
   const ACOL={Office:'#C2D6B6',Remote:'#CDC9E5',Vacation:'#EADDB6',Sick:'#EAC7B0',Off:'#EDD2D2',Absent:'#DDB0B0','Saturday Shift':'#9996A3',EL:'#A1949D'};
   const ACIR={Office:['#F5F9F2','#6A8A60','#D3E2C9'],Remote:['#F7F6FB','#7E78A8','#DCD9EE'],Vacation:['#FDFAF1','#9C8D63','#F0E7CB'],Sick:['#FDF7F2','#A88068','#F0DCCD'],Off:['#FCF6F6','#B48484','#F0DCDC'],Absent:['#FAF1F1','#9A6464','#EACACA'],'Saturday Shift':['#F7F6F9','#625E72','#DEDCE6'],EL:['#F9F6F8','#6E5A68','#E4DAE1']};
   const ALBL={Office:'Office',Remote:'Remote',Vacation:'Vacation',Sick:'Sick leave',Off:'Off',Absent:'Absent','Saturday Shift':'Saturday shift'};
-  let html='<div class="att-strip">'+Object.keys(ALBL).map(k=>'<div><div class="l"><span class="att-dot" style="background:'+ACOL[k]+'"></span>'+ALBL[k]+'</div><div class="v'+(tot[k]?'':' z')+'">'+tot[k]+'</div></div>').join('')+'</div>';
+  let html='<div class="sE" style="--n:'+Object.keys(ALBL).length+'">'+Object.keys(ALBL).map(k=>{const cc=ACIR[k]||['#fff','#888','#ddd'];return '<div><b style="color:'+(tot[k]?cc[1]:'#d0cdc8')+'">'+tot[k]+'</b><span><i style="background:'+cc[2]+'"></i>'+ALBL[k]+'</span></div>';}).join('')+'</div>';
   const _nowM=new Date().toISOString().slice(0,7);
   const _ms=Object.keys(byM).sort().reverse();
   _ms.forEach((m,mi)=>{
