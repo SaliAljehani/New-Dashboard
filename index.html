@@ -2924,7 +2924,7 @@ const REF_SHEETS = {
   },
   petromin: {
     id: '11M28wIA4Ee84ohrIqzXtobK7X-QsrruoL4MwjoGz-6k',
-    tabs: ['Instruction','Autocare','Petromin Express Stations','Tire&Battery','Eco Wash','DIESEL Express','DIESEL Workshop','PE-Emailz','Complaints Emails']
+    tabs: ['Instruction','Autocare','Petromin Express Stations','Tire&Battery','Eco Wash','DIESEL','PE-Emailz','Complaints Emails']
   },
   foton: {
     id: '1PBhYlWtWqGZFZi_wgjDTlUaoN6O0QeS4P1CHcd40H4Y',
@@ -4979,45 +4979,6 @@ function renderPetrominInstructionTab(arr, warrantyInner){
 }
 
 
-/* ── Petromin › DIESEL Workshop — reads columns by name; TO/CC rows under the table become e-mail cards ── */
-function renderPetrominDieselWorkshopTab(arr){
-  if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#D98E45';
-  const rows=arr.map(r=>(Array.isArray(r)?r:Object.values(r)).map(v=>String(v==null?'':v).trim()));
-  const hIdx=rows.findIndex(v=>v.some(c=>/^regions?$/i.test(c)));
-  const H=hIdx>=0?rows[hIdx].map(h=>h.toLowerCase()):[];
-  const fc=(re,d)=>{const i=H.findIndex(h=>re.test(h));return i>=0?i:d;};
-  const c={reg:fc(/^regions?$/,0),city:fc(/^city/,1),name:fc(/station|branch/,2),street:fc(/street/,3),dist:fc(/district/,4),
-    gps:fc(/gps|location|map/,5),contact:fc(/contact|manager/,6),mobile:fc(/mobile|phone/,7),email:fc(/email/,8),hours:fc(/working|hour/,9)};
-  const ok=x=>x&&!/^n\/?a$/i.test(x);
-  const isReg=x=>/^(west|central|centre|center|east|south|north|wr|cr|er|sr|nr)/i.test(x);
-  const emails=[],groups={};let hours='';
-  rows.slice(hIdx+1).forEach(v=>{
-    const g=i=>v[i]||'';
-    if(!v.some(Boolean)) return;
-    if(v.some(x=>/^to$/i.test(x))&&v.some(x=>/^cc$/i.test(x))) return;
-    if(!isReg(g(c.reg))){
-      const lab=v.find(Boolean)||'';const i0=v.indexOf(lab);
-      const to=v[i0+1]||'',cc=v[i0+2]||'';
-      if(to||cc) emails.push({label:lab.replace(/^for\s+/i,''),to:to,cc:cc});
-      return;
-    }
-    const name=g(c.name);if(!name) return;
-    const reg=regClean(g(c.reg));
-    if(!hours&&g(c.hours)) hours=g(c.hours);
-    (groups[reg]=groups[reg]||[]).push({name:name,city:g(c.city),district:ok(g(c.dist))?g(c.dist):'',street:ok(g(c.street))?g(c.street):'',
-      gps:g(c.gps),contact:ok(g(c.contact))?g(c.contact):'',mobile:ok(g(c.mobile))?g(c.mobile):'',email:/@/.test(g(c.email))?g(c.email):''});
-  });
-  const ORDER=['West','Central','East','South','North'];
-  const regs=Object.keys(groups).sort((a,b)=>{const ia=ORDER.indexOf(a),ib=ORDER.indexOf(b);return (ia<0?99:ia)-(ib<0?99:ib);});
-  if(!regs.length) return '<div style="text-align:center;padding:24px;color:#aaa">No branches found</div>';
-  const hoursDisp=hours.split('\n').map(s=>s.trim()).filter(Boolean).join(' · ');
-  return '<div style="text-align:center">'+fotonEmailHdr(emails,color)
-    +regs.map((reg,ri)=>fotonRegionBlock(reg,color,groups[reg].length,hoursDisp,'rgn_pe_dw_'+reg.replace(/\W/g,'')+'_'+ri,
-      groups[reg].map(b=>fotonBranchCard(b,color)).join(''))).join('')
-    +'</div>';
-}
-
 function renderPetrominWarrantyTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#D98E45';
@@ -5043,19 +5004,6 @@ function renderPetrominWarrantyTab(arr){
 function renderPetrominLocationListTab(arr, kind, brandColor){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color=brandColor||'#D98E45';
-  if(kind==='diesel'){
-    // Normalise whatever the reader returned (objects with any keys, or raw rows) into objects keyed by the real header row
-    const grid=Array.isArray(arr[0]) ? arr.map(r=>r.map(c=>String(c==null?'':c).trim()))
-      : [Object.keys(arr[0]||{})].concat(arr.map(r=>Object.values(r).map(c=>String(c==null?'':c).trim())));
-    const isHdr=r=>r.some(c=>/station/i.test(c))&&r.some(c=>/^city$/i.test(c));
-    let hi=grid.findIndex(isHdr);
-    let hd;
-    if(hi>=0) hd=grid[hi].map(c=>String(c).trim());
-    else { hd=['Regions','City','Station Name - Code','Address 1','Address 2','Contact','Mobile','Email','GPS','Working Hours']; hi=Array.isArray(arr[0])?-1:0; }
-    arr=grid.slice(hi+1).filter(r=>r.some(Boolean)).map(r=>{const o={};hd.forEach((h,i)=>{o[h||('__c'+i)]=r[i]||'';});return o;});
-    console.log('DIESEL Express header:',hd,'rows:',arr.length);
-    if(!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  }
   const CLEAN=!!brandColor && brandColor!=='#D98E45';
   const ICONS={ecowash:'🧼',fuel:'⛽',diesel:'🛢️'};
   const icon=CLEAN?'':(ICONS[kind]||'📍');
@@ -6969,7 +6917,7 @@ function showRefBrandPage(brand){
     +'<div class="ref-sub-tabs" id="refSubTabs_'+brand+'" style="justify-content:center;border-bottom:2px solid '+tabActive+'55">'
     +tabs.map((t,i)=>{
       const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📅 Appointment & Location SMS','Appointment & Location SMS':'📅 Appointment & Location SMS','SMS & Location':'📅 Appointment & Location SMS','BAIC Location':'📅 Appointment & Location SMS','Showrooms':'Showroom','PMS':'PMS - Spare Parts','Location SMS':'SMS Location','Emails':'📧 Emails','EV Maintenance Branches':'🔧 Maintenance Branches','EV Charging Stations':'⚡ Charging Stations','FAQ':'❓ FAQ','SMS':'📨 SMS','Sales Prices':'🏷️ Sales Prices'};
-      const BRAND_TAB_LABELS={bodyshop:{'Location':'SMS Location','Location ':'SMS Location'},foton:{'Location SMS':'SMS Location'},electromin:{'Emails':'Complaints','SMS':'SMS Location'},baic:{'Service':'Service & Spare Parts'},petromin:{'Autocare':'AutoCare','DIESEL Express':'DIESEL Express','DIESEL Workshop':'DIESEL Workshop','Petromin Express Stations':'Express Stations','Petromin Tristar':'Tristar','Complaints Emails':'PE Complaints','PE-Emailz':'PE Emails'}};
+      const BRAND_TAB_LABELS={bodyshop:{'Location':'SMS Location','Location ':'SMS Location'},foton:{'Location SMS':'SMS Location'},electromin:{'Emails':'Complaints','SMS':'SMS Location'},baic:{'Service':'Service & Spare Parts'},petromin:{'Autocare':'AutoCare','Petromin Express Stations':'Express Stations','Petromin Tristar':'Tristar','Complaints Emails':'PE Complaints','PE-Emailz':'PE Emails'}};
       const label=(BRAND_TAB_LABELS[brand]&&(BRAND_TAB_LABELS[brand][t]||BRAND_TAB_LABELS[brand][String(t).trim()]))||TAB_LABELS[t]||t;
       return '<button class="ref-sub-tab'+(i===0?' active':'')+'" '
         +'style="'+(i===0?'background:'+tabActive+'1f;color:'+tabActive:'color:'+tabActive)+'" '
@@ -7396,15 +7344,11 @@ async function renderRefBrand(brand,tabIdx){
     try{
       const t=sheetName.trim();
       const FORCE_RAW=['Tire&Battery','Petromin Tristar','Petromin Express Stations'];
-      // DIESEL tabs: try every name the sheet has had, and both read paths (proxy, then CSV)
-      const NAME_TRY={'DIESEL Express':['DIESEL Express','DIESEL'],'DIESEL':['DIESEL','DIESEL Express'],'DIESEL Workshop':['DIESEL Workshop']}[t]||[sheetName];
-      let arr=[];
-      for(const nm of NAME_TRY){
-        try{const d=await fetchSheet(cfg.id, nm);arr=Array.isArray(d)?d:((d&&d.rows)||[]);}catch(e){arr=[];}
-        if(!arr.length||FORCE_RAW.includes(t)||Object.keys(arr[0]).length<4){
-          try{const raw=await fetchCSVRaw(cfg.id, nm);if(raw&&raw.length>1)arr=raw;}catch(e){console.warn('CSV read failed for',nm,e.message);}
-        }
-        if(arr.length) break;
+      const data=await fetchSheet(cfg.id, sheetName);
+      let arr=Array.isArray(data)?data:(data.rows||[]);
+      if(FORCE_RAW.includes(t) || (arr.length && Object.keys(arr[0]).length<4)){
+        console.log('Petromin',sheetName,'using raw CSV (keys:',arr.length?Object.keys(arr[0]):'empty',')');
+        arr=await fetchCSVRaw(cfg.id, sheetName);
       }
       console.log('Petromin',sheetName,'rows:',arr.length,'sample:',arr[0]);
   if(brand==='petromin' && t==='Instruction'){
@@ -7441,8 +7385,7 @@ async function renderRefBrand(brand,tabIdx){
       else if(t==='Petromin Tristar') container.innerHTML=renderPetrominTristarTab(arr);
       else if(t==='Eco Wash') container.innerHTML=renderPetrominLocationListTab(arr,'ecowash');
       else if(t==='Fuel Station') container.innerHTML=renderPetrominLocationListTab(arr,'fuel');
-      else if(t==='DIESEL'||t==='DIESEL Express') container.innerHTML=renderPetrominLocationListTab(arr,'diesel');
-      else if(t==='DIESEL Workshop') container.innerHTML=renderPetrominDieselWorkshopTab(arr);
+      else if(t==='DIESEL') container.innerHTML=renderPetrominLocationListTab(arr,'diesel');
       else if(t==='Tire&Battery') container.innerHTML=renderPetrominTireBatteryTab(arr);
       else if(t==='PE-Emailz') container.innerHTML=renderPetrominEmailzTab(arr);
       else if(t==='Complaints Emails') container.innerHTML=renderPetrominComplaintsTab(arr);
@@ -7646,7 +7589,7 @@ async function renderRefBrand(brand,tabIdx){
       container.innerHTML=renderPetrominLocationListTab(arr,'fuel');
       return;
     }
-    if(brand==='petromin' && (sheetName.trim()==='DIESEL'||sheetName.trim()==='DIESEL Express')){
+    if(brand==='petromin' && sheetName.trim()==='DIESEL'){
       container.innerHTML=renderPetrominLocationListTab(arr,'diesel');
       return;
     }
