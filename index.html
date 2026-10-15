@@ -5043,6 +5043,11 @@ function renderPetrominWarrantyTab(arr){
 function renderPetrominLocationListTab(arr, kind, brandColor){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color=brandColor||'#D98E45';
+  if(kind==='diesel' && Array.isArray(arr[0])){
+    const hi=arr.findIndex(r=>r.some(c=>/station/i.test(String(c||''))));
+    if(hi>=0){const hd=arr[hi].map(c=>String(c||'').trim());arr=arr.slice(hi+1).map(r=>{const o={};hd.forEach((h,i)=>{if(h)o[h]=r[i];});return o;});}
+    if(!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  }
   const CLEAN=!!brandColor && brandColor!=='#D98E45';
   const ICONS={ecowash:'🧼',fuel:'⛽',diesel:'🛢️'};
   const icon=CLEAN?'':(ICONS[kind]||'📍');
@@ -7382,12 +7387,16 @@ async function renderRefBrand(brand,tabIdx){
     container.innerHTML='<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading '+sheetName+'...</div>';
     try{
       const t=sheetName.trim();
-      const FORCE_RAW=['DIESEL Workshop','Tire&Battery','Petromin Tristar','Petromin Express Stations'];
-      const data=await fetchSheet(cfg.id, sheetName);
-      let arr=Array.isArray(data)?data:(data.rows||[]);
-      if(FORCE_RAW.includes(t) || (arr.length && Object.keys(arr[0]).length<4)){
-        console.log('Petromin',sheetName,'using raw CSV (keys:',arr.length?Object.keys(arr[0]):'empty',')');
-        arr=await fetchCSVRaw(cfg.id, sheetName);
+      const FORCE_RAW=['Tire&Battery','Petromin Tristar','Petromin Express Stations'];
+      // DIESEL tabs: try every name the sheet has had, and both read paths (proxy, then CSV)
+      const NAME_TRY={'DIESEL Express':['DIESEL Express','DIESEL'],'DIESEL':['DIESEL','DIESEL Express'],'DIESEL Workshop':['DIESEL Workshop']}[t]||[sheetName];
+      let arr=[];
+      for(const nm of NAME_TRY){
+        try{const d=await fetchSheet(cfg.id, nm);arr=Array.isArray(d)?d:((d&&d.rows)||[]);}catch(e){arr=[];}
+        if(!arr.length||FORCE_RAW.includes(t)||Object.keys(arr[0]).length<4){
+          try{const raw=await fetchCSVRaw(cfg.id, nm);if(raw&&raw.length>1)arr=raw;}catch(e){console.warn('CSV read failed for',nm,e.message);}
+        }
+        if(arr.length) break;
       }
       console.log('Petromin',sheetName,'rows:',arr.length,'sample:',arr[0]);
   if(brand==='petromin' && t==='Instruction'){
