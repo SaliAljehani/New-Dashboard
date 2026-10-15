@@ -2924,7 +2924,7 @@ const REF_SHEETS = {
   },
   petromin: {
     id: '11M28wIA4Ee84ohrIqzXtobK7X-QsrruoL4MwjoGz-6k',
-    tabs: ['Instruction','Autocare','Petromin Express Stations','Tire&Battery','Eco Wash','DIESEL','DIESEL Workshop','PE-Emailz','Complaints Emails']
+    tabs: ['Instruction','Autocare','Petromin Express Stations','Tire&Battery','Eco Wash','DIESEL Express','DIESEL Workshop','PE-Emailz','Complaints Emails']
   },
   foton: {
     id: '1PBhYlWtWqGZFZi_wgjDTlUaoN6O0QeS4P1CHcd40H4Y',
@@ -6956,7 +6956,7 @@ function showRefBrandPage(brand){
     +'<div class="ref-sub-tabs" id="refSubTabs_'+brand+'" style="justify-content:center;border-bottom:2px solid '+tabActive+'55">'
     +tabs.map((t,i)=>{
       const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📅 Appointment & Location SMS','Appointment & Location SMS':'📅 Appointment & Location SMS','SMS & Location':'📅 Appointment & Location SMS','BAIC Location':'📅 Appointment & Location SMS','Showrooms':'Showroom','PMS':'PMS - Spare Parts','Location SMS':'SMS Location','Emails':'📧 Emails','EV Maintenance Branches':'🔧 Maintenance Branches','EV Charging Stations':'⚡ Charging Stations','FAQ':'❓ FAQ','SMS':'📨 SMS','Sales Prices':'🏷️ Sales Prices'};
-      const BRAND_TAB_LABELS={bodyshop:{'Location':'SMS Location','Location ':'SMS Location'},foton:{'Location SMS':'SMS Location'},electromin:{'Emails':'Complaints','SMS':'SMS Location'},baic:{'Service':'Service & Spare Parts'},petromin:{'Autocare':'AutoCare','DIESEL':'DIESEL Express','DIESEL Workshop':'DIESEL Workshop','Petromin Express Stations':'Express Stations','Petromin Tristar':'Tristar','Complaints Emails':'PE Complaints','PE-Emailz':'PE Emails'}};
+      const BRAND_TAB_LABELS={bodyshop:{'Location':'SMS Location','Location ':'SMS Location'},foton:{'Location SMS':'SMS Location'},electromin:{'Emails':'Complaints','SMS':'SMS Location'},baic:{'Service':'Service & Spare Parts'},petromin:{'Autocare':'AutoCare','DIESEL Express':'DIESEL Express','DIESEL Workshop':'DIESEL Workshop','Petromin Express Stations':'Express Stations','Petromin Tristar':'Tristar','Complaints Emails':'PE Complaints','PE-Emailz':'PE Emails'}};
       const label=(BRAND_TAB_LABELS[brand]&&(BRAND_TAB_LABELS[brand][t]||BRAND_TAB_LABELS[brand][String(t).trim()]))||TAB_LABELS[t]||t;
       return '<button class="ref-sub-tab'+(i===0?' active':'')+'" '
         +'style="'+(i===0?'background:'+tabActive+'1f;color:'+tabActive:'color:'+tabActive)+'" '
@@ -7424,7 +7424,7 @@ async function renderRefBrand(brand,tabIdx){
       else if(t==='Petromin Tristar') container.innerHTML=renderPetrominTristarTab(arr);
       else if(t==='Eco Wash') container.innerHTML=renderPetrominLocationListTab(arr,'ecowash');
       else if(t==='Fuel Station') container.innerHTML=renderPetrominLocationListTab(arr,'fuel');
-      else if(t==='DIESEL') container.innerHTML=renderPetrominLocationListTab(arr,'diesel');
+      else if(t==='DIESEL'||t==='DIESEL Express') container.innerHTML=renderPetrominLocationListTab(arr,'diesel');
       else if(t==='DIESEL Workshop') container.innerHTML=renderPetrominDieselWorkshopTab(arr);
       else if(t==='Tire&Battery') container.innerHTML=renderPetrominTireBatteryTab(arr);
       else if(t==='PE-Emailz') container.innerHTML=renderPetrominEmailzTab(arr);
@@ -7629,7 +7629,7 @@ async function renderRefBrand(brand,tabIdx){
       container.innerHTML=renderPetrominLocationListTab(arr,'fuel');
       return;
     }
-    if(brand==='petromin' && sheetName.trim()==='DIESEL'){
+    if(brand==='petromin' && (sheetName.trim()==='DIESEL'||sheetName.trim()==='DIESEL Express')){
       container.innerHTML=renderPetrominLocationListTab(arr,'diesel');
       return;
     }
