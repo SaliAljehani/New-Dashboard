@@ -5043,9 +5043,17 @@ function renderPetrominWarrantyTab(arr){
 function renderPetrominLocationListTab(arr, kind, brandColor){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color=brandColor||'#D98E45';
-  if(kind==='diesel' && Array.isArray(arr[0])){
-    const hi=arr.findIndex(r=>r.some(c=>/station/i.test(String(c||''))));
-    if(hi>=0){const hd=arr[hi].map(c=>String(c||'').trim());arr=arr.slice(hi+1).map(r=>{const o={};hd.forEach((h,i)=>{if(h)o[h]=r[i];});return o;});}
+  if(kind==='diesel'){
+    // Normalise whatever the reader returned (objects with any keys, or raw rows) into objects keyed by the real header row
+    const grid=Array.isArray(arr[0]) ? arr.map(r=>r.map(c=>String(c==null?'':c).trim()))
+      : [Object.keys(arr[0]||{})].concat(arr.map(r=>Object.values(r).map(c=>String(c==null?'':c).trim())));
+    const isHdr=r=>r.some(c=>/station/i.test(c))&&r.some(c=>/^city$/i.test(c));
+    let hi=grid.findIndex(isHdr);
+    let hd;
+    if(hi>=0) hd=grid[hi].map(c=>String(c).trim());
+    else { hd=['Regions','City','Station Name - Code','Address 1','Address 2','Contact','Mobile','Email','GPS','Working Hours']; hi=Array.isArray(arr[0])?-1:0; }
+    arr=grid.slice(hi+1).filter(r=>r.some(Boolean)).map(r=>{const o={};hd.forEach((h,i)=>{o[h||('__c'+i)]=r[i]||'';});return o;});
+    console.log('DIESEL Express header:',hd,'rows:',arr.length);
     if(!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   }
   const CLEAN=!!brandColor && brandColor!=='#D98E45';
