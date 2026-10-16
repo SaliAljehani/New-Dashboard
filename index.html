@@ -7026,7 +7026,7 @@ function showRefBrandPage(brand){
     +'<button onclick="renderRef()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:#FDFDFC;border:1px solid '+tabActive+';border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;color:'+tabActive+'">'
     +'← Back to References</button></div>'
     +'<div class="ref-brand-section" data-brand-color="'+tabActive+'" style="--brand:'+tabActive+';--brand-tint:'+tabActive+'2E;--brand-soft:'+tabActive+'14">'
-    +'<div style="padding:12px 20px;min-height:53px;background:'+tabActive+'2E;color:'+tabActive+';border-radius:12px 12px 0 0;display:flex;align-items:center;gap:12px;position:relative">'
+    +'<div class="ref-brand-band" style="padding:12px 20px;min-height:53px;background:color-mix(in srgb,'+tabActive+' 9%,#FDFDFC);color:'+tabActive+';border-radius:12px 12px 0 0;display:flex;align-items:center;gap:12px;position:relative">'
     +'<span style="width:32px;height:32px;border-radius:50%;background:#FDFDFC;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">'+brandLineIcon(brand,tabActive).replace('width="24" height="24"','width="18" height="18"')+'</span>'
     +'<span style="font-size:16px;font-weight:700">'+meta.label+'</span>'
     +'<span style="margin-left:auto"></span>'
@@ -8797,9 +8797,9 @@ function toggleLinksPanel(){ refTool('refLinksPanel'); return;
 }
 
 const RECALL_BRANDS = {
-  'Nissan Search':    {key:'recallNissan',    color:'#c0272d', icon:'🔍'},
-  'Stellantis Search':{key:'recallStellantis',color:'#1565c0', icon:'🔍'},
-  'BAIC Search':      {key:'recallBAIC',      color:'#D98E45', icon:'🔍'}
+  'Nissan Search':    {key:'recallNissan',    color:'#CD5257', icon:'🔍'},
+  'Stellantis Search':{key:'recallStellantis',color:'#4484CD', icon:'🔍'},
+  'BAIC Search':      {key:'recallBAIC',      color:'#D38B5D', icon:'🔍'}
 };
 let RECALL_ACTIVE_BRAND = 'Nissan Search';
 let RECALL_ACTIVE_TAB = 0;
@@ -8824,7 +8824,7 @@ function renderRecallPage(){
 
   el.innerHTML =
     // هيدر رمادي مع وزارة التجارة
-    '<div style="background:#B3A1582E;border-radius:12px 12px 0 0;padding:12px 20px;min-height:53px;display:flex;align-items:center;gap:12px;position:relative">'
+    '<div style="background:color-mix(in srgb,#B3A158 9%,#FDFDFC);border-radius:12px 12px 0 0;padding:12px 20px;min-height:53px;display:flex;align-items:center;gap:12px;position:relative">'
     +'<span style="width:32px;height:32px;border-radius:50%;background:#FDFDFC;display:inline-flex;align-items:center;justify-content:center">'+brandLineIcon('baicRecall','#B3A158').replace('width="24" height="24"','width="18" height="18"')+'</span><span style="font-size:16px;font-weight:700;color:#B3A158">Recall</span>'
     +'<a href="https://recalls.sa/" target="_blank" style="position:absolute;right:12px;display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(255,255,255,.92);color:#757575;border:1px solid rgba(255,255,255,.5);border-radius:14px;font-size:11px;font-weight:700;text-decoration:none">🏛️ وزارة التجارة</a>'
     +'</div>'
