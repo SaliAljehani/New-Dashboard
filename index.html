@@ -699,20 +699,20 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 /* e-mail boxes (Request / Complaint): pearl white with the tab's colour as a soft shade */
 .ref-brand-section div:has(> div > .ref-email-tag.to){background:color-mix(in srgb,var(--brand) 2.5%,#FEFDFA)!important;border:1px solid color-mix(in srgb,var(--brand) 14%,#EFEAE3)!important;box-shadow:0 1px 4px color-mix(in srgb,var(--brand) 10%,transparent)!important}
 /* brand pages: tables T3 — H2 titles, calm pearl tables, left-aligned, slim region bars, zebra rows (white / tab tint) */
-.ref-brand-section div:is(:has(+table),:has(+div>table:not(.dh-head))):not(:has(+.dh-wrap)){background:transparent!important;border:none!important;border-left:3px solid var(--brand)!important;border-radius:0!important;justify-content:flex-start!important;text-align:left!important;margin:4px 0 8px 2px;padding:2px 10px!important;font-size:14px!important;box-shadow:none!important}
+.ref-brand-section div:is(:has(+table),:has(+div>table:not(.dh-head))):not(:has(+.dh-wrap)):not(:has(.piTab)):not(:has(button)){background:transparent!important;border:none!important;border-left:3px solid var(--brand)!important;border-radius:0!important;justify-content:flex-start!important;text-align:left!important;margin:4px 0 8px 2px;padding:2px 10px!important;font-size:14px!important;box-shadow:none!important}
 .ref-brand-section div:has(>table){border:1px solid color-mix(in srgb,var(--brand) 16%,#EFEAE3)!important;border-radius:10px!important;background:#FEFDFA!important}
-.ref-brand-section thead tr,.ref-brand-section thead th{background:color-mix(in srgb,var(--brand) 10%,#FEFDFA)!important;border-bottom:1px solid color-mix(in srgb,var(--brand) 22%,#EFEAE3)!important}
+.ref-brand-section thead tr,.ref-brand-section thead th{background:color-mix(in srgb,var(--brand) 5%,#FFFFFF)!important;border-bottom:1px solid color-mix(in srgb,var(--brand) 22%,#EFEAE3)!important}
 .ref-brand-section thead th{color:color-mix(in srgb,var(--brand) 55%,#6E5E52)!important;font-weight:700!important;font-size:11.5px!important}
 .ref-brand-section thead th svg,.ref-brand-section thead th img{display:none!important}
-.ref-brand-section tbody tr,.ref-brand-section tbody tr td{background:#FEFDFA!important}
-.ref-brand-section tbody tr:nth-child(even),.ref-brand-section tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--brand) 10%,#FEFDFA)!important}
-.ref-brand-section tbody tr:hover td{background:color-mix(in srgb,var(--brand) 15%,#FEFDFA)!important}
+.ref-brand-section tbody tr,.ref-brand-section tbody tr td{background:#FFFFFF!important}
+.ref-brand-section tbody tr:nth-child(even),.ref-brand-section tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--brand) 5%,#FFFFFF)!important}
+.ref-brand-section tbody tr:hover td{background:color-mix(in srgb,var(--brand) 9%,#FFFFFF)!important}
 .ref-brand-section tbody td{border-bottom:none!important;white-space:normal!important;overflow-wrap:break-word!important;word-break:normal!important}
-.ref-brand-section thead th,.ref-brand-section tbody td{text-align:left!important}
-.ref-brand-section tbody td a{margin-left:0!important}
+.ref-brand-section thead th,.ref-brand-section tbody td{text-align:center!important}
+
 .ref-brand-section div[onclick^="toggleRegion"]{background:transparent!important;border-left:3px solid var(--brand)!important;border-radius:0!important;padding:4px 10px!important;margin:14px 0 6px!important}
 .ref-brand-section tbody td,.ref-brand-section thead th{border-left:none!important;border-right:none!important}
-.ref-brand-section tbody td>div{justify-content:flex-start!important}
+.ref-brand-section tbody td>div{justify-content:center!important}
 .ref-brand-section tbody td a[href^="mailto:"]{background:color-mix(in srgb,var(--brand) 9%,#FEFDFA)!important;color:color-mix(in srgb,var(--brand) 80%,#4A3A30)!important}
 .ref-brand-section[data-brand-color='#E1A56A'] tbody td a[href^="mailto:"]{color:color-mix(in srgb,var(--brand) 62%,#3A2A20)!important}
 .ref-brand-section tbody td a[href^="mailto:"]{overflow-wrap:normal!important;word-break:normal!important}
@@ -763,6 +763,19 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
   .ref-home .ref-brand-circles,.ref-tools{padding:28px 10px 10px!important}
   .pnav,.ref-home .ref-brand-circle,.ref-tool,.ref-home .ref-brand-circle-label{font-size:12px!important}
 }
+.ref-brand-section .piTab[style*="solid transparent"]{color:color-mix(in srgb,var(--tt,var(--brand)) 62%,#FFFFFF)!important}
+.ref-brand-section .piTab:not([style*="solid transparent"]){color:var(--tt,var(--brand))!important;border-bottom-color:var(--tt,var(--brand))!important}
+/* boxes take the light header tint so each one stands out */
+.ref-brand-section .sms-card{background:#FFFFFF!important;border:1px solid #EDE6DE!important}
+.ref-brand-section .bd-head{background:color-mix(in srgb,var(--brand) 6%,#FFFFFF)!important}
+.ref-brand-section .ref-email-card>div:first-child{color:var(--tt,var(--brand))!important}
+.ref-brand-section div[onclick^="toggleRegion"]{background:color-mix(in srgb,var(--brand) 6%,#FFFFFF)!important;border-left:4px solid var(--brand)!important;border-radius:0 8px 8px 0!important;padding:9px 14px!important}
+.ref-brand-section div:has(> div > .ref-email-tag.to),.ref-brand-section .ref-email-card{background:#FFFFFF!important;border:1px solid color-mix(in srgb,var(--brand) 30%,#EFEAE3)!important;box-shadow:none!important}
+.ref-brand-section div[onclick^="toggleRegion"] span[id^="ico_"]{color:var(--tt,var(--brand))!important}
+.ref-brand-section .sms-card button{border:1px solid #EDE6DE!important;background:#FFFFFF!important}
+/* one header tint per tab: brand band = branch header = region bars */
+.ref-brand-band{background:color-mix(in srgb,var(--brand,#8A6A4A) 11%,#FFFFFF)!important}
+.ref-brand-section .bd-head,.ref-brand-section div[onclick^="toggleRegion"],.ref-brand-section .br-rg{background:color-mix(in srgb,var(--brand) 11%,#FFFFFF)!important}
 /* footer: smaller */
 #lupd_footer{font-size:12px!important}
 #lupd_footer+span{font-size:12px!important}
@@ -3288,7 +3301,7 @@ function refGlobalFilter(q){
 
 function switchRefTab(brand, idx, btn){
   REF_ACTIVE_TABS[brand] = idx;
-  const color = {nissan:'#CD5257', stellantis:'#4484CD', baic:'#D38B5D', baicRecall:'#B3A158',petromin:'#E1A56A',foton:'#768B95',nos:'#58975B'}[brand] || '#c0272d';
+  const color = {nissan:'#CD5257', stellantis:'#4484CD', baic:'#D38B5D', baicRecall:'#B3A158',petromin:'#E1A56A',foton:'#546E7A',nos:'#58975B'}[brand] || '#c0272d';
   btn.parentElement.querySelectorAll('.ref-sub-tab').forEach((t,i) => {
     t.classList.toggle('active', i===idx);
     t.style.background = i===idx ? color : '';
@@ -3881,7 +3894,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
   if(brand==='nissan'){var _rmS=nissanRMFromSheet(arr);if(_rmS)window.__NISSAN_RM=_rmS;}
   const NISSAN_AM=(brand==='nissan')?(window.__NISSAN_RM||NISSAN_AM_FALLBACK):{};
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color={nissan:'#CD5257',stellantis:'#4484CD',baic:'#D38B5D',baicRecall:'#B3A158',petromin:'#E1A56A',foton:'#768B95',nos:'#58975B'}[brand]||'#c0272d';
+  const color={nissan:'#CD5257',stellantis:'#4484CD',baic:'#D38B5D',baicRecall:'#B3A158',petromin:'#E1A56A',foton:'#546E7A',nos:'#58975B'}[brand]||'#c0272d';
   const fmtNum = n => {
     const s=String(n||'').trim();
     if(!s||s==='-') return '';
@@ -6859,7 +6872,7 @@ function copyNissanAppForm(){
 
 function renderSMSTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color={nissan:'#CD5257',stellantis:'#4484CD',baic:'#D38B5D',baicRecall:'#B3A158',petromin:'#E1A56A',foton:'#768B95',nos:'#58975B'}[brand]||'#c0272d';
+  const color={nissan:'#CD5257',stellantis:'#4484CD',baic:'#D38B5D',baicRecall:'#B3A158',petromin:'#E1A56A',foton:'#546E7A',nos:'#58975B'}[brand]||'#c0272d';
   // All data comes under 3S keys — sections separated by header rows
   // Header rows: values equal their key names (e.g. "PAC Appointment SMS EN" == key "3S Appointment SMS EN")
   var sections = {s3:[], pac:[], body:[]};
@@ -7111,7 +7124,7 @@ function showRefBrandPage(brand){
     baic:      {label:'BAIC',      icon:'🚙',color:'#D38B5D'},
     baicRecall:{label:'BAIC Recall — VIN Search',icon:'🔎',color:'#B3A158'},
     petromin:  {label:'Petromin',  icon:'<svg viewBox="0 0 36 36" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="14" width="20" height="16" rx="3" fill="#c0272d"/><rect x="8" y="10" width="12" height="6" rx="2" fill="#1a1a2e"/><rect x="24" y="16" width="8" height="4" rx="2" fill="#1a1a2e"/><rect x="13" y="6" width="4" height="6" rx="1" fill="#c0272d"/><circle cx="10" cy="20" r="2" fill="#fff" opacity=".4"/></svg>',color:'#E1A56A'},
-    foton:     {label:'Foton',     icon:'🚛',color:'#768B95'},
+    foton:     {label:'Foton',     icon:'🚛',color:'#546E7A'},
     nos:       {label:'National Oil', icon:'🟢',color:'#58975B'},
     electromin:{label:'Energy', icon:'⚡',color:'#61806D'},
     volvo:     {label:'Volvo', icon:'<svg viewBox="0 0 36 36" width="22" height="22" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="21" r="8.5" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M21 15 L29 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M23.5 7 H29 V12.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',color:'#335979'},
@@ -7171,7 +7184,7 @@ function showRefBrandPage(brand){
 
 function switchRefTab(brand,idx,btn){
   REF_ACTIVE_TABS[brand]=idx;
-  const color={nissan:'#CD5257',stellantis:'#4484CD',baic:'#D38B5D',baicRecall:'#B3A158',petromin:'#E1A56A',foton:'#768B95',nos:'#58975B',electromin:'#61806D',volvo:'#335979'}[brand]||'#c0272d';
+  const color={nissan:'#CD5257',stellantis:'#4484CD',baic:'#D38B5D',baicRecall:'#B3A158',petromin:'#E1A56A',foton:'#546E7A',nos:'#58975B',electromin:'#61806D',volvo:'#335979'}[brand]||'#c0272d';
   const container=btn?btn.parentElement:document.querySelector('#refSubTabs_'+brand);
   if(container){
     container.querySelectorAll('.ref-sub-tab').forEach((t,i)=>{
@@ -8754,7 +8767,7 @@ function annBrandColor(txt){
   if(/ستيلانتس|ستيلنتس|جيب|رام|دودج|wrangler|\bram\b|dodge|durango|jeep|stellantis/i.test(t)) return '#4484CD';
   if(/بايك|baic/i.test(t)) return '#D38B5D';
   if(/بودي\s*شوب|body\s*shop/i.test(t)) return '#A54C5D';
-  if(/فوتون|foton/i.test(t)) return '#768B95';
+  if(/فوتون|foton/i.test(t)) return '#546E7A';
   if(/national\s*oil|نشنال|\bnos\b/i.test(t)) return '#58975B';
   if(/energy|electromin|الطاقة|اليكترومين/i.test(t)) return '#61806D';
   if(/بترومين|petromin/i.test(t)) return '#E1A56A';
@@ -8762,7 +8775,7 @@ function annBrandColor(txt){
 }
 function annTint(hex,a){var h=hex.replace('#','');if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];var r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);return 'rgba('+r+','+g+','+b+','+a+')';}
 function annHL(txt,accent){return String(txt||'').replace(/(\d[\d,\.]*\s*(?:ألف\s*)?(?:ريال|%))/g,'<b style="color:'+accent+'">$1</b>');}
-function annBrandName(c){return {'#335979':'Volvo','#CD5257':'Nissan','#4484CD':'Stellantis','#D38B5D':'BAIC','#A54C5D':'Body Shop','#768B95':'Foton','#58975B':'National Oil','#61806D':'Energy','#E1A56A':'Petromin'}[c]||'General';}
+function annBrandName(c){return {'#335979':'Volvo','#CD5257':'Nissan','#4484CD':'Stellantis','#D38B5D':'BAIC','#A54C5D':'Body Shop','#546E7A':'Foton','#58975B':'National Oil','#61806D':'Energy','#E1A56A':'Petromin'}[c]||'General';}
 var ANN_SEQ=0;
 function annToggle(id,btn){var b=document.getElementById(id);if(!b)return;var open=b.getAttribute('data-open')==='1';b.setAttribute('data-open',open?'0':'1');b.style.maxHeight=open?'112px':'none';btn.textContent=open?'Show more ▾':'Show less ▴';}
 function annCard(it){
@@ -9305,7 +9318,7 @@ async function renderRef(){
       {key:'nissan',     label:'Nissan',           icon:'🚗', color:'#CD5257'},
       {key:'stellantis', label:'Stellantis',       icon:'🚐', color:'#4484CD'},
       {key:'bodyshop',   label:'Body Shop',        icon:'🔧', color:'#A54C5D'},
-      {key:'foton',      label:'Foton',            icon:'🚛', color:'#768B95'},
+      {key:'foton',      label:'Foton',            icon:'🚛', color:'#546E7A'},
       {key:'nos',        label:'National Oil', icon:'🟢', color:'#58975B'},
       {key:'electromin', label:'Energy',           icon:'⚡', color:'#61806D'},
       {key:'volvo',      label:'Volvo',            icon:'<svg viewBox="0 0 36 36" width="22" height="22" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="21" r="8.5" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M21 15 L29 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M23.5 7 H29 V12.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>', color:'#335979'},
@@ -9592,10 +9605,10 @@ async function loadVehicleModels(brand){
       if(vk) arr.forEach(r=>{ String(r[vk]||'').split('/').forEach(m=>{const t=m.trim();if(t)models.push(t);}); });
     }
     if(!models.length){document.getElementById(contentId).innerHTML='<div style="text-align:center;color:#aaa;font-size:12px">No models — أضيفي صف "Vehicle Model" في تبويب Instruction</div>';return;}
-    const c={nissan:'#CD5257',stellantis:'#4484CD',baic:'#D38B5D',foton:'#768B95',volvo:'#335979'}[brand]||'#c0272d';
+    const c={nissan:'#CD5257',stellantis:'#4484CD',baic:'#D38B5D',foton:'#546E7A',volvo:'#335979'}[brand]||'#c0272d';
     let html='<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px">'
       +models.map((m)=>{
-        return '<div style="background:#FDFDFC;border:1px solid #EFEAE4;border-radius:8px;padding:6px 6px;width:120px;text-align:center;color:'+c+';font-size:11.5px;font-weight:600">'+m+'</div>';
+        return '<div class="veh-chip" style="background:#FFFFFF;border:1px solid color-mix(in srgb,'+c+' 32%,#EFEAE4);border-radius:8px;padding:6px 6px;width:120px;text-align:center;color:'+c+';font-size:11.5px;font-weight:600">'+m+'</div>';
       }).join('')
       +'</div>';
     VEHICLE_CACHE[brand]=true;
@@ -11348,7 +11361,9 @@ window.__watchDom=(function(){
     // keep how light/dark the original was, take the tab's hue + saturation
     var l=a[2], s=t[1]; if(l>0.88){ l=Math.min(0.975,l+0.025); s=s*0.5; } return hsl2rgb(t[0],s,l);}
   // text gets a deeper, calmer shade; very light backgrounds stay almost neutral (no pink/peach cast)
-  function mapCol2(rgb,T,kind){var a=rgb2hsl(rgb[0],rgb[1],rgb[2]);if(a[1]<0.14&&a[2]<0.9) return null;var t=rgb2hsl(T[0],T[1],T[2]);var l=a[2],s=t[1];
+  function mapCol2(rgb,T,kind){var a=rgb2hsl(rgb[0],rgb[1],rgb[2]);
+    if(kind==='bg'&&a[1]<0.14&&a[2]>0.86&&a[2]<0.985){ var t0=rgb2hsl(T[0],T[1],T[2]); return hsl2rgb(t0[0],Math.min(t0[1]*0.75,0.5),Math.max(a[2],0.958)); }
+    if(a[1]<0.14&&a[2]<0.9) return null;var t=rgb2hsl(T[0],T[1],T[2]);var l=a[2],s=t[1];
     if(kind==='text'&&window.__TT&&a[1]>=0.14) return window.__TT.slice();
     if(kind==='text'&&window.__DEEP_TEXT){ l=Math.min(l,0.42); s=t[1]*0.7; }
     else if(l>0.88){ l=Math.max(l,0.968); s=Math.min(t[1]*0.18,0.18); }
@@ -11401,7 +11416,7 @@ window.__watchDom=(function(){
   if(!window.LINKS_COLOR) window.LINKS_COLOR='#7AA6D6'; // Links & Systems: B3 sky
   function run(){
     document.querySelectorAll('#refContent .ref-brand-section').forEach(function(sec){
-      var c=sec.getAttribute('data-brand-color'); window.__DEEP_TEXT=(String(c).toUpperCase()==='#E1A56A'); if(c){ var _T=h2rgb(c); window.__TT=window.__DEEP_TEXT?[Math.round(_T[0]*.62+58*.38),Math.round(_T[1]*.62+42*.38),Math.round(_T[2]*.62+32*.38)]:_T; } if(c) { recolour(sec,c); sec.style.setProperty('--tt',hex(window.__TT)); [].forEach.call(sec.querySelectorAll('tbody td:first-child'),function(td){ td.classList.toggle('td-code',/^\s*\d{2,6}\s*$/.test(td.textContent)); }); var bk=sec.previousElementSibling; if(bk) recolour(bk,c); }
+      var c=sec.getAttribute('data-brand-color'); window.__DEEP_TEXT=(String(c).toUpperCase()==='#E1A56A'); if(c){ var _T=h2rgb(c); window.__TT=window.__DEEP_TEXT?h2rgb('#C48A55'):_T; } if(c) { recolour(sec,c); sec.style.setProperty('--tt',hex(window.__TT)); [].forEach.call(sec.querySelectorAll('tbody td:first-child'),function(td){ td.classList.toggle('td-code',/^\s*\d{2,6}\s*$/.test(td.textContent)); }); var bk=sec.previousElementSibling; if(bk) recolour(bk,c); }
       dedupeHeads(sec);
     });
     var cp=document.getElementById('refCasePanel'); if(cp&&window.CASE_COLOR) recolour(cp,window.CASE_COLOR);
