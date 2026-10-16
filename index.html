@@ -634,6 +634,9 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 /* ===== Team page: compact ===== */
 .ms-pm{display:inline-flex;align-items:center;gap:5px;color:#4A3528;font-size:12.5px}
 .ms-rt{margin-left:auto;font-size:11.5px;font-weight:600}
+.ms-bv-col{flex-direction:column;align-items:stretch!important;gap:5px!important}
+.ms-bv-col .ms-pm{width:100%}
+.ms-bv-col .ms-rt{align-self:flex-end;margin-left:0}
 .ms-wrap .ms-v,.ms-wrap .ms-vr2 .ms-v{font-size:14px!important}
 .ms-wrap .ms-c{padding:6px 8px!important}
 .ms-wrap .ms-pl{padding:5px 6px}
@@ -662,6 +665,27 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .ref-link-open-btn:hover{background:color-mix(in srgb,var(--lk) 8%,#FDFDFC)!important}
 .ref-tool.lk{color:var(--lk)!important;border-color:color-mix(in srgb,var(--lk) 28%,transparent)!important}
 .ref-tool.lk:hover,.ref-tool.lk.on{background:color-mix(in srgb,var(--lk) 8%,#FDFDFC)!important}
+/* Permissions KPIs: all four the same */
+#toKrow .kc{background:#FDFDFC!important;border:1px solid #EFEDE9!important}
+#toKrow .kc .klbl{color:#8A857C!important}
+#toKrow .kc .kval{color:var(--text)!important}
+/* TO/CC everywhere: light tint (inside a brand page it takes that brand's colour) */
+.ref-email-tag.to{background:color-mix(in srgb,var(--brand,var(--accent)) 16%,#FDFDFC)!important;color:var(--brand,var(--accent))!important}
+.ref-email-tag.cc{background:#F1EEEA!important;color:#7C7064!important}
+/* brand pages: softer TO/CC tags, scrollbar and badges */
+.ref-brand-section .ref-email-tag.to{background:color-mix(in srgb,var(--brand) 16%,#FDFDFC)!important;color:var(--brand)!important}
+.ref-brand-section .ref-email-tag.cc{background:#F1EEEA!important;color:#7C7064!important}
+.br-list::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--brc,#8A6A4A) 35%,#EDE4DA)!important}
+.br-list{scrollbar-color:color-mix(in srgb,var(--brc,#8A6A4A) 35%,#EDE4DA) transparent!important}
+.ref-brand-section ::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--brand) 35%,#EDE4DA)}
+.bd-role{background:color-mix(in srgb,var(--brc) 15%,#FDFDFC)!important;color:var(--brc)!important}
+.dh-wrap{position:sticky;top:0;z-index:2;background:#FDFDFC;margin-bottom:6px}
+/* Main menu: N2 — one bar like the sub-menu */
+.page-nav{display:flex!important;justify-content:center;gap:4px!important;width:fit-content!important;margin:18px auto 6px!important;border:1px solid #E8E2DA;border-radius:14px;padding:5px!important;background:#FDFDFC!important}
+.pnav{flex-direction:row!important;gap:8px!important;padding:9px 22px!important;border:none!important;border-radius:10px!important;font-size:13px!important;background:transparent!important}
+.pnav.active{background:rgba(var(--accent-rgb),.07)!important}
+.pnav .ic-done svg{width:17px!important;height:17px!important}
+@media(max-width:820px){.page-nav{flex-wrap:wrap!important;width:calc(100% - 24px)!important}.pnav{flex:1 1 30%;justify-content:center;padding:8px 10px!important}}
 /* footer: smaller */
 #lupd_footer{font-size:12px!important}
 #lupd_footer+span{font-size:12px!important}
@@ -705,8 +729,7 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
 #toKrow .kc{background:#FDFDFC!important;border:1px solid #EFEDE9!important;border-top:1px solid #EFEDE9!important;border-radius:12px!important;box-shadow:none!important;text-align:center;padding:10px 8px}
 #toKrow .kc .klbl{font-size:11.5px;color:#8A857C;font-weight:500;letter-spacing:0}
 #toKrow .kc .kval{font-size:18px;font-weight:600;color:var(--text)}
-#toKrow .kc.c1{background:rgba(184,137,58,.06)!important;border-color:rgba(184,137,58,.3)!important}
-#toKrow .kc.c1 .klbl,#toKrow .kc.c1 .kval{color:#9A6E28}
+/* Pending card: same as the others */
 .to-hero .hi2{background:none!important;border:none!important;padding:0!important;font-size:20px!important;font-weight:700!important;color:var(--text)!important}
 .to-badge.pend{background:rgba(184,137,58,.1);color:#9A6E28}
 .to-badge.appr{background:rgba(94,138,112,.1);color:#4A7058}
@@ -2539,7 +2562,7 @@ function renderMonthlySummary(name){
     :'<span class="ms-mu">No vacation in '+msLabel(k)+'</span>';
   var permIn=(perms.length?perms.map(function(r){return '<span class="ms-pm"><b>'+apFmtDate(String(r.Date).slice(0,10))+'</b> '+(r.From?hm(r.From)+' → '+hm(r.To):'')+(r.Hours?' · '+toFmtHrs(r.Hours)+'h':'')+' <span class="ap-b '+(stCls[r.Status]||'gr')+'">'+apEsc(r.Status||'')+'</span></span>';}).join(''):'<span class="ms-mu">No permissions in '+msLabel(k)+'</span>')
     +(typeof TO_MONTHLY_LIMIT!=='undefined'?'<span class="ms-mu ms-rt">Approved '+toFmtHrs(apprH)+'h of '+TO_MONTHLY_LIMIT+'h · Remaining '+toFmtHrs(Math.max(0,TO_MONTHLY_LIMIT-apprH))+'h</span>':'');
-  var vpRows='<div class="ms-br"><div class="ms-bk">Vacation</div><div class="ms-bv">'+vacIn+'</div></div><div class="ms-br"><div class="ms-bk">Permissions</div><div class="ms-bv">'+permIn+'</div></div>';
+  var vpRows='<div class="ms-br"><div class="ms-bk">Vacation</div><div class="ms-bv">'+vacIn+'</div></div><div class="ms-br"><div class="ms-bk">Permissions</div><div class="ms-bv ms-bv-col">'+permIn+'</div></div>';
   var attH2=any
     ? '<div class="ms-pills">'+pl('Worked',cnt.Office+cnt.Remote+cnt['Saturday Shift'])+pl('OFF',cnt.Off,'#B48484')+pl('Vacation',cnt.Vacation,'#9C8D63')+pl('Absent / Sick',cnt.Absent+cnt.Sick+cnt.EL)+pl('Permissions',toFmtHrs(apprH)+'h')+'</div>'
       +'<div class="ms-box">'+boxRows+vpRows+'</div>'
@@ -11246,7 +11269,7 @@ window.__watchDom=(function(){
   function hex(c){return '#'+c.map(function(v){return ('0'+Math.round(v).toString(16)).slice(-2);}).join('').toUpperCase();}
   function mapCol(rgb,T){var a=rgb2hsl(rgb[0],rgb[1],rgb[2]);if(a[1]<0.14) return null;var t=rgb2hsl(T[0],T[1],T[2]);
     // keep how light/dark the original was, take the tab's hue + saturation
-    var l=a[2], s=t[1]*(l>0.9?0.6:1); return hsl2rgb(t[0],s,l);}
+    var l=a[2], s=t[1]; if(l>0.88){ l=Math.min(0.975,l+0.025); s=s*0.5; } return hsl2rgb(t[0],s,l);}
   function fixStr(str,T){
     return str.replace(/#([0-9a-fA-F]{6})([0-9a-fA-F]{2})?\b|#([0-9a-fA-F]{3})\b(?![0-9a-fA-F])/g,function(m,h6,al,h3){var c=mapCol(h2rgb(h6||h3),T);return c?hex(c)+(al||''):m;})
               .replace(/rgba?\((\d+),\s*(\d+),\s*(\d+)(\s*,\s*[\d.]+)?\)/g,function(m,r,g,b,al){var c=mapCol([+r,+g,+b],T);return c?(al?'rgba(':'rgb(')+c.map(Math.round).join(',')+(al||'')+')':m;});
@@ -11257,12 +11280,34 @@ window.__watchDom=(function(){
       ['fill','stroke','color'].forEach(function(a){var v=e.getAttribute&&e.getAttribute(a); if(v&&v.charAt(0)==='#'){var n=fixStr(v,T); if(n!==v) e.setAttribute(a,n);}});
     });
   }
+  /* one header row instead of repeating it above every region */
+  function dedupeHeads(root){
+    var groups={};
+    [].slice.call(root.querySelectorAll('table')).forEach(function(t){
+      if(!t.tHead||t.classList.contains('dh-head')) return; var k=t.tHead.textContent.replace(/\s+/g,' ').trim(); if(!k) return; (groups[k]=groups[k]||[]).push(t);
+    });
+    Object.keys(groups).forEach(function(k){ var g=groups[k]; if(g.length<2||g[0].dataset.dh) return;
+      var a=g[0], b=g[1], A=a.parentNode; while(A&&!A.contains(b)) A=A.parentNode; if(!A) return;
+      var W=a; while(W.parentNode!==A) W=W.parentNode;
+      var ht=document.createElement('table'); ht.className=a.className+' dh-head'; ht.setAttribute('style',a.getAttribute('style')||''); ht.appendChild(a.tHead.cloneNode(true));
+      var hw=document.createElement('div'); hw.className='dh-wrap'; hw.appendChild(ht); A.insertBefore(hw,W);
+      g.forEach(function(t){ t.dataset.dh=1; t.tHead.style.display='none'; t.style.tableLayout='fixed'; });
+      ht.style.tableLayout='fixed'; ht.style.marginBottom='0';
+      var fit=function(){ var v=g.find(function(t){return t.offsetWidth>0;}); if(!v) return; hw.style.marginLeft='0px';
+        var rh=hw.getBoundingClientRect(), rv=v.getBoundingClientRect();
+        hw.style.marginLeft=(rv.left-rh.left)+'px'; ht.style.width=rv.width+'px';
+        var c1=v.tBodies[0]&&v.tBodies[0].rows[0]; if(c1){ var hc=ht.tHead.rows[ht.tHead.rows.length-1].cells; [].forEach.call(c1.cells,function(td,i){ if(hc[i]){ hc[i].style.width=td.offsetWidth+'px'; hc[i].style.textAlign=getComputedStyle(td).textAlign; } }); } };
+      fit(); setTimeout(fit,300);
+    });
+  }
+  window.__dedupeHeads=dedupeHeads;
   window.__recolour=recolour;
   if(!window.CASE_COLOR) window.CASE_COLOR='#8A6A4A';   // Case Handling: CH1 brown
   if(!window.LINKS_COLOR) window.LINKS_COLOR='#7AA6D6'; // Links & Systems: B3 sky
   function run(){
     document.querySelectorAll('#refContent .ref-brand-section').forEach(function(sec){
       var c=sec.getAttribute('data-brand-color'); if(c) { recolour(sec,c); var bk=sec.previousElementSibling; if(bk) recolour(bk,c); }
+      dedupeHeads(sec);
     });
     var cp=document.getElementById('refCasePanel'); if(cp&&window.CASE_COLOR) recolour(cp,window.CASE_COLOR);
     if(window.LINKS_COLOR) document.documentElement.style.setProperty('--lk',window.LINKS_COLOR);
