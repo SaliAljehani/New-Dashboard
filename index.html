@@ -630,6 +630,55 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .sE span{font-size:11.5px;color:#888;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
 .sE i{width:8px;height:8px;border-radius:50%;display:inline-block}
 @media(max-width:900px){.sE{grid-template-columns:repeat(3,1fr)}.sE>div+div{border-left:none}}
+
+/* ===== Team page: compact ===== */
+.ms-pm{display:inline-flex;align-items:center;gap:5px;color:#4A3528;font-size:12.5px}
+.ms-rt{margin-left:auto;font-size:11.5px;font-weight:600}
+.ms-wrap .ms-v,.ms-wrap .ms-vr2 .ms-v{font-size:14px!important}
+.ms-wrap .ms-c{padding:6px 8px!important}
+.ms-wrap .ms-pl{padding:5px 6px}
+/* Daily Reference: R2 capsules, smaller text */
+.ref-home .ref-brand-circles{gap:10px!important}
+.ref-home .ref-brand-circle{flex-direction:row!important;padding:8px 16px 8px 8px;border-radius:999px;gap:8px!important;background:color-mix(in srgb,var(--bc,#8A6A4A) 9%,#FDFDFC)}
+.ref-home .ref-brand-circle-icon{width:34px!important;height:34px!important;background:rgba(255,255,255,.75)!important}
+.ref-home .ref-brand-circle-icon svg{width:18px;height:18px}
+.ref-home .ref-brand-circle-label{font-size:12px!important;font-weight:600!important}
+.ref-tool{font-size:12px!important;padding:7px 14px!important}
+.ref-tool-ic{width:30px!important;height:30px!important}
+.to-mwrap{display:flex;align-items:center;justify-content:center;gap:8px}
+.to-mab{flex:none}
+#motivationText>div{font-size:13px!important}
+.to-b-appr,.to-b-appr:hover{background:var(--appr,#7E9A72)!important;color:#fff!important}
+/* Team page: equal 10px spacing between blocks */
+#teamSubNav.team-subnav{margin-bottom:10px!important}
+#page1.main{padding-top:0!important}
+#perfCtrl{margin-bottom:10px!important;padding:7px 20px!important}
+#vAgent .ag-hero{margin-bottom:10px!important;padding:8px 16px!important}
+#akpis.ag-kpis{margin-bottom:10px!important}
+#attContent.att-section{margin-top:0!important}
+#attContent .sE{margin-bottom:10px!important}
+#attContent .sE>div{padding:8px 6px!important}
+#attContent .sE b{font-size:18px!important}
+#attContent .sE span{font-size:11px!important}
+.tp-wrap{gap:10px!important}
+/* compact KPIs / ranking / summary */
+.ag-kpis .ag-k{padding:5px 8px!important;display:flex!important;flex-direction:column;justify-content:center;align-items:center;min-height:0!important}
+.ag-kpis .ag-k .p{font-size:10px!important;line-height:1.1}
+.ag-kpis .ag-k .v{margin-top:4px!important}
+.ag-kpis .ag-k .p{margin-top:2px}
+.ag-kpis .ag-k .v{font-size:15px!important}
+.ag-kpis .ag-k .l{font-size:10.5px!important}
+#agrid{gap:6px!important}
+#agrid>div{padding:7px 14px!important}
+#agrid>div>div[style*="border-radius:10px"]{padding:5px 4px!important}
+#agrid>div>div[style*="border-radius:10px"]>div:first-child{font-size:10.5px!important}
+#agrid>div>div[style*="border-radius:10px"]>div:last-child{font-size:14px!important}
+#agrid>div>div:nth-child(2)>div:first-child{font-size:14px!important}
+#agrid>div>div:first-child{font-size:18px!important}
+.tp-sum{padding:10px 14px!important}
+.tp-sum .m{padding:6px 0!important}
+.tp-sum .m .v{font-size:14px!important}
+@media(max-width:820px){.mo1 .ms-tr{grid-template-columns:90px repeat(3,minmax(0,1fr))!important}.mo1 .mo1-r,.mo1 .ms-br{grid-template-columns:90px minmax(0,1fr)!important}.mo1 .ms-pills{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
 </style>
 <style>
 /* ── batch: permissions / performance / attendance polish ── */
@@ -1084,8 +1133,17 @@ function normaliseCsvCell(v){
 
 // Turn a gviz table into the same array-of-objects shape the proxy returns.
 function gvizToObjects(json){
-  const cols = json.table.cols.map(c=>c.label||'');
-  return json.table.rows.map(r=>Object.fromEntries(cols.map((c,i)=>{
+  let cols = json.table.cols.map(c=>c.label||'');
+  let rows = json.table.rows;
+  // gviz sometimes misses the header row (all labels empty) when every column is text.
+  // Then the real headers are in the first data row: use them, so keys and order stay the same.
+  if(cols.every(c=>!String(c).trim()) && rows.length){
+    const h = (rows[0].c||[]).map(x=>x ? String(x.f!==undefined ? x.f : (x.v==null?'':x.v)) : '');
+    if(h.some(x=>x.trim())){ cols = cols.map((c,i)=>h[i]||''); rows = rows.slice(1); }
+  }
+  const seen = {};
+  cols = cols.map((c,i)=>{ let k=String(c); if(!k.trim()) return '__col'+i; if(seen[k]) k=k+' ('+(++seen[k])+')'; else seen[k]=1; return k; });
+  return rows.map(r=>Object.fromEntries(cols.map((c,i)=>{
     const cell = r.c ? r.c[i] : null;
     if(!cell) return [c,''];
     // Numbers: prefer the raw value, because the formatted string can carry
@@ -2457,11 +2515,20 @@ function renderMonthlySummary(name){
       return '<span class="ap-b '+(done?'ok':no?'gr':'vac')+'">'+apEsc(String(c).trim())+(done?' ✓':no?'':' · '+apEsc(s))+'</span>';}).join('');
   }
 
+  /* Vacation + Permissions as rows under OFF days */
+  var vacIn=vr.length?vr.map(function(r){var n=r[1]-r[0]+1;return '<span class="ap-b vac">'+(r[0]===r[1]?r[0]:r[0]+'–'+r[1])+' '+AP_MON[r[2]]+' · '+dd(n)+'</span>';}).join('')+(vr.length>1?'<span class="ms-mu ms-rt">Total '+dd(vTot)+'</span>':'')
+    :'<span class="ms-mu">No vacation in '+msLabel(k)+'</span>';
+  var permIn=(perms.length?perms.map(function(r){return '<span class="ms-pm"><b>'+apFmtDate(String(r.Date).slice(0,10))+'</b> '+(r.From?hm(r.From)+' → '+hm(r.To):'')+(r.Hours?' · '+toFmtHrs(r.Hours)+'h':'')+' <span class="ap-b '+(stCls[r.Status]||'gr')+'">'+apEsc(r.Status||'')+'</span></span>';}).join(''):'<span class="ms-mu">No permissions in '+msLabel(k)+'</span>')
+    +(typeof TO_MONTHLY_LIMIT!=='undefined'?'<span class="ms-mu ms-rt">Approved '+toFmtHrs(apprH)+'h of '+TO_MONTHLY_LIMIT+'h · Remaining '+toFmtHrs(Math.max(0,TO_MONTHLY_LIMIT-apprH))+'h</span>':'');
+  var vpRows='<div class="ms-br"><div class="ms-bk">Vacation</div><div class="ms-bv">'+vacIn+'</div></div><div class="ms-br"><div class="ms-bk">Permissions</div><div class="ms-bv">'+permIn+'</div></div>';
+  var attH2=any
+    ? '<div class="ms-pills">'+pl('Worked',cnt.Office+cnt.Remote+cnt['Saturday Shift'])+pl('OFF',cnt.Off,'#B48484')+pl('Vacation',cnt.Vacation,'#9C8D63')+pl('Absent / Sick',cnt.Absent+cnt.Sick+cnt.EL)+pl('Permissions',toFmtHrs(apprH)+'h')+'</div>'
+      +'<div class="ms-box">'+boxRows+vpRows+'</div>'
+    : '<div class="ap-empty">No attendance data in '+msLabel(k)+'</div><div class="ms-box">'+vpRows+'</div>';
   var sh=function(ic,t,x){return '<div class="ms-sh">'+ic+'<span>'+t+'</span>'+(x?'<span class="ms-x">'+x+'</span>':'')+'</div>';};
   el.innerHTML='<div class="ms-wrap">'+head
     +sh(apIc('chart'),'Performance · '+msLabel(k),prev?'vs '+AP_MONFULL[+pk.slice(5,7)-1]:'')+perf
-    +sh(apIc('att'),'Attendance')+attH
-    +'<div class="ms-two"><div>'+sh(apIc('sun'),'Vacation')+vacH+'</div><div>'+sh(apIc('clock'),'Permissions')+permH+'</div></div>'
+    +sh(apIc('att'),'Attendance')+attH2
     +(trH?sh(apIc('school'),'Campaign Training')+'<div class="ap-tags" style="margin-top:0">'+trH+'</div>':'')
     +'</div>';
 }
@@ -3102,7 +3169,7 @@ function refGlobalFilter(q){
 
 function switchRefTab(brand, idx, btn){
   REF_ACTIVE_TABS[brand] = idx;
-  const color = {nissan:'#c0272d', stellantis:'#1565c0', baic:'#C86E35', baicRecall:'#B7791F',petromin:'#D98E45',foton:'#546e7a',nos:'#2e7d32'}[brand] || '#c0272d';
+  const color = {nissan:'#CD5257', stellantis:'#4484CD', baic:'#D38B5D', baicRecall:'#B3A158',petromin:'#E1A56A',foton:'#768B95',nos:'#58975B'}[brand] || '#c0272d';
   btn.parentElement.querySelectorAll('.ref-sub-tab').forEach((t,i) => {
     t.classList.toggle('active', i===idx);
     t.style.background = i===idx ? color : '';
@@ -3695,7 +3762,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
   if(brand==='nissan'){var _rmS=nissanRMFromSheet(arr);if(_rmS)window.__NISSAN_RM=_rmS;}
   const NISSAN_AM=(brand==='nissan')?(window.__NISSAN_RM||NISSAN_AM_FALLBACK):{};
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#C86E35',baicRecall:'#B7791F',petromin:'#D98E45',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
+  const color={nissan:'#CD5257',stellantis:'#4484CD',baic:'#D38B5D',baicRecall:'#B3A158',petromin:'#E1A56A',foton:'#768B95',nos:'#58975B'}[brand]||'#c0272d';
   const fmtNum = n => {
     const s=String(n||'').trim();
     if(!s||s==='-') return '';
@@ -6673,7 +6740,7 @@ function copyNissanAppForm(){
 
 function renderSMSTab(arr, sheetName, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#C86E35',baicRecall:'#B7791F',petromin:'#D98E45',foton:'#546e7a',nos:'#2e7d32'}[brand]||'#c0272d';
+  const color={nissan:'#CD5257',stellantis:'#4484CD',baic:'#D38B5D',baicRecall:'#B3A158',petromin:'#E1A56A',foton:'#768B95',nos:'#58975B'}[brand]||'#c0272d';
   // All data comes under 3S keys — sections separated by header rows
   // Header rows: values equal their key names (e.g. "PAC Appointment SMS EN" == key "3S Appointment SMS EN")
   var sections = {s3:[], pac:[], body:[]};
@@ -6919,20 +6986,20 @@ let REF_CURRENT_BRAND=null;
 function showRefBrandPage(brand){
   REF_CURRENT_BRAND=brand;
   const META={
-    nissan:    {label:'Nissan',    icon:'🔴',color:'#c0272d'},
-    stellantis:{label:'Stellantis',icon:'🚙',color:'#1565c0'},
-    bodyshop:  {label:'Body Shop', icon:'🔧',color:'#7b0000'},
-    baic:      {label:'BAIC',      icon:'🚙',color:'#C86E35'},
-    baicRecall:{label:'BAIC Recall — VIN Search',icon:'🔎',color:'#B7791F'},
-    petromin:  {label:'Petromin',  icon:'<svg viewBox="0 0 36 36" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="14" width="20" height="16" rx="3" fill="#c0272d"/><rect x="8" y="10" width="12" height="6" rx="2" fill="#1a1a2e"/><rect x="24" y="16" width="8" height="4" rx="2" fill="#1a1a2e"/><rect x="13" y="6" width="4" height="6" rx="1" fill="#c0272d"/><circle cx="10" cy="20" r="2" fill="#fff" opacity=".4"/></svg>',color:'#D98E45'},
-    foton:     {label:'Foton',     icon:'🚛',color:'#546e7a'},
-    nos:       {label:'National Oil', icon:'🟢',color:'#2e7d32'},
-    electromin:{label:'Energy', icon:'⚡',color:'#3A6048'},
-    volvo:     {label:'Volvo', icon:'<svg viewBox="0 0 36 36" width="22" height="22" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="21" r="8.5" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M21 15 L29 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M23.5 7 H29 V12.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',color:'#003057'},
+    nissan:    {label:'Nissan',    icon:'🔴',color:'#CD5257'},
+    stellantis:{label:'Stellantis',icon:'🚙',color:'#4484CD'},
+    bodyshop:  {label:'Body Shop', icon:'🔧',color:'#A54C5D'},
+    baic:      {label:'BAIC',      icon:'🚙',color:'#D38B5D'},
+    baicRecall:{label:'BAIC Recall — VIN Search',icon:'🔎',color:'#B3A158'},
+    petromin:  {label:'Petromin',  icon:'<svg viewBox="0 0 36 36" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="14" width="20" height="16" rx="3" fill="#c0272d"/><rect x="8" y="10" width="12" height="6" rx="2" fill="#1a1a2e"/><rect x="24" y="16" width="8" height="4" rx="2" fill="#1a1a2e"/><rect x="13" y="6" width="4" height="6" rx="1" fill="#c0272d"/><circle cx="10" cy="20" r="2" fill="#fff" opacity=".4"/></svg>',color:'#E1A56A'},
+    foton:     {label:'Foton',     icon:'🚛',color:'#768B95'},
+    nos:       {label:'National Oil', icon:'🟢',color:'#58975B'},
+    electromin:{label:'Energy', icon:'⚡',color:'#61806D'},
+    volvo:     {label:'Volvo', icon:'<svg viewBox="0 0 36 36" width="22" height="22" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="21" r="8.5" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M21 15 L29 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M23.5 7 H29 V12.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',color:'#335979'},
   };
   const meta=META[brand];
-  const bannerBg = brand==='petromin' ? 'linear-gradient(135deg,#D98E45,#E0A055)' : 'linear-gradient(135deg,'+meta.color+','+meta.color+'99)';
-  const tabActive = brand==='petromin' ? '#D98E45' : meta.color;
+  const bannerBg = 'linear-gradient(135deg,'+meta.color+','+meta.color+'99)';
+  const tabActive = meta.color;
   const tabs=REF_SHEETS[brand].tabs;
   const container=document.getElementById('refContent');
   container.innerHTML=
@@ -6985,7 +7052,7 @@ function showRefBrandPage(brand){
 
 function switchRefTab(brand,idx,btn){
   REF_ACTIVE_TABS[brand]=idx;
-  const color={nissan:'#c0272d',stellantis:'#1565c0',baic:'#C86E35',baicRecall:'#B7791F',petromin:'#D98E45',foton:'#546e7a',nos:'#2e7d32',electromin:'#3A6048',volvo:'#003057'}[brand]||'#c0272d';
+  const color={nissan:'#CD5257',stellantis:'#4484CD',baic:'#D38B5D',baicRecall:'#B3A158',petromin:'#E1A56A',foton:'#768B95',nos:'#58975B',electromin:'#61806D',volvo:'#335979'}[brand]||'#c0272d';
   const container=btn?btn.parentElement:document.querySelector('#refSubTabs_'+brand);
   if(container){
     container.querySelectorAll('.ref-sub-tab').forEach((t,i)=>{
@@ -7090,7 +7157,7 @@ function mkCollapsibleOpen(title, bodyHtml, id, color){
 }
 
 async function renderInstructionTab(brand, cfg){
-  const BRAND_COLORS={nissan:'#c0272d',stellantis:'#1565c0',baic:'#C86E35',volvo:'#003057'};
+  const BRAND_COLORS={nissan:'#CD5257',stellantis:'#4484CD',baic:'#D38B5D',volvo:'#335979'};
   const color=BRAND_COLORS[brand]||'#555555';
 
   const data=await fetchSheet(cfg.id,'Instruction');
@@ -7738,7 +7805,7 @@ async function renderRefBrand(brand,tabIdx){
 
 function renderRecallTab(arr, sheetName){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
-  const color='#B7791F';
+  const color='#B3A158';
 
   // Parse: first section = recall details (until empty row then "VIN")
   const detailRows=[], vinRows=[];
@@ -8677,7 +8744,7 @@ function renderRecallInRef(){
   const refContent = document.getElementById('refContent');
   if(!refContent) return;
   refContent.innerHTML =
-    '<div style="margin-bottom:12px;text-align:left"><button onclick="renderRef()" style="background:#FDFDFC;border:1px solid #B7791F;padding:8px 22px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;color:#B7791F">← Back to References</button></div>'
+    '<div style="margin-bottom:12px;text-align:left"><button onclick="renderRef()" style="background:#FDFDFC;border:1px solid #B3A158;padding:8px 22px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;color:#B3A158">← Back to References</button></div>'
     +'<div id="recallContent"></div>';
   RECALL_ACTIVE_BRAND = 'BAIC Search';
   RECALL_ACTIVE_TAB = 0;
@@ -8738,8 +8805,8 @@ function renderRecallPage(){
 
   el.innerHTML =
     // هيدر رمادي مع وزارة التجارة
-    '<div style="background:#B7791F2E;border-radius:12px 12px 0 0;padding:12px 20px;min-height:53px;display:flex;align-items:center;gap:12px;position:relative">'
-    +'<span style="width:32px;height:32px;border-radius:50%;background:#FDFDFC;display:inline-flex;align-items:center;justify-content:center">'+brandLineIcon('baicRecall','#B7791F').replace('width="24" height="24"','width="18" height="18"')+'</span><span style="font-size:16px;font-weight:700;color:#B7791F">Recall</span>'
+    '<div style="background:#B3A1582E;border-radius:12px 12px 0 0;padding:12px 20px;min-height:53px;display:flex;align-items:center;gap:12px;position:relative">'
+    +'<span style="width:32px;height:32px;border-radius:50%;background:#FDFDFC;display:inline-flex;align-items:center;justify-content:center">'+brandLineIcon('baicRecall','#B3A158').replace('width="24" height="24"','width="18" height="18"')+'</span><span style="font-size:16px;font-weight:700;color:#B3A158">Recall</span>'
     +'<a href="https://recalls.sa/" target="_blank" style="position:absolute;right:12px;display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(255,255,255,.92);color:#757575;border:1px solid rgba(255,255,255,.5);border-radius:14px;font-size:11px;font-weight:700;text-decoration:none">🏛️ وزارة التجارة</a>'
     +'</div>'
     +'<div style="background:#FEFEFD;border-radius:0 0 12px 12px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:16px">'
@@ -8831,7 +8898,7 @@ function searchRecallByVIN(brandFilter){
   }
 
   const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  const bc = (RECALL_BRANDS[brandFilter+' Search']||{}).color || '#B7791F';
+  const bc = (RECALL_BRANDS[brandFilter+' Search']||{}).color || '#B3A158';
   // Group by VIN — one card per vehicle, each recall once (duplicates in the sheet are merged)
   const groups=[], byVin={};
   matches.forEach(r=>{
@@ -9035,7 +9102,7 @@ function toggleStellRecall(id){
 }
 
 function renderRecallTab(arr, sheetName, color){
-  color = color || '#B7791F';
+  color = color || '#B3A158';
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 
   const detailRows=[], vinRows=[];
@@ -9114,16 +9181,16 @@ async function renderRef(){
     const emailData = linksData;
 
     const BRAND_CONFIGS=[
-      {key:'petromin',   label:'Petromin',         icon:'<svg viewBox="0 0 36 36" width="26" height="26" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="14" width="20" height="16" rx="3" fill="#c0272d"/><rect x="8" y="10" width="12" height="6" rx="2" fill="#1a1a2e"/><rect x="24" y="16" width="8" height="4" rx="2" fill="#1a1a2e"/><rect x="13" y="6" width="4" height="6" rx="1" fill="#c0272d"/><circle cx="10" cy="20" r="2" fill="#fff" opacity=".4"/></svg>', color:'#D98E45'},
-      {key:'baic',       label:'BAIC',             icon:'🚙', color:'#C86E35'},
-      {key:'nissan',     label:'Nissan',           icon:'🚗', color:'#c0272d'},
-      {key:'stellantis', label:'Stellantis',       icon:'🚐', color:'#1565c0'},
-      {key:'bodyshop',   label:'Body Shop',        icon:'🔧', color:'#6A3030'},
-      {key:'foton',      label:'Foton',            icon:'🚛', color:'#546e7a'},
-      {key:'nos',        label:'National Oil', icon:'🟢', color:'#2e7d32'},
-      {key:'electromin', label:'Energy',           icon:'⚡', color:'#3A6048'},
-      {key:'volvo',      label:'Volvo',            icon:'<svg viewBox="0 0 36 36" width="22" height="22" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="21" r="8.5" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M21 15 L29 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M23.5 7 H29 V12.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>', color:'#003057'},
-      {key:'baicRecall', label:'Recall', icon:'⚠️', color:'#B7791F', onclick:'renderRecallInRef()'},
+      {key:'petromin',   label:'Petromin',         icon:'<svg viewBox="0 0 36 36" width="26" height="26" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="14" width="20" height="16" rx="3" fill="#c0272d"/><rect x="8" y="10" width="12" height="6" rx="2" fill="#1a1a2e"/><rect x="24" y="16" width="8" height="4" rx="2" fill="#1a1a2e"/><rect x="13" y="6" width="4" height="6" rx="1" fill="#c0272d"/><circle cx="10" cy="20" r="2" fill="#fff" opacity=".4"/></svg>', color:'#E1A56A'},
+      {key:'baic',       label:'BAIC',             icon:'🚙', color:'#D38B5D'},
+      {key:'nissan',     label:'Nissan',           icon:'🚗', color:'#CD5257'},
+      {key:'stellantis', label:'Stellantis',       icon:'🚐', color:'#4484CD'},
+      {key:'bodyshop',   label:'Body Shop',        icon:'🔧', color:'#A54C5D'},
+      {key:'foton',      label:'Foton',            icon:'🚛', color:'#768B95'},
+      {key:'nos',        label:'National Oil', icon:'🟢', color:'#58975B'},
+      {key:'electromin', label:'Energy',           icon:'⚡', color:'#61806D'},
+      {key:'volvo',      label:'Volvo',            icon:'<svg viewBox="0 0 36 36" width="22" height="22" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="21" r="8.5" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M21 15 L29 7" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M23.5 7 H29 V12.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>', color:'#335979'},
+      {key:'baicRecall', label:'Recall', icon:'⚠️', color:'#B3A158', onclick:'renderRecallInRef()'},
     ];
 
     // CONTACT NUMBERS
@@ -9312,7 +9379,7 @@ async function renderRef(){
 
       // BRAND CIRCLES — Order: Petromin, BAIC, Nissan, Stellantis, Body Shop, Foton, National Oil, Electromin, Recall, Links
       +'<div class="ref-home"><div class="ref-brand-circles" style="justify-content:center">'
-      +['petromin','baic','nissan','stellantis','bodyshop','foton','electromin','volvo','nos','baicRecall'].map(k=>{const c=BRAND_CONFIGS.find(b=>b.key===k);if(!c)return'';return'<div class="ref-brand-circle" onclick="'+(c.onclick||'showRefBrandPage(\''+c.key+'\')')+'"><div class="ref-brand-circle-icon" style="background:'+c.color+'1F">'+brandLineIcon(c.key,c.color)+'</div><div class="ref-brand-circle-label" style="color:'+c.color+'">'+c.label+'</div></div>';}).join('')
+      +['petromin','baic','nissan','stellantis','bodyshop','foton','electromin','volvo','nos','baicRecall'].map(k=>{const c=BRAND_CONFIGS.find(b=>b.key===k);if(!c)return'';return'<div class="ref-brand-circle" style="--bc:'+c.color+'" onclick="'+(c.onclick||'showRefBrandPage(\''+c.key+'\')')+'"><div class="ref-brand-circle-icon" style="background:'+c.color+'1F">'+brandLineIcon(c.key,c.color)+'</div><div class="ref-brand-circle-label" style="color:'+c.color+'">'+c.label+'</div></div>';}).join('')
       +'</div>'
       +'<div class="ref-tools">'
       +'<div class="ref-tool" data-p="refContactsPanel" onclick="refTool(\'refContactsPanel\')"><span class="ref-tool-ic">📞</span>Contact Numbers</div>'
@@ -9406,7 +9473,7 @@ async function loadVehicleModels(brand){
       if(vk) arr.forEach(r=>{ String(r[vk]||'').split('/').forEach(m=>{const t=m.trim();if(t)models.push(t);}); });
     }
     if(!models.length){document.getElementById(contentId).innerHTML='<div style="text-align:center;color:#aaa;font-size:12px">No models — أضيفي صف "Vehicle Model" في تبويب Instruction</div>';return;}
-    const c={nissan:'#c0272d',stellantis:'#1565c0',baic:'#C86E35',foton:'#546e7a',volvo:'#003057'}[brand]||'#c0272d';
+    const c={nissan:'#CD5257',stellantis:'#4484CD',baic:'#D38B5D',foton:'#768B95',volvo:'#335979'}[brand]||'#c0272d';
     let html='<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px">'
       +models.map((m)=>{
         return '<div style="background:#FDFDFC;border:1px solid #EFEAE4;border-radius:8px;padding:6px 6px;width:120px;text-align:center;color:'+c+';font-size:11.5px;font-weight:600">'+m+'</div>';
@@ -10376,12 +10443,16 @@ async function renderTimeOff(forceFresh){
 function toRenderMonthChip(){
   const chip=document.getElementById('toMonthChip');
   chip.textContent = '📅 ' + toMonthLabel(TO_SELECTED_MONTH);
-  chip.onclick = () => {
-    const keys=toAllMonthKeys();
-    const idx=keys.indexOf(TO_SELECTED_MONTH);
-    TO_SELECTED_MONTH = keys[(idx+1)%keys.length] || toCurrentMonthKey();
-    toRenderMonthChip(); toRenderSummary(); toRenderKpis();
-  };
+  chip.onclick = null; chip.style.cursor='default';
+  // arrows: previous / next month
+  if(!document.getElementById('toMPrev')){
+    const mk=(id,t,tip)=>{const b=document.createElement('span');b.id=id;b.className='ms-ab to-mab';b.textContent=t;b.title=tip;return b;};
+    const pv=mk('toMPrev','‹','Previous month'), nx=mk('toMNext','›','Next month');
+    const w=document.createElement('div'); w.className='to-mwrap'; chip.parentNode.insertBefore(w,chip); w.appendChild(pv); w.appendChild(chip); w.appendChild(nx);
+    pv.onclick=()=>{ TO_SELECTED_MONTH=msPrevMonth(TO_SELECTED_MONTH); toRenderMonthChip(); toRenderSummary(); toRenderKpis(); };
+    nx.onclick=()=>{ if(TO_SELECTED_MONTH>=toCurrentMonthKey()) return; TO_SELECTED_MONTH=msNextMonth(TO_SELECTED_MONTH); toRenderMonthChip(); toRenderSummary(); toRenderKpis(); };
+  }
+  const nx=document.getElementById('toMNext'); if(nx) nx.classList.toggle('dis', TO_SELECTED_MONTH>=toCurrentMonthKey());
 }
 
 function toRenderKpis(){
