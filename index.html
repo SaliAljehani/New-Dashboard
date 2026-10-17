@@ -693,7 +693,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .ref-brand-section{--brbg:color-mix(in srgb,var(--brand) 6%,#FDFDFC)!important}
 .ref-brand-section .br-rg{background:color-mix(in srgb,var(--brand) 4%,#FDFDFC)!important;color:var(--brand)!important}
 .ref-brand-section .br-it:hover{background:color-mix(in srgb,var(--brand) 3%,#FDFDFC)!important}
-.ref-brand-section .br-it.on{background:color-mix(in srgb,var(--brand) 11%,#FFFFFF)!important}
+.ref-brand-section .br-it.on{background:color-mix(in srgb,var(--brand) 8%,#FFFFFF)!important}
 .ref-brand-section .br-it b{color:var(--brand)!important}
 .ref-brand-section tbody tr:hover td{background:color-mix(in srgb,var(--brand) 4%,#FDFDFC)!important}
 /* e-mail boxes (Request / Complaint): pearl white with the tab's colour as a soft shade */
@@ -774,20 +774,20 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .ref-brand-section div[onclick^="toggleRegion"] span[id^="ico_"]{color:var(--tt,var(--brand))!important}
 .ref-brand-section .sms-card button{border:1px solid #EDE6DE!important;background:#FFFFFF!important}
 /* one header tint per tab: brand band = branch header = region bars */
-.ref-brand-band{background:color-mix(in srgb,var(--brand,#8A6A4A) 11%,#FFFFFF)!important}
-.ref-brand-section .bd-head,.ref-brand-section div[onclick^="toggleRegion"],.ref-brand-section .br-rg{background:color-mix(in srgb,var(--brand) 11%,#FFFFFF)!important}
+.ref-brand-band{background:color-mix(in srgb,var(--brand,#8A6A4A) 8%,#FFFFFF)!important}
+.ref-brand-section .bd-head,.ref-brand-section div[onclick^="toggleRegion"],.ref-brand-section .br-rg{background:color-mix(in srgb,var(--brand) 8%,#FFFFFF)!important}
 /* every coloured bar (No Answer SMS, collapsibles, regions) = header tint */
-.ref-brand-section :is(div[style*="border-left:4px solid"],div[style*="border-left: 4px solid"]){background:color-mix(in srgb,var(--brand) 11%,#FFFFFF)!important;border-left-color:var(--brand)!important}
-.ref-brand-section .piPanel div:has(> div > .ref-email-tag.to){background:color-mix(in srgb,var(--brand) 11%,#FFFFFF)!important}
+.ref-brand-section :is(div[style*="border-left:4px solid"],div[style*="border-left: 4px solid"]){background:color-mix(in srgb,var(--brand) 8%,#FFFFFF)!important;border-left-color:var(--brand)!important}
+.ref-brand-section .piPanel div:has(> div > .ref-email-tag.to){background:color-mix(in srgb,var(--brand) 8%,#FFFFFF)!important}
 /* brand title + sub tabs use the calm text colour (Petromin no longer bright) */
 .ref-brand-band,.ref-brand-band>*:not(button),.ref-brand-section .ref-sub-tab{color:var(--tt,var(--brand))!important}
 .ref-brand-section .ref-email-card>div:first-child{color:#3F3A36!important}
-.ref-brand-section .ref-sub-tab.active,.ref-brand-section .ref-sub-tab.active:hover{background:color-mix(in srgb,var(--brand) 11%,#FFFFFF)!important}
+.ref-brand-section .ref-sub-tab.active,.ref-brand-section .ref-sub-tab.active:hover{background:color-mix(in srgb,var(--brand) 8%,#FFFFFF)!important}
 .ref-brand-section .ref-sub-tab:hover:not(.active){background:color-mix(in srgb,var(--brand) 6%,#FFFFFF)!important}
 .ref-brand-section tbody td:not(.td-code),.ref-brand-section tbody td:not(.td-code) *:not(a){font-weight:400!important}
 /* website link buttons: calm, readable */
 .ref-brand-section div[id$="Website"] a,.ref-brand-section a[href*="petromin-baic.com"]{background:#FFFFFF!important;color:var(--tt,var(--brand))!important;border:1px solid color-mix(in srgb,var(--brand) 32%,#EFEAE3)!important;box-shadow:none!important;text-shadow:none!important}
-.ref-brand-section div[id$="Website"] a:hover,.ref-brand-section a[href*="petromin-baic.com"]:hover{background:color-mix(in srgb,var(--brand) 11%,#FFFFFF)!important}
+.ref-brand-section div[id$="Website"] a:hover,.ref-brand-section a[href*="petromin-baic.com"]:hover{background:color-mix(in srgb,var(--brand) 8%,#FFFFFF)!important}
 .ref-brand-section div[id$="Website"] a *{color:inherit!important}
 /* hover: no grey anywhere — use the section's own colour */
 .ref-brand-section .ref-email-card:hover{background:#FFFFFF!important;border-color:color-mix(in srgb,var(--brand) 45%,#EFEAE3)!important}
@@ -798,6 +798,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .ref-home .ref-brand-circle:hover{background:color-mix(in srgb,var(--bc) 18%,#FFFFFF)!important}
 .ref-tool:not(.lk):hover{background:rgba(var(--accent-rgb),.06)!important}
 .ref-brand-section button:hover{filter:none}
+.ref-brand-section .ref-email-card :is(span,a)[style*="border-radius: 20px"]{background:color-mix(in srgb,var(--brand) 8%,#FFFFFF)!important}
 /* footer: smaller */
 #lupd_footer{font-size:12px!important}
 #lupd_footer+span{font-size:12px!important}
@@ -5548,24 +5549,30 @@ function renderVolvoAftersalesTab(arr){
     const map=String(r[keys[8]]||'').trim();
     const loc=(map&&/^https?:/.test(map))?map:(gps?(/^https?:/.test(gps)?gps:'https://www.google.com/maps?q='+encodeURIComponent(gps)):'');
     return '<div style="background:#FEFEFD;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07)">'
-      +'<div style="background:'+color+'12;padding:20px 18px;text-align:center;border-bottom:2px solid '+color+'22">'
-      +'<div style="font-size:15px;font-weight:700;color:'+color+'">'+b+'</div>'
+      +'<div style="background:'+color+'12;padding:16px 16px;text-align:center;border-bottom:2px solid '+color+'22">'
+      +'<div style="font-size:14px;font-weight:700;color:'+color+'">'+b+'</div>'
       +(city?'<div style="font-size:12.5px;color:#888;margin-top:6px">📍 '+city+'</div>':'')
       +(loc?'<div style="margin-top:5px"><a href="'+loc+'" target="_blank" style="color:'+color+';font-size:11px;font-weight:600;text-decoration:none">🗺️ Location</a></div>':'')
       +'</div><div style="padding:14px 18px;text-align:center">'
-      +(bm?'<div style="font-size:13.5px;color:#555;margin-bottom:6px">👤 '+bm+'</div>':'')
-      +(ph?'<div style="font-size:13.5px;color:#555;margin-bottom:6px">📞 '+ph+'</div>':'')
-      +(em?'<div style="font-size:12.5px;margin-bottom:5px"><a href="mailto:'+em+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+em+'</a></div>':'')
+      +(bm?'<div style="font-size:12.5px;color:#555;margin-bottom:5px">👤 '+bm+'</div>':'')
+      +(ph?'<div style="font-size:12.5px;color:#555;margin-bottom:5px">📞 '+ph+'</div>':'')
+      +(em?'<div style="font-size:11.5px;margin-bottom:5px"><a href="mailto:'+em+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+em+'</a></div>':'')
       +'</div></div>';
   };
-  const cardsHTML=order.flatMap(reg=>regions[reg].map(r=>
-    '<div style="width:390px">'
-    +'<div style="text-align:center;margin-bottom:6px"><span style="display:inline-block;font-size:11px;font-weight:800;color:'+color+';background:'+color+'12;padding:3px 16px;border-radius:12px;letter-spacing:.05em">'+reg+'</span></div>'
-    +card(r)
-    +'</div>'
-  )).join('');
+  // Same layout as the other branch pages: region blocks -> side list + selected branch details
+  const blocks=order.map((reg,ri)=>{
+    const rid='volvoReg_'+String(reg).replace(/[^A-Za-z0-9]/g,'')+'_'+ri;
+    return '<div style="margin-bottom:14px">'
+      +'<div onclick="toggleRegion(\''+rid+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+color+'12;border-radius:8px;border-left:4px solid '+color+';cursor:pointer;user-select:none;margin-bottom:10px">'
+      +'<span style="font-size:13px;font-weight:700;color:'+color+'">'+reg+'</span>'
+      +'<span style="font-size:11px;color:#aaa">('+regions[reg].length+')</span>'
+      +'<span id="ico_'+rid+'" style="margin-left:auto;color:'+color+'">▼</span>'
+      +'</div>'
+      +'<div id="'+rid+'"><div class="ref-cards-grid">'+regions[reg].map(card).join('')+'</div></div>'
+      +'</div>';
+  }).join('');
 
-  return '<div>'+emailHtml+'<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:14px">'+cardsHTML+'</div></div>';
+  return '<div>'+emailHtml+'<div>'+blocks+'</div></div>';
 }
 
 function renderPetrominTireBatteryTab(arr){
@@ -6043,7 +6050,7 @@ function fotonEmailHdr(blocks, color){
 // with only a couple of cards (Showroom) instead of leaving a wide gap.
 function fotonRegionBlock(reg, regColor, count, hoursDisp, regId, cardsHTML, centred){
   const inner = centred
-    ? '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,330px));justify-content:center;gap:16px;margin-top:18px">'+cardsHTML+'</div>'
+    ? '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,290px));justify-content:center;gap:14px;margin-top:16px">'+cardsHTML+'</div>'
     : '<div class="ref-cards-grid">'+cardsHTML+'</div>';
   return '<div style="margin-bottom:14px">'
     +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+regColor+'12;border-radius:8px;border-left:4px solid '+regColor+';cursor:pointer;user-select:none;margin-bottom:10px">'
@@ -6072,8 +6079,8 @@ function fotonBranchCard(b, regColor){
     b.email?'<div style="font-size:11px;margin-bottom:2px"><a href="mailto:'+b.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+b.email+'</a></div>':''
   ].filter(Boolean).join('');
   return '<div style="background:#FEFEFD;border-radius:10px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
-    +'<div style="background:'+regColor+'18;border-bottom:2px solid '+regColor+'22;padding:18px 18px;text-align:center">'
-    +'<div style="font-size:14px;font-weight:700;color:'+regColor+'">'+b.name+'</div>'
+    +'<div style="background:'+regColor+'18;border-bottom:2px solid '+regColor+'22;padding:14px 16px;text-align:center">'
+    +'<div style="font-size:13.5px;font-weight:700;color:'+regColor+'">'+b.name+'</div>'
     +(sub?'<div style="font-size:11px;color:#666;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">'+sub+'</div>':'')
     +locHTML
     +'</div>'
@@ -11384,7 +11391,7 @@ window.__watchDom=(function(){
     var l=a[2], s=t[1]; if(l>0.88){ l=Math.min(0.975,l+0.025); s=s*0.5; } return hsl2rgb(t[0],s,l);}
   // text gets a deeper, calmer shade; very light backgrounds stay almost neutral (no pink/peach cast)
   function mapCol2(rgb,T,kind){var a=rgb2hsl(rgb[0],rgb[1],rgb[2]);
-    if(kind==='bg'&&a[1]<0.14&&a[2]>0.86&&a[2]<0.985){ return [T[0]*0.11+255*0.89,T[1]*0.11+255*0.89,T[2]*0.11+255*0.89]; }
+    if(kind==='bg'&&a[1]<0.14&&a[2]>0.86&&a[2]<0.985){ return [T[0]*0.08+255*0.92,T[1]*0.08+255*0.92,T[2]*0.08+255*0.92]; }
     if(a[1]<0.14&&a[2]<0.9) return null;var t=rgb2hsl(T[0],T[1],T[2]);var l=a[2],s=t[1];
     if(kind==='text'&&window.__TT&&a[1]>=0.14) return window.__TT.slice();
     if(kind==='text'&&window.__DEEP_TEXT){ l=Math.min(l,0.42); s=t[1]*0.7; }
@@ -11410,6 +11417,18 @@ window.__watchDom=(function(){
     [root].concat([].slice.call(root.querySelectorAll('*'))).forEach(function(e){
       var st=e.getAttribute&&e.getAttribute('style'); if(st){var n=fixStr(st,T); if(n!==st) e.setAttribute('style',n);}
       ['fill','stroke','color'].forEach(function(a){var v=e.getAttribute&&e.getAttribute(a); if(v&&v.charAt(0)==='#'){var n=fixVal(v,T,'text'); if(n!==v) e.setAttribute(a,n);}});
+    });
+  }
+  /* every light shade inside a tab = the header shade (no grey / odd tints) */
+  var SKIP={TD:1,TH:1,TR:1,THEAD:1,TBODY:1,TABLE:1,INPUT:1,SELECT:1,TEXTAREA:1,IMG:1,svg:1,SVG:1,path:1};
+  function unifyShades(sec,col){ if(!col) return; var T=h2rgb(col); var H='rgb('+T.map(function(v){return Math.round(v*0.08+255*0.92);}).join(',')+')';
+    [].slice.call(sec.querySelectorAll('*')).forEach(function(el){
+      if(SKIP[el.tagName]||el.closest('.ref-email-tag,.ref-sub-tab,.piTab,.br-it,.br-rg,.sms-card,.ref-brand-band,input')) return;
+      var bg=getComputedStyle(el).backgroundColor; var m=bg.match(/rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)(?:,\s*([\d.]+))?\)/); if(!m) return;
+      var a=m[4]===undefined?1:+m[4]; if(a<0.02) return;
+      var r=+m[1]*a+255*(1-a), g=+m[2]*a+255*(1-a), b=+m[3]*a+255*(1-a); var l=(Math.max(r,g,b)+Math.min(r,g,b))/510;
+      if(l<0.84||l>0.988) return;
+      if(el.style.background!==H){ el.style.background=H; }
     });
   }
   /* one header row instead of repeating it above every region */
@@ -11439,7 +11458,7 @@ window.__watchDom=(function(){
   function run(){
     document.querySelectorAll('#refContent .ref-brand-section').forEach(function(sec){
       var c=sec.getAttribute('data-brand-color'); window.__DEEP_TEXT=(String(c).toUpperCase()==='#E1A56A'); if(c){ var _T=h2rgb(c); window.__TT=window.__DEEP_TEXT?h2rgb('#C48A55'):_T; } if(c) { recolour(sec,c); sec.style.setProperty('--tt',hex(window.__TT)); [].forEach.call(sec.querySelectorAll('tbody td:first-child'),function(td){ td.classList.toggle('td-code',/^\s*\d{2,6}\s*$/.test(td.textContent)); }); var bk=sec.previousElementSibling; if(bk) recolour(bk,c); }
-      dedupeHeads(sec);
+      dedupeHeads(sec); try{unifyShades(sec,c);}catch(e){}
     });
     var cp=document.getElementById('refCasePanel'); if(cp&&window.CASE_COLOR) recolour(cp,window.CASE_COLOR);
     if(window.LINKS_COLOR) document.documentElement.style.setProperty('--lk',window.LINKS_COLOR);
