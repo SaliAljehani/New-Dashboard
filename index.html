@@ -891,6 +891,9 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
 .cv-seg button{padding:8px 20px;border-radius:9px;border:none;background:transparent;color:#6A5A4A;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
 .cv-seg button:hover{color:var(--accent)}
 .cv-seg button.on{background:rgba(var(--accent-rgb),.06);color:var(--accent)}
+.cv-range{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cv-range span{font-size:12px;font-weight:600;color:#8A857C}
+.cv-range input{height:40px;padding:0 12px;border-radius:8px;border:2px solid rgba(var(--accent-rgb),.25);background:#FEFEFD;color:var(--accent);font:700 13px inherit;box-shadow:0 2px 6px rgba(var(--accent-rgb),.08);cursor:pointer}
 .cv-sub{font-size:12px;color:#8A857C;margin:0 0 12px;min-height:16px}
 .cv-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}
 .cv-k{background:#FDFDFC;border:1px solid #EDE4DA;border-radius:12px;padding:16px 18px;text-align:center}
@@ -11561,7 +11564,7 @@ var CV_COL={tot:'var(--accent)',ans:'var(--st-ofc)',ab:'var(--st-abs)',wa:'var(-
 var CV_MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 var CV_MF=['January','February','March','April','May','June','July','August','September','October','November','December'];
 var CV_DW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-var CV_ROWS=null, CV_ERR='', CV_LOADING=false, CV_MODE='d', CV_CUR=null;
+var CV_ROWS=null, CV_ERR='', CV_LOADING=false, CV_MODE='d', CV_CUR=null, CV_FROM=null, CV_TO=null;
 
 function cvEsc(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function cvKey(o,test){var ks=Object.keys(o||{});for(var i=0;i<ks.length;i++){var k=ks[i].toLowerCase().replace(/[^a-z]/g,'');if(test(k))return ks[i];}return null;}
@@ -11613,6 +11616,7 @@ function cvOpen(){
 }
 function cvRetry(){ CV_ROWS=null; try{ delete REF_CACHE[SHEET_ID+'__'+CV_TAB]; }catch(e){} cvOpen(); }
 function cvDates(){var c=CV_CUR,a=[];
+  if(CV_MODE=='c'){var f=new Date(CV_FROM),t=new Date(CV_TO);if(f>t){var x=f;f=t;t=x;}for(var dd=new Date(f);dd<=t;dd.setDate(dd.getDate()+1))a.push(new Date(dd));return a;}
   if(CV_MODE=='d') a=[new Date(c)];
   else if(CV_MODE=='w'){var s=new Date(c);s.setDate(s.getDate()-s.getDay());for(var i=0;i<7;i++){var d=new Date(s);d.setDate(s.getDate()+i);a.push(d);}}
   else {var n=new Date(c.getFullYear(),c.getMonth()+1,0).getDate();for(var j=1;j<=n;j++)a.push(new Date(c.getFullYear(),c.getMonth(),j));}
@@ -11622,7 +11626,9 @@ function cvFd(d){return d.getDate()+' '+CV_MS[d.getMonth()];}
 function cvP2(n){return (n<10?'0':'')+n;}
 function cvVal(){var c=CV_CUR;return CV_MODE=='m'?c.getFullYear()+'-'+cvP2(c.getMonth()+1):c.getFullYear()+'-'+cvP2(c.getMonth()+1)+'-'+cvP2(c.getDate());}
 function cvPickDate(v){if(!v)return;var p=v.split('-');CV_CUR=new Date(+p[0],+p[1]-1,+(p[2]||1));renderCV();}
-function cvMode(m){CV_MODE=m;renderCV();}
+function cvIso(d){return d.getFullYear()+'-'+cvP2(d.getMonth()+1)+'-'+cvP2(d.getDate());}
+function cvSetRange(which,v){if(!v)return;var p=v.split('-'),d=new Date(+p[0],+p[1]-1,+p[2]);if(which=='f')CV_FROM=d;else CV_TO=d;renderCV();}
+function cvMode(m){CV_MODE=m;if(m=='c'&&!CV_FROM){CV_TO=new Date(CV_CUR);CV_FROM=new Date(CV_CUR.getFullYear(),CV_CUR.getMonth(),1);}renderCV();}
 function cvStep(n){var c=CV_CUR;if(CV_MODE=='d')c.setDate(c.getDate()+n);else if(CV_MODE=='w')c.setDate(c.getDate()+7*n);else CV_CUR=new Date(c.getFullYear(),c.getMonth()+n,1);renderCV();}
 function renderCV(){
   var el=document.getElementById('page14'); if(!el) return;
@@ -11630,7 +11636,7 @@ function renderCV(){
   var ds=cvDates(),c=CV_CUR,lbl;
   if(CV_MODE=='d') lbl=CV_DW[c.getDay()]+', '+cvFd(c)+' '+c.getFullYear();
   else if(CV_MODE=='w') lbl=cvFd(ds[0])+' – '+cvFd(ds[6])+' '+ds[6].getFullYear();
-  else lbl=CV_MF[c.getMonth()]+' '+c.getFullYear();
+  else if(CV_MODE=='m') lbl=CV_MF[c.getMonth()]+' '+c.getFullYear();
   var keys={}; ds.forEach(function(d){keys[cvDayKey(d)]=1;});
   var agg={}, order=CV_ORDER.slice(), daysSeen={};
   (CV_ROWS||[]).forEach(function(x){
@@ -11644,14 +11650,17 @@ function renderCV(){
   });
   var days=Object.keys(daysSeen).length, T=[0,0,0,0];
   Object.keys(agg).forEach(function(b){for(var j=0;j<4;j++)T[j]+=agg[b][j];});
-  var seg=[['d','Daily'],['w','Weekly'],['m','Monthly']].map(function(x){return '<button class="'+(CV_MODE==x[0]?'on':'')+'" onclick="cvMode(\''+x[0]+'\')">'+x[1]+'</button>';}).join('');
-  var h='<div class="cv-top"><div class="cv-nav">'
+  var seg=[['d','Daily'],['w','Weekly'],['m','Monthly'],['c','Custom']].map(function(x){return '<button class="'+(CV_MODE==x[0]?'on':'')+'" onclick="cvMode(\''+x[0]+'\')">'+x[1]+'</button>';}).join('');
+  var nav = CV_MODE=='c'
+    ? '<div class="cv-range"><span>From</span><input type="date" value="'+cvIso(CV_FROM)+'" onchange="cvSetRange(\'f\',this.value)"><span>To</span><input type="date" value="'+cvIso(CV_TO)+'" onchange="cvSetRange(\'t\',this.value)"></div>'
+    : null;
+  var h='<div class="cv-top">'+(nav?nav:'<div class="cv-nav">'
     +'<button class="cv-arr" onclick="cvStep(-1)" aria-label="Previous">‹</button>'
     +'<div class="cv-lbl">'+lbl+'</div>'
     +'<button class="cv-arr" onclick="cvStep(1)" aria-label="Next">›</button>'
     +'<label class="cv-arr cv-cal" title="Pick a date"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zM16 3v4M8 3v4M4 11h16"/></svg>'
     +'<input type="'+(CV_MODE=='m'?'month':'date')+'" value="'+cvVal()+'" onchange="cvPickDate(this.value)"></label>'
-    +'</div><div class="cv-seg">'+seg+'</div></div>';
+    +'</div>')+'<div class="cv-seg">'+seg+'</div></div>';
   h+='<div class="cv-sub">'+(CV_MODE=='d'||CV_ERR?'':'Based on '+days+' of '+ds.length+' days entered')+'</div>';
   var K=[['Total Calls',CV_COL.tot],['Calls Answered',CV_COL.ans],['Calls Abandoned',CV_COL.ab],['WhatsApp Received',CV_COL.wa]];
   h+='<div class="cv-kpis">'+K.map(function(k,i){return '<div class="cv-k" style="--c:'+k[1]+'"><div class="l">'+k[0]+'</div><div class="v">'+(days?cvF(T[i]):'-')+'</div></div>';}).join('')+'</div>';
