@@ -799,6 +799,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .ref-tool:not(.lk):hover{background:rgba(var(--accent-rgb),.06)!important}
 .ref-brand-section button:hover{filter:none}
 .ref-brand-section .ref-email-card :is(span,a)[style*="border-radius: 20px"]{background:color-mix(in srgb,var(--brand) 8%,#FFFFFF)!important}
+.ref-brand-section .piPanel table{table-layout:fixed!important}
 /* footer: smaller */
 #lupd_footer{font-size:12px!important}
 #lupd_footer+span{font-size:12px!important}
@@ -3463,6 +3464,26 @@ function renderElectrominBranchTab(rows,mode){
   return '<div style="text-align:center">'+out+'</div>';
 }
 
+
+/* Branch-style card (read by the side-list layout): head = title / place / map, body = people */
+function brCard(o,col){
+  const sub=[o.city?'<div style="font-size:11px;color:#888;margin-top:3px">📍 '+o.city+'</div>':''].join('');
+  const map=o.map?'<div style="margin-top:4px"><a href="'+o.map+'" target="_blank" style="color:'+col+';font-size:11px">🗺️ Location</a></div>':'';
+  const ppl=(o.people||[]).map(p=>(p.label?'<div style="font-size:11px;color:#888;margin-top:8px">'+p.label+'</div>':'')
+    +(p.name?'<div>👤 '+p.name+'</div>':'')+(p.phone?'<div>📞 '+p.phone+'</div>':'')
+    +(p.email?'<div><a href="mailto:'+p.email+'">'+p.email+'</a></div>':'')).join('');
+  return '<div style="background:#FEFEFD;border-radius:10px;overflow:hidden">'
+    +'<div style="padding:10px 14px;text-align:center"><div style="font-weight:700;color:'+col+'">'+o.title+'</div>'+sub+map+'</div>'
+    +'<div style="padding:10px 14px;text-align:center">'+(o.hours?'<div>🕐 '+o.hours+'</div>':'')+ppl+'</div></div>';
+}
+function brRegionBlock(reg,count,rid,col,cards,unit){
+  return '<div style="margin-bottom:12px">'
+    +'<div onclick="toggleRegion(\''+rid+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+col+'12;border-radius:8px;border-left:4px solid '+col+';cursor:pointer;user-select:none;margin-bottom:10px">'
+    +'<span style="font-size:13px;font-weight:700;color:'+col+'">'+regClean(reg)+'</span>'
+    +'<span style="font-size:11px;color:#aaa">('+count+')</span>'
+    +'<span id="ico_'+rid+'" style="margin-left:auto;color:'+col+'">▼</span></div>'
+    +'<div id="'+rid+'"><div class="ref-cards-grid">'+cards+'</div></div></div>';
+}
 // EV Charging Stations — grouped by region
 const ELM_CITY_REGION={
   "HOTA":'Central',"WADY DAWASIR":'Central',"LAYLA":'Central',"DHALAM":'Central',"QUWAIIYAH":'Central',"AFIF":'Central',"AL MAJMA'AH":'Central',"DAWADAMY":'Central',"ZULFI":'Central',"BUKAYRIYAH":'Central',"RASS":'Central',"BADAYEA":'Central',"MITHNAB":'Central',"QATIF":'East',"RASTANURA":'East',"UMAL SAHEK":'East',"NARIYAH":'East',"HAFER BATIN":'East',"AL HASSA":'East',"QURRIYAT":'North',"DAWMAT AL JANDAL":'North',"KHYBER":'West',"JAMMOOM":'West',"DURAH":'West',"KHAMIS":'South',"NAMAS":'South',"SABTL OLAYA":'South',"TANUMA":'South',"MAJARDA":'South',"AHAD MASRIHAH":'South',"ZEHRAN JANOOB":'South',"SHARURA":'South',"SABIYA":'South',"DARB":'South',"BAISH":'South',"EDABI":'South',"SAMTA":'South',"BAHA":'South',"BILJURESHI":'South',"MOHYAIL":'South',"AL MIKHWA":'South',"BARIQ":'South',"QUNFIDHA":'South',"AL QUOZ":'South',
@@ -3560,10 +3581,16 @@ function renderElectrominStationsTab(rows){
       +'<span style="font-size:11px;color:#aaa">('+list.length+' '+(list.length===1?'station':'stations')+')</span>'
       +'<span id="ico_'+rid+'" style="margin-left:auto;color:'+col+'">▼</span>'
       +'</div>'
-      +'<div id="'+rid+'">'+stTable(list,col)+'</div>'
-      +'</div>';
+      +'';
+    out=out.slice(0,out.lastIndexOf('<div style="margin-bottom:12px">'));
+    out+=brRegionBlock(reg,list.length,rid,col,list.map(function(row){
+      var g=function(i){return i>-1?String(row[i]||'').trim():'';};
+      var ppl=[{name:g(cSM),phone:cSMNo>-1?elmNum(row[cSMNo]):''}];
+      if(g(cAM)||(cAMNo>-1&&elmNum(row[cAMNo]))) ppl.push({label:'Area Manager',name:g(cAM),phone:cAMNo>-1?elmNum(row[cAMNo]):''});
+      return brCard({title:g(cName),city:elmCity(g(cCity)),people:ppl},col);
+    }).join(''));
   });
-  return '<div style="text-align:center">'+out+'</div>';
+  return '<div>'+out+'</div>';
 }
 
 // Emails — Escalation matrix, grouped by category
@@ -5159,16 +5186,16 @@ function renderPetrominInstructionTab(arr, warrantyInner){
     });
     const headText=title||'\uD83C\uDF89 \u0639\u0631\u0636 \u0627\u0644\u062C\u0645\u0639\u0629 \u0648\u0627\u0644\u0633\u0628\u062A';
     if(items.length){
-      weeklyInner='<div style="direction:rtl;background:'+color+'14;border-radius:16px;overflow:hidden;box-shadow:none;border:none;width:100%;margin:0">'
-        +'<div style="background:linear-gradient(135deg,'+color+',#e6a15c);color:#fff;text-align:center;padding:16px;font-size:18px;font-weight:800">'+headText+'</div>'
+      weeklyInner='<div class="wk-ticket" style="direction:rtl;background:#FFFFFF;border-radius:16px;overflow:hidden;box-shadow:none;border:1px solid color-mix(in srgb,'+color+' 24%,#EFEAE3);width:100%;margin:0">'
+        +'<div class="wk-head" style="background:color-mix(in srgb,'+color+' 8%,#FFFFFF);color:var(--tt,'+color+');text-align:center;padding:14px;font-size:16px;font-weight:800;border-bottom:1px dashed #EAD9C4">'+headText+'</div>'
         +'<div style="display:flex;flex-wrap:wrap">'
         +items.map((it,i)=>'<div style="flex:1 1 240px;padding:22px 18px;text-align:center'+(i>0?';border-inline-start:2px dashed #EAD9C4':'')+'">'
           +'<div style="font-size:14px;font-weight:800;color:#3D2E22;margin-bottom:10px">'+it.kind+'</div>'
-          +'<div style="font-size:34px;font-weight:900;color:'+color+';line-height:1">'+it.price+'<small style="font-size:15px;font-weight:700;color:#6A5A4A"> \u0631\u064A\u0627\u0644</small></div>'
-          +(it.plus?'<div style="display:inline-block;margin-top:8px;font-size:12px;font-weight:700;color:#bd7530;background:#FBF3EA;padding:4px 12px;border-radius:14px">'+it.plus+'</div>':'')
+          +'<div style="font-size:32px;font-weight:800;color:var(--tt,'+color+');line-height:1">'+it.price+'<small style="font-size:15px;font-weight:700;color:#6A5A4A"> \u0631\u064A\u0627\u0644</small></div>'
+          +(it.plus?'<div style="display:inline-block;margin-top:8px;font-size:12px;font-weight:700;color:var(--tt,#bd7530);background:color-mix(in srgb,'+color+' 8%,#FFFFFF);padding:4px 12px;border-radius:14px">'+it.plus+'</div>':'')
           +'</div>').join('')
         +'</div>'
-        +(notes.length?'<div style="background:#FBF7F1;border-top:1px dashed #EAD9C4;padding:12px 18px;text-align:center;font-size:12px;color:#6A5A4A;line-height:1.9">'+notes.join(' \u00B7 ')+'</div>':'')
+        +(notes.length?'<div style="background:color-mix(in srgb,'+color+' 8%,#FFFFFF);border-top:1px dashed #EAD9C4;padding:12px 18px;text-align:center;font-size:12px;color:#6A5A4A;line-height:1.9">'+notes.join(' \u00B7 ')+'</div>':'')
         +'</div>';
     } else {
       weeklyInner='<div style="background:'+color+'14;border-radius:12px;padding:16px;box-shadow:none;border:none;text-align:center;width:100%">'
@@ -5395,6 +5422,20 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
     return codeCell+cell(it.name)+cell(it.city)+cell(it.contact)+mobileCell+emailCell2+locCell;
   };
 
+  const asList=(kind==='diesel'||kind==='fuel');
+  if(asList){
+    const lb=order.map(g=>{
+      const its=groups[g]; const gid='peLoc_'+kind+'_'+g.replace(/[^A-Za-z0-9]/g,'');
+      return brRegionBlock(g,its.length,gid,color,its.map(it=>{
+        const ppl=kind==='diesel'
+          ? [{name:it.contact,phone:it.mobile,email:(it.email&&it.email.includes('@'))?it.email:''}]
+          : [{name:it.am,phone:it.mobile}].concat(it.rm?[{label:'Regional Manager',name:it.rm}]:[]);
+        let _c=it.code,_n=it.name||''; if(_c&&!/^\d+$/.test(_c)&&/^\d{3,}$/.test(_n.trim())){const _t=_c;_c=_n.trim();_n=_t;} if(!_c){const _m=_n.match(/^(.*?)\s*[-–]\s*(\d{3,})\s*$/); if(_m){_c=_m[2];_n=_m[1];}}
+        return brCard({title:(_c?_c+' - ':'')+_n,city:it.city,map:mapLink(it.coord,it.link),hours:kind==='diesel'?dieselHours:'',people:ppl},color);
+      }).join(''));
+    }).join('');
+    return '<div>'+lb+'</div>';
+  }
   const body=order.map(g=>{
     const its=groups[g];
     const gid='peLoc_'+kind+'_'+g.replace(/[^A-Za-z0-9]/g,'');
