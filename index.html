@@ -60,7 +60,7 @@ select#agSel{font-size:14px;font-weight:600;color:var(--accent);min-width:180px}
 .rfbtn{padding:6px 14px;border-radius:8px;border:1.5px solid var(--accent);background:rgba(var(--accent-rgb),.07);color:var(--accent);font-size:12px;cursor:pointer;font-weight:600}
 .rfbtn:hover{background:var(--accent);color:#fff}
 .ptag{display:inline-block;background:rgba(var(--accent-rgb),.07);color:var(--accent);border:1px solid #fcc;border-radius:8px;padding:3px 10px;font-size:11px;font-weight:600}
-.page-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;width:calc(100% - 48px);max-width:1352px;margin:30px auto 8px;padding:0;background:transparent}
+.page-nav{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;width:calc(100% - 48px);max-width:1352px;margin:30px auto 8px;padding:0;background:transparent}
 @media(max-width:900px){.page-nav{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .pnav{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:12px 6px;border-radius:12px;border:1px solid #EDE4DA;font-size:13px;font-weight:600;cursor:pointer;background:#FDFDFC;color:var(--text);transition:.15s;text-align:center;line-height:1.2}
 .team-subnav{display:flex;width:fit-content;margin:20px auto 10px;gap:3px;border:1px solid #E8E2DA;border-radius:12px;padding:4px;background:#FDFDFC}
@@ -730,7 +730,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .ref-brand-section div[onclick^="toggleRegion"]>span:nth-child(2){color:#A39A92!important}
 .ref-brand-section tbody td a[href^="tel:"],.ref-brand-section tbody td a[href^="tel:"] *,.ref-brand-section tbody td :is(b,strong):not(.td-code *){font-weight:400!important}
 /* Daily Reference home + main menu: R4 (exact) + brand buttons from the left + BRANDS/TOOLS a bit wider */
-.page-nav{border:none!important;background:transparent!important;padding:0!important;display:grid!important;grid-template-columns:repeat(5,251px);justify-content:center;gap:8px!important;width:auto!important;margin-top:34px!important;margin-bottom:14px!important}
+.page-nav{border:none!important;background:transparent!important;padding:0!important;display:grid!important;grid-template-columns:repeat(6,207px);justify-content:center;gap:8px!important;width:auto!important;margin-top:34px!important;margin-bottom:14px!important}
 
 .ref-home .ref-brand-circles{display:grid!important;grid-template-columns:repeat(10,118px);gap:8px!important;background:transparent!important}
 .ref-tools{display:grid!important;grid-template-columns:repeat(5,244px);gap:8px!important;margin-top:12px!important}
@@ -749,7 +749,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .ref-home .ref-brand-circle,.ref-tool{height:50px!important;gap:9px!important}
 .ref-home .ref-brand-circle-icon,.ref-tool-ic{width:30px!important;height:30px!important}
 @media(max-width:1440px){
-  .page-nav{grid-template-columns:repeat(5,minmax(0,1fr))!important;width:calc(100% - 48px)!important;max-width:1287px}
+  .page-nav{grid-template-columns:repeat(6,minmax(0,1fr))!important;width:calc(100% - 48px)!important;max-width:1287px}
   .ref-home .ref-brand-circles,.ref-tools{width:auto!important;box-sizing:border-box}
   .ref-home .ref-brand-circles{grid-template-columns:repeat(5,minmax(0,1fr))!important}
   .ref-tools{grid-template-columns:repeat(5,minmax(0,1fr))!important}
@@ -876,6 +876,38 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
 .ag-seg .tab:hover:not(.active){background:rgba(var(--accent-rgb),.05);color:var(--accent)}
 @media(max-width:1100px){.ag-seg{position:static;transform:none;width:100%;justify-content:center}}
 </style>
+
+<style>
+/* ===== CONTACT VOLUME ===== */
+.cv-top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.cv-nav{display:flex;align-items:center;gap:8px}
+.cv-arr{width:36px;height:36px;flex:none;border-radius:8px;border:1px solid #E2D6C8;background:#FEFEFD;color:#8A6D5A;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.cv-arr:hover{background:rgba(var(--accent-rgb),.04)}
+.cv-cal{position:relative;overflow:hidden}
+.cv-cal input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;border:0;padding:0}
+.cv-cal input::-webkit-calendar-picker-indicator{position:absolute;inset:0;width:100%;height:100%;cursor:pointer}
+.cv-lbl{padding:9px 24px;border-radius:8px;border:2px solid rgba(var(--accent-rgb),.25);background:#FEFEFD;color:var(--accent);font-size:13px;font-weight:700;box-shadow:0 2px 6px rgba(var(--accent-rgb),.08);min-width:220px;text-align:center}
+.cv-seg{display:flex;gap:3px;border:1px solid #E8E2DA;border-radius:12px;padding:4px;background:#FDFDFC}
+.cv-seg button{padding:8px 20px;border-radius:9px;border:none;background:transparent;color:#6A5A4A;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.cv-seg button:hover{color:var(--accent)}
+.cv-seg button.on{background:rgba(var(--accent-rgb),.06);color:var(--accent)}
+.cv-sub{font-size:12px;color:#8A857C;margin:0 0 12px;min-height:16px}
+.cv-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}
+.cv-k{background:#FDFDFC;border:1px solid #EDE4DA;border-radius:12px;padding:16px 18px;text-align:center}
+.cv-k .l{font-size:12px;font-weight:600;color:var(--c)}
+.cv-k .v{font-size:28px;font-weight:700;color:var(--c);margin-top:6px}
+.cv-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.cv-c{--b:var(--accent);background:#FDFDFC;border:1px solid #EDE4DA;border-top:3px solid color-mix(in srgb,var(--b) 42%,#FDFDFC);border-radius:12px;padding:16px}
+.cv-c .t{font-size:14px;font-weight:700;color:color-mix(in srgb,var(--b) 82%,#FDFDFC);margin-bottom:12px}
+.cv-c .r{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.cv-c .r div{background:#F8F5F1;border-radius:8px;padding:8px 4px;text-align:center}
+.cv-c .r small{display:block;font-size:11px;font-weight:600;color:var(--c)}
+.cv-c .r b{display:block;font-size:16px;color:var(--c);margin-top:2px}
+.cv-empty{grid-column:1/-1;background:#FDFDFC;border:1px dashed #E2D6C8;border-radius:12px;padding:34px;text-align:center;color:#8A857C;font-size:13px}
+.cv-empty button{margin-top:12px;padding:8px 20px;border-radius:8px;border:1px solid rgba(var(--accent-rgb),.3);background:rgba(var(--accent-rgb),.06);color:var(--accent);font:600 12px inherit;cursor:pointer}
+@media(max-width:1100px){.cv-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.cv-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.cv-grid{grid-template-columns:1fr}.cv-lbl{min-width:150px;padding:9px 12px}}
+</style>
 </head>
 <body>
 
@@ -915,6 +947,7 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
     <button class="pnav" id="navToday" onclick="showToday()">📍 Today</button>
     <button class="pnav" onclick="showPage(6,this)">📢 Announcements</button>
     <button class="pnav active" onclick="showPage(4,this)">📁 Daily Reference</button>
+    <button class="pnav" id="navCV" onclick="showPage(14,this)">📊 Contact Volume</button>
     <button class="pnav" id="navTeam" onclick="showTeamTab(TEAM_TAB||'perf')"><span class="ic-done" style="display:inline-flex"><svg viewBox="0 0 24 24" width="1.1em" height="1.1em" fill="none" stroke="#7a5cc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0-4 0M8 21v-1a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1M15 5a2 2 0 1 0 4 0a2 2 0 0 0-4 0M17 10h2a2 2 0 0 1 2 2v1M5 5a2 2 0 1 0 4 0a2 2 0 0 0-4 0M3 13v-1a2 2 0 0 1 2-2h2"/></svg></span>Team</button>
     <button class="pnav" onclick="showPage(12,this)" style="position:relative">🕐 Permissions<span id="toNavBadge" style="display:none;position:absolute;top:-6px;right:-6px;min-width:16px;height:16px;background:var(--accent);border-radius:8px;font-size:11px;font-weight:700;color:#fff;text-align:center;line-height:16px;padding:0 4px;box-sizing:border-box"></span></button>
   </div>
@@ -1086,6 +1119,7 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
 <div id="page10" style="display:none;max-width:1400px;margin:0 auto;padding:24px 24px">
   <div id="recallContent"><div style="text-align:center;padding:40px;color:#aaa">Loading...</div></div>
 </div>
+<div id="page14" style="display:none;max-width:1400px;margin:0 auto;padding:24px 24px"></div>
 <div id="page12" style="display:none;max-width:1400px;margin:0 auto;padding:24px 24px" class="to-wrap">
 
   <div class="to-hero">
@@ -1258,7 +1292,7 @@ function clearSheetCache(){
 // Manual refresh must always hit the network, never the cache.
 let FORCE_FRESH = false;
 let REF_FRESH = false;
-function refreshAll(){ clearSheetCache(); try{ REF_CACHE = {}; }catch(e){} FORCE_FRESH = true; REF_FRESH = true; loadAllData(); }
+function refreshAll(){ clearSheetCache(); try{ REF_CACHE = {}; }catch(e){} FORCE_FRESH = true; REF_FRESH = true; try{ CV_ROWS = null; if(CP===14) cvOpen(); }catch(e){} loadAllData(); }
 
 // Sheets read from Google's CSV export instead of the Apps Script proxy.
 //
@@ -2469,6 +2503,8 @@ function showPage(n,btn){CP=n;
   var _p12=document.getElementById('page12'); if(_p12) _p12.style.display=n===12?'block':'none';
   if(n===12) renderTimeOff();
   var _p13=document.getElementById('page13'); if(_p13) _p13.style.display=n===13?'block':'none';
+  var _p14=document.getElementById('page14'); if(_p14) _p14.style.display=n===14?'block':'none';
+  if(n===14) cvOpen();
   teamSync(n);
 }
 
@@ -11511,6 +11547,127 @@ window.__watchDom=(function(){
   function init(){ var rc=document.getElementById('refContent')||document.body; new MutationObserver(sched).observe(rc,{childList:true,subtree:true}); sched(); }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
 })();
+</script>
+
+<script>
+/* ===== CONTACT VOLUME =====
+   Sheet tab "Contact Volume" (main dashboard spreadsheet).
+   Columns: Date | Brand | Total Calls | Calls Answered | Calls Abandoned | WhatsApp Received
+   One row per brand per day. Weekly/monthly totals are summed here, the sheet holds no totals.
+   Week = Sunday to Saturday. */
+var CV_TAB='Contact Volume';
+var CV_ORDER=['Petromin','BAIC','Nissan','Stellantis','Body Shop','Foton','Energy','Volvo','National Oil'];
+var CV_COL={tot:'var(--accent)',ans:'var(--st-ofc)',ab:'var(--st-abs)',wa:'var(--st-chat)'};
+var CV_MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var CV_MF=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var CV_DW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+var CV_ROWS=null, CV_ERR='', CV_LOADING=false, CV_MODE='d', CV_CUR=null;
+
+function cvEsc(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function cvKey(o,test){var ks=Object.keys(o||{});for(var i=0;i<ks.length;i++){var k=ks[i].toLowerCase().replace(/[^a-z]/g,'');if(test(k))return ks[i];}return null;}
+function cvNum(v){var n=parseFloat(String(v==null?'':v).replace(/[,\s]/g,''));return isNaN(n)?0:n;}
+// Accepts 17/10/2026 (day first), 2026-10-17, 10/17/2026 when the day is > 12, and text dates like "17 Oct 2026".
+function cvDate(v){
+  var s=String(v==null?'':v).trim(); if(!s) return null;
+  var m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/); if(m) return new Date(+m[1],+m[2]-1,+m[3]);
+  m=s.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})$/);
+  if(m){var a=+m[1],b=+m[2],y=+m[3];if(y<100)y+=2000;var d=a,mo=b;if(b>12&&a<=12){d=b;mo=a;}if(mo<1||mo>12||d<1||d>31)return null;return new Date(y,mo-1,d);}
+  var p=new Date(s); return isNaN(p)?null:new Date(p.getFullYear(),p.getMonth(),p.getDate());
+}
+function cvDayKey(d){return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();}
+function cvParse(rows){
+  var out=[]; if(!rows||!rows.length) return out;
+  var r0=rows[0];
+  var kD=cvKey(r0,function(k){return k==='date'||k.indexOf('date')===0;}),
+      kB=cvKey(r0,function(k){return k.indexOf('brand')>=0;}),
+      kT=cvKey(r0,function(k){return k.indexOf('total')>=0;}),
+      kA=cvKey(r0,function(k){return k.indexOf('answer')>=0;}),
+      kX=cvKey(r0,function(k){return k.indexOf('abandon')>=0;}),
+      kW=cvKey(r0,function(k){return k.indexOf('whatsapp')>=0;});
+  rows.forEach(function(r){
+    var d=cvDate(kD?r[kD]:''), b=String(kB?r[kB]:'').trim();
+    if(!d||!b) return;
+    out.push({d:d,k:cvDayKey(d),b:b,v:[cvNum(kT?r[kT]:0),cvNum(kA?r[kA]:0),cvNum(kX?r[kX]:0),cvNum(kW?r[kW]:0)]});
+  });
+  return out;
+}
+function cvOpen(){
+  if(CV_ROWS){ renderCV(); return; }
+  if(CV_LOADING) return;
+  CV_LOADING=true; CV_ERR='';
+  document.getElementById('page14').innerHTML='<div class="cv-empty">Loading contact volume…</div>';
+  fetchSheet(SHEET_ID, CV_TAB).catch(function(){
+    return fetchGvizSheet(SHEET_ID, '', CV_TAB);
+  }).then(function(rows){
+    if(rows && rows.error) throw new Error(rows.error);
+    CV_ROWS=cvParse(Array.isArray(rows)?rows:[]);
+  }).catch(function(e){
+    console.warn('Contact Volume failed:', e); CV_ERR='Could not load the "'+CV_TAB+'" sheet.';
+  }).then(function(){
+    CV_LOADING=false;
+    if(!CV_CUR){ var t=new Date(); t=new Date(t.getFullYear(),t.getMonth(),t.getDate()); var tk=cvDayKey(t), last=null;
+      (CV_ROWS||[]).forEach(function(x){ if(x.k<=tk && (!last||x.k>last.k)) last=x; });
+      CV_CUR=last?new Date(last.d):t; }
+    if(CP===14) renderCV();
+  });
+}
+function cvRetry(){ CV_ROWS=null; try{ delete REF_CACHE[SHEET_ID+'__'+CV_TAB]; }catch(e){} cvOpen(); }
+function cvDates(){var c=CV_CUR,a=[];
+  if(CV_MODE=='d') a=[new Date(c)];
+  else if(CV_MODE=='w'){var s=new Date(c);s.setDate(s.getDate()-s.getDay());for(var i=0;i<7;i++){var d=new Date(s);d.setDate(s.getDate()+i);a.push(d);}}
+  else {var n=new Date(c.getFullYear(),c.getMonth()+1,0).getDate();for(var j=1;j<=n;j++)a.push(new Date(c.getFullYear(),c.getMonth(),j));}
+  return a;}
+function cvF(n){return Number(n).toLocaleString('en-US');}
+function cvFd(d){return d.getDate()+' '+CV_MS[d.getMonth()];}
+function cvP2(n){return (n<10?'0':'')+n;}
+function cvVal(){var c=CV_CUR;return CV_MODE=='m'?c.getFullYear()+'-'+cvP2(c.getMonth()+1):c.getFullYear()+'-'+cvP2(c.getMonth()+1)+'-'+cvP2(c.getDate());}
+function cvPickDate(v){if(!v)return;var p=v.split('-');CV_CUR=new Date(+p[0],+p[1]-1,+(p[2]||1));renderCV();}
+function cvMode(m){CV_MODE=m;renderCV();}
+function cvStep(n){var c=CV_CUR;if(CV_MODE=='d')c.setDate(c.getDate()+n);else if(CV_MODE=='w')c.setDate(c.getDate()+7*n);else CV_CUR=new Date(c.getFullYear(),c.getMonth()+n,1);renderCV();}
+function renderCV(){
+  var el=document.getElementById('page14'); if(!el) return;
+  if(!CV_CUR){var t=new Date();CV_CUR=new Date(t.getFullYear(),t.getMonth(),t.getDate());}
+  var ds=cvDates(),c=CV_CUR,lbl;
+  if(CV_MODE=='d') lbl=CV_DW[c.getDay()]+', '+cvFd(c)+' '+c.getFullYear();
+  else if(CV_MODE=='w') lbl=cvFd(ds[0])+' – '+cvFd(ds[6])+' '+ds[6].getFullYear();
+  else lbl=CV_MF[c.getMonth()]+' '+c.getFullYear();
+  var keys={}; ds.forEach(function(d){keys[cvDayKey(d)]=1;});
+  var agg={}, order=CV_ORDER.slice(), daysSeen={};
+  (CV_ROWS||[]).forEach(function(x){
+    if(!keys[x.k]) return;
+    daysSeen[x.k]=1;
+    var nb=x.b.toLowerCase().replace(/\s+/g,''), name=x.b;
+    for(var i=0;i<CV_ORDER.length;i++){ if(CV_ORDER[i].toLowerCase().replace(/\s+/g,'')===nb){ name=CV_ORDER[i]; break; } }
+    if(order.indexOf(name)<0) order.push(name);
+    if(!agg[name]) agg[name]=[0,0,0,0];
+    for(var j=0;j<4;j++) agg[name][j]+=x.v[j];
+  });
+  var days=Object.keys(daysSeen).length, T=[0,0,0,0];
+  Object.keys(agg).forEach(function(b){for(var j=0;j<4;j++)T[j]+=agg[b][j];});
+  var seg=[['d','Daily'],['w','Weekly'],['m','Monthly']].map(function(x){return '<button class="'+(CV_MODE==x[0]?'on':'')+'" onclick="cvMode(\''+x[0]+'\')">'+x[1]+'</button>';}).join('');
+  var h='<div class="cv-top"><div class="cv-nav">'
+    +'<button class="cv-arr" onclick="cvStep(-1)" aria-label="Previous">‹</button>'
+    +'<div class="cv-lbl">'+lbl+'</div>'
+    +'<button class="cv-arr" onclick="cvStep(1)" aria-label="Next">›</button>'
+    +'<label class="cv-arr cv-cal" title="Pick a date"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zM16 3v4M8 3v4M4 11h16"/></svg>'
+    +'<input type="'+(CV_MODE=='m'?'month':'date')+'" value="'+cvVal()+'" onchange="cvPickDate(this.value)"></label>'
+    +'</div><div class="cv-seg">'+seg+'</div></div>';
+  h+='<div class="cv-sub">'+(CV_MODE=='d'||CV_ERR?'':'Based on '+days+' of '+ds.length+' days entered')+'</div>';
+  var K=[['Total Calls',CV_COL.tot],['Calls Answered',CV_COL.ans],['Calls Abandoned',CV_COL.ab],['WhatsApp Received',CV_COL.wa]];
+  h+='<div class="cv-kpis">'+K.map(function(k,i){return '<div class="cv-k" style="--c:'+k[1]+'"><div class="l">'+k[0]+'</div><div class="v">'+(days?cvF(T[i]):'-')+'</div></div>';}).join('')+'</div>';
+  if(CV_ERR){
+    h+='<div class="cv-grid"><div class="cv-empty">'+cvEsc(CV_ERR)+'<br><button onclick="cvRetry()">Try again</button></div></div>';
+  } else if(!days){
+    h+='<div class="cv-grid"><div class="cv-empty">No data entered for this period yet</div></div>';
+  } else {
+    h+='<div class="cv-grid">'+order.filter(function(b){return agg[b];}).map(function(b){var r=agg[b];
+      function cell(lb,v,col){return '<div style="--c:'+col+'"><small>'+lb+'</small><b>'+cvF(v)+'</b></div>';}
+      return '<div class="cv-c" style="--b:'+annBrandColor(b)+'"><div class="t">'+cvEsc(b)+'</div><div class="r">'
+        +cell('Total',r[0],CV_COL.tot)+cell('Answered',r[1],CV_COL.ans)+cell('Abandoned',r[2],CV_COL.ab)+cell('WhatsApp',r[3],CV_COL.wa)+'</div></div>';
+    }).join('')+'</div>';
+  }
+  el.innerHTML=h;
+}
 </script>
 </body>
 </html>
