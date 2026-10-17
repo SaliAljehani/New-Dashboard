@@ -693,13 +693,13 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 .ref-brand-section{--brbg:color-mix(in srgb,var(--brand) 6%,#FDFDFC)!important}
 .ref-brand-section .br-rg{background:color-mix(in srgb,var(--brand) 4%,#FDFDFC)!important;color:var(--brand)!important}
 .ref-brand-section .br-it:hover{background:color-mix(in srgb,var(--brand) 3%,#FDFDFC)!important}
-.ref-brand-section .br-it.on{background:color-mix(in srgb,var(--brand) 7%,#FDFDFC)!important}
+.ref-brand-section .br-it.on{background:color-mix(in srgb,var(--brand) 11%,#FFFFFF)!important}
 .ref-brand-section .br-it b{color:var(--brand)!important}
 .ref-brand-section tbody tr:hover td{background:color-mix(in srgb,var(--brand) 4%,#FDFDFC)!important}
 /* e-mail boxes (Request / Complaint): pearl white with the tab's colour as a soft shade */
 .ref-brand-section div:has(> div > .ref-email-tag.to){background:color-mix(in srgb,var(--brand) 2.5%,#FEFDFA)!important;border:1px solid color-mix(in srgb,var(--brand) 14%,#EFEAE3)!important;box-shadow:0 1px 4px color-mix(in srgb,var(--brand) 10%,transparent)!important}
 /* brand pages: tables T3 — H2 titles, calm pearl tables, left-aligned, slim region bars, zebra rows (white / tab tint) */
-.ref-brand-section div:is(:has(+table),:has(+div>table:not(.dh-head))):not(:has(+.dh-wrap)):not(:has(.piTab)):not(:has(button)){background:transparent!important;border:none!important;border-left:3px solid var(--brand)!important;border-radius:0!important;justify-content:flex-start!important;text-align:left!important;margin:4px 0 8px 2px;padding:2px 10px!important;font-size:14px!important;box-shadow:none!important}
+.ref-brand-section div:is(:has(+table),:has(+div>table:not(.dh-head))):not(:has(+.dh-wrap)):not(:has(.piTab)):not(:has(button)):not(.dh-wrap){background:transparent!important;border:none!important;border-left:3px solid var(--brand)!important;border-radius:0!important;justify-content:flex-start!important;text-align:left!important;margin:4px 0 8px 2px;padding:2px 10px!important;font-size:14px!important;box-shadow:none!important}
 .ref-brand-section div:has(>table){border:1px solid color-mix(in srgb,var(--brand) 16%,#EFEAE3)!important;border-radius:10px!important;background:#FEFDFA!important}
 .ref-brand-section thead tr,.ref-brand-section thead th{background:color-mix(in srgb,var(--brand) 5%,#FFFFFF)!important;border-bottom:1px solid color-mix(in srgb,var(--brand) 22%,#EFEAE3)!important}
 .ref-brand-section thead th{color:color-mix(in srgb,var(--brand) 55%,#6E5E52)!important;font-weight:700!important;font-size:11.5px!important}
@@ -776,6 +776,28 @@ footer{text-align:center;padding:14px;font-size:11px;color:#666;border-top:1px s
 /* one header tint per tab: brand band = branch header = region bars */
 .ref-brand-band{background:color-mix(in srgb,var(--brand,#8A6A4A) 11%,#FFFFFF)!important}
 .ref-brand-section .bd-head,.ref-brand-section div[onclick^="toggleRegion"],.ref-brand-section .br-rg{background:color-mix(in srgb,var(--brand) 11%,#FFFFFF)!important}
+/* every coloured bar (No Answer SMS, collapsibles, regions) = header tint */
+.ref-brand-section :is(div[style*="border-left:4px solid"],div[style*="border-left: 4px solid"]){background:color-mix(in srgb,var(--brand) 11%,#FFFFFF)!important;border-left-color:var(--brand)!important}
+.ref-brand-section .piPanel div:has(> div > .ref-email-tag.to){background:color-mix(in srgb,var(--brand) 11%,#FFFFFF)!important}
+/* brand title + sub tabs use the calm text colour (Petromin no longer bright) */
+.ref-brand-band,.ref-brand-band>*:not(button),.ref-brand-section .ref-sub-tab{color:var(--tt,var(--brand))!important}
+.ref-brand-section .ref-email-card>div:first-child{color:#3F3A36!important}
+.ref-brand-section .ref-sub-tab.active,.ref-brand-section .ref-sub-tab.active:hover{background:color-mix(in srgb,var(--brand) 11%,#FFFFFF)!important}
+.ref-brand-section .ref-sub-tab:hover:not(.active){background:color-mix(in srgb,var(--brand) 6%,#FFFFFF)!important}
+.ref-brand-section tbody td:not(.td-code),.ref-brand-section tbody td:not(.td-code) *:not(a){font-weight:400!important}
+/* website link buttons: calm, readable */
+.ref-brand-section div[id$="Website"] a,.ref-brand-section a[href*="petromin-baic.com"]{background:#FFFFFF!important;color:var(--tt,var(--brand))!important;border:1px solid color-mix(in srgb,var(--brand) 32%,#EFEAE3)!important;box-shadow:none!important;text-shadow:none!important}
+.ref-brand-section div[id$="Website"] a:hover,.ref-brand-section a[href*="petromin-baic.com"]:hover{background:color-mix(in srgb,var(--brand) 11%,#FFFFFF)!important}
+.ref-brand-section div[id$="Website"] a *{color:inherit!important}
+/* hover: no grey anywhere — use the section's own colour */
+.ref-brand-section .ref-email-card:hover{background:#FFFFFF!important;border-color:color-mix(in srgb,var(--brand) 45%,#EFEAE3)!important}
+.ref-brand-section .ref-card:hover{border-color:color-mix(in srgb,var(--brand) 40%,#EFEAE3)!important;background:#FFFFFF!important}
+.ref-sub-tab:hover:not(.active){background:rgba(var(--accent-rgb),.06)!important}
+.tab:hover:not(.active){background:rgba(var(--accent-rgb),.06)!important;border-color:rgba(var(--accent-rgb),.25)!important;color:var(--accent)!important}
+.pnav:hover:not(.active){background:rgba(var(--accent-rgb),.05)!important}
+.ref-home .ref-brand-circle:hover{background:color-mix(in srgb,var(--bc) 18%,#FFFFFF)!important}
+.ref-tool:not(.lk):hover{background:rgba(var(--accent-rgb),.06)!important}
+.ref-brand-section button:hover{filter:none}
 /* footer: smaller */
 #lupd_footer{font-size:12px!important}
 #lupd_footer+span{font-size:12px!important}
@@ -4759,7 +4781,7 @@ function renderBaicShowroomTab(arr){
   });
   if(!rows.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 
-  const banner=sharedHours?'<div style="max-width:560px;margin:0 auto 18px;background:'+color+'10;border:1px solid '+color+'30;border-radius:10px;padding:10px 16px;text-align:center;font-size:13px;color:#555;font-weight:600">'+brFormatHours(sharedHours,color)+'</div>':'';
+  const banner=sharedHours?'<div style="max-width:560px;margin:0 auto 18px;background:color-mix(in srgb,'+color+' 11%,#FFFFFF);border:1px solid color-mix(in srgb,'+color+' 24%,#EFEAE3);border-radius:10px;padding:10px 16px;text-align:center;font-size:13px;color:#555;font-weight:600">'+brFormatHours(sharedHours,color)+'</div>':'';
 
   const cards='<div style="display:flex;justify-content:center;flex-wrap:wrap;gap:16px;align-items:flex-start;padding-top:4px">'+rows.map(r=>{
     const reg=String(r[regionCol]||'').trim();
@@ -4768,10 +4790,10 @@ function renderBaicShowroomTab(arr){
     const gps=String(r[gpsCol]||'').trim();
     return '<div style="position:relative;margin-top:11px;width:320px;max-width:100%">'
       +'<div style="position:absolute;top:-11px;left:50%;transform:translateX(-50%);z-index:2;background:'+color+';color:#fff;font-size:11px;font-weight:700;padding:3px 18px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.12)">'+regClean(reg)+'</div>'
-      +'<div style="background:#FEFEFD;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07)">'
-      +'<div style="background:'+color+'12;padding:16px 14px 12px;text-align:center">'
-      +'<div style="font-size:16px;font-weight:700;color:var(--text);padding-top:6px">'+name+'</div>'
-      +(city?'<div style="font-size:13px;color:#888;margin-top:6px">📍 '+city+'</div>':'')
+      +'<div style="background:#FFFFFF;border-radius:12px;overflow:hidden;border:1px solid color-mix(in srgb,'+color+' 24%,#EFEAE3)">'
+      +'<div style="background:color-mix(in srgb,'+color+' 11%,#FFFFFF);padding:16px 14px 12px;text-align:center">'
+      +'<div style="font-size:13.5px;font-weight:700;color:var(--text);padding-top:6px">'+name+'</div>'
+      +(city?'<div style="font-size:12px;color:#888;margin-top:5px">📍 '+city+'</div>':'')
       +(gps&&gps.startsWith('http')?'<div style="margin-top:6px"><a href="'+gps+'" target="_blank" style="color:'+color+';font-size:12px;font-weight:600;text-decoration:none">🗺️ Location</a></div>':'')
       +'</div>'
       +'</div>'
@@ -5526,18 +5548,18 @@ function renderVolvoAftersalesTab(arr){
     const map=String(r[keys[8]]||'').trim();
     const loc=(map&&/^https?:/.test(map))?map:(gps?(/^https?:/.test(gps)?gps:'https://www.google.com/maps?q='+encodeURIComponent(gps)):'');
     return '<div style="background:#FEFEFD;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07)">'
-      +'<div style="background:'+color+'12;padding:10px 14px;text-align:center;border-bottom:2px solid '+color+'22">'
-      +'<div style="font-size:13px;font-weight:700;color:'+color+'">'+b+'</div>'
-      +(city?'<div style="font-size:11px;color:#888;margin-top:4px">📍 '+city+'</div>':'')
+      +'<div style="background:'+color+'12;padding:20px 18px;text-align:center;border-bottom:2px solid '+color+'22">'
+      +'<div style="font-size:15px;font-weight:700;color:'+color+'">'+b+'</div>'
+      +(city?'<div style="font-size:12.5px;color:#888;margin-top:6px">📍 '+city+'</div>':'')
       +(loc?'<div style="margin-top:5px"><a href="'+loc+'" target="_blank" style="color:'+color+';font-size:11px;font-weight:600;text-decoration:none">🗺️ Location</a></div>':'')
-      +'</div><div style="padding:10px 14px;text-align:center">'
-      +(bm?'<div style="font-size:12px;color:#555;margin-bottom:5px">👤 '+bm+'</div>':'')
-      +(ph?'<div style="font-size:12px;color:#555;margin-bottom:5px">📞 '+ph+'</div>':'')
-      +(em?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+em+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+em+'</a></div>':'')
+      +'</div><div style="padding:14px 18px;text-align:center">'
+      +(bm?'<div style="font-size:13.5px;color:#555;margin-bottom:6px">👤 '+bm+'</div>':'')
+      +(ph?'<div style="font-size:13.5px;color:#555;margin-bottom:6px">📞 '+ph+'</div>':'')
+      +(em?'<div style="font-size:12.5px;margin-bottom:5px"><a href="mailto:'+em+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+em+'</a></div>':'')
       +'</div></div>';
   };
   const cardsHTML=order.flatMap(reg=>regions[reg].map(r=>
-    '<div style="width:240px">'
+    '<div style="width:390px">'
     +'<div style="text-align:center;margin-bottom:6px"><span style="display:inline-block;font-size:11px;font-weight:800;color:'+color+';background:'+color+'12;padding:3px 16px;border-radius:12px;letter-spacing:.05em">'+reg+'</span></div>'
     +card(r)
     +'</div>'
@@ -5592,7 +5614,7 @@ function renderPetrominTireBatteryTab(arr){
   const pirelliHTML=pirelli.length?'<div style="margin-bottom:18px">'+secHead('🛞 Pirelli Tire — Sales Supervisors')
     +tbl(['🗺️ Region','👤 Manager','📞 Phone','✉️ Email'],
       pirelli.map((p,i)=>'<tr style="background:'+(i%2?'#FAF8F5':'#FDFDFC')+'">'
-        +'<td style="padding:7px 12px;text-align:center;font-weight:700;color:'+color+'">'+p.region+'</td>'
+        +'<td style="padding:7px 12px;text-align:center">'+(m=>m?'<div>'+m[1].replace(/[\u0600-\u06FF\s]+$/,'').trim()+'</div><div style="font-size:11px;color:#9A9088">('+m[2].trim()+')</div>':p.region)(String(p.region).match(/^([^(]+)\(([^)]*)\)/))+'</td>'
         +'<td style="padding:7px 12px;text-align:center">'+p.manager+'</td>'
         +'<td style="padding:7px 12px;text-align:center">'+(p.phone||'')+'</td>'
         +'<td style="padding:7px 12px;text-align:center">'+emailCell(p.email)+'</td></tr>').join(''))
@@ -5729,15 +5751,15 @@ function renderPetrominEmailzTab(arr){
     +'<td style="'+td+'">'+cellC(r.to)+'</td>'
     +'<td style="'+td+'">'+cellC(r.cc)+'</td>'
     +'</tr>';
-  let body='';
-  topRows.forEach(r=>{ body+=rowHTML(r); });
+  const tblOpen='<div style="border-radius:10px;overflow:hidden;margin-bottom:16px"><table style="width:100%;border-collapse:collapse;font-size:12px">'
+    +'<thead><tr><th style="'+hd+';width:32%">Department</th><th style="'+hd+'">TO</th><th style="'+hd+'">CC</th></tr></thead><tbody>';
+  let out='';
+  if(topRows.length) out+=tblOpen+topRows.map(rowHTML).join('')+'</tbody></table></div>';
   sections.forEach(s=>{
-    body+='<tr><td colspan="3" style="background:'+color+'14;color:#bd7530;font-weight:800;letter-spacing:.04em;text-align:center;padding:8px 10px;border:1px solid #eadfce">'+s.title+'</td></tr>';
-    s.rows.forEach(r=>{ body+=rowHTML(r); });
+    out+='<div style="font-size:14px;font-weight:800;color:#bd7530;margin:6px 0 8px 2px;padding:2px 10px;border-left:3px solid '+color+'">'+s.title+'</div>'
+      +tblOpen+s.rows.map(rowHTML).join('')+'</tbody></table></div>';
   });
-  return '<table style="width:100%;border-collapse:collapse;font-size:12px;border:1px solid #eadfce;border-radius:10px;overflow:hidden">'
-    +'<thead><tr><th style="'+hd+';width:32%">Department</th><th style="'+hd+'">TO</th><th style="'+hd+'">CC</th></tr></thead>'
-    +'<tbody><tr><td colspan="3" style="height:12px;border:none;padding:0"></td></tr>'+body+'</tbody></table>';
+  return out;
 }
 
 function renderPetrominComplaintsTab(arr){
@@ -6021,7 +6043,7 @@ function fotonEmailHdr(blocks, color){
 // with only a couple of cards (Showroom) instead of leaving a wide gap.
 function fotonRegionBlock(reg, regColor, count, hoursDisp, regId, cardsHTML, centred){
   const inner = centred
-    ? '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,250px));justify-content:center;gap:10px">'+cardsHTML+'</div>'
+    ? '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,330px));justify-content:center;gap:16px;margin-top:18px">'+cardsHTML+'</div>'
     : '<div class="ref-cards-grid">'+cardsHTML+'</div>';
   return '<div style="margin-bottom:14px">'
     +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+regColor+'12;border-radius:8px;border-left:4px solid '+regColor+';cursor:pointer;user-select:none;margin-bottom:10px">'
@@ -6050,8 +6072,8 @@ function fotonBranchCard(b, regColor){
     b.email?'<div style="font-size:11px;margin-bottom:2px"><a href="mailto:'+b.email+'" style="background:#f5f5f5;color:#616161;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">✉️ '+b.email+'</a></div>':''
   ].filter(Boolean).join('');
   return '<div style="background:#FEFEFD;border-radius:10px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);direction:ltr">'
-    +'<div style="background:'+regColor+'18;border-bottom:2px solid '+regColor+'22;padding:10px 14px;text-align:center">'
-    +'<div style="font-size:13px;font-weight:700;color:'+regColor+'">'+b.name+'</div>'
+    +'<div style="background:'+regColor+'18;border-bottom:2px solid '+regColor+'22;padding:18px 18px;text-align:center">'
+    +'<div style="font-size:14px;font-weight:700;color:'+regColor+'">'+b.name+'</div>'
     +(sub?'<div style="font-size:11px;color:#666;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap">'+sub+'</div>':'')
     +locHTML
     +'</div>'
@@ -11362,7 +11384,7 @@ window.__watchDom=(function(){
     var l=a[2], s=t[1]; if(l>0.88){ l=Math.min(0.975,l+0.025); s=s*0.5; } return hsl2rgb(t[0],s,l);}
   // text gets a deeper, calmer shade; very light backgrounds stay almost neutral (no pink/peach cast)
   function mapCol2(rgb,T,kind){var a=rgb2hsl(rgb[0],rgb[1],rgb[2]);
-    if(kind==='bg'&&a[1]<0.14&&a[2]>0.86&&a[2]<0.985){ var t0=rgb2hsl(T[0],T[1],T[2]); return hsl2rgb(t0[0],Math.min(t0[1]*0.75,0.5),Math.max(a[2],0.958)); }
+    if(kind==='bg'&&a[1]<0.14&&a[2]>0.86&&a[2]<0.985){ return [T[0]*0.11+255*0.89,T[1]*0.11+255*0.89,T[2]*0.11+255*0.89]; }
     if(a[1]<0.14&&a[2]<0.9) return null;var t=rgb2hsl(T[0],T[1],T[2]);var l=a[2],s=t[1];
     if(kind==='text'&&window.__TT&&a[1]>=0.14) return window.__TT.slice();
     if(kind==='text'&&window.__DEEP_TEXT){ l=Math.min(l,0.42); s=t[1]*0.7; }
