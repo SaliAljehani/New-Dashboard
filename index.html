@@ -908,6 +908,14 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
 .cv-c .r b{display:block;font-size:16px;color:var(--c);margin-top:2px}
 .cv-empty{grid-column:1/-1;background:#FDFDFC;border:1px dashed #E2D6C8;border-radius:12px;padding:34px;text-align:center;color:#8A857C;font-size:13px}
 .cv-empty button{margin-top:12px;padding:8px 20px;border-radius:8px;border:1px solid rgba(var(--accent-rgb),.3);background:rgba(var(--accent-rgb),.06);color:var(--accent);font:600 12px inherit;cursor:pointer}
+ /* toolbar: one bar, buttons left, date right, calendar inside the date */
+.cv-top{flex-direction:row-reverse;background:#FDFDFC;border:1px solid #EDE4DA;border-radius:14px;padding:8px 10px;margin-bottom:18px}
+.cv-seg{border:none;padding:0;background:transparent}
+.cv-nav .cv-arr:not(.cv-cal){border-color:transparent;background:transparent}
+.cv-nav .cv-cal{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;border:0;overflow:hidden}
+.cv-nav .cv-lbl{cursor:pointer;position:relative;padding-right:40px}
+.cv-nav .cv-lbl:after{content:"";position:absolute;right:14px;top:50%;width:14px;height:14px;margin-top:-7px;background:currentColor;opacity:.55;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zM16 3v4M8 3v4M4 11h16'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zM16 3v4M8 3v4M4 11h16'/%3E%3C/svg%3E") center/contain no-repeat}
+.cv-sub{display:none}
 @media(max-width:1100px){.cv-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){.cv-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.cv-grid{grid-template-columns:1fr}.cv-lbl{min-width:150px;padding:9px 12px}}
 </style>
@@ -11628,6 +11636,7 @@ function cvVal(){var c=CV_CUR;return CV_MODE=='m'?c.getFullYear()+'-'+cvP2(c.get
 function cvPickDate(v){if(!v)return;var p=v.split('-');CV_CUR=new Date(+p[0],+p[1]-1,+(p[2]||1));renderCV();}
 function cvIso(d){return d.getFullYear()+'-'+cvP2(d.getMonth()+1)+'-'+cvP2(d.getDate());}
 function cvSetRange(which,v){if(!v)return;var p=v.split('-'),d=new Date(+p[0],+p[1]-1,+p[2]);if(which=='f')CV_FROM=d;else CV_TO=d;renderCV();}
+function cvOpenCal(){var i=document.querySelector('#page14 .cv-cal input');if(!i)return;try{i.showPicker();}catch(e){i.focus();i.click();}}
 function cvMode(m){CV_MODE=m;if(m=='c'&&!CV_FROM){CV_TO=new Date(CV_CUR);CV_FROM=new Date(CV_CUR.getFullYear(),CV_CUR.getMonth(),1);}renderCV();}
 function cvStep(n){var c=CV_CUR;if(CV_MODE=='d')c.setDate(c.getDate()+n);else if(CV_MODE=='w')c.setDate(c.getDate()+7*n);else CV_CUR=new Date(c.getFullYear(),c.getMonth()+n,1);renderCV();}
 function renderCV(){
@@ -11656,7 +11665,7 @@ function renderCV(){
     : null;
   var h='<div class="cv-top">'+(nav?nav:'<div class="cv-nav">'
     +'<button class="cv-arr" onclick="cvStep(-1)" aria-label="Previous">‹</button>'
-    +'<div class="cv-lbl">'+lbl+'</div>'
+    +'<div class="cv-lbl" onclick="cvOpenCal()" title="Pick a date">'+lbl+'</div>'
     +'<button class="cv-arr" onclick="cvStep(1)" aria-label="Next">›</button>'
     +'<label class="cv-arr cv-cal" title="Pick a date"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zM16 3v4M8 3v4M4 11h16"/></svg>'
     +'<input type="'+(CV_MODE=='m'?'month':'date')+'" value="'+cvVal()+'" onchange="cvPickDate(this.value)"></label>'
