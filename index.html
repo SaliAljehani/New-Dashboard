@@ -909,15 +909,22 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
 .cv-empty{grid-column:1/-1;background:#FDFDFC;border:1px dashed #E2D6C8;border-radius:12px;padding:34px;text-align:center;color:#8A857C;font-size:13px}
 .cv-empty button{margin-top:12px;padding:8px 20px;border-radius:8px;border:1px solid rgba(var(--accent-rgb),.3);background:rgba(var(--accent-rgb),.06);color:var(--accent);font:600 12px inherit;cursor:pointer}
  /* toolbar: one bar, buttons left, date right, calendar inside the date */
-.cv-top{flex-direction:row-reverse;background:#FDFDFC;border:1px solid #EDE4DA;border-radius:14px;padding:8px 10px;margin-bottom:18px}
+.cv-top{flex-direction:row-reverse;background:transparent;border:none;border-bottom:1px solid #E7E1D7;border-radius:0;padding:0 0 12px;margin-bottom:6px}
 .cv-seg{border:none;padding:0;background:transparent}
 .cv-nav .cv-arr:not(.cv-cal){border-color:transparent;background:transparent}
 .cv-nav .cv-cal{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;border:0;overflow:hidden}
 .cv-nav .cv-lbl{cursor:pointer;position:relative;padding-right:40px}
 .cv-nav .cv-lbl:after{content:"";position:absolute;right:14px;top:50%;width:14px;height:14px;margin-top:-7px;background:currentColor;opacity:.55;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zM16 3v4M8 3v4M4 11h16'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zM16 3v4M8 3v4M4 11h16'/%3E%3C/svg%3E") center/contain no-repeat}
 .cv-sub{display:none}
+ /* totals + brand numbers: one strip each, short divider lines between values */
+.cv-kpis{gap:0;background:transparent;border:none;border-radius:0;padding:6px 0 4px;margin-bottom:18px}
+.cv-k{border:none;border-radius:0;background:transparent;position:relative}
+.cv-k+.cv-k:before{content:"";position:absolute;left:0;top:18%;bottom:18%;width:1px;background:#E7E1D7}
+.cv-c .r{gap:0;background:transparent;border-radius:0}
+.cv-c .r div{background:transparent;border-radius:0;position:relative;padding:6px 4px}
+.cv-c .r div+div:before{content:"";position:absolute;left:0;top:22%;bottom:22%;width:1px;background:#E7E0D6}
 @media(max-width:1100px){.cv-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:700px){.cv-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.cv-grid{grid-template-columns:1fr}.cv-lbl{min-width:150px;padding:9px 12px}}
+@media(max-width:700px){.cv-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.cv-k:nth-child(3):before{display:none}.cv-grid{grid-template-columns:1fr}.cv-lbl{min-width:150px;padding:9px 12px}}
 </style>
 </head>
 <body>
@@ -1130,7 +1137,7 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
 <div id="page10" style="display:none;max-width:1400px;margin:0 auto;padding:24px 24px">
   <div id="recallContent"><div style="text-align:center;padding:40px;color:#aaa">Loading...</div></div>
 </div>
-<div id="page14" style="display:none;max-width:1400px;margin:0 auto;padding:24px 24px"></div>
+<div id="page14" style="display:none;max-width:1330px;margin:0 auto;padding:24px 24px"></div>
 <div id="page12" style="display:none;max-width:1400px;margin:0 auto;padding:24px 24px" class="to-wrap">
 
   <div class="to-hero">
