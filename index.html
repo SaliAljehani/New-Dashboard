@@ -9537,7 +9537,7 @@ async function renderRef(){
       const vals=Object.values(r).map(x=>String(x||'').trim());
       return vals.some(v=>v.startsWith('http')||(/\.(xlsx|pdf|docx)$/i.test(v))||(/@/.test(v)&&/\b(TO|CC)\b/i.test(v)));
     });
-    const mkLinkCard=r=>{
+    const mkLinkCard=(r,isDesc)=>{
       const keys=Object.keys(r);
       // Find by column name first, fallback to index
       const nameKey = keys.find(k=>k.toLowerCase().includes('program')||k.toLowerCase().includes('name'))||'';
@@ -9565,10 +9565,10 @@ async function renderRef(){
           +'</div><a href="'+_mailto+'" class="ref-link-open-btn">✉️ Email</a></div>';
       }
       const isFile=/\.(xlsx|pdf|docx)$/i.test(url);
-      return'<div class="ref-link-card"><div style="flex:1"><div class="ref-link-card-name">'+name+'</div>'+(pass?'<div class="ref-link-pass">🔑 '+pass+'</div>':'')+'</div>'+(isUrl?'<a href="'+url+'" target="_blank" class="ref-link-open-btn">🔗 Open</a>':isFile?'<span class="ref-link-file">📄 '+url+'</span>':'')+'</div>';
+      return'<div class="ref-link-card"><div style="flex:1"><div class="ref-link-card-name">'+name+'</div>'+(pass?(isDesc?'<div style="font-size:12px;color:#8A857C;margin-top:3px">'+pass+'</div>':'<div class="ref-link-pass">🔑 '+pass+'</div>'):'')+'</div>'+(isUrl?'<a href="'+url+'" target="_blank" class="ref-link-open-btn">🔗 Open</a>':isFile?'<span class="ref-link-file">📄 '+url+'</span>':'')+'</div>';
     };
     const linkCards=linksArr.map(mkLinkCard).filter(Boolean).join('');
-    const inboundCards=refInbound.map(mkLinkCard).filter(Boolean).join('');
+    const inboundCards=refInbound.map(r=>mkLinkCard(r,true)).filter(Boolean).join('');
 
     // SUBJECT
     const subjectArr=Array.isArray(subjectData)?subjectData:(subjectData.rows||[]);
@@ -9663,12 +9663,21 @@ async function renderRef(){
       +['petromin','baic','nissan','stellantis','bodyshop','foton','electromin','volvo','nos','baicRecall'].map(k=>{const c=BRAND_CONFIGS.find(b=>b.key===k);if(!c)return'';return'<div class="ref-brand-circle" style="--bc:'+c.color+'" onclick="'+(c.onclick||'showRefBrandPage(\''+c.key+'\')')+'"><div class="ref-brand-circle-icon" style="background:'+c.color+'1F">'+brandLineIcon(c.key,c.color)+'</div><div class="ref-brand-circle-label" style="color:'+c.color+'">'+c.label+'</div></div>';}).join('')
       +'</div>'
       +'<div class="ref-tools">'
-      +'<div class="ref-tool" data-p="refContactsPanel" onclick="refTool(\'refContactsPanel\')"><span class="ref-tool-ic">📞</span>Contact Numbers</div>'
-      +'<div class="ref-tool" data-p="refTicketPanel" onclick="refTool(\'refTicketPanel\')"><span class="ref-tool-ic">📋</span>Ticket Type</div>'
-      +'<div class="ref-tool" onclick="window.open(\'https://docs.google.com/spreadsheets/d/16ZzTUvIDmJnokaNJCTLb3AHXm7x_n2Kx_537H2gcCCI/edit\',\'_blank\')"><span class="ref-tool-ic">🎫</span>Ticket Quality</div>'
-      +(inboundCards?'<div class="ref-tool" data-p="refInboundPanel" onclick="refTool(\'refInboundPanel\')"><span class="ref-tool-ic">📑</span>Inbound Sheets</div>':'')
-      +(linkCards?'<div class="ref-tool lk" data-p="refLinksPanel" onclick="refTool(\'refLinksPanel\')"><span class="ref-tool-ic" style="background:#1565c01F">'+brandLineIcon('links','#1565c0')+'</span>Links & Systems</div>':'')
-      +'<div class="ref-tool" data-p="refCasePanel" onclick="refTool(\'refCasePanel\')"><span class="ref-tool-ic">📝</span>Case Handling</div>'
+      +(function(){
+        // Tool buttons: B = beige buttons with matte coloured icons · D = each button tinted in its own matte colour
+        var TP={phone:'M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5-2.5l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2',clip:'M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2M9 12h6M9 16h6',file:'M14 3v4a1 1 0 0 0 1 1h4M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2M9 13h6M9 17h6',link:'M9 15l6-6M11 6l.5-.5a5 5 0 0 1 7 7l-.5.5M13 18l-.4.5a5 5 0 0 1-7-7l.4-.5',edit:'M4 20h4L18.5 9.5a2.8 2.8 0 1 0-4-4L4 16v4M13.5 6.5l4 4'};
+        var D=(window.TOOL_STYLE==='D');
+        var tb=function(panel,ic,label,col){
+          var st=D?'color:'+col+'!important;border-color:color-mix(in srgb,'+col+' 25%,transparent)!important;background:color-mix(in srgb,'+col+' 7%,#FDFDFC)':'';
+          var ist=D?'background:#FDFDFC;color:'+col:'background:color-mix(in srgb,'+col+' 12%,#FDFDFC);color:'+col;
+          return '<div class="ref-tool" data-p="'+panel+'" onclick="refTool(\''+panel+'\')" style="'+st+'"><span class="ref-tool-ic" style="'+ist+'"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+TP[ic]+'"/></svg></span>'+label+'</div>';
+        };
+        return tb('refContactsPanel','phone','Contact Numbers','#B07070')
+          +tb('refTicketPanel','clip','Ticket Type','#9C8D63')
+          +(inboundCards?tb('refInboundPanel','file','Inbound Sheets','#6A8A60'):'')
+          +(linkCards?tb('refLinksPanel','link','Links & Systems','#6E87A6'):'')
+          +tb('refCasePanel','edit','Case Handling','#7E78A8');
+      })()
       +'</div></div>'
 
       // LINKS PANEL - hidden, toggled by blue circle, opens BELOW circles
