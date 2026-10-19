@@ -6058,8 +6058,11 @@ function reqCompCardsHTML(color, em){
       +(o.cc?'<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px"><span class="ref-email-tag cc">CC</span>'+chipTo(o.cc,color)+'</div>':'')
       +'</div>';
   };
-  return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">'
-    +card('Request',em.request)+card('Complaint',em.complaint)+'</div>';
+  var cards=[];
+  if(em.request.to||em.request.cc) cards.push(card('Request',em.request));
+  if(em.complaint.to||em.complaint.cc) cards.push(card('Complaint',em.complaint));
+  if(cards.length===1) return '<div style="display:flex;justify-content:center;margin-bottom:14px"><div style="width:100%;max-width:560px">'+cards[0]+'</div></div>';
+  return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">'+cards.join('')+'</div>';
 }
 
 function mkReqCompCards(color, emTo, emCc, fmtE){
