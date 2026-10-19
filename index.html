@@ -9591,34 +9591,42 @@ async function renderRef(){
     const CAT_TAGS=['Parts','Service','Sales','Nissan APP','Behavior','Finance issue','IT Related','Offers','PetrominIT','Product and performance','Station Maintenance and Items','Workmanship'];
     const NOTES_AR='شكاوى فروع الوكالة نيسان - ستلانتس - السمكرة والدهان - فروع المبيعات - بترومين أوتوكير - بترومين ترايستار';
     const subC=['PN Sales Complaint','PN Aftersales Complaint','PS Sales Complaint','PS AftesSales Complaint','Body Shop Complaint','PE Complaint','PAC Complaint','BAIC Complaint','TS Complaint','Tire Complaint','Fuel Complaint','Foton Complaint','Electromin Complaint'];
-    if(mainC){ mainC.subject='All Complaints'; mainC.status='Open'; mainC._deptTags=DEPT_TAGS; mainC._descText=DESC_TEXT; mainC._catTags=CAT_TAGS; mainC._notesAR=NOTES_AR; }
+    const subCSheet = mainC ? String(mainC.subject||'').split(/\n/).map(x=>x.trim()).filter(Boolean) : [];
+    if(subCSheet.length) subC.splice(0,subC.length,...subCSheet);
+    if(mainC){ mainC.subject='All Complaints'; }
 
-    const fbox=(name,val,c)=>'<span style="background:#FEFEFD;border:1px solid #F3E4E4;border-radius:7px;padding:5px 11px;font-size:11px;font-weight:600;color:#a85a5a;text-align:center;display:inline-block">'+name+'<small style="display:block;font-size:11px;color:'+c.t+';background:'+c.b+';font-weight:800;margin-top:4px;border-radius:4px;padding:1px 5px">'+val+'</small></span>';
+    const fbox=(name,val,c)=>'<span style="background:#FEFEFD;border:1px solid #F3E4E4;border-radius:7px;padding:3px 10px;font-size:11px;font-weight:600;color:#a85a5a;text-align:center;display:inline-block">'+name+'<small style="display:block;font-size:11px;color:'+c.t+';background:'+c.b+';font-weight:800;margin-top:2px;border-radius:4px;padding:1px 5px">'+val+'</small></span>';
     const formulaBar=(val,two,c)=>{
       const plus='<span style="color:#c0272d88;font-weight:800;display:flex;align-items:center">+</span>';
-      const boxes=two?[fbox('Invoice Number',val,c),fbox('Description',val,c)]:[fbox('Invoice Number',val,c),fbox('Subject',val,c),fbox('Description',val,c),fbox('Empty Box',val,c)];
-      return'<div style="display:flex;flex-wrap:wrap;align-items:stretch;gap:7px;background:#FDFBFB;border:1px dashed #F3E4E4;border-radius:10px;padding:11px 12px;direction:ltr;justify-content:center;margin:12px 14px">'+boxes.join(plus)+'</div>';
+      const boxes=two?[fbox('Ticket Type',val,c),fbox('Description',val,c)]:[fbox('Ticket Type',val,c),fbox('Subject',val,c),fbox('Description',val,c),fbox('Empty Box',val,c)];
+      return'<div style="display:flex;flex-wrap:wrap;align-items:stretch;gap:7px;background:#FDFBFB;border:1px dashed #F3E4E4;border-radius:10px;padding:7px 10px;direction:ltr;justify-content:center;margin:8px 12px">'+boxes.join(plus)+'</div>';
     };
-    const fieldRow=(icon,label,content,i)=>'<div style="display:grid;grid-template-columns:118px 1fr;gap:10px;padding:11px 16px;border-top:1px solid #F4F0EC;align-items:start;'+(i%2?'background:#FDFBF9':'background:#FDFDFC')+'"><div style="font-size:11px;font-weight:800;color:#9aa0a8;letter-spacing:.3px;padding-top:2px">'+icon+' '+label+'</div><div>'+content+'</div></div>';
+    const TT_LINE={'📁':'M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2','🏷️':'M7.5 7.5h.01M3 6v5.2a2 2 0 0 0 .6 1.4l7.7 7.7a2.4 2.4 0 0 0 3.4 0l5.6-5.6a2.4 2.4 0 0 0 0-3.4L12.6 3.6A2 2 0 0 0 11.2 3H6a3 3 0 0 0-3 3','✏️':'M4 20h4L18.5 9.5a2.8 2.8 0 1 0-4-4L4 16v4M13.5 6.5l4 4','💡':'M3 12h1m8-9v1m8 8h1M5.6 5.6l.7.7m12.1-.7l-.7.7M9 16a5 5 0 1 1 6 0a3.5 3.5 0 0 0-1 3a2 2 0 0 1-4 0a3.5 3.5 0 0 0-1-3M9.7 17h4.6','🔻':'M6 9l6 6l6-6'};
+    const TT_COL={'📁':'#B08A5A','🏷️':'#7E8A6A','✏️':'#8A6A8E','💡':'#B09A5A','🔻':'#B04848'};
+    const ttIcon=e=>{const m=window.TT_ICONS||'line'; if(m==='none')return''; if(m==='emoji')return e+' ';
+      const c=m==='mono'?'#A39A92':TT_COL[e]; return '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="'+c+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px"><path d="'+TT_LINE[e]+'"/></svg>';};
+    const TT_TAGS={orig:['#F7F5F2','#6f6a64',''],grey:['#F7F5F2','#6f6a64',''],beige:['#F4EEE6','#7A5E44','1px solid #EADFD2'],rose:['#FBF1F1','#A85A5A','1px solid #F1DADA'],cream:['#FBF7EE','#8A7246','1px solid #EFE6D2']};
+    const ttTag=()=>TT_TAGS[window.TT_TAG||'orig']||TT_TAGS.orig;
+    const fieldRow=(icon,label,content,i)=>'<div style="display:grid;grid-template-columns:118px 1fr;gap:10px;padding:6px 16px;border-top:1px solid #F4F0EC;align-items:center;'+(i%2?'background:#FDFBF9':'background:#FDFDFC')+'"><div style="font-size:11px;font-weight:800;color:#9aa0a8;letter-spacing:.3px">'+ttIcon(icon)+label+'</div><div>'+content+'</div></div>';
     const subjItem=(it,isCMain,subTags,twoField,gColor)=>{
       const deptTags = it._deptTags || (it.dept?it.dept.split(/\n/).flatMap(d=>d.split(' - ')).map(s=>s.trim()).filter(Boolean):[]);
       const catTags  = it._catTags  || (it.cat?it.cat.split(/\n/).flatMap(c=>c.split(' - ')).map(s=>s.trim()).filter(Boolean):[]);
       const descText = it._descText || it.desc || '';
       const notesAR  = it._notesAR  || it.notes || '';
       const fVal = isCMain ? 'Complaint type' : (it.subject||'');
-      const badge = isCMain ? {t:'#fff',b:'#d98a8f'} : {t:'#c0272d',b:'#f7e4e4'};
+      const badge = {t:'#c0272d',b:'#f7e4e4'};
       const isOpen = it.status && /open/i.test(it.status);
       const stColor = gColor;
       const stBg = gColor+'18';
-      const catKey=c=>{const l=c.toLowerCase();let bg='#f1f2f4',cl='#666';if(l==='parts'){bg='#eef5fb';cl='#3f7fbf';}else if(l==='service'){bg='#fbf3e9';cl='#c9812f';}else if(l==='sales'){bg='#eef6ef';cl='#4a9a5e';}return'<span style="display:inline-block;background:'+bg+';color:'+cl+';font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;margin:2px">'+c+'</span>';};
+      const catKey=c=>{const l=c.toLowerCase();let bg=ttTag()[0],cl=ttTag()[1];if(l==='parts'){bg='#eef5fb';cl='#3f7fbf';}else if(l==='service'){bg='#fbf3e9';cl='#c9812f';}else if(l==='sales'){bg='#eef6ef';cl='#4a9a5e';}return'<span style="display:inline-block;background:'+bg+';color:'+cl+';font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;margin:2px">'+c+'</span>';};
       let rows='',i=0;
-      if(deptTags.length) rows+=fieldRow('📁','Departments','<span>'+deptTags.map(d=>'<span style="display:inline-block;background:#F7F5F2;color:#6f6a64;font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;margin:2px">'+d+'</span>').join('')+'</span>',i++);
+      if(deptTags.length) rows+=fieldRow('📁','Departments','<span>'+deptTags.map(d=>'<span style="display:inline-block;background:'+ttTag()[0]+';color:'+ttTag()[1]+';border:'+(ttTag()[2]||'none')+';font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;margin:2px">'+d+'</span>').join('')+'</span>',i++);
       if(catTags.length) rows+=fieldRow('🏷️','Category','<span>'+catTags.map(catKey).join('')+'</span>',i++);
-      if(descText) rows+=fieldRow('✏️','Description','<span style="background:#FAF8F5;border-radius:8px;padding:7px 11px;font-size:12px;color:#555;display:inline-block;direction:rtl">'+descText+'</span>',i++);
-      if(notesAR) rows+=fieldRow('💡','Example','<span style="font-size:12px;color:#888;direction:rtl">'+notesAR+'</span>',i++);
-      if(isCMain&&subTags&&subTags.length) rows+=fieldRow('🔻','Complaint Type','<span>'+subTags.map(s=>'<span style="display:inline-block;background:#fdf1f1;color:#c0272d;border:1px solid #f1cfcf;font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;margin:2px">'+s+'</span>').join('')+'</span>',i++);
+      if(descText) rows+=fieldRow('✏️','Description','<span style="background:#FAF8F5;border-radius:8px;padding:3px 10px;font-size:12px;color:#555;display:inline-block;direction:rtl">'+descText+'</span>',i++);
+      if(notesAR) rows+=fieldRow('💡','When to Use','<span style="font-size:12px;color:#888;direction:rtl">'+notesAR+'</span>',i++);
+      if(isCMain&&subTags&&subTags.length) rows+=fieldRow('🔻','Complaint Type','<span>'+subTags.map(s=>'<span style="display:inline-block;background:#f7e4e4;color:#c0272d;border:none;font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;margin:2px">'+s+'</span>').join('')+'</span>',i++);
       return'<div class="ref-subj-item" style="padding:0;border:0;border-radius:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05);margin-bottom:0;flex:1;display:flex;flex-direction:column">'
-        +'<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:#FAF8F5;border-bottom:1px solid '+gColor+'33">'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:#FAF8F5;border-bottom:1px solid '+gColor+'33">'
         +'<span class="ref-subj-subject" style="margin:0;font-size:14px;font-weight:800;color:'+gColor+'">'+it.subject+'</span>'
         +(it.status?'<span class="ref-subj-badge" style="background:'+stBg+';color:'+stColor+';font-size:11px;font-weight:700;padding:3px 10px;border-radius:14px">'+it.status+'</span>':'')
         +'</div>'
@@ -9628,7 +9636,7 @@ async function renderRef(){
     };
 
     // 2-column subject layout — كل تذكرة (subject) خانة مستقلة، مربعين جنب بعض بالترتيب المطلوب
-    const wantedOrder=['Inquiry','Appointment','Invoice','Comment','FollowUp-Complaints','NA Complaint','Request - Contract','Request','All Complaints','Complaint'];
+    const wantedOrder=['Inquiry','Appointment','Invoice','Comment','Request','Contract','FollowUp-Complaints','All Complaints','Complaint'];
     const _normG=s=>String(s).toLowerCase().replace(/[\s\-]+/g,'');
     // نسطّح كل subject لخانة مستقلة (ماعدا Complaint الكبير — يبقى بمعاملته الخاصة)
     const flatCards=[];
@@ -9644,7 +9652,7 @@ async function renderRef(){
     flatCards.forEach(f=>{ if(orderedCards.indexOf(f)<0)orderedCards.push(f); });
 
     const buildCard=card=>{
-      const col='#c0272d';
+      const col='#B04848';
       if(card.__complaint&&mainC){
         return'<div class="ref-subj-group" style="height:100%;margin:0;display:flex;flex-direction:column">'
           +subjItem(mainC,true,subC,true,col)
@@ -9706,7 +9714,7 @@ async function renderRef(){
       +'📋 Ticket Type<span id="refSubjectIco" style="margin-left:8px;font-size:12px">▲</span>'
       +'</div>'
       +'<div id="refSubjectBody"><div class="ref-panel-body">'
-      +(function(){var h='';for(var i=0;i<orderedCards.length;i+=2){var a=orderedCards[i],b=orderedCards[i+1];h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch;margin-bottom:16px"><div style="height:100%">'+buildCard(a)+'</div>'+(b?'<div style="height:100%">'+buildCard(b)+'</div>':'<div></div>')+'</div>';}return h;})()
+      +(function(){var h='';var rest=orderedCards.filter(c=>c.__complaint||_normG((c.__it&&c.__it.subject)||'')!=='nacomplaint'),cmp=null;for(var i=0;i<rest.length;i+=2){var a=rest[i],b=rest[i+1];h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:stretch;margin-bottom:18px"><div style="height:100%">'+buildCard(a)+'</div>'+(b?'<div style="height:100%">'+buildCard(b)+'</div>':'<div></div>')+'</div>';}if(cmp)h+='<div style="margin-bottom:18px">'+buildCard(cmp)+'</div>';return h;})()
       +'</div></div></div>'
 
 
