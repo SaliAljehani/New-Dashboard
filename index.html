@@ -3526,7 +3526,7 @@ function brCard(o,col){
   const ppl=(o.people||[]).map(p=>(p.label?'<div style="font-size:11px;color:#888;margin-top:8px">'+p.label+'</div>':'')
     +(p.name?'<div>👤 '+p.name+'</div>':'')+(p.phone?'<div>📞 '+p.phone+'</div>':'')
     +(p.email?'<div><a href="mailto:'+p.email+'">'+p.email+'</a></div>':'')).join('');
-  return '<div style="background:#FEFEFD;border-radius:10px;overflow:hidden">'
+  return '<div'+(o.plabel?' data-plabel="'+o.plabel+'"':'')+' style="background:#FEFEFD;border-radius:10px;overflow:hidden">'
     +'<div style="padding:10px 14px;text-align:center"><div style="font-weight:700;color:'+col+'">'+o.title+'</div>'+sub+map+'</div>'
     +'<div style="padding:10px 14px;text-align:center">'+(o.hours?'<div>🕐 '+o.hours+'</div>':'')+ppl+'</div></div>';
 }
@@ -5402,7 +5402,8 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
         station:f(x=>x.includes('station')&&!x.includes('manager')&&!x.includes('manger')),
         am:f(x=>(x.includes('area manager')||x.includes('area manger')||x==='am name'||x==='am')&&!/phone|mobile|number|no\b/.test(x)),
         mobile:f(x=>/phone|mobile|number/.test(x)&&!x.includes('regional')),
-        rm:f(x=>x.includes('regional manager')||x==='rm'),
+        rm:f(x=>(x.includes('regional manager')||x==='rm')&&!x.includes('email')),
+        rmEmail:f(x=>x.includes('email')&&(x.includes('regional')||x==='rm email')),
         gps:f(x=>/gps|coordinate|location|map/.test(x))
       };
       const gv=(v,i)=>i>-1?String(v[i]==null?'':v[i]).trim():'';
@@ -5412,7 +5413,7 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
         if(!station||/^station/i.test(station))return;
         if(station.includes('@'))return;
         const city=gv(v,fuelIdx.city);
-        items.push({region:normReg(gv(v,fuelIdx.region)||cityToRegion(city)),code:gv(v,fuelIdx.code),name:station,city,am:gv(v,fuelIdx.am),mobile:gv(v,fuelIdx.mobile),rm:gv(v,fuelIdx.rm),coord:gv(v,fuelIdx.gps)});
+        items.push({region:normReg(gv(v,fuelIdx.region)||cityToRegion(city)),code:gv(v,fuelIdx.code),name:station,city,am:gv(v,fuelIdx.am),mobile:gv(v,fuelIdx.mobile),rm:gv(v,fuelIdx.rm),rmEmail:gv(v,fuelIdx.rmEmail),coord:gv(v,fuelIdx.gps)});
       });
     }
   }
@@ -5483,9 +5484,9 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
       return brRegionBlock(g,its.length,gid,color,its.map(it=>{
         const ppl=kind==='diesel'
           ? [{name:it.contact,phone:it.mobile,email:(it.email&&it.email.includes('@'))?it.email:''}]
-          : [{name:it.am,phone:it.mobile}].concat(it.rm?[{label:'Regional Manager',name:it.rm}]:[]);
+          : [{name:it.am,phone:it.mobile}].concat((it.rm||it.rmEmail)?[{label:'Regional Manager',name:it.rm,email:(it.rmEmail&&it.rmEmail.includes('@'))?it.rmEmail:''}]:[]);
         let _c=it.code,_n=it.name||''; if(_c&&!/^\d+$/.test(_c)&&/^\d{3,}$/.test(_n.trim())){const _t=_c;_c=_n.trim();_n=_t;} if(!_c){const _m=_n.match(/^(.*?)\s*[-–]\s*(\d{3,})\s*$/); if(_m){_c=_m[2];_n=_m[1];}}
-        return brCard({title:(_c?_c+' - ':'')+_n,city:it.city,map:mapLink(it.coord,it.link),hours:kind==='diesel'?dieselHours:'',people:ppl},color);
+        return brCard({title:(_c?_c+' - ':'')+_n,city:it.city,map:mapLink(it.coord,it.link),hours:kind==='diesel'?dieselHours:'',plabel:kind==='fuel'?'Area Manager':'',people:ppl},color);
       }).join(''));
     }).join('');
     return '<div>'+lb+'</div>';
