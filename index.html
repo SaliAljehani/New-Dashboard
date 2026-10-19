@@ -17,7 +17,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" defer></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--accent:#8A6A4A;--accent-rgb:138,106,74;--text:#33291F;--st-multi:#7C7064;--st-multi-bg:#F7F4EF;--st-chat:#828B7C;--st-chat-bg:#F1F2EE;--st-off:#B48484;--st-off-bg:#FCF6F6;--st-vac:#9C8D63;--st-vac-bg:#FDFAF1;--st-ofc:#6A8A60;--st-ofc-bg:#F5F9F2;--st-rem:#7E78A8;--st-rem-bg:#F7F6FB;--st-sick:#A88068;--st-sick-bg:#FDF7F2;--st-abs:#9A6464;--st-abs-bg:#FAF1F1;--st-sat:#625E72;--st-sat-bg:#F7F6F9;--st-el:#6E5A68;--st-el-bg:#F9F6F8}
+:root{--app-font:'Noto Sans','Noto Sans Arabic',system-ui,sans-serif;--accent:#8A6A4A;--accent-rgb:138,106,74;--text:#33291F;--st-multi:#7C7064;--st-multi-bg:#F7F4EF;--st-chat:#828B7C;--st-chat-bg:#F1F2EE;--st-off:#B48484;--st-off-bg:#FCF6F6;--st-vac:#9C8D63;--st-vac-bg:#FDFAF1;--st-ofc:#6A8A60;--st-ofc-bg:#F5F9F2;--st-rem:#7E78A8;--st-rem-bg:#F7F6FB;--st-sick:#A88068;--st-sick-bg:#FDF7F2;--st-abs:#9A6464;--st-abs-bg:#FAF1F1;--st-sat:#625E72;--st-sat-bg:#F7F6F9;--st-el:#6E5A68;--st-el-bg:#F9F6F8}
 #recallVinInput{font-family:inherit}#recallVinInput:not(:placeholder-shown){font-family:monospace;letter-spacing:.06em}#recallVinInput::placeholder{direction:rtl}
 
 .pf-ar{font-style:normal;font-size:9px;margin-right:4px;opacity:.8}
@@ -31,7 +31,7 @@
 .ref-tool-ic{width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:15px;flex:none;background:rgba(var(--accent-rgb),.12)}
 .ref-tool.lk{color:#1565c0;border-color:#1565c033}
 .ref-tool.lk:hover,.ref-tool.lk.on{background:#1565c012}
-body{font-family:'Inter',system-ui,sans-serif;font-size:12px;background:#FDFDFC;color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+body{font-family:var(--app-font);font-size:12px;background:#FDFDFC;color:var(--text);min-height:100vh;display:flex;flex-direction:column}
 #loadingDiv,#errDiv,#mainContent{flex:1 0 auto}
 .hcard{width:100%;margin:0 0 6px;border:0;border-bottom:1px solid rgba(var(--accent-rgb),.18);border-radius:0;background:#FDFDFC;position:relative;z-index:50}
 .quotes-bar{background:transparent;border-top:1px solid rgba(var(--accent-rgb),.10);border-bottom:1px solid rgba(var(--accent-rgb),.10);padding:11px 20px;display:flex;align-items:center;justify-content:space-around;gap:10px}
@@ -926,6 +926,7 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
 @media(max-width:1100px){.cv-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){.cv-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.cv-k:nth-child(3):before{display:none}.cv-grid{grid-template-columns:1fr}.cv-lbl{min-width:150px;padding:9px 12px}}
 </style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap">
 </head>
 <body>
 
@@ -9595,37 +9596,41 @@ async function renderRef(){
     if(subCSheet.length) subC.splice(0,subC.length,...subCSheet);
     if(mainC){ mainC.subject='All Complaints'; }
 
-    const fbox=(name,val,c)=>'<span style="background:#FEFEFD;border:1px solid #F3E4E4;border-radius:7px;padding:3px 10px;font-size:11px;font-weight:600;color:#a85a5a;text-align:center;display:inline-block">'+name+'<small style="display:block;font-size:11px;color:'+c.t+';background:'+c.b+';font-weight:800;margin-top:2px;border-radius:4px;padding:1px 5px">'+val+'</small></span>';
+    const fbox=(name,val,c)=>'<span style="background:#FEFEFD;border:1px solid #F3E4E4;border-radius:8px;padding:6px 14px;font-size:11px;font-weight:600;color:#a85a5a;text-align:center;display:inline-block">'+name+'<small style="display:block;font-size:11px;color:'+c.t+';background:'+c.b+';font-weight:800;margin-top:4px;border-radius:5px;padding:2px 8px">'+val+'</small></span>';
     const formulaBar=(val,two,c)=>{
-      const plus='<span style="color:#c0272d88;font-weight:800;display:flex;align-items:center">+</span>';
-      const boxes=two?[fbox('Ticket Type',val,c),fbox('Description',val,c)]:[fbox('Ticket Type',val,c),fbox('Subject',val,c),fbox('Description',val,c),fbox('Empty Box',val,c)];
-      return'<div style="display:flex;flex-wrap:wrap;align-items:stretch;gap:7px;background:#FDFBFB;border:1px dashed #F3E4E4;border-radius:10px;padding:7px 10px;direction:ltr;justify-content:center;margin:8px 12px">'+boxes.join(plus)+'</div>';
+      const names=two?['Ticket Type','Description']:['Ticket Type','Subject','Description','Empty Box'];
+      const plus='<span style="color:#c0272d88;font-weight:800;margin:0 8px">+</span>';
+      return'<div style="background:#FDFBFB;border:1px dashed #F3E4E4;border-radius:10px;padding:12px 14px;direction:ltr;text-align:center;margin:8px 12px">'
+        +'<div style="font-size:12px;font-weight:700;color:#a85a5a;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;row-gap:4px">'+names.map(n=>'<span>'+n+'</span>').join(plus)+'</div>'
+        +'<div style="margin-top:8px"><span style="display:inline-block;font-size:12px;font-weight:800;color:'+c.t+';background:'+c.b+';border-radius:6px;padding:3px 14px">'+val+'</span></div>'
+        +'</div>';
     };
     const TT_LINE={'📁':'M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2','🏷️':'M7.5 7.5h.01M3 6v5.2a2 2 0 0 0 .6 1.4l7.7 7.7a2.4 2.4 0 0 0 3.4 0l5.6-5.6a2.4 2.4 0 0 0 0-3.4L12.6 3.6A2 2 0 0 0 11.2 3H6a3 3 0 0 0-3 3','✏️':'M4 20h4L18.5 9.5a2.8 2.8 0 1 0-4-4L4 16v4M13.5 6.5l4 4','💡':'M3 12h1m8-9v1m8 8h1M5.6 5.6l.7.7m12.1-.7l-.7.7M9 16a5 5 0 1 1 6 0a3.5 3.5 0 0 0-1 3a2 2 0 0 1-4 0a3.5 3.5 0 0 0-1-3M9.7 17h4.6','🔻':'M6 9l6 6l6-6'};
     const TT_COL={'📁':'#B08A5A','🏷️':'#7E8A6A','✏️':'#8A6A8E','💡':'#B09A5A','🔻':'#B04848'};
     const ttIcon=e=>{const m=window.TT_ICONS||'line'; if(m==='none')return''; if(m==='emoji')return e+' ';
       const c=m==='mono'?'#A39A92':TT_COL[e]; return '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="'+c+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:5px"><path d="'+TT_LINE[e]+'"/></svg>';};
-    const TT_TAGS={orig:['#F7F5F2','#6f6a64',''],grey:['#F7F5F2','#6f6a64',''],beige:['#F4EEE6','#7A5E44','1px solid #EADFD2'],rose:['#FBF1F1','#A85A5A','1px solid #F1DADA'],cream:['#FBF7EE','#8A7246','1px solid #EFE6D2']};
-    const ttTag=()=>TT_TAGS[window.TT_TAG||'orig']||TT_TAGS.orig;
-    const fieldRow=(icon,label,content,i)=>'<div style="display:grid;grid-template-columns:118px 1fr;gap:10px;padding:6px 16px;border-top:1px solid #F4F0EC;align-items:center;'+(i%2?'background:#FDFBF9':'background:#FDFDFC')+'"><div style="font-size:11px;font-weight:800;color:#9aa0a8;letter-spacing:.3px">'+ttIcon(icon)+label+'</div><div>'+content+'</div></div>';
+    const TT_TAGS={orig:['#F7F5F2','#6f6a64',''],none:['transparent','#6f6a64',''],grey:['#F7F5F2','#6f6a64',''],beige:['#F4EEE6','#7A5E44','1px solid #EADFD2'],rose:['#FBF1F1','#A85A5A','1px solid #F1DADA'],cream:['#FBF7EE','#8A7246','1px solid #EFE6D2']};
+    window.TT_TXT=window.TT_TXT||'#5C5248';
+    const ttTag=()=>{const t=(TT_TAGS[window.TT_TAG||'none']||TT_TAGS.orig).slice(); if(window.TT_TXT)t[1]=window.TT_TXT; return t;};
+    const fieldRow=(icon,label,content,i)=>'<div style="display:grid;grid-template-columns:118px 1fr;gap:10px;padding:8px 16px;border-top:1px solid #F4F0EC;align-items:center;'+'background:#FDFDFC'+'"><div style="font-size:11px;font-weight:800;color:#9aa0a8;letter-spacing:.3px">'+ttIcon(icon)+label+'</div><div>'+content+'</div></div>';
     const subjItem=(it,isCMain,subTags,twoField,gColor)=>{
       const deptTags = it._deptTags || (it.dept?it.dept.split(/\n/).flatMap(d=>d.split(' - ')).map(s=>s.trim()).filter(Boolean):[]);
       const catTags  = it._catTags  || (it.cat?it.cat.split(/\n/).flatMap(c=>c.split(' - ')).map(s=>s.trim()).filter(Boolean):[]);
       const descText = it._descText || it.desc || '';
       const notesAR  = it._notesAR  || it.notes || '';
       const fVal = isCMain ? 'Complaint type' : (it.subject||'');
-      const badge = {t:'#c0272d',b:'#f7e4e4'};
+      const badge = {t:'#c0272d',b:'#F6EEEB'};
       const isOpen = it.status && /open/i.test(it.status);
       const stColor = gColor;
       const stBg = gColor+'18';
-      const catKey=c=>{const l=c.toLowerCase();let bg=ttTag()[0],cl=ttTag()[1];if(l==='parts'){bg='#eef5fb';cl='#3f7fbf';}else if(l==='service'){bg='#fbf3e9';cl='#c9812f';}else if(l==='sales'){bg='#eef6ef';cl='#4a9a5e';}return'<span style="display:inline-block;background:'+bg+';color:'+cl+';font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;margin:2px">'+c+'</span>';};
+      const catKey=c=>{const l=c.toLowerCase();let bg=ttTag()[0],cl=ttTag()[1];if(l==='parts'){bg='#eef5fb';cl='#3f7fbf';}else if(l==='service'){bg='#fbf3e9';cl='#c9812f';}else if(l==='sales'){bg='#eef6ef';cl='#4a9a5e';}return'<span style="display:inline-block;background:'+bg+';color:'+cl+';font-size:12px;font-weight:400;font-family:var(--tt-font,inherit);padding:3px 10px;border-radius:6px;margin:2px">'+c+'</span>';};
       let rows='',i=0;
-      if(deptTags.length) rows+=fieldRow('📁','Departments','<span>'+deptTags.map(d=>'<span style="display:inline-block;background:'+ttTag()[0]+';color:'+ttTag()[1]+';border:'+(ttTag()[2]||'none')+';font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;margin:2px">'+d+'</span>').join('')+'</span>',i++);
+      if(deptTags.length) rows+=fieldRow('📁','Departments','<span>'+deptTags.map(d=>'<span style="display:inline-block;background:'+(deptTags.length>1?'#F6F3EF':ttTag()[0])+';color:'+ttTag()[1]+';border:'+(ttTag()[2]||'none')+';font-size:12px;font-weight:400;font-family:var(--tt-font,inherit);padding:3px 10px;border-radius:6px;margin:2px">'+d+'</span>').join('')+'</span>',i++);
       if(catTags.length) rows+=fieldRow('🏷️','Category','<span>'+catTags.map(catKey).join('')+'</span>',i++);
-      if(descText) rows+=fieldRow('✏️','Description','<span style="background:#FAF8F5;border-radius:8px;padding:3px 10px;font-size:12px;color:#555;display:inline-block;direction:rtl">'+descText+'</span>',i++);
-      if(notesAR) rows+=fieldRow('💡','When to Use','<span style="font-size:12px;color:#888;direction:rtl">'+notesAR+'</span>',i++);
-      if(isCMain&&subTags&&subTags.length) rows+=fieldRow('🔻','Complaint Type','<span>'+subTags.map(s=>'<span style="display:inline-block;background:#f7e4e4;color:#c0272d;border:none;font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;margin:2px">'+s+'</span>').join('')+'</span>',i++);
-      return'<div class="ref-subj-item" style="padding:0;border:0;border-radius:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05);margin-bottom:0;flex:1;display:flex;flex-direction:column">'
+      if(descText) rows+=fieldRow('✏️','Description','<span style="background:transparent;border-radius:8px;padding:3px 10px;margin:2px;font-size:12px;font-weight:400;font-family:var(--tt-font,inherit);color:'+(window.TT_TXT||'#555')+';display:inline-block;direction:rtl">'+descText+'</span>',i++);
+      if(notesAR) rows+=fieldRow('💡','When to Use','<span style="display:inline-block;padding:3px 10px;margin:2px;font-size:12px;font-weight:400;font-family:var(--tt-font,inherit);color:'+(window.TT_TXT||'#888')+';direction:rtl">'+notesAR+'</span>',i++);
+      if(isCMain&&subTags&&subTags.length) rows+=fieldRow('🔻','Complaint Type','<span>'+subTags.map(s=>'<span style="display:inline-block;background:#F6EEEB;color:#c0272d;border:none;font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;margin:2px">'+s+'</span>').join('')+'</span>',i++);
+      return'<div class="ref-subj-item" style="padding:0;border:0;border-radius:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05);margin-bottom:0;flex:1;display:flex;flex-direction:column;background:#FDFDFC">'
         +'<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:#FAF8F5;border-bottom:1px solid '+gColor+'33">'
         +'<span class="ref-subj-subject" style="margin:0;font-size:14px;font-weight:800;color:'+gColor+'">'+it.subject+'</span>'
         +(it.status?'<span class="ref-subj-badge" style="background:'+stBg+';color:'+stColor+';font-size:11px;font-weight:700;padding:3px 10px;border-radius:14px">'+it.status+'</span>':'')
