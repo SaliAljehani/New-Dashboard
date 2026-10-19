@@ -3695,26 +3695,28 @@ function renderElectrominEmailsTab(rows){
   keys.forEach(function(cat){
     var isComp=/complaint/i.test(cat);
     var col=isComp?'#c0272d':'#2e7d32';
-    var cards=groups[cat].map(function(row){
+    var _u='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9A948C" stroke-width="2" style="vertical-align:-1px;margin-right:4px"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
+    var _e='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9A948C" stroke-width="2" style="vertical-align:-1px;margin-right:4px"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
+    var _lab=function(t){return '<span style="font-size:10.5px;font-weight:800;color:#A8A29A;letter-spacing:.08em;margin-right:4px;min-width:22px;display:inline-block">'+t+'</span>';};
+    var cards='<div class="rc-box" style="background:#FFFFFF;border:1px solid color-mix(in srgb,var(--brand,'+col+') 30%,#EFEAE3);border-radius:10px">'+groups[cat].map(function(row,ri){
       var req=(row[cReq]||'').trim();
       var own=(row[cOwn]||'').trim();
       var esc=(row[cEsc]||'').trim();
       var cc=(row[cCC]||'').trim();
       var to=(cTo>=0?(row[cTo]||'').trim():'');
-      return '<div style="background:#FEFEFD;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);border-left:4px solid '+col+';padding:12px 14px;text-align:left;direction:ltr">'
-        +'<div style="font-size:13px;font-weight:700;color:'+col+';margin-bottom:8px">'+req+'</div>'
-        +(own?'<div style="font-size:12px;color:#555;margin-bottom:4px">👤 <b style="color:var(--text)">Owner:</b> '+own+'</div>':'')
-        +(esc?'<div style="font-size:12px;color:#555;margin-bottom:6px">⬆️ <b style="color:var(--text)">Escalation:</b> '+esc+'</div>':'')
-        +(to?'<div style="padding-top:6px;border-top:1px solid #f0f0f0"><div style="font-size:11px;color:#999;font-weight:700;margin-bottom:3px">TO</div>'+chipTo(to,col)+'</div>':'')
-        +(cc?'<div style="padding-top:6px'+(to?'':';border-top:1px solid #f0f0f0')+'"><div style="font-size:11px;color:#999;font-weight:700;margin-bottom:3px">CC</div>'+chipTo(cc,col)+'</div>':'')
+      var ar=/[؀-ۿ]/.test(req);
+      return '<div style="display:grid;grid-template-columns:1.1fr 1fr 1.6fr;gap:12px;align-items:center;padding:10px 16px;direction:ltr;text-align:left;'+(ri?'border-top:1px solid #F2EEE8':'')+'">'
+        +'<div style="font-size:13px;font-weight:700;color:'+col+';'+(ar?'direction:rtl;text-align:left':'')+'">'+req+'</div>'
+        +'<div style="font-size:12px;color:#5C5248;line-height:1.7">'+(own?'<div>'+_u+own+'</div>':'')+(esc?'<div>'+_e+esc+'</div>':'')+'</div>'
+        +'<div>'+(to?'<div>'+_lab('TO')+rcChips(to,col)+'</div>':'')+(cc?'<div>'+_lab('CC')+rcChips(cc,col)+'</div>':'')+'</div>'
         +'</div>';
-    }).join('');
+    }).join('')+'</div>';
     out+='<div style="margin-bottom:16px">'
       +'<div style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+col+'12;border-radius:8px;border-left:4px solid '+col+';margin-bottom:10px">'
       +'<span style="font-size:13px;font-weight:700;color:'+col+';letter-spacing:.04em">'+(isComp?'📮 '+cat:'📥 '+cat)+'</span>'
       +'<span style="font-size:11px;color:#aaa">('+groups[cat].length+')</span>'
       +'</div>'
-      +'<div class="ref-cards-grid">'+cards+'</div>'
+      +cards
       +'</div>';
   });
   return '<div>'+out+'</div>';
@@ -5850,22 +5852,18 @@ function renderPetrominEmailzTab(arr){
   // (Complaint / Contract …) keep their light band. Single tab-orange colour.
   if(!topRows.length && !sections.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 
-  const cellC=v=>chipPairs(v)||'<span style="color:#ccc">—</span>';
-  const td='padding:9px 10px;text-align:center;border:1px solid #f0e7d6;vertical-align:middle';
-  const hd='background:#faf3e9;color:#bd7530;font-weight:800;padding:8px 10px;text-align:center;border:1px solid #eadfce';
-  const rowHTML=r=>'<tr>'
-    +'<td style="'+td+';width:32%"><div style="font-size:12.5px;font-weight:800;color:#bd7530;word-break:break-word">'+r.dept+'</div>'
-      +(r.subj?'<div style="font-size:11px;color:#8a6d1a;direction:rtl;margin-top:3px;word-break:break-word">'+r.subj+'</div>':'')+'</td>'
-    +'<td style="'+td+'">'+cellC(r.to)+'</td>'
-    +'<td style="'+td+'">'+cellC(r.cc)+'</td>'
-    +'</tr>';
-  const tblOpen='<div style="border-radius:10px;overflow:hidden;margin-bottom:16px"><table style="width:100%;border-collapse:collapse;font-size:12px">'
-    +'<thead><tr><th style="'+hd+';width:32%">Department</th><th style="'+hd+'">TO</th><th style="'+hd+'">CC</th></tr></thead><tbody>';
+  const _lab=t=>'<span style="font-size:10.5px;font-weight:800;color:#A8A29A;letter-spacing:.08em;margin-right:4px;min-width:22px;display:inline-block">'+t+'</span>';
+  const _em=v=>rcChips(String(v||'').split('|').join(','),color);
+  const rowHTML=(r,i)=>'<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.7fr);gap:14px;align-items:center;padding:10px 16px;direction:ltr;text-align:left;'+(i?'border-top:1px solid #F2EEE8':'')+'">'
+    +'<div><div style="font-size:13px;font-weight:700;color:'+color+';word-break:break-word">'+r.dept+'</div>'
+      +(r.subj?'<div style="font-size:12px;color:#8A857C;direction:rtl;text-align:left;margin-top:2px;word-break:break-word"><span style="direction:rtl;unicode-bidi:embed">'+r.subj+'</span></div>':'')+'</div>'
+    +'<div>'+(r.to?'<div>'+_lab('TO')+_em(r.to)+'</div>':'')+(r.cc?'<div>'+_lab('CC')+_em(r.cc)+'</div>':'')+'</div>'
+    +'</div>';
+  const box=rows=>'<div class="rc-box" style="background:#FFFFFF;border:1px solid color-mix(in srgb,var(--brand,'+color+') 30%,#EFEAE3);border-radius:10px;margin-bottom:16px">'+rows.map(rowHTML).join('')+'</div>';
   let out='';
-  if(topRows.length) out+=tblOpen+topRows.map(rowHTML).join('')+'</tbody></table></div>';
+  if(topRows.length) out+=box(topRows);
   sections.forEach(s=>{
-    out+='<div style="font-size:14px;font-weight:800;color:#bd7530;margin:6px 0 8px 2px;padding:2px 10px;border-left:3px solid '+color+'">'+s.title+'</div>'
-      +tblOpen+s.rows.map(rowHTML).join('')+'</tbody></table></div>';
+    out+='<div style="font-size:14px;font-weight:800;color:'+color+';margin:6px 0 8px 2px;padding:2px 10px;border-left:3px solid '+color+'">'+s.title+'</div>'+box(s.rows);
   });
   return out;
 }
@@ -6069,10 +6067,13 @@ function rcBox(color, parts){
   var lab=function(t){return '<span style="font-size:10.5px;font-weight:800;color:#A8A29A;letter-spacing:.08em;margin-right:4px">'+t+'</span>';};
   var row=function(l,h){return h?'<div style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;margin-bottom:1px">'+lab(l)+h+'</div>':'';};
   var half=function(p){return '<div style="flex:1;min-width:0;padding:9px 16px;text-align:center"><div style="font-size:13px;font-weight:700;color:#5C5248;margin-bottom:5px">'+mail+p.title+'</div>'+row('TO',p.to)+row('CC',p.cc)+'</div>';};
-  var line='<div style="width:1.5px;background:'+color+'55;margin:9px 0;border-radius:2px;flex:none"></div>';
+  var line='<div style="width:1.5px;background:'+color+';opacity:.55;margin:9px 0;border-radius:2px;flex:none"></div>';
   parts=parts.filter(function(p){return p.to||p.cc;});
   if(!parts.length) return '';
-  return '<div class="rc-box" style="display:flex;flex-wrap:wrap;background:#FFFFFF;border:1px solid color-mix(in srgb,'+color+' 30%,#EFEAE3);border-radius:10px;margin-bottom:12px">'+parts.map(half).join(line)+'</div>';
+  var one=function(ps){return '<div class="rc-box" style="display:flex;flex-wrap:wrap;background:#FFFFFF;border:1px solid color-mix(in srgb,var(--brand,'+color+') 30%,#EFEAE3);border-radius:10px;margin-bottom:12px">'+ps.map(half).join(line)+'</div>';};
+  if(parts.length<=2) return one(parts);
+  var out=''; for(var i=0;i<parts.length;i+=2) out+=one(parts.slice(i,i+2));
+  return '<div class="rc-wrap">'+out+'</div>';
 }
 function reqCompCardsHTML(color, em){
   if(!em || !em.has) return '';
@@ -7299,11 +7300,11 @@ function showRefBrandPage(brand){
 
     +''
 
-    +(brand==='nissan'?'<div id="nissanWebsite" style="display:none;background:#FEFEFD;border-bottom:2px solid #eee;padding:20px;text-align:center"><div style="font-size:13px;color:#888;margin-bottom:14px">Nissan Saudi Arabia — Petromin</div><a href="https://www.petromin-nissan.com/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;padding:12px 30px;background:#c0272d;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(192,39,45,.3)">🔗 petromin-nissan.com</a></div>':'')
-    +(brand==='petromin'?'<div id="petrominWebsite" style="display:none;background:#FEFEFD;border-bottom:2px solid #eee;padding:20px"><div style="display:flex;flex-direction:column;gap:12px;align-items:center"><a href="https://petromin.com/ar/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:12px 28px;background:#D98E45;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;width:290px;justify-content:center;box-shadow:0 4px 14px rgba(218,165,32,.3)">🔗 الصفحة الرئيسية - Petromin</a><a href="https://www.petrominexpress.com/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:12px 28px;background:#c0272d;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;width:290px;justify-content:center;box-shadow:0 4px 14px rgba(192,39,45,.3)">🔗 بترومين إكسبرس - 650 محطة</a><a href="https://mac.petromin.com/Services/KSAPE/MiAutoCare/Account/login?returnUrl=%2FServices%2FKSAPE%2FMiAutoCare%2FHome%2Findex" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;padding:12px 28px;background:#1a1a2e;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;width:290px;justify-content:center;box-shadow:0 4px 14px rgba(26,26,46,.3)">🔗 MiAutoCare - Public Site</a></div></div>':'')
+    +(brand==='nissan'?'<div id="nissanWebsite" style="display:none;background:#FEFEFD;border-bottom:2px solid #eee;padding:14px;text-align:center"><div style="font-size:13px;color:#888;margin-bottom:14px">Nissan Saudi Arabia — Petromin</div><a href="https://www.petromin-nissan.com/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;padding:8px 22px;background:#c0272d;color:#fff;border-radius:20px;font-size:12.5px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(192,39,45,.3)">🔗 petromin-nissan.com</a></div>':'')
+    +(brand==='petromin'?'<div id="petrominWebsite" style="display:none;background:#FEFEFD;border-bottom:2px solid #eee;padding:14px"><div style="display:flex;flex-direction:column;gap:8px;align-items:center"><a href="https://petromin.com/ar/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;padding:8px 22px;background:#D98E45;color:#fff;border-radius:20px;font-size:12.5px;font-weight:700;text-decoration:none;width:240px;justify-content:center;box-shadow:0 4px 14px rgba(218,165,32,.3)">🔗 الصفحة الرئيسية - Petromin</a><a href="https://www.petrominexpress.com/" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;padding:8px 22px;background:#c0272d;color:#fff;border-radius:20px;font-size:12.5px;font-weight:700;text-decoration:none;width:240px;justify-content:center;box-shadow:0 4px 14px rgba(192,39,45,.3)">🔗 بترومين إكسبرس - 650 محطة</a><a href="https://mac.petromin.com/Services/KSAPE/MiAutoCare/Account/login?returnUrl=%2FServices%2FKSAPE%2FMiAutoCare%2FHome%2Findex" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;padding:8px 22px;background:#1a1a2e;color:#fff;border-radius:20px;font-size:12.5px;font-weight:700;text-decoration:none;width:240px;justify-content:center;box-shadow:0 4px 14px rgba(26,26,46,.3)">🔗 MiAutoCare - Public Site</a></div></div>':'')
     +(brand==='petromin'?'<div id="petrominNoAnswer" style="display:none;background:#FEFEFD;border-bottom:2px solid #eee;padding:16px"><div style="border:1px solid #eee;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.05)"><div style="background:#D98E4514;border-bottom:1px solid #D98E4522;padding:10px;text-align:center;font-size:13px;font-weight:700;color:#a86a28">📨 No Answer SMS</div><div style="padding:12px">'+noAnsCards('petromin')+'</div></div></div>':'')
-    +(brand==='baic'?'<div id="baicWebsite" style="display:none;background:#FEFEFD;border-bottom:2px solid #eee;padding:20px;text-align:center"><div style="font-size:13px;color:#888;margin-bottom:14px">BAIC Saudi Arabia — Petromin</div><a href="https://www.petromin-baic.com/ar/models" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;padding:12px 30px;background:#C86E35;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(210,105,30,.35)">🔗 petromin-baic.com</a></div>':'')
-    +(brand==='foton'?'<div id="fotonWebsite" style="display:none;background:#FEFEFD;border-bottom:2px solid #eee;padding:20px;text-align:center"><div style="font-size:13px;color:#888;margin-bottom:14px">Foton Saudi Arabia — Petromin · Commercial Vehicles</div><a href="https://petromin-foton.com/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;padding:12px 30px;background:#546e7a;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(84,110,122,.35)">🔗 petromin-foton.com</a></div>':'')
+    +(brand==='baic'?'<div id="baicWebsite" style="display:none;background:#FEFEFD;border-bottom:2px solid #eee;padding:14px;text-align:center"><div style="font-size:13px;color:#888;margin-bottom:14px">BAIC Saudi Arabia — Petromin</div><a href="https://www.petromin-baic.com/ar/models" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;padding:8px 22px;background:#C86E35;color:#fff;border-radius:20px;font-size:12.5px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(210,105,30,.35)">🔗 petromin-baic.com</a></div>':'')
+    +(brand==='foton'?'<div id="fotonWebsite" style="display:none;background:#FEFEFD;border-bottom:2px solid #eee;padding:14px;text-align:center"><div style="font-size:13px;color:#888;margin-bottom:14px">Foton Saudi Arabia — Petromin · Commercial Vehicles</div><a href="https://petromin-foton.com/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;padding:8px 22px;background:#546e7a;color:#fff;border-radius:20px;font-size:12.5px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(84,110,122,.35)">🔗 petromin-foton.com</a></div>':'')
     +'<div id="petrominWarrantyDrawer" style="display:none;background:#FEFEFD;border-bottom:2px solid #eee;padding:16px 20px"></div>'
     +'<div class="ref-sub-tabs" id="refSubTabs_'+brand+'" style="justify-content:center;border-bottom:2px solid '+tabActive+'55">'
     +tabs.map((t,i)=>{
@@ -7703,7 +7704,7 @@ async function renderRefBrand(brand,tabIdx){
       +'<div style="font-size:48px;margin-bottom:16px">🌐</div>'
       +'<div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px">BAIC Saudi Arabia — Petromin</div>'
       +'<div style="font-size:13px;color:#888;margin-bottom:24px">موديلات بايك — الأسعار والمواصفات</div>'
-      +'<a href="https://www.petromin-baic.com/ar/models" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;padding:14px 32px;background:#C86E35;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(210,105,30,.35)">🔗 petromin-baic.com</a>'
+      +'<a href="https://www.petromin-baic.com/ar/models" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;padding:8px 22px;background:#C86E35;color:#fff;border-radius:24px;font-size:12.5px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(210,105,30,.35)">🔗 petromin-baic.com</a>'
       +'</div>';
     return;
   }
@@ -7726,8 +7727,8 @@ async function renderRefBrand(brand,tabIdx){
         +'<div style="font-size:48px;margin-bottom:12px">🌐</div>'
         +'<div style="font-size:16px;font-weight:700;color:var(--text)">Petromin Websites</div>'
         +'</div>'
-        +'<a href="https://petromin.com/ar/" target="_blank" style="display:flex;align-items:center;gap:10px;padding:14px 32px;background:#D98E45;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(218,165,32,.3);width:280px;justify-content:center">🔗 الصفحة الرئيسية - Petromin</a>'
-        +'<a href="https://www.petrominexpress.com/" target="_blank" style="display:flex;align-items:center;gap:10px;padding:14px 32px;background:#c0272d;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(192,39,45,.3);width:280px;justify-content:center">🔗 بترومين إكسبرس - 650 محطة</a>'
+        +'<a href="https://petromin.com/ar/" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 22px;background:#D98E45;color:#fff;border-radius:24px;font-size:12.5px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(218,165,32,.3);width:280px;justify-content:center">🔗 الصفحة الرئيسية - Petromin</a>'
+        +'<a href="https://www.petrominexpress.com/" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 22px;background:#c0272d;color:#fff;border-radius:24px;font-size:12.5px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(192,39,45,.3);width:280px;justify-content:center">🔗 بترومين إكسبرس - 650 محطة</a>'
         +'</div>';
       return;
     }
@@ -8008,8 +8009,8 @@ async function renderRefBrand(brand,tabIdx){
         +'<div style="font-size:48px;margin-bottom:12px">🌐</div>'
         +'<div style="font-size:16px;font-weight:700;color:var(--text)">Petromin Websites</div>'
         +'</div>'
-        +'<a href="https://petromin.com/ar/" target="_blank" style="display:flex;align-items:center;gap:10px;padding:14px 32px;background:#D98E45;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(218,165,32,.3);width:280px;justify-content:center">🔗 الصفحة الرئيسية - Petromin</a>'
-        +'<a href="https://www.petrominexpress.com/" target="_blank" style="display:flex;align-items:center;gap:10px;padding:14px 32px;background:#c0272d;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(192,39,45,.3);width:280px;justify-content:center">🔗 بترومين إكسبرس - 650 محطة</a>'
+        +'<a href="https://petromin.com/ar/" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 22px;background:#D98E45;color:#fff;border-radius:24px;font-size:12.5px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(218,165,32,.3);width:280px;justify-content:center">🔗 الصفحة الرئيسية - Petromin</a>'
+        +'<a href="https://www.petrominexpress.com/" target="_blank" style="display:flex;align-items:center;gap:8px;padding:8px 22px;background:#c0272d;color:#fff;border-radius:24px;font-size:12.5px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(192,39,45,.3);width:280px;justify-content:center">🔗 بترومين إكسبرس - 650 محطة</a>'
         +'</div>';
       return;
     }
@@ -8055,7 +8056,7 @@ async function renderRefBrand(brand,tabIdx){
         +'<div style="font-size:48px;margin-bottom:16px">🌐</div>'
         +'<div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px">Nissan Saudi Arabia — Petromin</div>'
         +'<div style="font-size:13px;color:#888;margin-bottom:24px">سيارات ركاب، دفع الرباعي، رياضية، تجارية</div>'
-        +'<a href="https://www.petromin-nissan.com/" target="_blank" style="display:inline-flex;align-items:center;gap:10px;padding:14px 32px;background:#c0272d;color:#fff;border-radius:24px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(192,39,45,.3)">🔗 petromin-nissan.com</a>'
+        +'<a href="https://www.petromin-nissan.com/" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:8px 22px;background:#c0272d;color:#fff;border-radius:24px;font-size:12.5px;font-weight:700;text-decoration:none;box-shadow:0 4px 14px rgba(192,39,45,.3)">🔗 petromin-nissan.com</a>'
         +'</div>';
       return;
     }
