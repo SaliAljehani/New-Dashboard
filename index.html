@@ -9431,8 +9431,21 @@ async function renderRef(){
     // Links: rows where Program/Link columns have http values
     const _hasLink=r=>Object.values(r).map(x=>String(x||'').trim()).some(v=>v.startsWith('http')||(/\.(xlsx|pdf|docx)$/i.test(v))||(/@/.test(v)&&/\b(TO|CC)\b/i.test(v)));
     // Links now live in the "Reference" tab: Section | Program | Link | Password
-    let refRaw=[]; try{ refRaw = await fetchFB(REF_SHEETS.main.id,['Reference']); }catch(e){ refRaw=[]; }
-    const refArr=(Array.isArray(refRaw)?refRaw:(refRaw.rows||[]));
+    // Read the Reference tab; turn any shape (objects or raw rows) into objects keyed by the "Section" header row
+    const _refRows=src=>{
+      const g=(Array.isArray(src)?src:((src&&src.rows)||[])).map(r=>Array.isArray(r)?r:null);
+      let grid;
+      if(Array.isArray(src)&&src.length&&!Array.isArray(src[0])){ const k=Object.keys(src[0]); grid=[k].concat(src.map(o=>k.map(x=>o[x]))); }
+      else grid=g.filter(Boolean);
+      grid=grid.map(r=>r.map(c=>String(c==null?'':c).trim()));
+      const hi=grid.findIndex(r=>r.some(c=>/^section$/i.test(c)));
+      if(hi<0) return [];
+      const H=grid[hi].map((h,i)=>h||('__c'+i));
+      return grid.slice(hi+1).filter(r=>r.some(Boolean)).map(r=>{const o={};H.forEach((h,i)=>o[h]=r[i]||'');return o;});
+    };
+    let refArr=[];
+    try{ refArr=_refRows(await fetchFB(REF_SHEETS.main.id,['Reference','Reference '])); }catch(e){}
+    if(!refArr.length){ try{ refArr=_refRows(await fetchCSVRawByGid(REF_SHEETS.main.id,'910779499')); }catch(e){ console.warn('Reference tab:',e); } }
     const _secKey=refArr.length?Object.keys(refArr[0]).find(k=>/section/i.test(k)):null;
     const _secOf=r=>_secKey?String(r[_secKey]||'').trim().toLowerCase():'';
     const refSystems=_secKey?refArr.filter(r=>_secOf(r)&&_secOf(r)!=='inbound'&&_hasLink(r)):[];
