@@ -1447,15 +1447,27 @@ async function loadAllData(silent){
   }
   try{
     setProgress(15,'Loading dashboard data...');
-    const [apRows, attRows, callRows] = await Promise.all([
-      loadSheet('Agent Performance').catch(e=>{ console.warn('AP failed:',e); return []; }),
-      loadSheet('Attendance').catch(e=>{ console.warn('Att failed:',e); return []; }),
-      Promise.resolve([]),
+    // Phase 1 — light sheets first (Today, Announcements, Schedule) so the page is usable right away
+    await Promise.all([
       loadAgentDir().catch(e=>{ console.warn('Dir failed:',e); }),
       loadSchedule().catch(e=>{ console.warn('Schedule failed:', e); }),
       loadRoster().catch(e=>{ console.warn('Roster failed:', e); }),
       loadAnnouncements().catch(e=>{ console.warn('Announcements failed:', e); })
     ]);
+    try{ initUI(silent); }catch(e){ console.warn('early initUI:', e); }
+    if(!Object.keys(D).length){ const _ag=document.getElementById('agrid'); if(_ag) _ag.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:28px;color:#A8A29A;font-size:13px">⏳ Loading team performance…</div>'; }
+    if(!silent){
+      document.getElementById('loadingDiv').style.display='none';
+      document.getElementById('mainContent').style.display='block';
+    }
+    // Phase 2 — heavy performance sheets in the background (only the Team page needs them)
+    window.__PERF_LOADING__ = true;
+    const [apRows, attRows] = await Promise.all([
+      loadSheet('Agent Performance').catch(e=>{ console.warn('AP failed:',e); return []; }),
+      loadSheet('Attendance').catch(e=>{ console.warn('Att failed:',e); return []; })
+    ]);
+    const callRows = [];
+    window.__PERF_LOADING__ = false;
     FORCE_FRESH = false;
     window.__PRELOADED_DATA__ = null;
     window.__PRELOADED_RAW__ = null;
@@ -1614,11 +1626,7 @@ async function loadAllData(silent){
     if(callRows.length>0) console.log('CALL first row:', JSON.stringify(callRows[0]));
     setProgress(100,'Done!');
     console.log('All data loaded!');
-    initUI(silent);
-    if(!silent){
-      document.getElementById('loadingDiv').style.display='none';
-      document.getElementById('mainContent').style.display='block';
-    }
+    initUI(true);
     const now = new Date();
     const DAY_NAMES=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     const MON_NAMES=['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -2516,7 +2524,7 @@ async function fetchCSVRaw(sheetId, sheetName, retries){
   }
   const cacheKey = sheetId+'__RAW__'+sheetName;
   if(REF_CACHE[cacheKey]) return REF_CACHE[cacheKey];
-  retries = retries===undefined ? 2 : retries;
+  if(retries===undefined) return __once('R:'+cacheKey, ()=>fetchCSVRaw(sheetId, sheetName, 2));
   const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=`+encodeURIComponent(sheetName);
   const controller = new AbortController();
   const timeoutId = setTimeout(()=>controller.abort(), 30000);
@@ -2680,9 +2688,16 @@ const REF_SHEETS = {
 let REF_CACHE = {};
 let REF_ACTIVE_TABS = {nissan:0, stellantis:0, bodyshop:0, baic:0, baicRecall:0};
 
+var __INFLIGHT = {};
+function __once(key, fn){
+  if(__INFLIGHT[key]) return __INFLIGHT[key];
+  const p = fn().finally(()=>{ delete __INFLIGHT[key]; });
+  __INFLIGHT[key] = p; return p;
+}
 async function fetchSheet(spreadsheetId, sheetName, retries){
   const key = `${spreadsheetId}__${sheetName}`;
   if(REF_CACHE[key]) return REF_CACHE[key];
+  if(retries===undefined) return __once('S:'+key, ()=>fetchSheet(spreadsheetId, sheetName, 1));
   retries = retries===undefined ? 1 : retries;
   const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${spreadsheetId}&sheetName=${encodeURIComponent(sheetName)}` + ((FORCE_FRESH||REF_FRESH) ? '&fresh=1' : '');
   const controller = new AbortController();
@@ -2865,7 +2880,7 @@ function brCard(o,col){
   const ppl=(o.people||[]).map(p=>(p.label?'<div style="font-size:11px;color:#808080;margin-top:8px">'+p.label+'</div>':'')
     +(p.name?'<div>👤 '+p.name+'</div>':'')+(p.phone?'<div>📞 '+p.phone+'</div>':'')
     +(p.email?'<div><a href="mailto:'+p.email+'">'+p.email+'</a></div>':'')).join('');
-  return '<div'+(o.plabel?' data-plabel="'+o.plabel+'"':'')+' style="background:#FEFEFD;border-radius:10px;overflow:hidden">'
+  return '<div'+(o.plabel?' data-plabel="'+o.plabel+'"':'')+(o.rlabel?' data-rlabel="'+o.rlabel+'"':'')+' style="background:#FEFEFD;border-radius:10px;overflow:hidden">'
     +'<div style="padding:10px 14px;text-align:center"><div style="font-weight:700;color:'+col+'">'+o.title+'</div>'+sub+map+'</div>'
     +'<div style="padding:10px 14px;text-align:center">'+(o.hours?'<div>🕐 '+o.hours+'</div>':'')+ppl+'</div></div>';
 }
@@ -4493,7 +4508,7 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
         const v=Object.values(r);
         const station=gv(v,fuelIdx.station);
         if(!station||/^station/i.test(station))return;
-        if(station.includes('@'))return;
+        if(station.includes('@')||/^for\s+(complaint|request)/i.test(station))return;
         const city=gv(v,fuelIdx.city);
         items.push({region:normReg(gv(v,fuelIdx.region)||cityToRegion(city)),code:gv(v,fuelIdx.code),name:station,city,area:gv(v,fuelIdx.dist),am:gv(v,fuelIdx.am),mobile:gv(v,fuelIdx.mobile),rm:gv(v,fuelIdx.rm),rmEmail:gv(v,fuelIdx.rmEmail),coord:gv(v,fuelIdx.gps)});
       });
@@ -4506,12 +4521,12 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
     if(/^(TO|CC)$/i.test(v0) || /^for\s+(request|complaint)$/i.test(v0) || /^for\s+(request|complaint)$/i.test(v[1]||'')) return;
     if((v[1]||'').includes('@')) return;
     if(kind==='ecowash'){
-      const _ek={st:_dFind('station'),city:_dFind('city'),mgr:_dFind('manager','manger'),reg:_dFind('region'),gps:_dFind('location','gps','map','coordinate')};
+      const _ek={st:_dFind('station'),city:_dFind('city'),mgr:_dFind('manager','manger'),reg:_dFind('region'),gps:_dFind('location','gps','map','coordinate','cordinate'),dist:_dFind('district','distrct')};
       const _p=v;
       const [region,city,station,mgr,coord]=_ek.st?[_dgv(r,_ek.reg),_dgv(r,_ek.city),_dgv(r,_ek.st),_dgv(r,_ek.mgr),_dgv(r,_ek.gps)]:_p;
       if(!station)return;
       const [code,name]=splitCode(station);
-      items.push({region:normReg(cityToRegion(city)||region),code,name,city,mgr,coord});
+      items.push({region:normReg(cityToRegion(city)||region),code,name,city,mgr,coord,dist:_ek.dist?_dgv(r,_ek.dist):''});
     }else if(kind==='fuel'){
       const [siteCode,station,city,am,mobile,region,rm,gps]=v;
       if(!station)return;
@@ -4533,7 +4548,7 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
   const mapLink=(coord,link)=>{if(link&&/^https?:/.test(link))return link;if(!coord)return'';if(/^https?:/.test(coord))return coord;return 'https://www.google.com/maps?q='+encodeURIComponent(coord);};
   const fuelHasLoc = kind==='fuel' && items.some(it=>it.coord);
   const cols = kind==='fuel' ? ['City','Site Code','Station','Area Manager','Mobile','Regional Manager'].concat(fuelHasLoc?['Location']:[])
-    : kind==='ecowash' ? ['City','Code','Station','Area Manager','Location']
+    : kind==='ecowash' ? ['City','Code','Station','District','Area Manager','Location']
     : ['Code','Station','City','Contact','Mobile','Email','Location'];
   const th=h=>CLEAN?'<th style="padding:9px 10px;text-align:center;color:#808080;font-weight:600;border-bottom:1px solid #e6e2de;white-space:nowrap">'+h+'</th>'
     :'<th style="padding:8px 10px;color:'+color+';font-weight:800;border-bottom:2px solid '+color+'44;text-align:center;white-space:nowrap">'+h+'</th>';
@@ -4546,7 +4561,7 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
     const nameCell=CLEAN?'<td style="padding:9px 10px;border-bottom:1px solid #f0edea;text-align:center;font-weight:600;color:var(--text)">'+(it.name||'—')+'</td>':cell(it.name);
     const locC=CLEAN?locCell.replace('padding:7px 10px;','padding:6px 10px;border-bottom:1px solid #f0edea;'):locCell;
     if(kind==='fuel') return cell(it.city)+codeCell+nameCell+cell(it.am)+cell(it.mobile)+cell(it.rm)+(fuelHasLoc?locC:'');
-    if(kind==='ecowash') return cell(it.city)+codeCell+cell(it.name)+cell(it.mgr)+locCell;
+    if(kind==='ecowash') return cell(it.city)+codeCell+cell(it.name)+'<td style="padding:7px 10px;text-align:center;direction:rtl">'+(it.dist||'—')+'</td>'+cell(it.mgr)+locCell;
     const mobileCell='<td style="padding:7px 10px;text-align:center">'+(it.mobile?'<a href="tel:'+String(it.mobile).replace(/\s/g,'')+'" style="color:#2e7d32;font-weight:700;text-decoration:none">📞 '+it.mobile+'</a>':'—')+'</td>';
     const emailCell2='<td style="padding:7px 10px;text-align:center">'+(it.email&&it.email.includes('@')?'<a href="mailto:'+it.email+'" style="background:#f5f5f5;color:#333333;font-weight:700;text-decoration:none;padding:2px 7px;border-radius:5px;font-size:11px">'+it.email+'</a>':'—')+'</td>';
     return codeCell+cell(it.name)+cell(it.city)+cell(it.contact)+mobileCell+emailCell2+locCell;
@@ -4791,42 +4806,53 @@ function renderPetrominTireBatteryTab(arr){
     if(/NORTH/.test(u))return'North';
     return r?'Other':'Other';
   };
+  // ---- Tire Service Locations as branch cards (list + detail), with the Pirelli manager of each station's region ----
+  const _isGM=p=>/general\s*manager/i.test(String(p.region||''));
+  const _gm=pirelli.find(_isGM)||null;
+  const _gmEmails=_gm?String(_gm.email||'').split(/[,;]/).map(x=>x.trim().toLowerCase()).filter(Boolean):[];
+  const _pMgrs=pirelli.filter(p=>!_isGM(p));
+  const _firstEmail=v=>String(v||'').split(/[,;]/).map(x=>x.trim()).filter(x=>x.includes('@')&&_gmEmails.indexOf(x.toLowerCase())<0)[0]||'';
+  const _pLabel=p=>{const s=String(p.region||'').replace(/[؀-ۿ]+/g,'').trim();const m=s.match(/^([^(\-–]+)/);return (m?m[1]:s).trim();};
+  const _pick=(reg,city)=>{
+    const u=String(reg||'').toUpperCase().trim(), c=String(city||'').toUpperCase();
+    let re=null;
+    if(/^WR\s*NORTH/.test(u)) re=/^WR\s*North/i;
+    else if(/^WR\b|WEST/.test(u)) re=/^Western/i;
+    else if(/^CR\b|CENT/.test(u)) re=/^Central/i;
+    else if(/^ER\b|EAST/.test(u)) re=/^Eastern/i;
+    else if(/SOUTH/.test(u)||(!u&&/JAZAN|JIZAN|ABHA|KHAMIS|NAJRAN|BISHA|BAHA|SABYA/.test(c))) re=/^Southern/i;
+    return re?_pMgrs.filter(p=>re.test(String(p.region||'').trim())):[];
+  };
+  const _regOf=l=>{const r=normMainReg(l.region);if(r!=='Other')return r;return /JAZAN|JIZAN|ABHA|KHAMIS|NAJRAN|BISHA|BAHA|SABYA/i.test(l.city||'')?'South':'Other';};
   const locGroups={};
-  locations.forEach(l=>{const reg=normMainReg(l.region);(locGroups[reg]=locGroups[reg]||[]).push(l);});
+  locations.forEach(l=>{const reg=_regOf(l);(locGroups[reg]=locGroups[reg]||[]).push(l);});
   const LOC_ORDER=['West','Central','East','South','North','Other'];
   const locOrder=LOC_ORDER.filter(r=>locGroups[r]);
-  const _hasArea=locations.some(l=>String(l.area||'').trim());
-  const _hasCity=locations.some(l=>String(l.city||'').trim());
   const locBody=locOrder.map(reg=>{
     const items=locGroups[reg];
     const rid='tbLoc_'+reg.replace(/[^A-Za-z0-9]/g,'');
-    const rows=items.map((l,i)=>{
+    return brRegionBlock(reg,items.length,rid,color,items.map(l=>{
       const _sm=String(l.station||'').trim().match(/^(\d*)\s*-\s*(.*)$/);
       const code=_sm?_sm[1]:'', name=_sm?_sm[2]:String(l.station||'').trim();
-      const map=(l.link&&/^https?:/.test(l.link))?'<a href="'+l.link+'" target="_blank" style="color:'+color+';font-weight:700;text-decoration:none">🗺️ Location</a>':'—';
-      return '<tr style="background:'+(i%2?'#FAF8F5':'#FDFDFC')+'">'
-        +(_hasCity?'<td style="padding:7px 10px;text-align:center">'+(l.city||'')+'</td>':'')
-        +'<td style="padding:7px 10px;text-align:center;font-weight:800;color:'+color+'">'+code+'</td>'
-        +'<td style="padding:7px 10px;text-align:center">'+name+'</td>'
-        +(_hasArea?'<td style="padding:7px 10px;text-align:center;direction:rtl">'+(l.area||'')+'</td>':'')
-        +'<td style="padding:7px 10px;text-align:center">'+(l.supervisor||'')+'</td>'
-        +'<td style="padding:7px 10px;text-align:center">'+map+'</td></tr>';
-    }).join('');
-    return '<div style="margin-bottom:10px">'
-      +'<div onclick="toggleRegion(\''+rid+'\')" style="display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:'+color+'12;border-radius:0 8px 8px 0;border-left:4px solid '+color+';cursor:pointer;margin-bottom:6px">'
-      +'<span style="font-size:13px;font-weight:800;color:'+color+'">'+reg+' ('+items.length+')</span>'
-      +'<span id="ico_'+rid+'" style="color:'+color+'">▼</span></div>'
-      +'<div id="'+rid+'">'+tbl((_hasCity?['City']:[]).concat(_hasArea?['Code','Station',tbCols.dist?'District':'Location','Supervisor','Map']:['Code','Station','Supervisor','Map']),rows)+'</div></div>';
+      const mg=_pick(l.region,l.city);
+      const people=mg.map(p=>({name:p.manager,phone:p.phone,email:_firstEmail(p.email)}))
+        .concat(_gm?[{label:'General Manager',name:_gm.manager,phone:_gm.phone,email:String(_gm.email||'').split(/[,;]/).map(x=>x.trim()).filter(x=>x.includes('@'))[0]||''}]:[]);
+      return brCard({title:(code?code+' - ':'')+name,city:l.city||'',area:l.area||'',
+        map:(l.link&&/^https?:/.test(l.link))?l.link:'',
+        hours:l.supervisor?'Tire Sales Supervisor · '+l.supervisor:'',
+        plabel:'Pirelli'+(mg.length?' · '+_pLabel(mg[0]):''),rlabel:'General Manager',people},color);
+    }).join(''));
   }).join('');
   const locHTML=locations.length?'<div><div style="font-size:14px;font-weight:800;color:'+color+';text-align:center;margin-bottom:12px">📍 Tire Service Locations ('+locations.length+')</div>'+locBody+'</div>':'';
   const _tb=window.TB_STYLE||'tight';
   if(_tb&&(pirelli.length||powertech.length)){
-    const pr=pirelli.map(p=>{const m=String(p.region).match(/^([^(]+)\(([^)]*)\)/);const ar2=!m&&String(p.region).match(/^(.*?[A-Za-z][^\u0600-\u06FF]*?)\s*[-–]\s*([\u0600-\u06FF][\u0600-\u06FF\s]*)$/);
-      return {title:m?m[1].replace(/[\u0600-\u06FF\s\-–]+$/,'').trim():(ar2?ar2[1].trim():p.region), sub:m?m[2].trim():(ar2?ar2[2].trim():''), mid:(p.manager?'<div>'+RC_USER+p.manager+'</div>':'')+(p.phone?'<div>'+RC_PHONE+p.phone+'</div>':''), emails:_ems(p.email)};});
-    const pw=powertech.map(p=>({title:'Powertech Battery', sub:p.area||'', mid:(p.employee?'<div>'+RC_USER+p.employee+'</div>':'')+(p.mobile?'<div>'+RC_PHONE+p.mobile+'</div>':''), emails:_ems(p.email)}));
-    const cols='minmax(0,1fr) minmax(0,1fr) minmax(0,1.3fr)';
-    const hd='<div style="display:grid;grid-template-columns:'+cols+';gap:14px;padding:8px 16px;border-bottom:1px solid #F2EEE8;font-size:11px;font-weight:800;color:#808080;letter-spacing:.04em;text-align:left;direction:ltr"><div>Region</div><div>Manager Name &amp; Phone</div><div>Email</div></div>';
-    const body=rcRows(color,[].concat(pr,pw),cols).replace('<div class="rc-box" style="','<div class="rc-box" style="border-top:0!important;border-radius:0 0 10px 10px!important;margin-bottom:0!important;').replace(/padding:10px 16px;/g,'padding:0 16px;min-height:62px;');
+    const _ph=v=>v?'<div style="display:flex;align-items:center;gap:6px">'+RC_PHONE+v+' <button type="button" class="bd-cp" data-cp="'+v+'">copy</button></div>':'';
+    const pr=pirelli.filter(p=>!/general\s*manager/i.test(String(p.region||''))).map(p=>{const m=String(p.region).match(/^([^(]+)\(([^)]*)\)/);const ar2=!m&&String(p.region).match(/^(.*?[A-Za-z][^\u0600-\u06FF]*?)\s*[-–]\s*([\u0600-\u06FF][\u0600-\u06FF\s]*)$/);
+      return {title:m?m[1].replace(/[\u0600-\u06FF\s\-–]+$/,'').trim():(ar2?ar2[1].trim():p.region), sub:m?m[2].trim():(ar2?ar2[2].trim():''), mid:(p.manager?'<div>'+RC_USER+p.manager+'</div>':''), emails:_ph(p.phone)};});
+    const pw=powertech.map(p=>({title:'🔋 Powertech Battery', sub:p.area||'', mid:(p.employee?'<div>'+RC_USER+p.employee+'</div>':''), emails:_ph(p.mobile)}));
+    const cols='minmax(0,1.6fr) minmax(0,1fr) minmax(0,1fr)';
+    const hd='<div style="display:grid;grid-template-columns:'+cols+';gap:14px;padding:6px 16px;border-bottom:1px solid #F2EEE8;font-size:11px;font-weight:800;color:#808080;letter-spacing:.04em;text-align:left;direction:ltr"><div>Region</div><div>Manager Name</div><div>Phone</div></div>';
+    const body=rcRows(color,[].concat(pr,pw),cols).replace('<div class="rc-box" style="','<div class="rc-box" style="border-top:0!important;border-radius:0 0 10px 10px!important;margin-bottom:0!important;').replace(/padding:10px 16px;/g,'padding:4px 16px;min-height:38px;');
     const id='tbPirelli';
     return '<div style="margin-bottom:18px">'
       +'<div onclick="toggleRegion(\''+id+'\')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:9px 16px;background:color-mix(in srgb,var(--brand,'+color+') 6%,#FFFFFF);border:1px solid color-mix(in srgb,var(--brand,'+color+') 30%,#EFEAE3);border-radius:10px 10px 0 0;font-size:13px;font-weight:800;color:'+color+';direction:ltr">Pirelli Tire — Sales Supervisors<span id="ico_'+id+'" style="font-size:11px">▼</span></div>'
@@ -4929,18 +4955,17 @@ function renderPetrominComplaintsTab(arr){
   ];
   const groups={};
   rows.forEach(v=>{const c=CATS.find(c=>c.re.test(v[0]));(groups[c.k]=groups[c.k]||[]).push(v);});
-  const th='padding:8px 12px;color:#8A6A4A;font-weight:700;border-bottom:1px solid #EFE6DC;background:#FAF6F1';
   return CATS.filter(c=>groups[c.k]).map(c=>{
     const id='pcw_'+c.k;
     const body=groups[c.k].map((v,i)=>'<tr style="background:'+(i%2?'#FBF9F6':'#FFFFFF')+'">'
-      +'<td style="padding:9px 12px;font-size:12px;line-height:1.6;vertical-align:top;border-bottom:1px solid #F3EEE8">'+esc(v[0])+' <button type="button" class="bd-cp" data-cp="'+esc(v[0])+'">copy</button></td>'
-      +'<td style="padding:9px 12px;font-size:12px;line-height:1.8;vertical-align:top;direction:rtl;text-align:right;border-bottom:1px solid #F3EEE8">'+esc(v[1])+'</td></tr>').join('');
+      +'<td style="padding:9px 12px;font-size:12px;line-height:1.6;vertical-align:top;border-bottom:1px solid #F3EEE8;text-align:left!important;direction:ltr">'+esc(v[0])+' <button type="button" class="bd-cp" data-cp="'+esc(v[0])+'">copy</button></td>'
+      +'<td style="padding:9px 12px;font-size:12px;line-height:1.8;vertical-align:top;direction:rtl;text-align:right!important;border-bottom:1px solid #F3EEE8">'+esc(v[1])+'</td></tr>').join('');
     return '<div style="margin-bottom:12px">'
       +'<div onclick="toggleRegion(\''+id+'\')" style="display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:'+color+'12;border-left:4px solid '+color+';border-radius:0 8px 8px 0;cursor:pointer;user-select:none;margin-bottom:6px">'
-      +'<span style="font-size:13px;font-weight:700;color:#8A6A4A">'+c.t+' <span style="font-size:11px;color:#aaa;font-weight:600">('+groups[c.k].length+')</span></span>'
+      +'<span style="font-size:13px;font-weight:700;color:#8A6A4A">'+c.t+'</span>'
       +'<span id="ico_'+id+'" style="color:'+color+'">▼</span></div>'
       +'<div id="'+id+'"><div style="overflow-x:auto;border:1px solid #EFEDE9;border-radius:8px"><table style="width:100%;border-collapse:collapse;table-layout:fixed;word-break:break-word">'
-      +'<thead><tr><th style="'+th+';text-align:left">English</th><th style="'+th+';text-align:right;direction:rtl">العربي</th></tr></thead><tbody>'+body+'</tbody></table></div></div></div>';
+      +'<tbody>'+body+'</tbody></table></div></div></div>';
   }).join('');
 }
 function renderNosFAQTab(arr){
@@ -5350,7 +5375,24 @@ function renderFotonPMSTab(arr){
     return fotonRegionBlock(reg, rc, groups[reg].length, hoursDisp, regId,
       groups[reg].map(b=>fotonBranchCard(b,rc)).join(''));
   }).join('');
-  return '<div style="text-align:center">'+fotonEmailHdr(emailBlocks,color)+spareHTML+regionsHTML+'</div>';
+  // Emails: two stacked boxes (Service / Spare Parts), each Request | Complaint like the other tabs;
+  // the spare-parts contact sits inside the Spare Parts box.
+  const _emBox=(cap,blocks,extra)=>{
+    const parts=blocks.map(b=>({title:/complaint/i.test(b.label)?'Complaint':'Request',to:rcChips(b.to,color),cc:rcChips(b.cc,color)}));
+    const had=Object.prototype.hasOwnProperty.call(window,'RC_STYLE'), prev=window.RC_STYLE;
+    window.RC_STYLE='box'; let h=''; try{ h=rcBox(color,parts); }finally{ if(had) window.RC_STYLE=prev; else delete window.RC_STYLE; }
+    const capDiv='<div style="flex-basis:100%;text-align:center;font-size:10.5px;font-weight:800;color:#A8A29A;letter-spacing:.08em;padding-top:8px">'+cap+'</div>';
+    if(!h) return extra?'<div class="rc-box" style="display:flex;flex-wrap:wrap;background:#FFFFFF;border:1px solid color-mix(in srgb,var(--brand,'+color+') 30%,#EFEAE3);border-radius:10px;margin-bottom:12px">'+capDiv+extra+'</div>':'';
+    const i=h.indexOf('">')+2, j=h.lastIndexOf('</div>');
+    return h.slice(0,i)+capDiv+h.slice(i,j)+(extra||'')+h.slice(j);
+  };
+  const _spareLine=spare.length?'<div style="flex-basis:100%;border-top:1px solid #F2EEE8;padding:8px 16px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12.5px;color:#333333">'
+    +spare.map(c=>'<div style="display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap"><span style="font-size:10.5px;font-weight:800;color:#A8A29A;letter-spacing:.08em">🔧 CONTACT</span><span style="font-weight:600">'+(c.name||'')+'</span>'
+      +(c.mobile?'<a href="tel:'+c.mobile+'" style="color:#333333;text-decoration:none">📞 '+c.mobile+'</a>':'')
+      +(c.note?'<span dir="rtl" style="color:#808080">'+c.note+'</span>':'')+'</div>').join('')+'</div>':'';
+  const _svc=emailBlocks.filter(b=>!/spare/i.test(b.label)), _sp=emailBlocks.filter(b=>/spare/i.test(b.label));
+  const emailsHTML=emailBlocks.length?(_emBox('SERVICE',_svc)+_emBox('SPARE PARTS',_sp,_spareLine)):spareHTML;
+  return '<div style="text-align:center">'+emailsHTML+regionsHTML+'</div>';
 }
 function renderFotonSMSLocationTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
@@ -6166,7 +6208,18 @@ function showRefBrandPage(brand){
     +'</div>'
     +'<div class="ref-tab-content"><div id="refTab_'+brand+'" style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading '+tabs[0]+'...</div></div>'
     +'</div>';
-  renderRefBrand(brand,0);
+  Promise.resolve(renderRefBrand(brand,0)).catch(()=>{}).then(()=>prefetchBrandTabs(brand));
+}
+// Load the brand's other tabs in the background once the first tab is on screen,
+// so switching tabs is instant. Data is fetched fresh at the moment the brand is opened.
+async function prefetchBrandTabs(brand){
+  try{
+    const cfg=REF_SHEETS[brand]; if(!cfg||!cfg.id||!Array.isArray(cfg.tabs)) return;
+    const flag='__prefetched__'+brand; if(REF_CACHE[flag]) return; REF_CACHE[flag]=1;
+    const tabs=cfg.tabs.filter((t,i)=>i>0&&!/website|instruction/i.test(String(t)));
+    tabs.forEach(t=>{ fetchCSVRaw(cfg.id,t).catch(()=>{}); });
+    for(const t of tabs){ try{ await fetchSheet(cfg.id,t); }catch(e){} }
+  }catch(e){ console.warn('prefetch',brand,e); }
 }
 function switchRefTab(brand,idx,btn){
   REF_ACTIVE_TABS[brand]=idx;
@@ -9020,7 +9073,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if(!isA&&el.closest('a'))return;
         var raw=(el.textContent||'').trim();if(!raw)return;var t=clean(raw);
         if(/^(TO|CC)$/.test(t)){role=t;return;}
-        if(/^(regional|area)\s*manager$/i.test(t)){sec='regional';cur=null;role='';return;}
+        if(/^(regional|area|general)\s*manager$/i.test(t)){sec='regional';cur=null;role='';return;}
         if(/government\s*sales/i.test(t)){sec='gov';cur=null;return;}
         if(/^station\s*email$/i.test(t)){stationNext=true;return;}
         if(/^[🕐⏰]/u.test(raw)){d.hours=t;return;}
@@ -9068,7 +9121,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if(hours)h+='<div class="bd-sec bd-hours">'+brFormatHours(hours)+'</div>';
     var cols='';
     if(d.sections.branch.length)cols+='<div><div class="bd-lbl">'+esc(card.getAttribute('data-plabel')||'Branch Manager')+'</div>'+peopleHtml(d.sections.branch)+'</div>';
-    if(d.sections.regional.length)cols+='<div><div class="bd-lbl">Regional Manager</div>'+peopleHtml(d.sections.regional)+'</div>';
+    if(d.sections.regional.length)cols+='<div><div class="bd-lbl">'+esc(card.getAttribute('data-rlabel')||'Regional Manager')+'</div>'+peopleHtml(d.sections.regional)+'</div>';
     if(cols)h+='<div class="bd-sec"><div class="bd-pp">'+cols+'</div></div>';
     if(d.station.length)h+='<div class="bd-sec"><div class="bd-lbl">Station email</div>'+d.station.map(function(em){return'<div class="bd-rw"><span class="ic">✉️</span><a class="em" href="mailto:'+esc(em)+'">'+esc(em)+'</a> '+cpBtn(em)+'</div>';}).join('')+'</div>';
     if(d.sections.gov.length)h+='<div class="bd-sec"><div class="bd-lbl">Government sales</div><div class="bd-pp">'+peopleHtml(d.sections.gov)+'</div></div>';
