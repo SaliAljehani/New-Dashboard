@@ -207,7 +207,7 @@ select#agSel{font-size:14px;font-weight:600;color:var(--accent);min-width:180px}
 @media(max-width:1300px){.ref-cards-grid:has(> .sms-card){grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media(max-width:900px){.ref-cards-grid:has(> .sms-card){grid-template-columns:1fr!important}}
 .br-hidden{display:none!important}
-.br-md{display:grid;grid-template-columns:320px minmax(0,1fr);gap:14px;align-items:start;margin-bottom:16px}.br-right{min-width:0;position:sticky;top:10px}.rc-over{margin-left:334px!important}@media(max-width:900px){.rc-over{margin-left:0!important}}.br-right>.br-detail{position:static}.rc-box,.rc-wrap{margin-top:20px!important;margin-bottom:20px!important}.rc-box+.rc-box{margin-top:0!important}.rc-box:has(+.rc-box){margin-bottom:12px!important}.br-right>.rc-box,.br-right>.rc-wrap{margin-bottom:12px!important}
+.br-md{display:grid;grid-template-columns:320px minmax(0,1fr);gap:14px;align-items:start;margin-bottom:16px}.br-right{min-width:0;position:sticky;top:10px}.rc-over{margin-left:334px!important}@media(max-width:900px){.rc-over{margin-left:0!important}}.br-right>.br-detail{position:static}.rc-box,.rc-wrap{margin-top:20px!important;margin-bottom:20px!important}.rc-box+.rc-box{margin-top:0!important}#tbPirelli .rc-box{margin:0!important;border:0!important;border-radius:0 0 10px 10px!important}.rc-box:has(+.rc-box){margin-bottom:12px!important}.br-right>.rc-box,.br-right>.rc-wrap{margin-bottom:12px!important}
 .br-list{scrollbar-width:thin;scrollbar-color:var(--brc,#c0272d) transparent;text-align:left;background:#FDFDFC;border:0.5px solid #eee;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:10px;max-height:72vh;overflow-y:auto;position:sticky;top:10px}
 .br-search{width:100%;box-sizing:border-box;padding:8px 12px;border:1px solid #e5e5e5;border-radius:10px;font-size:13px;background:#fff;margin-bottom:6px;outline:none}
 .br-search:focus{border-color:var(--brc,#c0272d)}
@@ -4016,7 +4016,8 @@ function renderBaicServiceTab(arr, apptArr){
   const color='#C86E35';
   const amRows=[];
   const keys=Object.keys(arr[0]||{});
-  const regionCol=keys[0], cityCol=keys[1], branchCol=keys[2], mgrCol=keys[3], phoneCol=keys[4], emailCol=keys[5], gpsLinkCol=keys[7];
+  const _bk=(re,d)=>keys.find(k=>re.test(String(k).trim()))||keys[d];
+  const regionCol=keys[0], cityCol=keys[1], branchCol=keys[2], mgrCol=_bk(/manager name/i,3), phoneCol=_bk(/number|mobile|phone/i,4), emailCol=_bk(/^email/i,5), gpsLinkCol=_bk(/map link|google map/i,7), distCol=keys.find(k=>/^district/i.test(String(k).trim()));
   const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
   const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
   const VALID_REGIONS=new Set(['West','Western','Central','Center','East','Eastern','South','Southern','North','Northern']);
@@ -4118,10 +4119,12 @@ function renderBaicServiceTab(arr, apptArr){
         const phone=String(r[phoneCol]||'').split(',').map(s=>fmtNum(s.trim())).filter(Boolean).join(' / ');
         const email=String(r[emailCol]||'').trim();
         const gps=String(r[gpsLinkCol]||'').trim();
+        const dist=distCol?String(r[distCol]||'').trim():'';
         return '<div style="background:#FEFEFD;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
           +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
           +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
           +(city?'<div style="font-size:11px;color:#808080;margin-top:3px">📌 '+city+'</div>':'')
+          +(dist?'<div style="font-size:11px;color:#808080;margin-top:3px">📍 '+dist+'</div>':'')
           +(gps&&gps.startsWith('http')?'<div style="margin-top:5px"><a href="'+gps+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
           +'</div>'
           +'<div style="padding:10px 14px;text-align:center;background:#FDFCFB">'
@@ -4726,7 +4729,7 @@ function renderPetrominTireBatteryTab(arr){
   const color='#D98E45';
   const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
   const pirelli=[], powertech=[], locations=[];
-  let mode='';
+  let mode='', tbCols={st:2,sp:3,area:1,link:4,dist:false};
   arr.forEach(r=>{
     const v=Object.values(r).map(x=>String(x===undefined||x===null?'':x).trim());
     const a=v[0]||'',b=v[1]||'',c=v[2]||'',d=v[3]||'',e=v[4]||'';
@@ -4736,7 +4739,12 @@ function renderPetrominTireBatteryTab(arr){
       if(b||c||d||e) powertech.push({area:b,employee:c,mobile:fmtNum(d),email:e});
       return;
     }
-    if(a==='Region'&&b==='location'){ mode='loc'; return; }
+    if(a==='Region'&&/^(location|city|district)$/i.test(b)){ mode='loc';
+      const fi=re=>v.findIndex(x=>re.test(x));
+      const st=fi(/station/i), sp=fi(/supervisor/i), ds=fi(/^district$/i), lc=fi(/^location$/i);
+      let lk=-1; v.forEach((x,i)=>{ if(/location|map|gps/i.test(x)) lk=i; });
+      tbCols={st:st>=0?st:2, sp:sp>=0?sp:3, area:ds>=0?ds:(lc>=0&&lc!==lk?lc:1), link:lk>=0?lk:4, dist:ds>=0};
+      return; }
     if(mode==='pirelli'){
       if(b==='Region'&&(c==='Manager Name'||/email/i.test(d))) return;
       if(b){
@@ -4747,7 +4755,8 @@ function renderPetrominTireBatteryTab(arr){
       return;
     }
     if(mode==='loc'){
-      if(c){ locations.push({region:a,area:b,station:c,supervisor:d,link:e}); }
+      const _st=v[tbCols.st]||'';
+      if(_st){ locations.push({region:a,area:v[tbCols.area]||'',station:_st,supervisor:v[tbCols.sp]||'',link:v[tbCols.link]||''}); }
       return;
     }
   });
@@ -4784,8 +4793,8 @@ function renderPetrominTireBatteryTab(arr){
     const items=locGroups[reg];
     const rid='tbLoc_'+reg.replace(/[^A-Za-z0-9]/g,'');
     const rows=items.map((l,i)=>{
-      const parts=String(l.station||'').split(' - ');
-      const code=parts[0]||'', name=parts.slice(1).join(' - ')||l.station;
+      const _sm=String(l.station||'').trim().match(/^(\d*)\s*-\s*(.*)$/);
+      const code=_sm?_sm[1]:'', name=_sm?_sm[2]:String(l.station||'').trim();
       const map=(l.link&&/^https?:/.test(l.link))?'<a href="'+l.link+'" target="_blank" style="color:'+color+';font-weight:700;text-decoration:none">🗺️ Location</a>':'—';
       return '<tr style="background:'+(i%2?'#FAF8F5':'#FDFDFC')+'">'
         +'<td style="padding:7px 10px;text-align:center;font-weight:800;color:'+color+'">'+code+'</td>'
@@ -4798,7 +4807,7 @@ function renderPetrominTireBatteryTab(arr){
       +'<div onclick="toggleRegion(\''+rid+'\')" style="display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:'+color+'12;border-radius:0 8px 8px 0;border-left:4px solid '+color+';cursor:pointer;margin-bottom:6px">'
       +'<span style="font-size:13px;font-weight:800;color:'+color+'">'+reg+' ('+items.length+')</span>'
       +'<span id="ico_'+rid+'" style="color:'+color+'">▼</span></div>'
-      +'<div id="'+rid+'">'+tbl(_hasArea?['Code','Station','Location','Supervisor','Map']:['Code','Station','Supervisor','Map'],rows)+'</div></div>';
+      +'<div id="'+rid+'">'+tbl(_hasArea?['Code','Station',tbCols.dist?'District':'Location','Supervisor','Map']:['Code','Station','Supervisor','Map'],rows)+'</div></div>';
   }).join('');
   const locHTML=locations.length?'<div><div style="font-size:14px;font-weight:800;color:'+color+';text-align:center;margin-bottom:12px">📍 Tire Service Locations ('+locations.length+')</div>'+locBody+'</div>':'';
   const _tb=window.TB_STYLE||'tight';
@@ -5244,12 +5253,23 @@ function renderFotonPMSTab(arr){
   const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
   const branches=[], emailBlocks=[], spare=[];
   let hoursIdx=-1, hoursRaw='';
+  let FC={city:1,name:2,street:3,district:4,gps:5,contact:6,mobile:7};
+  const _fcSet=h=>{const L=h.map(x=>String(x||'').trim().toLowerCase());const f=re=>L.findIndex(x=>re.test(x));
+    const nm=f(/station|branch/);if(nm<0)return;
+    FC={city:f(/^city/),name:nm,street:f(/street/),district:f(/district/),gps:f(/gps|map/),contact:f(/contact/),mobile:f(/mobile|phone/)};
+    L.forEach((x,i)=>{ if(/working\s*hours?|timings?/i.test(x)) hoursIdx=i; });};
+  _fcSet(Object.keys(arr[0]||{}));
   arr.forEach(r=>{
     const vals=Object.values(r).map(v=>String(v===undefined||v===null?'':v).trim());
     const v0=vals[0]||'', v1=vals[1]||'', v2=vals[2]||'', v3=vals[3]||'', v4=vals[4]||'';
     if(!v0 && !v1 && !v2 && !v3) return;
     if(/^regions?$/i.test(v0)){
       vals.forEach((h,i)=>{ if(/working\s*hours?|timings?/i.test(h)) hoursIdx=i; });
+      _fcSet(vals);
+      return;
+    }
+    if(/^spare parts$/i.test(v0) && v1 && !v1.includes('@')){
+      spare.push({name:v1, mobile:fmtNum(v2), note:v3});
       return;
     }
     if(v2==='TO' && v3==='CC') return;
@@ -5263,8 +5283,9 @@ function renderFotonPMSTab(arr){
       return;
     }
     if(v0 && v1 && v2){
-      branches.push({region:v0, name:v2, city:v1, street:v3, district:v4,
-                     gps:vals[5]||'', contact:vals[6]||'', mobile:fmtNum(vals[7]||''),
+      const g=i=>i>=0?(vals[i]||''):'';
+      branches.push({region:v0, name:g(FC.name), city:g(FC.city), street:g(FC.street), district:g(FC.district),
+                     gps:g(FC.gps), contact:g(FC.contact), mobile:fmtNum(g(FC.mobile)),
                      email:(vals.slice(6).find(x=>x.includes('@'))||'')});
       if(hoursIdx>=0 && !hoursRaw && vals[hoursIdx]) hoursRaw=vals[hoursIdx];
     }
@@ -5365,6 +5386,9 @@ function renderPetrominPACTab(arr){
   let emRows={};
   let emMode='';
   const normMainReg=s=>{const u=String(s||'').toUpperCase().trim();if(/^WR|WESTERN|^WEST/.test(u))return'West';if(/^CR|CENTRAL|^CENT/.test(u))return'Central';if(/^ER|EASTERN|^EAST/.test(u))return'East';if(/SOUTH|^SR/.test(u))return'South';if(/NORTH|^NR/.test(u))return'North';return s?String(s).trim():'Other';};
+  const _PK=Object.keys(arr[0]||{}).map(k=>String(k).trim().toLowerCase());
+  const _pc=(re,d)=>{const i=_PK.findIndex(k=>re.test(k));return i>=0?i:d;};
+  const PC={mgr:_pc(/manager name/,3),phone:_pc(/mobile|number|phone/,4),email:_pc(/email/,5),map:_pc(/map link|google map/,7),wh:_pc(/working|hours/,8),dist:_pc(/^district/,-1)};
   arr.forEach((r,idx)=>{
     const vals=Object.values(r).map(v=>String(v||'').trim());
     const v0=vals[0]||'';
@@ -5461,7 +5485,7 @@ function renderPetrominPACTab(arr){
     const rows=regions[reg];
     const rc=REGION_COLORS[reg]||REGION_PALETTE[ri%REGION_PALETTE.length];
     const regId='pePac_'+reg.replace(/\s+/g,'_');
-    const hours=rows[0][8]||'';
+    const hours=rows[0][PC.wh]||'';
     return '<div style="margin-bottom:14px">'
       +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px">'
       +'<span style="font-size:13px;font-weight:700;color:'+rc+'">'+regClean(reg)+'</span>'
@@ -5472,11 +5496,12 @@ function renderPetrominPACTab(arr){
         const city=vals[1]||'';
         const branch=(vals[2]||'').replace(/\n/g,' ');
         const branchCode=branch.split('-')[0].trim();
-        const mgr=vals[3]||'';
-        const phone=String(vals[4]||'').split(',').map(s=>fmtNum(s.trim())).filter(Boolean).join(' / ');
-        const email=vals[5]||'';
-        const gps=vals[7]||'';
-        const wh=vals[8]||'';
+        const mgr=vals[PC.mgr]||'';
+        const phone=String(vals[PC.phone]||'').split(',').map(s=>fmtNum(s.trim())).filter(Boolean).join(' / ');
+        const email=vals[PC.email]||'';
+        const gps=vals[PC.map]||'';
+        const wh=vals[PC.wh]||'';
+        const dist=PC.dist>=0?(vals[PC.dist]||''):'';
         const gpsLink=gps?(/^https?:\/\//i.test(gps)?gps:'https://www.google.com/maps?q='+encodeURIComponent(gps)):'';
         const branchNameOnly=branch.replace(/^\d+\s*-\s*/,'').trim();
         const nkBranch=branchNameOnly.toLowerCase().replace(/[^a-z0-9]/g,'');
@@ -5485,6 +5510,7 @@ function renderPetrominPACTab(arr){
           +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
           +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
           +(city?'<div style="font-size:11px;color:#808080;margin-top:3px">📌 '+city+'</div>':'')
+          +(dist?'<div style="font-size:11px;color:#808080;margin-top:3px">📍 '+dist+'</div>':'')
           +(gpsLink?'<div style="margin-top:5px"><a href="'+gpsLink+'" target="_blank" style="color:#1565c0;font-size:11px;font-weight:600">🗺️ Location</a></div>':'')
           +'</div>'
           +'<div style="padding:10px 14px;text-align:center;background:#FDFCFB">'
@@ -8913,7 +8939,7 @@ window.addEventListener('DOMContentLoaded', () => {
   function cardLoc(card){card=deIcon(card);var h0=card.firstElementChild;var r={city:'',dist:''};if(!h0)return r;var h=h0.cloneNode(true);[].slice.call(h.querySelectorAll('a')).forEach(function(a){a.remove();});var t=h.textContent||'';
     var c=t.match(/📌\s*([^\n]*?)\s*(?=📍|🗺|$)/u);var d=t.match(/📍\s*([^\n]*?)\s*(?=📌|🗺|$)/u);
     if(c)r.city=c[1].trim();
-    if(d){var dv=d[1].trim();var _pp=dv.split(/\s[-–]\s/);if(!r.city&&_pp.length>1&&/^[A-Za-z][A-Za-z .'-]*$/.test(_pp[_pp.length-1].trim())){r.city=_pp.pop().trim();r.dist=_pp.join(' - ').trim();}else r.dist=dv;}
+    if(d){var dv=d[1].replace(/\s*🛣\uFE0F?\s*/gu,' · ').replace(/^ · | · $/g,'').trim();var _pp=dv.split(/\s[-–]\s/);if(!r.city&&_pp.length>1&&/^[A-Za-z][A-Za-z .'-]*$/.test(_pp[_pp.length-1].trim())){r.city=_pp.pop().trim();r.dist=_pp.join(' - ').trim();}else r.dist=dv;}
     return r;}
   var CITY_CANON={Mecca:'Makkah',Medina:'Madinah',Madina:'Madinah',Ryiadh:'Riyadh','Al Khobar':'Khobar','Al Jubail':'Jubail',Jazan:'Jizan',Buraidah:'Buraydah',Unaizah:'Unayzah','Al-Kharj':'Kharj','Al Duwadimi':'Dwadmi','Al Bahah':'Baha',Hassa:'Al Hassa','Al Hofuf':'Al Hassa',Hufouf:'Al Hassa',Hofuf:'Al Hassa',Ahsa:'Al Hassa','Al Ahsa':'Al Hassa',Tabouk:'Tabuk',Qassim:'Qassim'};
   var CITY_EN=[],CITY_ARL=[];
@@ -8943,7 +8969,7 @@ window.addEventListener('DOMContentLoaded', () => {
   function darker(rgb){var m=rgb.match(/\d+/g);if(!m)return rgb;return'rgb('+m.slice(0,3).map(function(v){return Math.round(v*0.8);}).join(',')+')';}
   function tint(rgb){var m=rgb.match(/\d+/g);if(!m)return'#FBEDEE';return'rgba('+m[0]+','+m[1]+','+m[2]+',.09)';}
   var EMAIL_RE=/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/;
-  function clean(t){return String(t||'').replace(/[👤📞📱✉️📧📌📍🗺️🕐⏰🏢☎🧑💼]/gu,'').replace(/[\uFE0F\u200D]/g,'').replace(/\s+/g,' ').trim();}
+  function clean(t){return String(t||'').replace(/[👤📞📱✉️📧📌📍🗺️🕐⏰🏢☎🧑💼🛣🏘🏙]/gu,'').replace(/[\uFE0F\u200D]/g,'').replace(/\s+/g,' ').trim();}
   function parseCard(card){
     card=deIcon(card);var h=card.firstElementChild;if(!h)return null;
     var titleEl=h.firstElementChild||h;var title=(titleEl.textContent||'').replace(/\s+/g,' ').trim();
@@ -9006,7 +9032,14 @@ window.addEventListener('DOMContentLoaded', () => {
     var hours=info.hours||d.hours;
     var h='<div class="bd-head"><div class="bd-title">'+(m?'<b>'+esc(m[1])+'</b>'+esc(m[2]):esc(d.title))+'</div>'
       +(card.getAttribute('data-closed')==='1'?'<div style="margin-top:6px"><span style="display:inline-block;font-size:11px;font-weight:600;padding:2px 10px;border-radius:10px;background:rgba(168,90,90,.1);color:#8E4848">Temporarily closed</span></div>':'')
-      +(function(){var cty=cardCity(card);var sb=d.subs.slice();if(cty&&!sb.some(function(x){return x.toLowerCase().indexOf(cty.toLowerCase())>-1;}))sb.unshift(cty);sb=sb.filter(function(x){var xl=x.toLowerCase();return !sb.some(function(y){return y!==x&&y.toLowerCase().indexOf(xl)===0;});});return sb.length?'<div class="bd-sub">'+esc(sb.join(' · '))+'</div>':'';})()
+      +(function(){var cty=cardCity(card);var sb=d.subs.slice();if(cty&&!sb.some(function(x){return x.toLowerCase().indexOf(cty.toLowerCase())>-1;}))sb.unshift(cty);sb=sb.filter(function(x){var xl=x.toLowerCase();return !sb.some(function(y){return y!==x&&y.toLowerCase().indexOf(xl)===0;});});if(!sb.length)return '';var _ar=sb.some(function(x){return /[\u0600-\u06FF]/.test(x);});
+        if(_ar){var _M={khamis:'خميس مشيط',neom:'نيوم',bahrah:'بحرة',qassim:'القصيم','al hassa':'الأحساء',hofuf:'الهفوف',hufouf:'الهفوف',ahsa:'الأحساء','al ahsa':'الأحساء',tabouk:'تبوك','al kharj':'الخرج',qunfudhah:'القنفذة',qunfidha:'القنفذة','al hufuf':'الهفوف',dhahran:'الظهران',qatif:'القطيف','al qatif':'القطيف',makkah:'مكة المكرمة',"buraida":"بريدة","unizah":"عنيزة","alkhobar":"الخبر","khoar":"الخبر","alhassa":"الأحساء","rania":"رنية","dawadamy":"الدوادمي","hutat sudair":"حوطة سدير","majmah":"المجمعة","al majma'ah":"المجمعة","rastanura":"رأس تنورة","tayma":"تيماء","khyber":"خيبر","jammoom":"الجموم","hota":"حوطة بني تميم","wady dawasir":"وادي الدواسر","dhalam":"ظلم","layla":"ليلى","qurriyat":"القريات","dawmat al jandal":"دومة الجندل","quwaiiyah":"القويعية","afif":"عفيف","bukayriyah":"البكيرية","rass":"الرس","ar rass":"الرس","riyadh al khabra":"رياض الخبراء","badayea":"البدائع","mithnab":"المذنب","zulfi":"الزلفي","umal sahek":"أم الساهك","hafer batin":"حفر الباطن","nariyah":"النعيرية","sabiya":"صبيا","darb":"الدرب","baish":"بيش","edabi":"العيدابي","biljureshi":"بلجرشي","majarda":"المجاردة","mohyail":"محايل","al mikhwa":"المخواة","al quoz":"القوز","bariq":"بارق","samta":"صامطة","ahad masrihah":"أحد المسارحة","namas":"النماص","sabtl olaya":"سبت العلاية","tanuma":"تنومة","zehran janoob":"ظهران الجنوب","sharura":"شرورة"};
+          try{Object.keys(ELM_CITY_AR).forEach(function(k){var kk=k.trim().toLowerCase();if(!_M[kk])_M[kk]=ELM_CITY_AR[k];});}catch(e){}
+          sb=sb.map(function(x){var k=x.trim().toLowerCase().replace(/\s+(branch|city)$/,'');return _M[k]||x;});
+          var _cities=sb.filter(function(x,i){return i===0||Object.keys(_M).some(function(k){return _M[k]===x;});});
+          sb=sb.map(function(x){if(_cities.indexOf(x)>-1)return x;var ps=x.split(/\s*[،,]\s*/);if(ps.length<2)return x;var kept=ps.filter(function(q){var qq=q.replace(/^(حي|مدينة)\s+/,'').trim();return qq&&!_cities.some(function(c){return c===qq||c.indexOf(qq)>-1&&qq.length>2;});});return kept.length?kept.join('، '):x;});
+          sb=sb.filter(function(x,i){var xt=x.replace(/^(حي|مدينة)\s+/,'').trim();return !sb.some(function(y,j){return j!==i&&y!==x&&y.indexOf(xt)>-1;})&&sb.indexOf(x)===i;});}
+        return '<div class="bd-sub"'+(_ar?' dir="rtl"':'')+'>'+sb.map(function(x){return '<bdi>'+esc(x)+'</bdi>';}).join(' · ')+'</div>';})()
       +(d.map?(function(){var coords=/-?\d{1,3}\.\d+\s*,\s*-?\d{1,3}\.\d+/.test(d.mapTxt)?d.mapTxt.match(/-?\d{1,3}\.\d+\s*,\s*-?\d{1,3}\.\d+/)[0]:'';var txt=coords||d.map;return'<div class="bd-loc"><a href="'+esc(d.map)+'" target="_blank">'+esc(txt)+'</a>'+cpBtn(txt)+'</div>';})():'')
       +'</div>';
     if(hours)h+='<div class="bd-sec bd-hours">'+brFormatHours(hours)+'</div>';
@@ -9061,7 +9094,7 @@ window.addEventListener('DOMContentLoaded', () => {
             row.innerHTML='<span><b></b><span class="n"></span></span><span class="ds"></span>';
             row.querySelector('b').textContent=m?m[1]:'';row.querySelector('.n').textContent=m?m[2]:title;
             if(card.getAttribute('data-closed')==='1'){var _cb=document.createElement('span');_cb.textContent='Closed';_cb.style.cssText='margin-left:6px;font-size:10px;font-weight:600;padding:0 7px;border-radius:9px;background:rgba(168,90,90,.1);color:#8E4848';row.querySelector('.n').appendChild(_cb);}
-            var _ds=cardLoc(card).dist;if(_ds&&_ds.toLowerCase()!==c.toLowerCase())row.querySelector('.ds').textContent=_ds;else row.querySelector('.ds').remove();
+            var _ds=cardLoc(card).dist;if(_ds&&_ds.toLowerCase()!==c.toLowerCase())row.querySelector('.ds').innerHTML=_ds.split(' · ').map(function(x){return '<bdi>'+esc(x)+'</bdi>';}).join(' · ');if(/[\u0600-\u06FF]/.test(_ds)){var _dq=row.querySelector('.ds');_dq.setAttribute('dir','rtl');_dq.style.textAlign='left';}else row.querySelector('.ds').remove();
             var e={row:row,card:card,info:it.info,rg:rg,city:c};row.onclick=function(){select(e);};
             list.appendChild(row);entries.push(e);rEntries.push(e);
           });
