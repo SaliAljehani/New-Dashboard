@@ -9393,7 +9393,7 @@ window.addEventListener('DOMContentLoaded', () => {
   var holdT=null, holdStart=0, held=[];
   function release(){ held.forEach(function(c){ c.classList.remove('rc-hold'); }); held=[]; holdStart=0; }
   function onMut(muts){
-    muts.forEach(function(m){ var t=m.target; var c=t&&t.closest?t.closest('[id^="refTab_"]'):null; if(!c&&t&&t.id&&t.id.indexOf('refTab_')===0) c=t;
+    muts.forEach(function(m){ var t=m.target; /* hold only when a whole tab is (re)drawn — not for small changes like a copy button */ var c=(t&&t.id&&t.id.indexOf('refTab_')===0)?t:null;
       if(c&&!c.classList.contains('rc-hold')){ c.classList.add('rc-hold'); held.push(c); } });
     if(held.length){ if(!holdStart) holdStart=Date.now(); clearTimeout(holdT); holdT=setTimeout(release, Date.now()-holdStart>600?0:230); }
     sched();
