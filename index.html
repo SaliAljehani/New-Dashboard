@@ -288,9 +288,7 @@ button,input,select,textarea{font-family:inherit}
 .ref-sub-tab:focus,.ref-sub-tab:focus-visible,.ref-sub-tab:active{outline:none!important;box-shadow:none!important;border-color:transparent!important}
 .ref-sub-tab:hover:not(.active){background:#f2f2f2;color:#333333}
 .ref-tab-content{padding:14px}
-.ref-tab-content{padding-top:0!important}
-.ref-tab-content>[id^="refTab_"]{padding-top:20px!important}
-.ref-tab-content>[id^="refTab_"]>:first-child,.ref-tab-content>[id^="refTab_"]>:first-child>:first-child{margin-top:0!important}
+.ref-tab-content{padding-top:0!important;padding-bottom:0!important}
 .ref-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:16px}
 .ref-card{background:#FEFEFD;border-radius:10px;padding:14px;border:1px solid #e8eaed;transition:.2s;text-align:center;direction:ltr}
 .ref-card:hover{border-color:#bdbdbd;background:#FDFDFC;box-shadow:0 4px 12px rgba(0,0,0,.08)}
@@ -9065,6 +9063,32 @@ window.addEventListener('DOMContentLoaded', () => {
 
 <div class="to-toast" id="toToast"></div>
 
+<script>
+/* Same 24px space above and below the content of every tabbed section (measured after each tab renders). */
+(function(){
+  var GAP=24, t=null;
+  function fix(tc){
+    var sub=tc.previousElementSibling; if(!sub||!sub.classList||!sub.classList.contains('ref-sub-tabs')) return;
+    var el=tc.firstElementChild; if(!el||!el.offsetParent) return;
+    // 1px padding while measuring stops child margins from collapsing through, so they are counted
+    el.style.setProperty('padding-top','1px','important'); el.style.setProperty('padding-bottom','1px','important');
+    var top=Infinity, bot=-Infinity, cand=[];
+    [].forEach.call(el.children,function(c){cand.push(c);[].forEach.call(c.children,function(g){cand.push(g);});});
+    cand.forEach(function(n){var r=n.getBoundingClientRect(); if(!r.width||!r.height) return; if(r.top<top) top=r.top; if(r.bottom>bot) bot=r.bottom;});
+    if(top===Infinity){ el.style.setProperty('padding-top',GAP+'px','important'); el.style.setProperty('padding-bottom',GAP+'px','important'); return; }
+    var er=el.getBoundingClientRect(), sb=sub.getBoundingClientRect().bottom;
+    var mTop=(top-er.top-1), mBot=(er.bottom-1-bot);            // child margins inside the container
+    var lead=Math.max(0,er.top-sb);                              // any space between the tabs and the container
+    el.style.setProperty('padding-top',Math.max(0,Math.round(GAP-lead-mTop))+'px','important');
+    el.style.setProperty('padding-bottom',Math.max(0,Math.round(GAP-mBot))+'px','important');
+  }
+  function run(){ t=null; document.querySelectorAll('.ref-tab-content').forEach(function(tc){ try{ fix(tc); }catch(e){} }); }
+  function later(){ if(t) clearTimeout(t); t=setTimeout(run,120); setTimeout(run,700); setTimeout(run,1600); }
+  window.__fixTabGaps=run;
+  function start(){ try{ new MutationObserver(later).observe(document.body,{childList:true,subtree:true}); }catch(e){} window.addEventListener('resize',later); try{ document.fonts.ready.then(later); }catch(e){} later(); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
+})();
+</script>
 <script>window.__watchDom=(function(){
   var fns=[],t=null,pending=false,started=false,IGN='.br-detail,#motivationText,#notifPanel,.to-toast,.hcard';
   function own(n){return n.nodeType===1&&n.classList&&(n.classList.contains('ic-done')||n.classList.contains('loc-cp'));}
