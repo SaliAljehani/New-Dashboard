@@ -584,7 +584,7 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
 
 #teamSubNav.team-subnav{margin-bottom:10px!important}
 #page1.main{padding-top:0!important}
-#perfCtrl{margin-bottom:10px!important;padding:7px 20px!important}
+#perfCtrl{margin-bottom:20px!important;padding:7px 20px!important}
 #vAgent .ag-hero{margin-bottom:10px!important;padding:8px 16px!important}
 #akpis.ag-kpis{margin-bottom:10px!important}
 #attContent.att-section{margin-top:0!important}
@@ -2377,7 +2377,7 @@ async function renderCaseHandling(){
       '#caseHandlingContent .res{margin-top:16px;border:1px solid #EFEDE9;border-radius:14px;padding:14px 20px}'+
       '#caseHandlingContent .res h3{text-align:center;font-size:14.5px;margin:0 0 10px;color:var(--text)}'+
       '#caseHandlingContent .rchips{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}'+
-      '#caseHandlingContent .rchip{border-radius:10px;padding:8px 12px;font-size:12.5px;color:#4A7058;background:rgba(94,138,112,.08);display:flex;gap:8px;align-items:center}'+
+      '#caseHandlingContent .rchip{border-radius:10px;padding:8px 12px;font-size:12.5px;color:#6A5A4A;background:color-mix(in srgb,#8A6A4A 7%,#FDFDFC);display:flex;gap:8px;align-items:center}'+
       '#caseHandlingContent .rchip:before{content:"✓";font-weight:800}'+
       '@media(max-width:760px){#caseHandlingContent .cpb,#caseHandlingContent .subrow,#caseHandlingContent .rchips{grid-template-columns:1fr}}';
     var li=function(x){ return '<li>'+esc(x)+'</li>'; };
@@ -2665,7 +2665,7 @@ const REF_SHEETS = {
   },
   electromin: {
     id: '1Rr37Ojft0hnRjjSv8KF6Dmt4ywA0P7ObApKTMOHgmOc',
-    tabs: ['Emails','EV Charging Stations','Fuel Station']
+    tabs: ['Emails','Fuel Station','EV Charging Stations']
   },
   volvo: {
     id: '1gk4iGJ8Xs6QesKKSzT3bhfRu2qkLeb5VpiR09hptYE0',
@@ -2860,7 +2860,7 @@ function renderElectrominBranchTab(rows,mode){
   return '<div style="text-align:center">'+out+'</div>';
 }
 function brCard(o,col){
-  const sub=[o.city?'<div style="font-size:11px;color:#808080;margin-top:3px">📍 '+o.city+'</div>':''].join('');
+  const sub=[o.city?'<div style="font-size:11px;color:#808080;margin-top:3px">📍 '+o.city+'</div>':'',o.area?'<div style="font-size:11px;color:#808080;margin-top:3px;direction:rtl">🛣 '+o.area+'</div>':''].join('');
   const map=o.map?'<div style="margin-top:4px"><a href="'+o.map+'" target="_blank" style="color:'+col+';font-size:11px">🗺️ Location</a></div>':'';
   const ppl=(o.people||[]).map(p=>(p.label?'<div style="font-size:11px;color:#808080;margin-top:8px">'+p.label+'</div>':'')
     +(p.name?'<div>👤 '+p.name+'</div>':'')+(p.phone?'<div>📞 '+p.phone+'</div>':'')
@@ -2911,6 +2911,7 @@ function renderElectrominStationsTab(rows){
   var cCity=fc('city'); if(cCity<0)cCity=2;
   var cName=fc('station name'); if(cName<0)cName=3;
   var cType=fc('type');
+  var cDist=fc('district','distrct');
   var cSM=fc('sm name','station manager'); if(cSM<0)cSM=fc('sm ');
   var cSMNo=fc('sm number','station manager number','station manager no'); if(cSMNo<0)cSMNo=fc('sm no');
   var cAM=fc('area manger','area manager');
@@ -2977,7 +2978,7 @@ function renderElectrominStationsTab(rows){
       var g=function(i){return i>-1?String(row[i]||'').trim():'';};
       var ppl=[{name:g(cSM),phone:cSMNo>-1?elmNum(row[cSMNo]):''}];
       if(g(cAM)||(cAMNo>-1&&elmNum(row[cAMNo]))) ppl.push({label:'Area Manager',name:g(cAM),phone:cAMNo>-1?elmNum(row[cAMNo]):''});
-      return brCard({title:g(cName),city:elmCity(g(cCity)),people:ppl},col);
+      return brCard({title:g(cName),city:elmCity(g(cCity)),area:g(cDist),people:ppl},col);
     }).join(''));
   });
   return '<div>'+out+'</div>';
@@ -3898,13 +3899,15 @@ function renderStellantisPACTab(arr){
 function renderPACTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   var keys=Object.keys(arr[0]||{});
-  var cityKey=keys[0]||'';
-  var branchKey=keys[1]||'';
-  var bmKey=keys[2]||'';
-  var phoneKey=keys[3]||'';
-  var emailKey=keys[4]||'';
-  var locKey=keys[5]||'';
-  var hoursKey=keys[6]||'';
+  function fk(re,ex){for(var i=0;i<keys.length;i++){var k=String(keys[i]).toLowerCase();if(re.test(k)&&!(ex&&ex.test(k)))return keys[i];}return '';}
+  var cityKey=fk(/city/)||keys[0]||'';
+  var branchKey=fk(/branch|station/,/manager|email/)||keys[1]||'';
+  var distKey=fk(/distr?i?ct/);
+  var bmKey=fk(/manager|\bbm\b/,/email|phone|mobile|contact|number/)||keys[2]||'';
+  var phoneKey=fk(/contact|phone|mobile|number/,/email/)||keys[3]||'';
+  var emailKey=fk(/email/)||keys[4]||'';
+  var locKey=fk(/location|map|gps/)||keys[5]||'';
+  var hoursKey=fk(/hour|time|working/)||(locKey?keys[keys.indexOf(locKey)+1]:'')||'';
   function gv(r,k){return k&&r[k]?String(r[k]).trim():'';}
   function mkRow(ico,val){
     if(!val||val==='-') return '';
@@ -3918,7 +3921,7 @@ function renderPACTab(arr){
   }).slice(0, 9);
   var PAC_RM={'sakaka':['Mohammed Sallam','0555047230','m.sallam@petromin.com'],'dwadmi':['Roummie Palma','0539143824','roummie@petromin.com'],'al kharj':['Roummie Palma','0539143824','roummie@petromin.com'],'khafji':['Sumeet Bhat','0557554409','sumeet.bhat@petromin.com'],'mohyail':['Chirag Dhingra','0539200978','c.dhingra@petromin.com'],'khamis mushait':['Chirag Dhingra','0539200978','c.dhingra@petromin.com'],'yanbu':['Chirag Dhingra','0539200978','c.dhingra@petromin.com'],'tabuk':['Chirag Dhingra','0539200978','c.dhingra@petromin.com'],'taif':['Faizan Shams','0550113348','f.shams@petromin.com']};
   var cards=workshopRows.map(function(r){
-    var branch=gv(r,branchKey), city=gv(r,cityKey);
+    var branch=gv(r,branchKey), city=gv(r,cityKey), dist=gv(r,distKey);
     var bm=gv(r,bmKey), phone=gv(r,phoneKey), email=gv(r,emailKey);
     var loc=gv(r,locKey), hours=gv(r,hoursKey);
     if(!branch) return '';
@@ -3927,6 +3930,7 @@ function renderPACTab(arr){
       +'<div style="background:#c0272d18;border-bottom:2px solid rgba(192,39,45,.5)22;padding:10px 14px;border-radius:10px 10px 0 0">'
       +'<div style="font-size:13px;font-weight:700;color:#c0272d">'+branch+'</div>'
       +(city?'<div style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:12px;color:var(--text);font-weight:600;margin-top:3px;direction:ltr"><span>&#128204;</span><span>'+city+'</span></div>':'')
+      +(dist?'<div style="font-size:12px;color:#808080;margin-top:3px;direction:rtl">&#128205; '+dist+'</div>':'')
       +mkRow('&#128205;',loc)
       +'</div>'
       +'<div style="padding:10px 14px">'
@@ -4448,7 +4452,7 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
   const icon=CLEAN?'':(ICONS[kind]||'📍');
   const _dk=Object.keys(arr[0]||{});
   const _dFind=(...names)=>_dk.find(k=>{const kl=k.toLowerCase();return names.some(n=>kl.includes(n));})||'';
-  const dK={reg:_dFind('region'),city:_dFind('city'),station:_dFind('station name','station'),contact:_dFind('contact'),mobile:_dFind('mobile'),email:_dFind('email'),gps:_dFind('gps','coordinate','location','map'),hours:_dFind('working hour')};
+  const dK={reg:_dFind('region'),city:_dFind('city'),station:_dFind('station name','station'),contact:_dFind('contact'),mobile:_dFind('mobile'),email:_dFind('email'),gps:_dFind('gps','coordinate','location','map'),hours:_dFind('working hour'),addr1:_dFind('address 1','address1','street'),addr2:_dFind('address 2','address2','district','distrct')};
   const _dgv=(r,k)=>k?String(r[k]==null?'':r[k]).trim():'';
   let dieselHours='';
   const CITY_REGION={
@@ -4481,7 +4485,8 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
         mobile:f(x=>/phone|mobile|number/.test(x)&&!x.includes('regional')),
         rm:f(x=>(x.includes('regional manager')||x==='rm')&&!x.includes('email')),
         rmEmail:f(x=>x.includes('email')&&(x.includes('regional')||x==='rm email')),
-        gps:f(x=>/gps|coordinate|location|map/.test(x))
+        gps:f(x=>/gps|coordinate|location|map/.test(x)),
+        dist:f(x=>/^distr?i?ct$/.test(x))
       };
       const gv=(v,i)=>i>-1?String(v[i]==null?'':v[i]).trim():'';
       arr.slice(start).forEach(r=>{
@@ -4490,7 +4495,7 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
         if(!station||/^station/i.test(station))return;
         if(station.includes('@'))return;
         const city=gv(v,fuelIdx.city);
-        items.push({region:normReg(gv(v,fuelIdx.region)||cityToRegion(city)),code:gv(v,fuelIdx.code),name:station,city,am:gv(v,fuelIdx.am),mobile:gv(v,fuelIdx.mobile),rm:gv(v,fuelIdx.rm),rmEmail:gv(v,fuelIdx.rmEmail),coord:gv(v,fuelIdx.gps)});
+        items.push({region:normReg(gv(v,fuelIdx.region)||cityToRegion(city)),code:gv(v,fuelIdx.code),name:station,city,area:gv(v,fuelIdx.dist),am:gv(v,fuelIdx.am),mobile:gv(v,fuelIdx.mobile),rm:gv(v,fuelIdx.rm),rmEmail:gv(v,fuelIdx.rmEmail),coord:gv(v,fuelIdx.gps)});
       });
     }
   }
@@ -4501,7 +4506,9 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
     if(/^(TO|CC)$/i.test(v0) || /^for\s+(request|complaint)$/i.test(v0) || /^for\s+(request|complaint)$/i.test(v[1]||'')) return;
     if((v[1]||'').includes('@')) return;
     if(kind==='ecowash'){
-      const [region,city,station,mgr,coord]=v;
+      const _ek={st:_dFind('station'),city:_dFind('city'),mgr:_dFind('manager','manger'),reg:_dFind('region'),gps:_dFind('location','gps','map','coordinate')};
+      const _p=v;
+      const [region,city,station,mgr,coord]=_ek.st?[_dgv(r,_ek.reg),_dgv(r,_ek.city),_dgv(r,_ek.st),_dgv(r,_ek.mgr),_dgv(r,_ek.gps)]:_p;
       if(!station)return;
       const [code,name]=splitCode(station);
       items.push({region:normReg(cityToRegion(city)||region),code,name,city,mgr,coord});
@@ -4516,7 +4523,7 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
       const city=_dgv(r,dK.city);
       const region=normReg(_dgv(r,dK.reg)||cityToRegion(city));
       if(!dieselHours){const h=_dgv(r,dK.hours);if(h&&!/working hour/i.test(h))dieselHours=h;}
-      items.push({region,code,name,city,contact:_dgv(r,dK.contact),mobile:_dgv(r,dK.mobile),email:_dgv(r,dK.email),coord:_dgv(r,dK.gps),link:_dgv(r,dK.gps)});
+      items.push({region,code,name,city,area:[_dgv(r,dK.addr2),_dgv(r,dK.addr1)].filter(x=>x&&x!=='`').join(' · '),contact:_dgv(r,dK.contact),mobile:_dgv(r,dK.mobile),email:_dgv(r,dK.email),coord:_dgv(r,dK.gps),link:_dgv(r,dK.gps)});
     }
   });
   const groups={};
@@ -4526,7 +4533,7 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
   const mapLink=(coord,link)=>{if(link&&/^https?:/.test(link))return link;if(!coord)return'';if(/^https?:/.test(coord))return coord;return 'https://www.google.com/maps?q='+encodeURIComponent(coord);};
   const fuelHasLoc = kind==='fuel' && items.some(it=>it.coord);
   const cols = kind==='fuel' ? ['City','Site Code','Station','Area Manager','Mobile','Regional Manager'].concat(fuelHasLoc?['Location']:[])
-    : kind==='ecowash' ? ['Code','Station','City','Area Manager','Location']
+    : kind==='ecowash' ? ['City','Code','Station','Area Manager','Location']
     : ['Code','Station','City','Contact','Mobile','Email','Location'];
   const th=h=>CLEAN?'<th style="padding:9px 10px;text-align:center;color:#808080;font-weight:600;border-bottom:1px solid #e6e2de;white-space:nowrap">'+h+'</th>'
     :'<th style="padding:8px 10px;color:'+color+';font-weight:800;border-bottom:2px solid '+color+'44;text-align:center;white-space:nowrap">'+h+'</th>';
@@ -4539,7 +4546,7 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
     const nameCell=CLEAN?'<td style="padding:9px 10px;border-bottom:1px solid #f0edea;text-align:center;font-weight:600;color:var(--text)">'+(it.name||'—')+'</td>':cell(it.name);
     const locC=CLEAN?locCell.replace('padding:7px 10px;','padding:6px 10px;border-bottom:1px solid #f0edea;'):locCell;
     if(kind==='fuel') return cell(it.city)+codeCell+nameCell+cell(it.am)+cell(it.mobile)+cell(it.rm)+(fuelHasLoc?locC:'');
-    if(kind==='ecowash') return codeCell+cell(it.name)+cell(it.city)+cell(it.mgr)+locCell;
+    if(kind==='ecowash') return cell(it.city)+codeCell+cell(it.name)+cell(it.mgr)+locCell;
     const mobileCell='<td style="padding:7px 10px;text-align:center">'+(it.mobile?'<a href="tel:'+String(it.mobile).replace(/\s/g,'')+'" style="color:#2e7d32;font-weight:700;text-decoration:none">📞 '+it.mobile+'</a>':'—')+'</td>';
     const emailCell2='<td style="padding:7px 10px;text-align:center">'+(it.email&&it.email.includes('@')?'<a href="mailto:'+it.email+'" style="background:#f5f5f5;color:#333333;font-weight:700;text-decoration:none;padding:2px 7px;border-radius:5px;font-size:11px">'+it.email+'</a>':'—')+'</td>';
     return codeCell+cell(it.name)+cell(it.city)+cell(it.contact)+mobileCell+emailCell2+locCell;
@@ -4553,7 +4560,7 @@ function renderPetrominLocationListTab(arr, kind, brandColor){
           ? [{name:it.contact,phone:it.mobile,email:(it.email&&it.email.includes('@'))?it.email:''}]
           : [{name:it.am,phone:it.mobile}].concat((it.rm||it.rmEmail)?[{label:'Regional Manager',name:it.rm,email:(it.rmEmail&&it.rmEmail.includes('@'))?it.rmEmail:''}]:[]);
         let _c=it.code,_n=it.name||''; if(_c&&!/^\d+$/.test(_c)&&/^\d{3,}$/.test(_n.trim())){const _t=_c;_c=_n.trim();_n=_t;} if(!_c){const _m=_n.match(/^(.*?)\s*[-–]\s*(\d{3,})\s*$/); if(_m){_c=_m[2];_n=_m[1];}}
-        return brCard({title:(_c?_c+' - ':'')+_n,city:it.city,map:mapLink(it.coord,it.link),hours:kind==='diesel'?dieselHours:'',plabel:kind==='fuel'?'Area Manager':'',people:ppl},color);
+        return brCard({title:(_c?_c+' - ':'')+_n,city:it.city,area:it.area||'',map:mapLink(it.coord,it.link),hours:kind==='diesel'?dieselHours:'',plabel:kind==='fuel'?'Area Manager':'',people:ppl},color);
       }).join(''));
     }).join('');
     return '<div>'+lb+'</div>';
@@ -4729,7 +4736,7 @@ function renderPetrominTireBatteryTab(arr){
   const color='#D98E45';
   const fmtNum=n=>{const s=String(n||'').trim().replace(/\.0$/,'');if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
   const pirelli=[], powertech=[], locations=[];
-  let mode='', tbCols={st:2,sp:3,area:1,link:4,dist:false};
+  let mode='', tbCols={st:2,sp:3,area:1,link:4,dist:false,city:-1};
   arr.forEach(r=>{
     const v=Object.values(r).map(x=>String(x===undefined||x===null?'':x).trim());
     const a=v[0]||'',b=v[1]||'',c=v[2]||'',d=v[3]||'',e=v[4]||'';
@@ -4741,9 +4748,9 @@ function renderPetrominTireBatteryTab(arr){
     }
     if(a==='Region'&&/^(location|city|district)$/i.test(b)){ mode='loc';
       const fi=re=>v.findIndex(x=>re.test(x));
-      const st=fi(/station/i), sp=fi(/supervisor/i), ds=fi(/^district$/i), lc=fi(/^location$/i);
+      const st=fi(/station/i), sp=fi(/supervisor/i), ds=fi(/^distr?i?ct$/i), lc=fi(/^location$/i), ct=fi(/^city$/i);
       let lk=-1; v.forEach((x,i)=>{ if(/location|map|gps/i.test(x)) lk=i; });
-      tbCols={st:st>=0?st:2, sp:sp>=0?sp:3, area:ds>=0?ds:(lc>=0&&lc!==lk?lc:1), link:lk>=0?lk:4, dist:ds>=0};
+      tbCols={st:st>=0?st:2, sp:sp>=0?sp:3, area:ds>=0?ds:(lc>=0&&lc!==lk?lc:1), link:lk>=0?lk:4, dist:ds>=0, city:ct};
       return; }
     if(mode==='pirelli'){
       if(b==='Region'&&(c==='Manager Name'||/email/i.test(d))) return;
@@ -4756,7 +4763,7 @@ function renderPetrominTireBatteryTab(arr){
     }
     if(mode==='loc'){
       const _st=v[tbCols.st]||'';
-      if(_st){ locations.push({region:a,area:v[tbCols.area]||'',station:_st,supervisor:v[tbCols.sp]||'',link:v[tbCols.link]||''}); }
+      if(_st){ locations.push({region:a,city:tbCols.city>=0?(v[tbCols.city]||''):'',area:v[tbCols.area]||'',station:_st,supervisor:v[tbCols.sp]||'',link:v[tbCols.link]||''}); }
       return;
     }
   });
@@ -4789,6 +4796,7 @@ function renderPetrominTireBatteryTab(arr){
   const LOC_ORDER=['West','Central','East','South','North','Other'];
   const locOrder=LOC_ORDER.filter(r=>locGroups[r]);
   const _hasArea=locations.some(l=>String(l.area||'').trim());
+  const _hasCity=locations.some(l=>String(l.city||'').trim());
   const locBody=locOrder.map(reg=>{
     const items=locGroups[reg];
     const rid='tbLoc_'+reg.replace(/[^A-Za-z0-9]/g,'');
@@ -4797,6 +4805,7 @@ function renderPetrominTireBatteryTab(arr){
       const code=_sm?_sm[1]:'', name=_sm?_sm[2]:String(l.station||'').trim();
       const map=(l.link&&/^https?:/.test(l.link))?'<a href="'+l.link+'" target="_blank" style="color:'+color+';font-weight:700;text-decoration:none">🗺️ Location</a>':'—';
       return '<tr style="background:'+(i%2?'#FAF8F5':'#FDFDFC')+'">'
+        +(_hasCity?'<td style="padding:7px 10px;text-align:center">'+(l.city||'')+'</td>':'')
         +'<td style="padding:7px 10px;text-align:center;font-weight:800;color:'+color+'">'+code+'</td>'
         +'<td style="padding:7px 10px;text-align:center">'+name+'</td>'
         +(_hasArea?'<td style="padding:7px 10px;text-align:center;direction:rtl">'+(l.area||'')+'</td>':'')
@@ -4807,7 +4816,7 @@ function renderPetrominTireBatteryTab(arr){
       +'<div onclick="toggleRegion(\''+rid+'\')" style="display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:'+color+'12;border-radius:0 8px 8px 0;border-left:4px solid '+color+';cursor:pointer;margin-bottom:6px">'
       +'<span style="font-size:13px;font-weight:800;color:'+color+'">'+reg+' ('+items.length+')</span>'
       +'<span id="ico_'+rid+'" style="color:'+color+'">▼</span></div>'
-      +'<div id="'+rid+'">'+tbl(_hasArea?['Code','Station',tbCols.dist?'District':'Location','Supervisor','Map']:['Code','Station','Supervisor','Map'],rows)+'</div></div>';
+      +'<div id="'+rid+'">'+tbl((_hasCity?['City']:[]).concat(_hasArea?['Code','Station',tbCols.dist?'District':'Location','Supervisor','Map']:['Code','Station','Supervisor','Map']),rows)+'</div></div>';
   }).join('');
   const locHTML=locations.length?'<div><div style="font-size:14px;font-weight:800;color:'+color+';text-align:center;margin-bottom:12px">📍 Tire Service Locations ('+locations.length+')</div>'+locBody+'</div>':'';
   const _tb=window.TB_STYLE||'tight';
@@ -4908,17 +4917,31 @@ function renderPetrominEmailzTab(arr){
 function renderPetrominComplaintsTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#D98E45';
-  const rows=arr.filter(r=>{
-    const v=Object.values(r);
-    return v[0] && v[1];
-  });
-  return '<div class="ref-cards-grid">'+rows.map(r=>{
-    const v=Object.values(r).map(x=>String(x||'').trim());
-    return '<div class="ref-card" style="padding:10px 14px">'
-      +'<div style="font-size:11px;color:var(--text);margin-bottom:6px;line-height:1.6">'+v[0]+'</div>'
-      +'<div style="font-size:11px;color:#333333;direction:rtl;text-align:right;line-height:1.8;border-top:1px dashed #eee;padding-top:6px">'+v[1]+'</div>'
-      +'</div>';
-  }).join('')+'</div>';
+  const esc=t=>String(t||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const rows=arr.map(r=>Object.values(r).map(x=>String(x==null?'':x).trim())).filter(v=>v[0]&&v[1]&&!(/^e?i?nglish$/i.test(v[0])&&/^arabic$/i.test(v[1])));
+  const CATS=[
+    {k:'oil',t:'🛢️ Oil Leak · تسرب زيت',re:/oil|leak|filter|drain|plug/i},
+    {k:'ac',t:'❄️ Air Conditioner · المكيف',re:/air ?condition|\bac\b|compressor|cooling|gas refill/i},
+    {k:'bat',t:'🔋 Battery · البطارية',re:/batter/i},
+    {k:'pay',t:'💳 Payment & Discounts · الدفع والخصومات',re:/amount|withdrawn|charged|discount|payment|price|invoice|refund/i},
+    {k:'staff',t:'👤 Staff & Management · الموظفين والإدارة',re:/administration|responsible|manager|behavio|rude|attitude/i},
+    {k:'other',t:'📋 Other · أخرى',re:/.*/}
+  ];
+  const groups={};
+  rows.forEach(v=>{const c=CATS.find(c=>c.re.test(v[0]));(groups[c.k]=groups[c.k]||[]).push(v);});
+  const th='padding:8px 12px;color:#8A6A4A;font-weight:700;border-bottom:1px solid #EFE6DC;background:#FAF6F1';
+  return CATS.filter(c=>groups[c.k]).map(c=>{
+    const id='pcw_'+c.k;
+    const body=groups[c.k].map((v,i)=>'<tr style="background:'+(i%2?'#FBF9F6':'#FFFFFF')+'">'
+      +'<td style="padding:9px 12px;font-size:12px;line-height:1.6;vertical-align:top;border-bottom:1px solid #F3EEE8">'+esc(v[0])+' <button type="button" class="bd-cp" data-cp="'+esc(v[0])+'">copy</button></td>'
+      +'<td style="padding:9px 12px;font-size:12px;line-height:1.8;vertical-align:top;direction:rtl;text-align:right;border-bottom:1px solid #F3EEE8">'+esc(v[1])+'</td></tr>').join('');
+    return '<div style="margin-bottom:12px">'
+      +'<div onclick="toggleRegion(\''+id+'\')" style="display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:'+color+'12;border-left:4px solid '+color+';border-radius:0 8px 8px 0;cursor:pointer;user-select:none;margin-bottom:6px">'
+      +'<span style="font-size:13px;font-weight:700;color:#8A6A4A">'+c.t+' <span style="font-size:11px;color:#aaa;font-weight:600">('+groups[c.k].length+')</span></span>'
+      +'<span id="ico_'+id+'" style="color:'+color+'">▼</span></div>'
+      +'<div id="'+id+'"><div style="overflow-x:auto;border:1px solid #EFEDE9;border-radius:8px"><table style="width:100%;border-collapse:collapse;table-layout:fixed;word-break:break-word">'
+      +'<thead><tr><th style="'+th+';text-align:left">English</th><th style="'+th+';text-align:right;direction:rtl">العربي</th></tr></thead><tbody>'+body+'</tbody></table></div></div></div>';
+  }).join('');
 }
 function renderNosFAQTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
@@ -6134,7 +6157,7 @@ function showRefBrandPage(brand){
     +'<div class="ref-sub-tabs" id="refSubTabs_'+brand+'" style="justify-content:center;border-bottom:2px solid '+tabActive+'55">'
     +tabs.map((t,i)=>{
       const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📅 Appointment & Location SMS','Appointment & Location SMS':'📅 Appointment & Location SMS','SMS & Location':'📅 Appointment & Location SMS','BAIC Location':'📅 Appointment & Location SMS','Showrooms':'Showroom','PMS':'PMS - Spare Parts','Location SMS':'SMS Location','Emails':'📧 Emails','EV Maintenance Branches':'🔧 Maintenance Branches','EV Charging Stations':'⚡ Charging Stations','FAQ':'❓ FAQ','SMS':'📨 SMS','Sales Prices':'🏷️ Sales Prices'};
-      const BRAND_TAB_LABELS={bodyshop:{'Location':'SMS Location','Location ':'SMS Location'},foton:{'Location SMS':'SMS Location'},electromin:{'Emails':'Complaints','SMS':'SMS Location'},baic:{'Service':'Service & Spare Parts'},petromin:{'Autocare':'AutoCare','DIESEL':'Diesel Express','DIESEL Workshop':'Diesel Workshop','Petromin Express Stations':'Express Stations','Tire&Battery':'Tire & Battery','Petromin Tristar':'Tristar','Complaints Emails':'Complaints','PE-Emailz':'Emails'}};
+      const BRAND_TAB_LABELS={bodyshop:{'Location':'SMS Location','Location ':'SMS Location'},foton:{'Location SMS':'SMS Location'},electromin:{'SMS':'SMS Location'},baic:{'Service':'Service & Spare Parts'},petromin:{'Autocare':'AutoCare','DIESEL':'Diesel Express','DIESEL Workshop':'Diesel Workshop','Petromin Express Stations':'Express Stations','Tire&Battery':'Tire & Battery','Petromin Tristar':'Tristar','Complaints Emails':'Complaint Wording','PE-Emailz':'Emails'}};
       const label=(BRAND_TAB_LABELS[brand]&&(BRAND_TAB_LABELS[brand][t]||BRAND_TAB_LABELS[brand][String(t).trim()]))||TAB_LABELS[t]||t;
       return '<button class="ref-sub-tab'+(i===0?' active':'')+'" '
         +'style="'+(i===0?'background:'+tabActive+'1f;color:'+tabActive:'color:'+tabActive)+'" '
@@ -7134,11 +7157,11 @@ function renderAnnouncements(){
   const dateStr = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   const _wd=new Date(); const _wnDate=(_wd.toLocaleDateString('en-US',{weekday:'short'})+' · '+_wd.getDate()+' '+_wd.toLocaleDateString('en-US',{month:'short'})+' '+_wd.getFullYear()).toUpperCase();
   ANN_SEQ=0;
-  let html = '<div style="margin:0 auto;padding:8px 0">'
-    +'<div style="display:flex;align-items:center;gap:14px;padding:6px 20px 18px">'
+  let html = '<div style="margin:-6px auto 0;padding:0">'
+    +'<div style="display:flex;align-items:center;gap:14px;padding:0 20px 18px">'
     +'<div style="flex:1;height:1px;background:#E8E1D8"></div>'
-    +'<div style="text-align:center"><div style="font-size:16px;font-weight:700;color:#333333">What\'s New</div>'
-    +'<div style="font-size:10.5px;color:#A8A29A;letter-spacing:.14em;margin-top:2px">'+_wnDate+'</div></div>'
+    +'<div style="text-align:center"><div style="font-size:21px;font-weight:700;color:#333333">What\'s New</div>'
+    +'<div style="font-size:12px;color:#A8A29A;letter-spacing:.14em;margin-top:3px">'+_wnDate+'</div></div>'
     +'<div style="flex:1;height:1px;background:#E8E1D8"></div>'
     +'</div>';
   html += '<div style="margin:0 auto;direction:rtl"><div style="border-right:2px solid #EFEDE9;padding-right:22px">';
@@ -7672,9 +7695,9 @@ async function renderRef(){
     const formulaBar=(val,two,c)=>{
       const names=two?['Ticket Type','Description']:['Ticket Type','Subject','Description','Empty Box'];
       const plus='<span style="color:#c0272d88;font-weight:800;margin:0 8px">+</span>';
-      return'<div style="background:#FDFBFB;border:1px dashed #F3E4E4;border-radius:10px;padding:12px 14px;direction:ltr;text-align:center;margin:8px 12px">'
+      return'<div style="background:#FDFBFB;border:1px dashed #F3E4E4;border-radius:10px;padding:8px 12px;direction:ltr;text-align:center;margin:6px 12px">'
         +'<div style="display:inline-flex;flex-wrap:wrap;justify-content:center;align-items:center;row-gap:4px;font-size:12px;font-weight:700;color:#a85a5a;'+({outline:'border:1px solid #EBD9D5;border-radius:8px;padding:4px 12px',under:'border-bottom:1px solid #E3CCC7;padding:2px 6px 5px',dashed:'border:1px dashed #E3CCC7;border-radius:8px;padding:4px 12px',shade:'background:#F6EEEB;border-radius:8px;padding:5px 12px'}[window.TT_FBAR||'outline'])+'">'+names.map(n=>'<span>'+n+'</span>').join(plus)+'</div>'
-        +'<div style="margin-top:7px"><span style="display:inline-block;font-size:12px;font-weight:800;color:'+c.t+';background:'+c.b+';border-radius:6px;padding:3px 14px">'+val+'</span></div>'
+        +'<div style="margin-top:5px"><span style="display:inline-block;font-size:12px;font-weight:800;color:'+c.t+';background:'+c.b+';border-radius:6px;padding:2px 14px">'+val+'</span></div>'
         +'</div>';
     };
     const TT_LINE={'📁':'M5 4h4l3 3h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2','🏷️':'M7.5 7.5h.01M3 6v5.2a2 2 0 0 0 .6 1.4l7.7 7.7a2.4 2.4 0 0 0 3.4 0l5.6-5.6a2.4 2.4 0 0 0 0-3.4L12.6 3.6A2 2 0 0 0 11.2 3H6a3 3 0 0 0-3 3','✏️':'M4 20h4L18.5 9.5a2.8 2.8 0 1 0-4-4L4 16v4M13.5 6.5l4 4','💡':'M3 12h1m8-9v1m8 8h1M5.6 5.6l.7.7m12.1-.7l-.7.7M9 16a5 5 0 1 1 6 0a3.5 3.5 0 0 0-1 3a2 2 0 0 1-4 0a3.5 3.5 0 0 0-1-3M9.7 17h4.6','🔻':'M6 9l6 6l6-6'};
@@ -7684,7 +7707,7 @@ async function renderRef(){
     const TT_TAGS={orig:['#F7F5F2','#333333',''],none:['transparent','#333333',''],grey:['#F7F5F2','#333333',''],beige:['#F4EEE6','#7A5E44','1px solid #EADFD2'],rose:['#FBF1F1','#A85A5A','1px solid #F1DADA'],cream:['#FBF7EE','#8A7246','1px solid #EFE6D2']};
     window.TT_TXT=window.TT_TXT||'#333333';
     const ttTag=()=>{const t=(TT_TAGS[window.TT_TAG||'none']||TT_TAGS.orig).slice(); if(window.TT_TXT)t[1]=window.TT_TXT; return t;};
-    const fieldRow=(icon,label,content,i)=>'<div style="display:grid;grid-template-columns:118px 1fr;gap:10px;padding:'+(window.TT_ROWPAD||7)+'px 16px;border-top:1px solid #F4F0EC;align-items:center;'+'background:#FDFDFC'+'"><div style="font-size:11px;font-weight:800;color:#9aa0a8;letter-spacing:.3px">'+ttIcon(icon)+label+'</div><div class="tt-val" style="line-height:1.45">'+content+'</div></div>';
+    const fieldRow=(icon,label,content,i)=>'<div style="display:grid;grid-template-columns:118px 1fr;gap:10px;padding:'+(window.TT_ROWPAD||5)+'px 16px;border-top:1px solid #F4F0EC;align-items:center;'+'background:#FDFDFC'+'"><div style="font-size:11px;font-weight:800;color:#9aa0a8;letter-spacing:.3px">'+ttIcon(icon)+label+'</div><div class="tt-val" style="line-height:1.45">'+content+'</div></div>';
     const subjItem=(it,isCMain,subTags,twoField,gColor)=>{
       const deptTags = it._deptTags || (it.dept?it.dept.split(/\n/).flatMap(d=>d.split(' - ')).map(s=>s.trim()).filter(Boolean):[]);
       const catTags  = it._catTags  || (it.cat?it.cat.split(/\n/).flatMap(c=>c.split(' - ')).map(s=>s.trim()).filter(Boolean):[]);
@@ -7703,7 +7726,7 @@ async function renderRef(){
       if(notesAR) rows+=fieldRow('💡','When to Use','<span style="display:inline-block;padding:3px 10px;margin:2px;font-size:12px;font-weight:400;font-family:var(--tt-font,inherit);color:'+(window.TT_TXT||'#808080')+';direction:rtl">'+notesAR+'</span>',i++);
       if(isCMain&&subTags&&subTags.length) rows+=fieldRow('🔻','Complaint Type','<span>'+subTags.map(s=>'<span style="display:inline-block;background:#F6EEEB;color:#c0272d;border:none;font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;margin:2px">'+s+'</span>').join('')+'</span>',i++);
       return'<div class="ref-subj-item" style="padding:0;border:0;border-radius:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05);margin-bottom:0;flex:1;display:flex;flex-direction:column;background:#FDFDFC">'
-        +'<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:#FAF8F5;border-bottom:1px solid '+gColor+'33">'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 16px;background:#FAF8F5;border-bottom:1px solid '+gColor+'33">'
         +'<span class="ref-subj-subject" style="margin:0;font-size:14px;font-weight:800;color:'+gColor+'">'+it.subject+'</span>'
         +(it.status?'<span class="ref-subj-badge" style="background:'+stBg+';color:'+stColor+';font-size:11px;font-weight:700;padding:3px 10px;border-radius:14px">'+it.status+'</span>':'')
         +'</div>'
