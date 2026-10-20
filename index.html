@@ -207,7 +207,7 @@ select#agSel{font-size:14px;font-weight:600;color:var(--accent);min-width:180px}
 @media(max-width:1300px){.ref-cards-grid:has(> .sms-card){grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media(max-width:900px){.ref-cards-grid:has(> .sms-card){grid-template-columns:1fr!important}}
 .br-hidden{display:none!important}
-.br-md{display:grid;grid-template-columns:320px minmax(0,1fr);gap:14px;align-items:start;margin-bottom:16px}
+.br-md{display:grid;grid-template-columns:320px minmax(0,1fr);gap:14px;align-items:start;margin-bottom:16px}.br-right{min-width:0;position:sticky;top:10px}.rc-over{margin-left:334px!important}@media(max-width:900px){.rc-over{margin-left:0!important}}.br-right>.br-detail{position:static}.br-right>.rc-box,.br-right>.rc-wrap{margin-bottom:12px!important}
 .br-list{scrollbar-width:thin;scrollbar-color:var(--brc,#c0272d) transparent;text-align:left;background:#FDFDFC;border:0.5px solid #eee;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:10px;max-height:72vh;overflow-y:auto;position:sticky;top:10px}
 .br-search{width:100%;box-sizing:border-box;padding:8px 12px;border:1px solid #e5e5e5;border-radius:10px;font-size:13px;background:#fff;margin-bottom:6px;outline:none}
 .br-search:focus{border-color:var(--brc,#c0272d)}
@@ -4806,9 +4806,14 @@ function renderPetrominTireBatteryTab(arr){
     const pr=pirelli.map(p=>{const m=String(p.region).match(/^([^(]+)\(([^)]*)\)/);const ar2=!m&&String(p.region).match(/^(.*?[A-Za-z][^\u0600-\u06FF]*?)\s*[-–]\s*([\u0600-\u06FF][\u0600-\u06FF\s]*)$/);
       return {title:m?m[1].replace(/[\u0600-\u06FF\s\-–]+$/,'').trim():(ar2?ar2[1].trim():p.region), sub:m?m[2].trim():(ar2?ar2[2].trim():''), mid:(p.manager?'<div>'+RC_USER+p.manager+'</div>':'')+(p.phone?'<div>'+RC_PHONE+p.phone+'</div>':''), emails:_ems(p.email)};});
     const pw=powertech.map(p=>({title:'Powertech Battery', sub:p.area||'', mid:(p.employee?'<div>'+RC_USER+p.employee+'</div>':'')+(p.mobile?'<div>'+RC_PHONE+p.mobile+'</div>':''), emails:_ems(p.email)}));
-    const cols=_tb==='tight'?'minmax(0,260px) minmax(0,190px) minmax(0,1fr)':null;
-    const rowsAll=[].concat(pr.length?[{head:'Pirelli Tire — Sales Supervisors'}]:[],pr,pw);
-    return '<div style="margin-bottom:18px">'+rcRows(color,rowsAll,cols)+'</div>'+locHTML;
+    const cols='minmax(0,1fr) minmax(0,1fr) minmax(0,1.3fr)';
+    const hd='<div style="display:grid;grid-template-columns:'+cols+';gap:14px;padding:8px 16px;border-bottom:1px solid #F2EEE8;font-size:11px;font-weight:800;color:#808080;letter-spacing:.04em;text-align:left;direction:ltr"><div>Region</div><div>Manager Name &amp; Phone</div><div>Email</div></div>';
+    const body=rcRows(color,[].concat(pr,pw),cols).replace('<div class="rc-box" style="','<div class="rc-box" style="border-top:0!important;border-radius:0 0 10px 10px!important;margin-bottom:0!important;').replace(/padding:10px 16px;/g,'padding:0 16px;min-height:62px;');
+    const id='tbPirelli';
+    return '<div style="margin-bottom:18px">'
+      +'<div onclick="toggleRegion(\''+id+'\')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:9px 16px;background:color-mix(in srgb,var(--brand,'+color+') 6%,#FFFFFF);border:1px solid color-mix(in srgb,var(--brand,'+color+') 30%,#EFEAE3);border-radius:10px 10px 0 0;font-size:13px;font-weight:800;color:'+color+';direction:ltr">Pirelli Tire — Sales Supervisors<span id="ico_'+id+'" style="font-size:11px">▼</span></div>'
+      +'<div id="'+id+'" style="border:1px solid color-mix(in srgb,var(--brand,'+color+') 30%,#EFEAE3);border-top:0;border-radius:0 0 10px 10px;background:#FFFFFF">'+hd+body+'</div>'
+      +'</div>'+locHTML;
   }
   return pirelliHTML+powertechHTML+locHTML || '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
 }
@@ -6093,7 +6098,7 @@ function showRefBrandPage(brand){
     +'<div class="ref-sub-tabs" id="refSubTabs_'+brand+'" style="justify-content:center;border-bottom:2px solid '+tabActive+'55">'
     +tabs.map((t,i)=>{
       const TAB_LABELS={'service':'Service','3S':'Service','Nissan PAC':'PAC','PAC':'PAC','Nissan APP 25-26':'Nissan App 25-26','Appointment Script':'Appointment Script','Body Shop & Paint':'Body Shop','Instruction':'📋 Instruction','Location ':'📍 Location','Offers':'🎁 Offers','SMS Appointment':'📅 Appointment & Location SMS','Appointment & Location SMS':'📅 Appointment & Location SMS','SMS & Location':'📅 Appointment & Location SMS','BAIC Location':'📅 Appointment & Location SMS','Showrooms':'Showroom','PMS':'PMS - Spare Parts','Location SMS':'SMS Location','Emails':'📧 Emails','EV Maintenance Branches':'🔧 Maintenance Branches','EV Charging Stations':'⚡ Charging Stations','FAQ':'❓ FAQ','SMS':'📨 SMS','Sales Prices':'🏷️ Sales Prices'};
-      const BRAND_TAB_LABELS={bodyshop:{'Location':'SMS Location','Location ':'SMS Location'},foton:{'Location SMS':'SMS Location'},electromin:{'Emails':'Complaints','SMS':'SMS Location'},baic:{'Service':'Service & Spare Parts'},petromin:{'Autocare':'AutoCare','DIESEL':'DIESEL Express','DIESEL Workshop':'DIESEL Workshop','Petromin Express Stations':'Express Stations','Petromin Tristar':'Tristar','Complaints Emails':'PE Complaints','PE-Emailz':'PE Emails'}};
+      const BRAND_TAB_LABELS={bodyshop:{'Location':'SMS Location','Location ':'SMS Location'},foton:{'Location SMS':'SMS Location'},electromin:{'Emails':'Complaints','SMS':'SMS Location'},baic:{'Service':'Service & Spare Parts'},petromin:{'Autocare':'AutoCare','DIESEL':'Diesel Express','DIESEL Workshop':'Diesel Workshop','Petromin Express Stations':'Express Stations','Tire&Battery':'Tire & Battery','Petromin Tristar':'Tristar','Complaints Emails':'Complaints','PE-Emailz':'Emails'}};
       const label=(BRAND_TAB_LABELS[brand]&&(BRAND_TAB_LABELS[brand][t]||BRAND_TAB_LABELS[brand][String(t).trim()]))||TAB_LABELS[t]||t;
       return '<button class="ref-sub-tab'+(i===0?' active':'')+'" '
         +'style="'+(i===0?'background:'+tabActive+'1f;color:'+tabActive:'color:'+tabActive)+'" '
@@ -9071,7 +9076,7 @@ window.addEventListener('DOMContentLoaded', () => {
           if(!cur||cur.row.style.display==='none'){var nx=entries.find(function(x){return x.row.style.display!=='none';});if(nx)select(nx);}}}
       search.addEventListener('input',refresh);
       var sec=gr.parent.closest('[id^="page"]')||gr.parent;
-      md.appendChild(list);md.appendChild(detail);
+      md.appendChild(list);var right=document.createElement('div');right.className='br-right';right.appendChild(detail);md.appendChild(right);
       gr.parent.insertBefore(md,gr.items[0].block);
       gr.items.forEach(function(it){if(it.block&&it.block.parentNode)it.block.parentNode.removeChild(it.block);});
       [].slice.call(gr.parent.querySelectorAll('input[placeholder*="Search by branch"]')).forEach(function(inp){if(!inp.classList.contains('br-search')&&inp.parentElement)inp.parentElement.classList.add('br-hidden');});
@@ -9410,6 +9415,8 @@ window.addEventListener('DOMContentLoaded', () => {
   }
   function run(){
     try{ if(window.__brScan) window.__brScan(); }catch(e){}
+    try{ if(window.RC_POS==='over'){ [].forEach.call(document.querySelectorAll('#refContent .br-md'),function(md){ var p=md.parentElement; [].slice.call(p.children).forEach(function(c){ if(c!==md&&(c.classList.contains('rc-box')||c.classList.contains('rc-wrap'))&&(c.compareDocumentPosition(md)&Node.DOCUMENT_POSITION_FOLLOWING)) c.classList.add('rc-over'); }); }); } }catch(e){}
+    try{ if((window.RC_POS||'detail')==='detail'){ [].forEach.call(document.querySelectorAll('#refContent .br-md'),function(md){ var r=md.querySelector('.br-right'); if(!r) return; var lvl=md, top=md.closest('[id^="refTab_"]')||md.parentElement; while(lvl&&lvl!==top){ var p=lvl.parentElement; if(!p) break; [].slice.call(p.children).forEach(function(c){ if(c===lvl||c.contains(md)) return; if((c.classList.contains('rc-box')||c.classList.contains('rc-wrap')) && (c.compareDocumentPosition(md)&Node.DOCUMENT_POSITION_FOLLOWING)) r.insertBefore(c,r.querySelector('.br-detail')); }); lvl=p; } }); } }catch(e){}
     document.querySelectorAll('#refContent .ref-brand-section').forEach(function(sec){
       var c=sec.getAttribute('data-brand-color'); try{convertEmailCards(sec,c||'#8A6A4A');}catch(e){} window.__DEEP_TEXT=(String(c).toUpperCase()==='#D59352'); if(c){ var _T=h2rgb(c); window.__TT=window.__DEEP_TEXT?h2rgb('#C48A55'):_T; } if(c) { recolour(sec,c); sec.style.setProperty('--tt',hex(window.__TT)); [].forEach.call(sec.querySelectorAll('tbody td:first-child'),function(td){ td.classList.toggle('td-code',/^\s*\d{2,6}\s*$/.test(td.textContent)); }); var bk=sec.previousElementSibling; if(bk) recolour(bk,c); }
       dedupeHeads(sec); try{unifyShades(sec,c);}catch(e){}
