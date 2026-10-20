@@ -3523,15 +3523,15 @@ function renderNissanBranchTab(arr, sheetName, brand){
   var govAreaSection = '';
   if(brand === 'stellantis' && (sh.includes('showroom') || sh === 'showroom')){
     govAreaSection =
-      '<div style="margin-top:10px;margin-bottom:6px">'
-      +'<a href="https://docs.google.com/spreadsheets/d/1c3n-4Lek4LgmBgV1LooFCynDtAIug5JbrBqR5PQViR0/edit?gid=0#gid=0" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#78909c;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:500;text-decoration:none;margin:4px;box-shadow:0 1px 4px rgba(120,144,156,.2)">📄 Sales Price List</a>'
+      '<div style="margin:0 0 12px">'
+      +secBar(color,'💰','Price List','أسعار السيارات','↗','href="https://docs.google.com/spreadsheets/d/1c3n-4Lek4LgmBgV1LooFCynDtAIug5JbrBqR5PQViR0/edit?gid=0#gid=0" target="_blank"')
       +'</div>';
   }
   if(brand === 'nissan' && (sh.includes('showroom') || sh === 'showroom')){
     govAreaSection =
-      '<div style="margin-top:10px;margin-bottom:6px">'
-      +'<a href="https://petromincrm-my.sharepoint.com/:x:/r/personal/amal_alghamdi_petromin_com/Documents/LMT/LMT%20(7).xlsx?d=w4f5bfe89cf904a458af70cbf2d86ac0b&csf=1&web=1&e=l1ekTK" target="_blank" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#D98E45;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;margin:4px;box-shadow:0 1px 4px rgba(245,124,0,.2);text-decoration:none">📊 LMT</a>'
-      +'<button onclick="toggleRegion(\'govSalesSection\')" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:#4db6ac;color:#fff;border:none;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;margin:4px;box-shadow:0 1px 4px rgba(77,182,172,.2)">🏢 Government Sales <span id="ico_govSalesSection">▼</span></button>'
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin:0 0 12px">'
+      +secBar(color,'💰','Price List · LMT','أسعار السيارات','↗','href="https://petromincrm-my.sharepoint.com/:x:/r/personal/amal_alghamdi_petromin_com/Documents/LMT/LMT%20(7).xlsx?d=w4f5bfe89cf904a458af70cbf2d86ac0b&csf=1&web=1&e=l1ekTK" target="_blank"')
+      +secBar(color,'🏛','Government Sales','مبيعات الجهات الحكومية','<span id="ico_govSalesSection">▾</span>','onclick="toggleRegion(\'govSalesSection\')" role="button"')
       +'</div>'
       +'<div id="govSalesSection" style="display:none;margin-bottom:12px">'
       +'<div style="overflow-x:auto;border-radius:10px;border:1px solid #e0f0ee;background:#f5fafa">'
@@ -3566,7 +3566,7 @@ function toggleRegion(id){
   if(!el)return;
   const open=el.style.display!=='none';
   el.style.display=open?'none':'block';
-  if(ico)ico.textContent=open?'▶':'▼';
+  if(ico)ico.textContent=(id==='govSalesSection')?(open?'▾':'▴'):(open?'▶':'▼');
 }
 function showPetrominInstrTab(idx){
   document.querySelectorAll('.piTab').forEach((t,i)=>{
@@ -4134,11 +4134,8 @@ function renderBaicServiceTab(arr, apptArr){
     +'</div>';
   const hasSpare=emTo.spare||emCc.spare;
   const emailHtml='<div style="margin-bottom:16px">'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">'
-    +emCard('📧','Service Request',emTo.request,emCc.request)
-    +emCard('📧','Service Complaint',emTo.complaint,emCc.complaint)
-    +'</div>'
-    +(hasSpare?emCard('🔧','Spare Parts (Request - Complaint)',emTo.spare,emCc.spare):'')
+    +emGroupBox(color,'SERVICE',[{title:'Request',to:rcChips(emTo.request,color),cc:rcChips(emCc.request,color)},{title:'Complaint',to:rcChips(emTo.complaint,color),cc:rcChips(emCc.complaint,color)}])
+    +(hasSpare?emGroupBox(color,'SPARE PARTS',[{title:'Request - Complaint',to:rcChips(emTo.spare,color),cc:rcChips(emCc.spare,color)}]):'')
     +'</div>';
   const REGION_ALIAS={Eastern:'East',Western:'West',Northern:'North',Southern:'South',Center:'Central',Centeral:'Central'};
   const normReg=r=>REGION_ALIAS[r]||r;
@@ -5227,6 +5224,22 @@ function rcBox(color, parts){
   var out=''; for(var i=0;i<parts.length;i+=2) out+=one(parts.slice(i,i+2));
   return '<div class="rc-wrap">'+out+'</div>';
 }
+/* Standard Request | Complaint box with optional small caption (SERVICE / SPARE PARTS) and extra row */
+function emGroupBox(color,cap,parts,extra){
+  var had=Object.prototype.hasOwnProperty.call(window,'RC_STYLE'), prev=window.RC_STYLE, h='';
+  window.RC_STYLE='box'; try{ h=rcBox(color,parts); }finally{ if(had) window.RC_STYLE=prev; else delete window.RC_STYLE; }
+  var capDiv=cap?'<div style="flex-basis:100%;text-align:center;font-size:10.5px;font-weight:800;color:#A8A29A;letter-spacing:.08em;padding-top:7px;margin-bottom:-5px">'+cap+'</div>':'';
+  if(!h) return extra?'<div class="rc-box" style="display:flex;flex-wrap:wrap;background:#FFFFFF;border:1px solid color-mix(in srgb,var(--brand,'+color+') 30%,#EFEAE3);border-radius:10px;margin-bottom:12px">'+capDiv+extra+'</div>':'';
+  if(!capDiv&&!extra) return h;
+  var i=h.indexOf('">')+2, j=h.lastIndexOf('</div>');
+  return h.slice(0,i)+capDiv+h.slice(i,j)+(extra||'')+h.slice(j);
+}
+/* Section-style link / toggle bar (price list, government sales) */
+function secBar(color,icon,title,sub,arrow,attrs){
+  return '<a '+attrs+' style="display:flex;align-items:center;gap:10px;text-align:left;direction:ltr;background:color-mix(in srgb,'+color+' 6%,#FFFFFF);border-left:4px solid '+color+';border-radius:0 8px 8px 0;padding:9px 14px;text-decoration:none;cursor:pointer;color:#333333">'
+    +'<span style="font-size:15px">'+icon+'</span><span style="flex:1;min-width:0"><span style="display:block;font-size:13px;font-weight:700;color:'+color+'">'+title+'</span>'
+    +'<span style="display:block;font-size:11px;color:#808080;margin-top:1px" dir="rtl">'+sub+'</span></span><span style="font-size:13px;color:'+color+';opacity:.8">'+arrow+'</span></a>';
+}
 /* Row list (same look as PE Emails): title + subtitle on the left, people in the middle, e-mails on the right */
 function rcLab(t){return '<span style="font-size:10.5px;font-weight:800;color:#A8A29A;letter-spacing:.08em;margin-right:4px;min-width:22px;display:inline-block">'+t+'</span>';}
 function rcRows(color, rows, cols){
@@ -5365,7 +5378,7 @@ function renderFotonShowroomTab(arr){
     ? fotonRegionBlock('Showrooms', color, branches.length, hoursDisp, 'rgn_foton_showroom',
         branches.map(b=>fotonBranchCard(b,color)).join(''), true)
     : '';
-  return '<div style="text-align:center">'+fotonEmailHdr(emailBlocks,color)+regionHTML+'</div>';
+  return '<div style="text-align:center">'+emGroupBox(color,'',emailBlocks.map(b=>({title:/complaint/i.test(b.label)?'Complaint':'Request',to:rcChips(b.to,color),cc:rcChips(b.cc,color)})))+regionHTML+'</div>';
 }
 function renderFotonPMSTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No branch data</div>';
@@ -5449,15 +5462,7 @@ function renderFotonPMSTab(arr){
   }).join('');
   // Emails: two stacked boxes (Service / Spare Parts), each Request | Complaint like the other tabs;
   // the spare-parts contact sits inside the Spare Parts box.
-  const _emBox=(cap,blocks,extra)=>{
-    const parts=blocks.map(b=>({title:/complaint/i.test(b.label)?'Complaint':'Request',to:rcChips(b.to,color),cc:rcChips(b.cc,color)}));
-    const had=Object.prototype.hasOwnProperty.call(window,'RC_STYLE'), prev=window.RC_STYLE;
-    window.RC_STYLE='box'; let h=''; try{ h=rcBox(color,parts); }finally{ if(had) window.RC_STYLE=prev; else delete window.RC_STYLE; }
-    const capDiv='<div style="flex-basis:100%;text-align:center;font-size:10.5px;font-weight:800;color:#A8A29A;letter-spacing:.08em;padding-top:8px">'+cap+'</div>';
-    if(!h) return extra?'<div class="rc-box" style="display:flex;flex-wrap:wrap;background:#FFFFFF;border:1px solid color-mix(in srgb,var(--brand,'+color+') 30%,#EFEAE3);border-radius:10px;margin-bottom:12px">'+capDiv+extra+'</div>':'';
-    const i=h.indexOf('">')+2, j=h.lastIndexOf('</div>');
-    return h.slice(0,i)+capDiv+h.slice(i,j)+(extra||'')+h.slice(j);
-  };
+  const _emBox=(cap,blocks,extra)=>emGroupBox(color,cap,blocks.map(b=>({title:/complaint/i.test(b.label)?'Complaint':'Request',to:rcChips(b.to,color),cc:rcChips(b.cc,color)})),extra);
   const _spareLine=spare.length?'<div style="flex-basis:100%;border-top:1px solid #F2EEE8;padding:8px 16px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12.5px;color:#333333">'
     +spare.map(c=>'<div style="display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap"><span style="font-size:10.5px;font-weight:800;color:#A8A29A;letter-spacing:.08em">🔧 CONTACT</span><span style="font-weight:600">'+(c.name||'')+'</span>'
       +(c.mobile?'<a href="tel:'+c.mobile+'" style="color:#333333;text-decoration:none">📞 '+c.mobile+'</a>':'')
