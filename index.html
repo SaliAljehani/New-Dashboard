@@ -2705,6 +2705,38 @@ let REF_CACHE = {};
 let REF_ACTIVE_TABS = {nissan:0, stellantis:0, bodyshop:0, baic:0, baicRecall:0};
 
 var __INFLIGHT = {};
+// Read reference tabs straight from Google (CSV export by tab id) — much faster than the Apps Script proxy.
+// Same row format as the proxy (row 1 = headers, empty rows skipped). The proxy stays as the fallback.
+var DIRECT_GIDS = {"1MRUWG3v9Neac-UselMf_HzlfiLtX64a9iJsIUV5FmRU": {"Announcement": 536403637, "Agent": 1123791969, "Agent Performance": 810269545, "Attendance": 1979596727, "Contact Volume": 903692081, "Weekly Schedule": 920710775, "Hide Schedule": 1153730417, "Vacation 2026": 644438759, "Time-Off": 1180491486, "Active Sessions": 660855050, "Subject": 124854438, "Case Handling": 136368249, "Call Data ": 95246895, "Reference ": 910779499, "Vacation 27": 92813193}, "1lXDeN1iUosG_JSADgdWhnkT5J1t3hhwXoSJdbmb4B88": {"Instruction": 501982434, "Showroom": 0, "Service": 892972528, "Spare Parts ": 1600462399, "PAC": 1439489903, "SMS & Location": 1108293933, "Nissan App 25-26": 2146369676}, "104CXGHd1raokgGijhvHgt6AI2gdsqzANBH74Ehm01dM": {"Instruction": 916076482, "Showroom ": 545350259, "Service": 0, "Spare Parts ": 748141236, "Showroom Sales Team": 579585715, "Appointment & Location SMS": 558313231}, "1_Z8Ry4-Y7kNFYnhXNvn7QP8jt1S_n9JHdVC2zT6R6WE": {"Body Shop & Paint": 0, "Location ": 988890877}, "1FQaNEkC-gKFIJLT5hBE9qzBL7pXf_m5Aot35h622hR4": {"Instruction": 208840535, "Showroom": 67999882, "Service": 0, "BAIC Location": 260555768}, "11M28wIA4Ee84ohrIqzXtobK7X-QsrruoL4MwjoGz-6k": {"Warranty": 5429095, "Instruction": 1559546758, "Autocare": 0, "Petromin Express Stations": 568317198, "Tire&Battery": 948382035, "Eco Wash": 1567633718, "DIESEL": 1216723660, "DIESEL Workshop": 879941377, "PE-Emailz": 781690816, "Complaints Emails": 5915921, "SMS": 1562070351}, "1PBhYlWtWqGZFZi_wgjDTlUaoN6O0QeS4P1CHcd40H4Y": {"Instruction": 647197376, "Showrooms": 1573282722, "PMS": 298690841, "Location SMS": 272923692}, "1gKtlJ2VNz8ddL5yOuIgGCgAGGkqeizzZ_r9NZ1FNaj0": {"Franchise Locations": 1948792148, "Price List": 1238827691, "NOS Complaint ": 862266020, "FAQ": 0}, "1Rr37Ojft0hnRjjSv8KF6Dmt4ywA0P7ObApKTMOHgmOc": {"Emails": 493567416, "EV Charging Stations": 378125153, "Fuel Station": 1768605692, "FAQ": 476705075, "SMS": 572847617}, "1gk4iGJ8Xs6QesKKSzT3bhfRu2qkLeb5VpiR09hptYE0": {"Instruction": 0, "Sales Prices ": 2008193375, "Aftersales": 555993991}};
+var DIRECT_SKIP = /^(time-off|active sessions|agent performance|attendance)$/i;
+function directGid(id, name){
+  var m = DIRECT_GIDS[id]; if(!m) return null;
+  var n = String(name||''); if(Object.prototype.hasOwnProperty.call(m, n)) return m[n];
+  var t = n.trim().toLowerCase();
+  for(var k in m){ if(k.trim().toLowerCase()===t) return m[k]; }
+  return null;
+}
+async function fetchSheetDirect(id, name){
+  if(DIRECT_SKIP.test(String(name||'').trim())) return null;
+  var gid = directGid(id, name); if(gid===null||gid===undefined) return null;
+  var ctrl = new AbortController(), tid = setTimeout(function(){ ctrl.abort(); }, 6000);
+  try{
+    var res = await fetch('https://docs.google.com/spreadsheets/d/'+id+'/export?format=csv&gid='+gid, {signal: ctrl.signal, cache: 'no-store'});
+    var txt = await res.text();
+    if(!res.ok || /^\s*</.test(txt)) return null;
+    var g = Papa.parse(txt, {skipEmptyLines:false}).data;
+    if(!g || g.length < 2) return [];
+    var H = g[0].map(function(h){ return String(h==null?'':h).trim(); });
+    var rows = [];
+    for(var i=1;i<g.length;i++){
+      var r = g[i], o = {}, has = false;
+      for(var c=0;c<H.length;c++){ var v = (r[c]==null?'':String(r[c])); o[H[c]] = v; if(v!=='') has = true; }
+      if(has) rows.push(o);
+    }
+    return rows;
+  }catch(e){ return null; }
+  finally{ clearTimeout(tid); }
+}
 function __once(key, fn){
   if(__INFLIGHT[key]) return __INFLIGHT[key];
   const p = fn().finally(()=>{ delete __INFLIGHT[key]; });
@@ -2713,7 +2745,11 @@ function __once(key, fn){
 async function fetchSheet(spreadsheetId, sheetName, retries){
   const key = `${spreadsheetId}__${sheetName}`;
   if(REF_CACHE[key]) return REF_CACHE[key];
-  if(retries===undefined) return __once('S:'+key, ()=>fetchSheet(spreadsheetId, sheetName, 1));
+  if(retries===undefined) return __once('S:'+key, async ()=>{
+    const d = await fetchSheetDirect(spreadsheetId, sheetName);
+    if(d){ REF_CACHE[key] = d; return d; }
+    return fetchSheet(spreadsheetId, sheetName, 1);
+  });
   retries = retries===undefined ? 1 : retries;
   const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${spreadsheetId}&sheetName=${encodeURIComponent(sheetName)}` + ((FORCE_FRESH||REF_FRESH) ? '&fresh=1' : '');
   const controller = new AbortController();
