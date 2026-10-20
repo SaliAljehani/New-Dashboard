@@ -1037,6 +1037,20 @@ const TEAM_LOGOS={
 };
 const SHEET_GIDS={'Agent':1123791969,'Agent Performance':810269545,'Attendance Data':1979596727,'Attendance':1979596727,'Data Call':95246895,'Call Data':95246895,'Call Data ':95246895,'Reference':910779499,'Announcement Board':536403637,'Announcement':536403637,'Subject':124854438,'Emails ':124854438,'Emails':124854438,'Contact Number ':124854438,'Contact Number':124854438,'Vacation Schedule 2026':644438759,'Vacation 2026':644438759,'Daily Off Schedule & Weekly Calls & Breakk':920710775,'Daily Off - Weekly Calls - Breaks':920710775,'Weekly Schedule':920710775,'Campaign Training':700588037};
 const SHEET_CACHE_TTL = 300000;
+// Performance sheets: load only recent months first (proxy filters by ?since=); older ranges load on demand.
+var PERF_SINCE=(function(){var d=new Date(),y=d.getFullYear(),m=d.getMonth()-1;if(m<0){m+=12;y--;}return y+'-'+('0'+(m+1)).slice(-2)+'-01';})();
+var PERF_FULL=false;
+function perfSinceFor(name){return (!PERF_FULL&&(name==='Agent Performance'||name==='Attendance'))?PERF_SINCE:'';}
+function ensurePerfRange(f){
+  if(PERF_FULL||!f) return false;
+  var _y=+f.slice(0,4),_m=+f.slice(5,7)-1; if(_m<1){_m=12;_y--;}
+  var need=_y+'-'+('0'+_m).slice(-2)+'-01'; // the month before the chosen start (used for comparisons)
+  if(need>=PERF_SINCE) return false;
+  PERF_FULL=true; window.__KEEP_RANGE=true;
+  var _ag=document.getElementById('agrid'); if(_ag) _ag.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:28px;color:#A8A29A;font-size:13px">⏳ Loading older data…</div>';
+  Promise.resolve(loadAllData(true)).catch(function(){}).then(function(){ window.__KEEP_RANGE=false; try{ rf(); }catch(e){} });
+  return true;
+}
 function sheetCacheGet(key){
   try{
     const raw = sessionStorage.getItem(key);
@@ -1111,7 +1125,8 @@ async function loadSheet(name, retries){
     return window.__PRELOADED_DATA__[name];
   }
   const gid = SHEET_GIDS[name] || '';
-  const ckey = 'sheet:' + name;
+  const _since = perfSinceFor(name);
+  const ckey = 'sheet:' + name + (_since ? '@' + _since : '');
   const cached = sheetCacheGet(ckey);
   if(cached) return cached;
   if(!FAST_PATH_OFF && FAST_SHEETS.indexOf(name) >= 0 && gid){
@@ -1151,7 +1166,7 @@ async function loadSheet(name, retries){
     }
   }
   retries = retries===undefined ? 0 : retries;
-  const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${SHEET_ID}&gid=${gid}` + (FORCE_FRESH ? '&fresh=1' : '');
+  const url = `https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec?id=${SHEET_ID}&gid=${gid}` + (_since ? '&since=' + _since : '') + (FORCE_FRESH ? '&fresh=1' : '');
   const controller = new AbortController();
   const timeoutId = setTimeout(()=>controller.abort(), 10000);
   try{
@@ -1648,7 +1663,7 @@ async function loadAllData(silent){
 }
 function initUI(silent){
   const allD=Object.values(D).flat().map(r=>r[0]).filter(Boolean).sort();
-  if(allD.length){
+  if(allD.length && !window.__KEEP_RANGE){
     var _last=allD[allD.length-1], _first=String(_last).slice(0,8)+'01';
     if(_first<allD[0]) _first=allD[0];
     document.getElementById('df').value=_first;
@@ -2465,6 +2480,7 @@ function rf(){
   ['df','df_p1','df2'].forEach(function(id){var el=document.getElementById(id);if(el&&f)el.value=f;});
   ['dt','dt_p1','dt2'].forEach(function(id){var el=document.getElementById(id);if(el&&t)el.value=t;});
   var ptag=document.getElementById('ptag');if(ptag)ptag.textContent=f+' → '+t;
+  if(ensurePerfRange(f)) return;
   if(CP===2){renderCallPage();}
   else if(CA){renderAgent(CA);}
   else{renderAll();}
@@ -2878,7 +2894,7 @@ function brCard(o,col){
   const sub=[o.city?'<div style="font-size:11px;color:#808080;margin-top:3px">📍 '+o.city+'</div>':'',o.area?'<div style="font-size:11px;color:#808080;margin-top:3px;direction:rtl">🛣 '+o.area+'</div>':''].join('');
   const map=o.map?'<div style="margin-top:4px"><a href="'+o.map+'" target="_blank" style="color:'+col+';font-size:11px">🗺️ Location</a></div>':'';
   const ppl=(o.people||[]).map(p=>(p.label?'<div style="font-size:11px;color:#808080;margin-top:8px">'+p.label+'</div>':'')
-    +(p.name?'<div>👤 '+p.name+'</div>':'')+(p.phone?'<div>📞 '+p.phone+'</div>':'')
+    +(p.name?'<div>👤 '+p.name+'</div>':'')+(p.note?'<div style="font-size:11px;color:#808080">🧭 '+p.note+'</div>':'')+(p.phone?'<div>📞 '+p.phone+'</div>':'')
     +(p.email?'<div><a href="mailto:'+p.email+'">'+p.email+'</a></div>':'')).join('');
   return '<div'+(o.plabel?' data-plabel="'+o.plabel+'"':'')+(o.rlabel?' data-rlabel="'+o.rlabel+'"':'')+' style="background:#FEFEFD;border-radius:10px;overflow:hidden">'
     +'<div style="padding:10px 14px;text-align:center"><div style="font-weight:700;color:'+col+'">'+o.title+'</div>'+sub+map+'</div>'
@@ -4845,7 +4861,8 @@ function renderPetrominTireBatteryTab(arr){
       const _sm=String(l.station||'').trim().match(/^(\d*)\s*-\s*(.*)$/);
       const code=_sm?_sm[1]:'', name=_sm?_sm[2]:String(l.station||'').trim();
       const mg=_pick(l.region,l.city);
-      const people=mg.map(p=>({name:p.manager,phone:p.phone,email:_firstEmail(p.email)}))
+      const _cov=p=>{const m=String(p.region||'').match(/\(([^)]*)\)/);return m?m[1].split(/\s*[-–]\s*/).map(x=>x.trim()).filter(Boolean).join(' · '):'';};
+      const people=mg.map(p=>({name:p.manager,note:mg.length>1?_cov(p):'',phone:p.phone,email:_firstEmail(p.email)}))
         .concat(_gm?[{label:'General Manager',name:_gm.manager,phone:_gm.phone,email:String(_gm.email||'').split(/[,;]/).map(x=>x.trim()).filter(x=>x.includes('@'))[0]||''}]:[]);
       return brCard({title:(code?code+' - ':'')+name,city:l.city||'',area:l.area||'',
         map:(l.link&&/^https?:/.test(l.link))?l.link:'',
@@ -9103,6 +9120,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if(href.indexOf('tel:')===0||/^📞|^📱|^☎/u.test(raw)){var ph=href.indexOf('tel:')===0?href.slice(4):t;if(!cur||cur.emails.length)person();cur.phones.push(ph);return;}
         if(/^👤/u.test(raw)){person().name=t;return;}
         if(/^🧑/u.test(raw)){var pp2=t.split(/\s*·\s*/);cur={name:pp2[0]||'',phones:pp2[1]?[pp2[1]]:[],emails:[],role:'Supervisor'};d.sections[sec].push(cur);return;}
+        if(/^🧭/u.test(raw)){if(cur)cur.note=t.replace(/^🧭\s*/u,'');return;}
         if(/^🏢/u.test(raw)){d.company=t;return;}
         if(isA)return;
         if(t&&d.more.indexOf(t)<0)d.more.push(t);
@@ -9115,7 +9133,7 @@ window.addEventListener('DOMContentLoaded', () => {
   function esc(t){return String(t||'').replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
   function cpBtn(v){return'<button type="button" class="bd-cp" data-cp="'+esc(v)+'">copy</button>';}
   function peopleHtml(list){return list.map(function(p){
-    return'<div class="bd-p">'+(p.role?'<div class="bd-lbl" style="margin-bottom:2px">'+esc(p.role)+'</div>':'')+(p.name?'<div class="bd-nm">'+esc(p.name)+'</div>':'')
+    return'<div class="bd-p">'+(p.role?'<div class="bd-lbl" style="margin-bottom:2px">'+esc(p.role)+'</div>':'')+(p.name?'<div class="bd-nm">'+esc(p.name)+'</div>':'')+(p.note?'<div class="bd-lbl" style="margin:1px 0 4px;font-size:11px">'+esc(p.note)+'</div>':'')
       +p.phones.map(function(ph){return'<div class="bd-rw"><span class="ic">📞</span>'+esc(ph)+' '+cpBtn(ph)+'</div>';}).join('')
       +(function(){var groups={},ord=[];p.emails.forEach(function(x){var k=x.role||'';if(!groups[k]){groups[k]=[];ord.push(k);}groups[k].push(x.e);});
         return ord.map(function(k){return(k?'<div class="bd-role">'+k+'</div>':'')+groups[k].map(function(em){return'<div class="bd-rw"><span class="ic">✉️</span><a class="em" href="mailto:'+esc(em)+'">'+esc(em)+'</a> '+cpBtn(em)+'</div>';}).join('');}).join('');})()+'</div>';}).join('');}
@@ -9612,12 +9630,29 @@ function cvParse(rows){
   });
   return out;
 }
+// Read the Contact Volume tab straight from Google (fast, no Apps Script proxy); the proxy stays as a fallback.
+async function cvFetchDirect(){
+  const url='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&headers=1&sheet='+encodeURIComponent(CV_TAB);
+  const ctrl=new AbortController(); const tid=setTimeout(function(){ctrl.abort();},8000);
+  try{
+    const res=await fetch(url,{signal:ctrl.signal,cache:'no-store'});
+    const txt=await res.text();
+    const j=JSON.parse(txt.substring(txt.indexOf('{'),txt.lastIndexOf('}')+1));
+    if(!j||j.status==='error'||!j.table) throw new Error('gviz error');
+    const cols=j.table.cols.map(function(c,i){return (c&&c.label)||('__col'+i);});
+    return j.table.rows.map(function(r){var o={};cols.forEach(function(c,i){var cell=r.c&&r.c[i];var v=cell?cell.v:'';
+      if(typeof v==='string'){var m=v.match(/^Date\((\d+),(\d+),(\d+)/);if(m)v=m[1]+'-'+(+m[2]+1)+'-'+m[3];}
+      o[c]=(v==null?'':v);});return o;});
+  }finally{clearTimeout(tid);}
+}
 function cvOpen(){
   if(CV_ROWS){ renderCV(); return; }
   if(CV_LOADING) return;
   CV_LOADING=true; CV_ERR='';
   document.getElementById('page14').innerHTML='<div class="cv-empty">Loading contact volume…</div>';
-  fetchSheet(SHEET_ID, CV_TAB).catch(function(){
+  cvFetchDirect().then(function(r){ if(!r||!r.length||!cvParse(r).length) throw new Error('empty'); return r; }).catch(function(){
+    return fetchSheet(SHEET_ID, CV_TAB);
+  }).catch(function(){
     return fetchGvizSheet(SHEET_ID, '', CV_TAB);
   }).then(function(rows){
     if(rows && rows.error) throw new Error(rows.error);
