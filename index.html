@@ -584,7 +584,7 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
 
 #teamSubNav.team-subnav{margin-bottom:10px!important}
 #page1.main{padding-top:0!important}
-#perfCtrl{margin-bottom:20px!important;padding:7px 20px!important}
+#perfCtrl{margin-bottom:20px!important;padding:7px 20px!important;width:fit-content!important;max-width:100%;margin-left:auto!important;margin-right:auto!important;border-bottom:0!important}
 #vAgent .ag-hero{margin-bottom:10px!important;padding:8px 16px!important}
 #akpis.ag-kpis{margin-bottom:10px!important}
 #attContent.att-section{margin-top:0!important}
@@ -4808,7 +4808,17 @@ function renderPetrominTireBatteryTab(arr){
   };
   // ---- Tire Service Locations as branch cards (list + detail), with the Pirelli manager of each station's region ----
   const _isGM=p=>/general\s*manager/i.test(String(p.region||''));
-  const _gm=pirelli.find(_isGM)||null;
+  let _gm=pirelli.find(_isGM)||null;
+  if(!_gm){ // Google merges the first sheet rows into the header, so the General Manager row can end up inside the column titles
+    const _k0=Object.keys(arr[0]||{}).map(k=>String(k)), _v0=Object.values(arr[0]||{}).map(k=>String(k==null?'':k));
+    const ks=_k0.some(k=>/general\s*manager/i.test(k))?_k0:_v0;
+    const gk=ks.findIndex(k=>/general\s*manager/i.test(k));
+    if(gk>=0){
+      const nm=String(ks[gk+1]||'').replace(/manager\s*name/i,'').replace(/^[\s\-–]+|[\s\-–]+$/g,'').trim();
+      const em=(ks.slice(gk).join(' ').match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/)||[])[0]||'';
+      if(nm||em) _gm={region:'General Manager - Central',manager:nm,email:em,phone:''};
+    }
+  }
   const _gmEmails=_gm?String(_gm.email||'').split(/[,;]/).map(x=>x.trim().toLowerCase()).filter(Boolean):[];
   const _pMgrs=pirelli.filter(p=>!_isGM(p));
   const _firstEmail=v=>String(v||'').split(/[,;]/).map(x=>x.trim()).filter(x=>x.includes('@')&&_gmEmails.indexOf(x.toLowerCase())<0)[0]||'';
@@ -4850,6 +4860,14 @@ function renderPetrominTireBatteryTab(arr){
     const pr=pirelli.filter(p=>!/general\s*manager/i.test(String(p.region||''))).map(p=>{const m=String(p.region).match(/^([^(]+)\(([^)]*)\)/);const ar2=!m&&String(p.region).match(/^(.*?[A-Za-z][^\u0600-\u06FF]*?)\s*[-–]\s*([\u0600-\u06FF][\u0600-\u06FF\s]*)$/);
       return {title:m?m[1].replace(/[\u0600-\u06FF\s\-–]+$/,'').trim():(ar2?ar2[1].trim():p.region), sub:m?m[2].trim():(ar2?ar2[2].trim():''), mid:(p.manager?'<div>'+RC_USER+p.manager+'</div>':''), emails:_ph(p.phone)};});
     const pw=powertech.map(p=>({title:'🔋 Powertech Battery', sub:p.area||'', mid:(p.employee?'<div>'+RC_USER+p.employee+'</div>':''), emails:_ph(p.mobile)}));
+    // keep each row on one line: the sub-text sits next to the region name
+    const _inl=r=>Object.assign({},r,{title:r.title+(r.sub?'<span style="font-weight:400;color:#808080;font-size:12px;margin-left:8px;unicode-bidi:plaintext">'+r.sub+'</span>':''),sub:''});
+    pr.splice(0,pr.length,...pr.map(_inl)); pw.splice(0,pw.length,...pw.map(_inl));
+    if(_gm){
+      const _gmEm=String(_gm.email||'').split(/[,;]/).map(x=>x.trim()).filter(x=>x.includes('@'))[0]||'';
+      pr.unshift({head:'General Manager'},{title:'Central',mid:(_gm.manager?'<div>'+RC_USER+_gm.manager+'</div>':''),
+        emails:_gm.phone?_ph(_gm.phone):(_gmEm?'<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><a href="mailto:'+_gmEm+'" style="color:#808080;text-decoration:none;font-size:12px">'+_gmEm+'</a> <button type="button" class="bd-cp" data-cp="'+_gmEm+'">copy</button></div>':'')});
+    }
     const cols='minmax(0,1.6fr) minmax(0,1fr) minmax(0,1fr)';
     const hd='<div style="display:grid;grid-template-columns:'+cols+';gap:14px;padding:6px 16px;border-bottom:1px solid #F2EEE8;font-size:11px;font-weight:800;color:#808080;letter-spacing:.04em;text-align:left;direction:ltr"><div>Region</div><div>Manager Name</div><div>Phone</div></div>';
     const body=rcRows(color,[].concat(pr,pw),cols).replace('<div class="rc-box" style="','<div class="rc-box" style="border-top:0!important;border-radius:0 0 10px 10px!important;margin-bottom:0!important;').replace(/padding:10px 16px;/g,'padding:4px 16px;min-height:38px;');
