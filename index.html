@@ -3520,19 +3520,14 @@ function renderNissanBranchTab(arr, sheetName, brand){
       +'<div id="'+regId+'"><div class="ref-cards-grid">'+bList.map(b=>makeCard(b,col_color)).join('')+'</div></div>'
       +'</div>';
   }).join('');
-  var govAreaSection = '';
+  var govAreaSection = '', linksBar = '';
   if(brand === 'stellantis' && (sh.includes('showroom') || sh === 'showroom')){
-    govAreaSection =
-      '<div style="margin:0 0 12px">'
-      +secBar(color,'💰','Price List','أسعار السيارات','↗','href="https://docs.google.com/spreadsheets/d/1c3n-4Lek4LgmBgV1LooFCynDtAIug5JbrBqR5PQViR0/edit?gid=0#gid=0" target="_blank"')
-      +'</div>';
+    linksBar=linkBar(color,[{icon:'tag',title:'Price List',arrow:'↗',attrs:'href="https://docs.google.com/spreadsheets/d/1c3n-4Lek4LgmBgV1LooFCynDtAIug5JbrBqR5PQViR0/edit?gid=0#gid=0" target="_blank"'}]);
   }
   if(brand === 'nissan' && (sh.includes('showroom') || sh === 'showroom')){
+    linksBar=linkBar(color,[{icon:'tag',title:'Price List · LMT',arrow:'↗',attrs:'href="https://petromincrm-my.sharepoint.com/:x:/r/personal/amal_alghamdi_petromin_com/Documents/LMT/LMT%20(7).xlsx?d=w4f5bfe89cf904a458af70cbf2d86ac0b&csf=1&web=1&e=l1ekTK" target="_blank"'},{icon:'bld',title:'Government Sales',arrow:'<span id="ico_govSalesSection">▾</span>',attrs:'onclick="toggleRegion(\'govSalesSection\')" role="button"'}]);
     govAreaSection =
-      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin:0 0 12px">'
-      +secBar(color,'💰','Price List · LMT','أسعار السيارات','↗','href="https://petromincrm-my.sharepoint.com/:x:/r/personal/amal_alghamdi_petromin_com/Documents/LMT/LMT%20(7).xlsx?d=w4f5bfe89cf904a458af70cbf2d86ac0b&csf=1&web=1&e=l1ekTK" target="_blank"')
-      +secBar(color,'🏛','Government Sales','مبيعات الجهات الحكومية','<span id="ico_govSalesSection">▾</span>','onclick="toggleRegion(\'govSalesSection\')" role="button"')
-      +'</div>'
+      ''
       +'<div id="govSalesSection" style="display:none;margin-bottom:12px">'
       +'<div style="overflow-x:auto;border-radius:10px;border:1px solid #e0f0ee;background:#f5fafa">'
       +'<table style="width:100%;border-collapse:collapse;font-size:12px">'
@@ -3558,7 +3553,7 @@ function renderNissanBranchTab(arr, sheetName, brand){
       +'<tr><td style="padding:7px 12px;font-weight:700;text-align:center;color:#1565c0">East</td><td style="padding:7px 12px;text-align:center"><a href="mailto:z.bakhurji@petromin.com" style="background:#f5f5f5;color:#333333;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px">z.bakhurji@petromin.com</a></td></tr>'
       +'</tbody></table></div></div>';
   }
-  return '<div style="text-align:center">' + emailHdr + govAreaSection + regionsHTML + '</div>';
+  return '<div style="text-align:center">' + linksBar + emailHdr + govAreaSection + regionsHTML + '</div>';
 }
 function toggleRegion(id){
   const el=document.getElementById(id);
@@ -5228,17 +5223,19 @@ function rcBox(color, parts){
 function emGroupBox(color,cap,parts,extra){
   var had=Object.prototype.hasOwnProperty.call(window,'RC_STYLE'), prev=window.RC_STYLE, h='';
   window.RC_STYLE='box'; try{ h=rcBox(color,parts); }finally{ if(had) window.RC_STYLE=prev; else delete window.RC_STYLE; }
-  var capDiv=cap?'<div style="flex-basis:100%;text-align:center;font-size:10.5px;font-weight:800;color:#A8A29A;letter-spacing:.08em;padding-top:7px;margin-bottom:-5px">'+cap+'</div>':'';
+  var capDiv=cap?'<div style="flex-basis:100%;text-align:center;font-size:10.5px;font-weight:800;color:#A8A29A;letter-spacing:.08em;line-height:1;padding-top:6px;margin-bottom:-6px">'+cap+'</div>':'';
   if(!h) return extra?'<div class="rc-box" style="display:flex;flex-wrap:wrap;background:#FFFFFF;border:1px solid color-mix(in srgb,var(--brand,'+color+') 30%,#EFEAE3);border-radius:10px;margin-bottom:12px">'+capDiv+extra+'</div>':'';
   if(!capDiv&&!extra) return h;
   var i=h.indexOf('">')+2, j=h.lastIndexOf('</div>');
   return h.slice(0,i)+capDiv+h.slice(i,j)+(extra||'')+h.slice(j);
 }
-/* Section-style link / toggle bar (price list, government sales) */
-function secBar(color,icon,title,sub,arrow,attrs){
-  return '<a '+attrs+' style="display:flex;align-items:center;gap:10px;text-align:left;direction:ltr;background:color-mix(in srgb,'+color+' 6%,#FFFFFF);border-left:4px solid '+color+';border-radius:0 8px 8px 0;padding:9px 14px;text-decoration:none;cursor:pointer;color:#333333">'
-    +'<span style="font-size:15px">'+icon+'</span><span style="flex:1;min-width:0"><span style="display:block;font-size:13px;font-weight:700;color:'+color+'">'+title+'</span>'
-    +'<span style="display:block;font-size:11px;color:#808080;margin-top:1px" dir="rtl">'+sub+'</span></span><span style="font-size:13px;color:'+color+';opacity:.8">'+arrow+'</span></a>';
+/* Compact links bar above the emails (Price List / Government Sales) */
+function linkBar(color,items){
+  var ic={tag:'<path d="M20.6 13.4l-7.2 7.2a2 2 0 01-2.8 0L3 13V3h10l7.6 7.6a2 2 0 010 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/>',bld:'<path d="M3 21h18M5 21V10M19 21V10M9 21v-6h6v6M2 10l10-6 10 6"/>'};
+  var sv=function(k){return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="'+color+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;flex:none">'+ic[k]+'</svg>';};
+  return '<div data-topgap="14" style="display:flex;justify-content:center;margin:0 0 13px"><div style="display:inline-flex;align-items:center;background:color-mix(in srgb,'+color+' 9%,#fff);border-radius:8px;padding:0 4px;height:33px;box-sizing:border-box">'
+    +items.map(function(it){return '<a '+it.attrs+' style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;color:'+color+';font-size:12px;font-weight:600;text-decoration:none;cursor:pointer">'+sv(it.icon)+it.title+'<span style="opacity:.55">'+it.arrow+'</span></a>';}).join('<span style="width:1px;height:14px;background:'+color+'33"></span>')
+    +'</div></div>';
 }
 /* Row list (same look as PE Emails): title + subtitle on the left, people in the middle, e-mails on the right */
 function rcLab(t){return '<span style="font-size:10.5px;font-weight:800;color:#A8A29A;letter-spacing:.08em;margin-right:4px;min-width:22px;display:inline-block">'+t+'</span>';}
@@ -9084,7 +9081,8 @@ window.addEventListener('DOMContentLoaded', () => {
     var er=el.getBoundingClientRect(), sb=sub.getBoundingClientRect().bottom;
     var mTop=(top-er.top-1), mBot=(er.bottom-1-bot);            // child margins inside the container
     var lead=Math.max(0,er.top-sb);                              // any space between the tabs and the container
-    el.style.setProperty('padding-top',Math.max(0,Math.round(GAP-lead-mTop))+'px','important');
+    var tg=el.querySelector(':scope > [data-topgap]'), gT=tg?(+tg.getAttribute('data-topgap')||GAP):GAP;
+    el.style.setProperty('padding-top',Math.max(0,Math.round(gT-lead-mTop))+'px','important');
     el.style.setProperty('padding-bottom',Math.max(0,Math.round(GAP-mBot))+'px','important');
   }
   function run(){ t=null; document.querySelectorAll('.ref-tab-content').forEach(function(tc){ try{ fix(tc); }catch(e){} }); }
