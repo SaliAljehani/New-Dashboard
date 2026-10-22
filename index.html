@@ -5736,7 +5736,6 @@ function renderPetrominExpressStationsTab(arr){
     const be=g(v,col.be),station=g(v,col.station);
     if(!station&&!be)return;
     if(v.some(c=>/^(to|cc|for\s+(request|complaint))$/i.test(c)))return;
-    if(/\btest\b/i.test(station+' '+g(v,col.am.name)))return;
     const reg=col.reg>=0?normMainReg(g(v,col.reg)):((window.__brRegionOf&&window.__brRegionOf(g(v,col.city)))||'Other');
     if(!regions[reg]){regions[reg]=[];regionOrder.push(reg);}
     regions[reg].push(v);
