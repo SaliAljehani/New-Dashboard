@@ -4801,9 +4801,11 @@ function renderPetrominTireBatteryTab(arr){
     const v=Object.values(r).map(x=>String(x===undefined||x===null?'':x).trim());
     const a=v[0]||'',b=v[1]||'',c=v[2]||'',d=v[3]||'',e=v[4]||'';
     if(/The Sales supervisor for Pirelli Tire/i.test(b)){ mode='pirelli'; return; }
-    if(a==='Powertech Battery'){
+    if(/^Powertech Battery/i.test(a)){
       if(b==='Area') return;
-      if(b||c||d||e) powertech.push({area:b,employee:c,mobile:fmtNum(d),email:e});
+      let _mob='',_em=e;
+      String(d).split(/\s*\/\s*/).forEach(x=>{ if(x.includes('@')) _em=_em?_em+', '+x:x; else if(/\d/.test(x)) _mob=fmtNum(x); });
+      if(b||c||d||e) powertech.push({label:a,area:b,employee:c,mobile:_mob,email:_em});
       return;
     }
     if(a==='Region'&&/^(location|city|district)$/i.test(b)){ mode='loc';
@@ -4904,19 +4906,21 @@ function renderPetrominTireBatteryTab(arr){
   if(_tb&&(pirelli.length||powertech.length)){
     const _ph=v=>v?'<div style="display:flex;align-items:center;gap:6px">'+RC_PHONE+v+' <button type="button" class="bd-cp" data-cp="'+v+'">copy</button></div>':'';
     const pr=pirelli.filter(p=>!/general\s*manager/i.test(String(p.region||''))).map(p=>{const m=String(p.region).match(/^([^(]+)\(([^)]*)\)/);const ar2=!m&&String(p.region).match(/^(.*?[A-Za-z][^\u0600-\u06FF]*?)\s*[-–]\s*([\u0600-\u06FF][\u0600-\u06FF\s]*)$/);
-      return {title:m?m[1].replace(/[\u0600-\u06FF\s\-–]+$/,'').trim():(ar2?ar2[1].trim():p.region), sub:m?m[2].trim():(ar2?ar2[2].trim():''), mid:(p.manager?'<div>'+RC_USER+p.manager+'</div>':''), emails:_ph(p.phone)};});
-    const pw=powertech.map(p=>({title:'🔋 Powertech Battery', sub:p.area||'', mid:(p.employee?'<div>'+RC_USER+p.employee+'</div>':''), emails:_ph(p.mobile)}));
+      return {title:m?m[1].replace(/[\u0600-\u06FF\s\-–]+$/,'').trim():(ar2?ar2[1].trim():p.region), sub:m?m[2].trim():(ar2?ar2[2].trim():''), mid:(p.manager?'<div>'+RC_USER+p.manager+'</div>':''), emails:_ph(p.phone), _em:p.email};});
+    const pw=powertech.map(p=>({title:(p.label||'Powertech Battery'), sub:p.area||'', mid:(p.employee?'<div>'+RC_USER+p.employee+'</div>':''), emails:_ph(p.mobile), _em:p.email}));
     // keep each row on one line: the sub-text sits next to the region name
     const _inl=r=>Object.assign({},r,{title:r.title+(r.sub?'<span style="font-weight:400;color:#808080;font-size:12px;margin-left:8px;unicode-bidi:plaintext">'+r.sub+'</span>':''),sub:''});
     pr.splice(0,pr.length,...pr.map(_inl)); pw.splice(0,pw.length,...pw.map(_inl));
     if(_gm){
       const _gmEm=String(_gm.email||'').split(/[,;]/).map(x=>x.trim()).filter(x=>x.includes('@'))[0]||'';
       pr.unshift({head:'General Manager'},{title:'Central',mid:(_gm.manager?'<div>'+RC_USER+_gm.manager+'</div>':''),
-        emails:_gm.phone?_ph(_gm.phone):(_gmEm?'<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><a href="mailto:'+_gmEm+'" style="color:#808080;text-decoration:none;font-size:12px">'+_gmEm+'</a> <button type="button" class="bd-cp" data-cp="'+_gmEm+'">copy</button></div>':'')});
+        emails:_gm.phone?_ph(_gm.phone):'', _em:_gm.email});
     }
-    const cols='minmax(0,1.6fr) minmax(0,1fr) minmax(0,1fr)';
-    const hd='<div style="display:grid;grid-template-columns:'+cols+';gap:14px;padding:6px 16px;border-bottom:1px solid #F2EEE8;font-size:11px;font-weight:800;color:#808080;letter-spacing:.04em;text-align:left;direction:ltr"><div>Region</div><div>Manager Name</div><div>Phone</div></div>';
-    const body=rcRows(color,[].concat(pr,pw),cols).replace('<div class="rc-box" style="','<div class="rc-box" style="border-top:0!important;border-radius:0 0 10px 10px!important;margin-bottom:0!important;').replace(/padding:10px 16px;/g,'padding:4px 16px;min-height:38px;');
+    const _emc=v=>String(v||'').split(/[,;\/]/).map(x=>x.trim()).filter(x=>x.includes('@')).map(x=>'<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><a href="mailto:'+x+'" style="color:#808080;text-decoration:none;font-size:12px;word-break:break-all">'+x+'</a> <button type="button" class="bd-cp" data-cp="'+x+'">copy</button></div>').join('');
+    [pr,pw].forEach(L=>L.forEach(r=>{ if(r.head) return; r.mid=(r.mid||'')+'\u0001'+(r.emails||''); r.emails=_emc(r._em); }));
+    const cols='minmax(0,1.5fr) minmax(0,0.9fr) minmax(0,0.9fr) minmax(0,1.5fr)';
+    const hd='<div style="display:grid;grid-template-columns:'+cols+';gap:14px;padding:6px 16px;border-bottom:1px solid #F2EEE8;font-size:11px;font-weight:800;color:#808080;letter-spacing:.04em;text-align:left;direction:ltr"><div>Region</div><div>Manager Name</div><div>Phone</div><div>Email</div></div>';
+    const body=rcRows(color,[].concat(pr,pw),cols).split('\u0001').join('</div><div>').replace('<div class="rc-box" style="','<div class="rc-box" style="border-top:0!important;border-radius:0 0 10px 10px!important;margin-bottom:0!important;').replace(/padding:10px 16px;/g,'padding:4px 16px;min-height:38px;');
     const id='tbPirelli';
     return '<div style="margin-bottom:18px">'
       +'<div onclick="toggleRegion(\''+id+'\')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding:9px 16px;background:color-mix(in srgb,var(--brand,'+color+') 6%,#FFFFFF);border:1px solid color-mix(in srgb,var(--brand,'+color+') 30%,#EFEAE3);border-radius:10px 10px 0 0;font-size:13px;font-weight:800;color:'+color+';direction:ltr">Pirelli Tire — Sales Supervisors<span id="ico_'+id+'" style="font-size:11px">▼</span></div>'
