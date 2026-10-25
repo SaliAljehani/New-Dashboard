@@ -2686,7 +2686,7 @@ const REF_SHEETS = {
   },
   nos: {
     id: '1gKtlJ2VNz8ddL5yOuIgGCgAGGkqeizzZ_r9NZ1FNaj0',
-    tabs: ['Franchise Locations','Price List']
+    tabs: ['Information','Franchise Locations','Price List']
   },
   electromin: {
     id: '1Rr37Ojft0hnRjjSv8KF6Dmt4ywA0P7ObApKTMOHgmOc',
@@ -5036,6 +5036,25 @@ function renderPetrominComplaintsTab(arr){
       +'<tbody>'+body+'</tbody></table></div></div></div>';
   }).join('');
 }
+function renderNosInformationTab(arr){
+  const color='#4D7E4F';
+  const rows=(arr||[]).map(r=>(Array.isArray(r)?r:Object.values(r)).map(x=>String(x==null?'':x).trim()));
+  let toI=-1, ccI=-1, start=0;
+  for(let i=0;i<rows.length;i++){
+    const a=rows[i].findIndex(x=>/^to$/i.test(x)), b=rows[i].findIndex(x=>/^cc$/i.test(x));
+    if(a>=0||b>=0){toI=a;ccI=b;start=i+1;break;}
+  }
+  if(toI<0&&ccI<0){toI=1;ccI=2;}
+  const parts=[];
+  rows.slice(start).forEach(v=>{
+    const to=toI>=0?(v[toI]||''):'', cc=ccI>=0?(v[ccI]||''):'';
+    if(!to&&!cc) return;
+    const title=v.find((x,i)=>x&&i!==toI&&i!==ccI)||'Email';
+    parts.push({title:title,to:rcChips(to,color),cc:rcChips(cc,color)});
+  });
+  if(!parts.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
+  return rcBox(color,parts);
+}
 function renderNosFAQTab(arr){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#aaa">No data</div>';
   const color='#2e7d32';
@@ -6687,6 +6706,12 @@ async function renderRefBrand(brand,tabIdx){
     container.innerHTML='<div style="text-align:center;padding:24px;color:#bbb;font-size:13px">⏳ Loading '+sheetName+'...</div>';
     try{
       const t=sheetName.trim();
+      if(t==='Information'){
+        const raw=await fetchCSVRaw(cfg.id, sheetName);
+        if(container.dataset.reqId!==__reqId) return;
+        container.innerHTML=renderNosInformationTab(raw);
+        return;
+      }
       const data=await fetchSheet(cfg.id, sheetName);
       let arr=Array.isArray(data)?data:(data.rows||[]);
       if(arr.length && Object.keys(arr[0]).length<3){
