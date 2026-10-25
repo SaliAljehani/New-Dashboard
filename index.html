@@ -5175,9 +5175,10 @@ function parseReqCompEmails(arr){
     var v=Object.values(row).map(function(x){return String(x==null?'':x).trim();});
     var marker=v.find(function(x){return /^for\s+(request|complaint)$/i.test(x);});
     if(marker){ cur=/complaint/i.test(marker)?'C':'R'; return; }
-    var label=(v[0]||'').toUpperCase();
-    if(label!=='TO' && label!=='CC') return;
-    var val=v.slice(1).find(function(x){return x;})||'';
+    var li=v.findIndex(function(x){return /^(TO|CC)$/i.test(x);});
+    if(li<0) return;
+    var label=v[li].toUpperCase();
+    var val=v.slice(li+1).find(function(x){return x;})||'';
     val=val.replace(/,\s*$/,'').trim();
     if(label==='TO'){ if(cur==='C')C.to=val; else if(cur==='R')R.to=val; }
     else { if(cur==='C')C.cc=val; else if(cur==='R')R.cc=val; }
