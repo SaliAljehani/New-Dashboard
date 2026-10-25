@@ -4085,6 +4085,9 @@ function renderBaicServiceTab(arr, apptArr){
   const keys=Object.keys(arr[0]||{});
   const _bk=(re,d)=>keys.find(k=>re.test(String(k).trim()))||keys[d];
   const regionCol=keys[0], cityCol=keys[1], branchCol=keys[2], mgrCol=_bk(/manager name/i,3), phoneCol=_bk(/number|mobile|phone/i,4), emailCol=_bk(/^email/i,5), gpsLinkCol=_bk(/map link|google map/i,7), distCol=keys.find(k=>/^district/i.test(String(k).trim()));
+  const svcCol=keys.find(k=>/^services?$/i.test(String(k).trim()))||keys.find(k=>arr.some(r=>/\b(PMS|Recall|Warranty)\b/i.test(String(r[k]||''))));
+  const SVC_ALL=['PMS','Recall','Warranty'];
+  const svcHtml=r=>{const raw=svcCol?String(r[svcCol]||'').trim():'';if(!raw)return '';const have=raw.split(/\s*[-–,\/\n]\s*/).map(x=>x.trim()).filter(Boolean);const hl=have.map(x=>x.toLowerCase());const list=SVC_ALL.concat(have.filter(x=>SVC_ALL.map(y=>y.toLowerCase()).indexOf(x.toLowerCase())<0));return '<div style="margin-top:6px">'+list.map(x=>'<div style="font-size:11px">'+x.toUpperCase()+(hl.indexOf(x.toLowerCase())>-1?' ✓':' ✗')+'</div>').join('')+'</div>';};
   const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
   const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
   const VALID_REGIONS=new Set(['West','Western','Central','Center','East','Eastern','South','Southern','North','Northern']);
@@ -4195,6 +4198,7 @@ function renderBaicServiceTab(arr, apptArr){
           +(mgr?'<div style="font-size:12px;color:#333333;margin-bottom:5px">👤 '+mgr+'</div>':'')
           +(phone?'<div style="font-size:12px;color:#333333;margin-bottom:5px">📞 '+phone+'</div>':'')
           +(email?'<div style="font-size:11px;margin-bottom:5px"><a href="mailto:'+email+'" style="background:#f5f5f5;color:#333333;font-weight:800;text-decoration:none;padding:2px 7px;border-radius:5px;box-shadow:inset 0 0 0 1px #61616130">✉️ '+email+'</a></div>':'')
+          +svcHtml(r)
           +(function(){var am=BAIC_AM[reg];return am?'<div style="border-top:1px solid #f0e2d5;padding-top:6px;margin-top:4px">'+'<div style="font-size:11px;color:'+color+';letter-spacing:.03em;margin-bottom:3px;font-weight:700">Regional Manager</div>'+'<div style="font-size:11px;color:#333333">👤 '+am.name+'</div>'+'<div style="font-size:11px;color:#333333;margin-top:2px">📞 '+am.phone+'</div>'+'<div style="font-size:11px;margin-top:2px"><a href="mailto:'+am.email+'" style="background:'+color+'15;color:'+color+';font-weight:700;text-decoration:none;padding:2px 6px;border-radius:5px">'+am.email+'</a></div>'+'</div>':'';})()
           +'</div></div>';
       }).join('')+'</div></div></div>';
