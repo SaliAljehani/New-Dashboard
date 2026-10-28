@@ -5555,7 +5555,12 @@ function renderPetrominPACTab(arr){
   const normMainReg=s=>{const u=String(s||'').toUpperCase().trim();if(/^WR|WESTERN|^WEST/.test(u))return'West';if(/^CR|CENTRAL|^CENT/.test(u))return'Central';if(/^ER|EASTERN|^EAST/.test(u))return'East';if(/SOUTH|^SR/.test(u))return'South';if(/NORTH|^NR/.test(u))return'North';return s?String(s).trim():'Other';};
   const _PK=Object.keys(arr[0]||{}).map(k=>String(k).trim().toLowerCase());
   const _pc=(re,d)=>{const i=_PK.findIndex(k=>re.test(k));return i>=0?i:d;};
-  const PC={mgr:_pc(/manager name/,3),phone:_pc(/mobile|number|phone/,4),email:_pc(/email/,5),map:_pc(/map link|google map/,7),wh:_pc(/working|hours/,8),dist:_pc(/^district/,-1)};
+  const _isRM=k=>/re\w*g\w*nal|^rm\b/.test(k);
+  const _pcB=(re,d)=>{const i=_PK.findIndex(k=>re.test(k)&&!_isRM(k));return i>=0?i:d;};
+  const PC={mgr:_pcB(/manager name/,3),phone:_pcB(/mobile|number|phone/,4),email:_pcB(/email/,5),map:_pc(/map link|google map/,7),wh:_pc(/working|hours/,8),dist:_pc(/^district/,-1),
+    rmName:_PK.findIndex(k=>_isRM(k)&&!/mobile|number|phone|email/.test(k)),
+    rmMob:_PK.findIndex(k=>_isRM(k)&&/mobile|number|phone/.test(k)),
+    rmEm:_PK.findIndex(k=>_isRM(k)&&/email/.test(k))};
   arr.forEach((r,idx)=>{
     const vals=Object.values(r).map(v=>String(v||'').trim());
     const v0=vals[0]||'';
@@ -5672,7 +5677,9 @@ function renderPetrominPACTab(arr){
         const gpsLink=gps?(/^https?:\/\//i.test(gps)?gps:'https://www.google.com/maps?q='+encodeURIComponent(gps)):'';
         const branchNameOnly=branch.replace(/^\d+\s*-\s*/,'').trim();
         const nkBranch=branchNameOnly.toLowerCase().replace(/[^a-z0-9]/g,'');
-        const rm=rmByCode[branchCode]||rmByBranch[nkBranch]||null;
+        const _rg=i=>i>=0?String(vals[i]||'').trim():'';
+        const _rmRow=(_rg(PC.rmName)||_rg(PC.rmEm))?{name:_rg(PC.rmName),mobile:fmtNum(_rg(PC.rmMob)),email:_rg(PC.rmEm)}:null;
+        const rm=_rmRow||rmByCode[branchCode]||rmByBranch[nkBranch]||null;
         return '<div style="background:#FEFEFD;border-radius:12px;padding:0;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.07);">'
           +'<div style="background:'+rc+'12;padding:10px 14px;text-align:center">'
           +'<div style="font-size:13px;font-weight:700;color:'+rc+'">'+branch+'</div>'
