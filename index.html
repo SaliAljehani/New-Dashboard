@@ -509,7 +509,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#333333;border-top:1p
 .page-nav{border:none!important;background:transparent!important;padding:0!important;display:grid!important;grid-template-columns:repeat(6,207px);justify-content:center;gap:8px!important;width:auto!important;margin-top:34px!important;margin-bottom:14px!important}
 
 .ref-home .ref-brand-circles{display:grid!important;grid-template-columns:repeat(10,118px);gap:8px!important;background:transparent!important}
-.ref-tools{display:grid!important;grid-template-columns:repeat(5,244px);gap:8px!important;margin-top:12px!important}
+.ref-tools{display:grid!important;grid-template-columns:repeat(6,202px);gap:8px!important;margin-top:12px!important}
 .ref-home .ref-brand-circles,.ref-tools{width:fit-content;margin-left:auto!important;margin-right:auto!important;border:1px solid #EDE6DE;border-radius:14px!important;padding:30px 16px 16px!important;position:relative;box-shadow:none!important}
 .ref-home .ref-brand-circles::before{content:"BRANDS";position:absolute;top:9px;left:16px;font-size:10.5px;font-weight:700;letter-spacing:.1em;color:#A39A92}
 .ref-tools::before{content:"TOOLS";position:absolute;top:9px;left:16px;font-size:10.5px;font-weight:700;letter-spacing:.1em;color:#A39A92}
@@ -528,7 +528,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#333333;border-top:1p
   .page-nav{grid-template-columns:repeat(6,minmax(0,1fr))!important;width:calc(100% - 48px)!important;max-width:1287px}
   .ref-home .ref-brand-circles,.ref-tools{width:auto!important;box-sizing:border-box}
   .ref-home .ref-brand-circles{grid-template-columns:repeat(5,minmax(0,1fr))!important}
-  .ref-tools{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+  .ref-tools{grid-template-columns:repeat(6,minmax(0,1fr))!important}
   .pnav,.ref-home .ref-brand-circle,.ref-tool{overflow:hidden}
   .pnav{overflow:visible!important}
 }
@@ -7359,11 +7359,12 @@ function renderRecallInRef(){
   renderRecallPage();
 }
 function refTool(id){
-  ['refContactsPanel','refTicketPanel','refCasePanel','refLinksPanel','refInboundPanel'].forEach(function(x){
+  ['refContactsPanel','refTicketPanel','refCasePanel','refLinksPanel','refInboundPanel','refAccountsPanel'].forEach(function(x){
     var p=document.getElementById(x); if(!p) return;
     var open=(x===id)&&p.style.display==='none';
     p.style.display=open?'block':'none';
     if(open&&x==='refCasePanel') renderCaseHandling();
+    if(open&&x==='refAccountsPanel') renderAccounts();
     var b=document.querySelector('.ref-tool[data-p="'+x+'"]'); if(b) b.classList.toggle('on',open);
     if(open) setTimeout(function(){p.scrollIntoView({behavior:'smooth',block:'nearest'});},50);
   });
@@ -7931,7 +7932,7 @@ async function renderRef(){
       +'</div>'
       +'<div class="ref-tools">'
       +(function(){
-        var TP={phone:'M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5-2.5l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2',clip:'M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2M9 12h6M9 16h6',file:'M14 3v4a1 1 0 0 0 1 1h4M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2M9 13h6M9 17h6',link:'M9 15l6-6M11 6l.5-.5a5 5 0 0 1 7 7l-.5.5M13 18l-.4.5a5 5 0 0 1-7-7l.4-.5',edit:'M4 20h4L18.5 9.5a2.8 2.8 0 1 0-4-4L4 16v4M13.5 6.5l4 4'};
+        var TP={phone:'M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5-2.5l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2',clip:'M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2M9 12h6M9 16h6',file:'M14 3v4a1 1 0 0 0 1 1h4M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2M9 13h6M9 17h6',link:'M9 15l6-6M11 6l.5-.5a5 5 0 0 1 7 7l-.5.5M13 18l-.4.5a5 5 0 0 1-7-7l.4-.5',edit:'M4 20h4L18.5 9.5a2.8 2.8 0 1 0-4-4L4 16v4M13.5 6.5l4 4',lock:'M7 11h10a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2M8 11V7a4 4 0 0 1 8 0v4'};
         var D=(window.TOOL_STYLE==='D');
         var tb=function(panel,ic,label,col){
           var st=D?'color:'+col+'!important;border-color:color-mix(in srgb,'+col+' 25%,transparent)!important;background:color-mix(in srgb,'+col+' 7%,#FDFDFC)':'';
@@ -7942,7 +7943,8 @@ async function renderRef(){
           +tb('refTicketPanel','clip','Ticket Type','#9C8D63')
           +(inboundCards?tb('refInboundPanel','file','Inbound Sheets','#6A8A60'):'')
           +(linkCards?tb('refLinksPanel','link','Links & Systems','#6E87A6'):'')
-          +tb('refCasePanel','edit','Case Handling','#7E78A8');
+          +tb('refCasePanel','edit','Case Handling','#7E78A8')
+          +tb('refAccountsPanel','lock','Accounts','#8C7B6B');
       })()
       +'</div></div>'
       +(linkCards?('<div id="refLinksPanel" style="display:none;margin-top:8px;margin-bottom:4px;background:#FEFEFD;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)"><div onclick="refTool(\'refLinksPanel\')" title="اضغطي للإغلاق" style="background:#1565c02E;color:#1565c0;padding:14px 20px;min-height:53px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:700;cursor:pointer;user-select:none">🔗 Links & Systems <span id="refLinksIco" style="font-size:12px">▲</span></div><div class="ref-panel-body">'+linkCards+'</div></div>'):'')
@@ -7956,6 +7958,10 @@ async function renderRef(){
       +'<div class="ref-info-panel" id="refCasePanel" style="display:none;margin-top:8px">'
       +'<div class="ref-panel-header" style="cursor:pointer;justify-content:center" onclick="refTool(\'refCasePanel\')">📝 Case Handling <span style="margin-left:8px;font-size:12px">▲</span></div>'
       +'<div class="ref-panel-body"><div id="caseHandlingContent"><div style="text-align:center;padding:30px;color:#aaa">Loading...</div></div></div>'
+      +'</div>'
+      +'<div class="ref-info-panel" id="refAccountsPanel" style="display:none;margin-top:8px">'
+      +'<div class="ref-panel-header" style="cursor:pointer;justify-content:center" onclick="refTool(\'refAccountsPanel\')">🔐 Accounts <span style="margin-left:8px;font-size:12px">▲</span></div>'
+      +'<div class="ref-panel-body"><div id="accountsContent"></div></div>'
       +'</div>'
       +'<div class="ref-info-panel" id="refTicketPanel" style="display:none;margin-top:8px">'
       +'<div class="ref-panel-header" style="cursor:pointer;justify-content:center" onclick="refTool(\'refTicketPanel\')">'
@@ -9837,5 +9843,137 @@ function renderCV(){
   }
   el.innerHTML=h;
 }</script>
+<!-- ═══ Team Accounts (Daily Reference → TOOLS → Accounts) ═══ -->
+<style>
+#accountsContent{--ac-line:#EDE4DA;--ac-sub:#8A7F74;--ac-txt:#3E342C;--ac-soft:#F6F4F0;--ac-acc:#8C7B6B;font-size:13px;color:var(--ac-txt)}
+#accountsContent .ac-lbl{font-size:11px;font-weight:700;letter-spacing:.08em;color:#A39A92;margin:4px 0 8px}
+#accountsContent .ac-me{border:1px solid var(--ac-line);border-radius:12px;padding:14px;margin-bottom:18px;background:#FDFDFC}
+#accountsContent .ac-mehead{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+#accountsContent .ac-av{width:34px;height:34px;border-radius:50%;background:color-mix(in srgb,var(--ac-acc) 12%,#FDFDFC);color:var(--ac-acc);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
+#accountsContent select,#accountsContent input{font:inherit;font-size:13px;color:var(--ac-txt);border:1px solid var(--ac-line);border-radius:9px;padding:7px 10px;background:#FDFDFC;outline:none}
+#accountsContent .ac-sys{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#accountsContent .ac-box{background:var(--ac-soft);border-radius:10px;padding:12px}
+#accountsContent .ac-t{font-size:11.5px;color:var(--ac-sub);margin-bottom:5px}
+#accountsContent .ac-u{font-size:13px;margin-bottom:9px;word-break:break-all}
+#accountsContent .ac-row{display:flex;align-items:center;gap:8px}
+#accountsContent .ac-dots{color:#B4ABA0;letter-spacing:2px;flex:1}
+#accountsContent .ac-btn{font:inherit;font-size:12px;border:1px solid var(--ac-line);background:#FDFDFC;color:#6A5A4A;border-radius:8px;padding:5px 10px;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-block}
+#accountsContent .ac-btn:hover{background:var(--ac-soft)}
+#accountsContent .ac-btn.p{background:color-mix(in srgb,var(--ac-acc) 10%,#FDFDFC);color:var(--ac-acc);border-color:color-mix(in srgb,var(--ac-acc) 30%,transparent)}
+#accountsContent .ac-none{color:#B4ABA0;font-size:12.5px}
+#accountsContent .ac-bar{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+#accountsContent .ac-bar input{flex:1;min-width:180px}
+#accountsContent .ac-chip{font-size:12px;padding:5px 12px;border:1px solid var(--ac-line);border-radius:20px;background:#FDFDFC;color:#6A5A4A;cursor:pointer;user-select:none}
+#accountsContent .ac-chip.on{background:color-mix(in srgb,var(--ac-acc) 10%,#FDFDFC);color:var(--ac-acc);border-color:color-mix(in srgb,var(--ac-acc) 30%,transparent)}
+#accountsContent table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--ac-line);border-radius:12px;overflow:hidden;background:#FDFDFC}
+#accountsContent th{background:#FBF9F4;color:var(--ac-sub);font-weight:600;font-size:11.5px;text-align:left;padding:9px 12px;border-bottom:1px solid var(--ac-line)}
+#accountsContent td{padding:9px 12px;border-bottom:1px solid #F3EDE6;vertical-align:middle}
+#accountsContent tr:last-child td{border-bottom:0}
+#accountsContent .ac-nm{font-weight:600}
+#accountsContent .ac-bd{font-size:11.5px;color:var(--ac-sub)}
+#accountsContent .ac-acc{display:flex;align-items:center;gap:8px}
+#accountsContent .ac-em{font-size:12px;color:#6A5A4A;flex:1;word-break:break-all}
+#accountsContent .ac-note{margin-top:10px;font-size:11.5px;color:var(--ac-sub)}
+#accountsContent .ac-lock{max-width:340px;margin:10px auto;text-align:center}
+#accountsContent .ac-err{color:#A0524A;font-size:12px;margin-top:6px;min-height:16px}
+#acToast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#4A3528;color:#fff;padding:9px 16px;border-radius:9px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:99999}
+#acToast.s{opacity:1}
+@media(max-width:820px){#accountsContent .ac-sys{grid-template-columns:1fr}}
+</style>
+<script>
+(function(){
+  var ACC_API = 'https://script.google.com/macros/s/AKfycbyzLwaqPUjIrJ3FW76CTfMZZs0FUEMUqvdPNoOIbZCxZlED5J-1eb_4NJSw_vV2YuksDg/exec';
+  var ACC = {list:null, links:{}, filter:'all', q:'', me:null};
+
+  function esc(t){return String(t==null?'':t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function getCode(){try{return localStorage.getItem('accCode')||'';}catch(e){return '';}}
+  function setCode(v){try{v?localStorage.setItem('accCode',v):localStorage.removeItem('accCode');}catch(e){}}
+  function who(){try{return (typeof currentAgentName!=='undefined'&&currentAgentName)||localStorage.getItem('dashboardAgentName')||'';}catch(e){return '';}}
+  function toast(t){var e=document.getElementById('acToast');if(!e){e=document.createElement('div');e.id='acToast';document.body.appendChild(e);}e.textContent=t;e.classList.add('s');clearTimeout(e._t);e._t=setTimeout(function(){e.classList.remove('s');},1500);}
+  function post(payload){
+    return fetch(ACC_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).then(function(r){return r.json();});
+  }
+  function copyText(t){
+    if(navigator.clipboard&&window.isSecureContext){return navigator.clipboard.writeText(t);}
+    return new Promise(function(res,rej){try{var a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();document.execCommand('copy');a.remove();res();}catch(e){rej(e);}});
+  }
+  function box(){return document.getElementById('accountsContent');}
+
+  function renderLock(msg){
+    box().innerHTML='<div class="ac-lock"><div class="ac-lbl" style="text-align:center">TEAM CODE</div>'
+      +'<div style="display:flex;gap:8px"><input id="acCodeIn" type="password" placeholder="Enter team code" style="flex:1" autocomplete="off">'
+      +'<button class="ac-btn p" id="acCodeBtn">Open</button></div><div class="ac-err" id="acErr">'+esc(msg||'')+'</div></div>';
+    var go=function(){var v=document.getElementById('acCodeIn').value.trim();if(!v){document.getElementById('acErr').textContent='Enter the team code';return;}setCode(v);load();};
+    document.getElementById('acCodeBtn').onclick=go;
+    document.getElementById('acCodeIn').onkeydown=function(e){if(e.key==='Enter')go();};
+    document.getElementById('acCodeIn').oninput=function(){document.getElementById('acErr').textContent='';};
+  }
+
+  function load(){
+    var code=getCode();
+    if(!code){renderLock();return;}
+    box().innerHTML='<div style="text-align:center;padding:24px;color:#aaa">Loading...</div>';
+    post({action:'accList',code:code}).then(function(r){
+      if(!r||!r.ok){ if(r&&r.error==='Wrong code'){setCode('');renderLock('Wrong code');} else box().innerHTML='<div class="ac-none" style="text-align:center;padding:20px">Failed to load'+(r&&r.error?': '+esc(r.error):'')+'</div>'; return; }
+      ACC.list=r.agents||[]; ACC.links=r.links||{};
+      if(ACC.me==null){var n=who().toLowerCase().trim();var i=ACC.list.findIndex(function(a){return a.agent.toLowerCase().trim()===n;});ACC.me=i>=0?i:0;}
+      render();
+    }).catch(function(e){box().innerHTML='<div class="ac-none" style="text-align:center;padding:20px">Failed to load</div>';});
+  }
+
+  function sysBox(title,sys,a){
+    var em=sys==='nissan'?a.nissan:a.unified;
+    if(!em) return '<div class="ac-box"><div class="ac-t">'+title+'</div><div class="ac-none">No account</div></div>';
+    var link=ACC.links[sys]?'<a class="ac-btn" href="'+esc(ACC.links[sys])+'" target="_blank" rel="noopener">↗ Open</a>':'';
+    return '<div class="ac-box"><div class="ac-t">'+title+'</div><div class="ac-u">'+esc(em)+'</div>'
+      +'<div class="ac-row"><span class="ac-dots">••••••••••</span><button class="ac-btn p" data-acp="'+esc(a.agent)+'" data-sys="'+sys+'">📋 Copy password</button>'+link+'</div></div>';
+  }
+  function cell(a,sys){
+    var em=sys==='nissan'?a.nissan:a.unified;
+    if(!em) return '<span class="ac-none">—</span>';
+    return '<div class="ac-acc"><span class="ac-em">'+esc(em)+'</span><button class="ac-btn" data-acp="'+esc(a.agent)+'" data-sys="'+sys+'">📋 Copy</button></div>';
+  }
+  function rowsHtml(){
+    var q=ACC.q.toLowerCase().trim(),h='';
+    ACC.list.forEach(function(a){
+      if(q&&a.agent.toLowerCase().indexOf(q)<0&&String(a.badge).indexOf(q)<0)return;
+      if(ACC.filter==='miss'&&a.nissan&&a.unified)return;
+      h+='<tr><td><div class="ac-nm">'+esc(a.agent)+'</div><div class="ac-bd">'+esc(a.badge)+'</div></td><td>'+cell(a,'nissan')+'</td><td>'+cell(a,'unified')+'</td></tr>';
+    });
+    return h||'<tr><td colspan="3" class="ac-none">No match</td></tr>';
+  }
+  function render(){
+    if(!ACC.list.length){box().innerHTML='<div class="ac-none" style="text-align:center;padding:20px">No accounts yet</div>';return;}
+    var me=ACC.list[ACC.me]||ACC.list[0];
+    var ini=me.agent.split(/\s+/).map(function(w){return w.charAt(0);}).slice(0,2).join('').toUpperCase();
+    box().innerHTML='<div class="ac-lbl">MY ACCOUNTS</div>'
+      +'<div class="ac-me"><div class="ac-mehead"><div class="ac-av">'+esc(ini)+'</div>'
+      +'<select id="acWho">'+ACC.list.map(function(a,i){return '<option value="'+i+'"'+(i===ACC.me?' selected':'')+'>'+esc(a.agent)+'</option>';}).join('')+'</select>'
+      +'<span class="ac-bd">Badge '+esc(me.badge)+'</span></div>'
+      +'<div class="ac-sys">'+sysBox('Nissan','nissan',me)+sysBox('Unified Portal','unified',me)+'</div></div>'
+      +'<div class="ac-lbl">TEAM ACCOUNTS</div>'
+      +'<div class="ac-bar"><input id="acQ" placeholder="Search by name or badge" value="'+esc(ACC.q)+'">'
+      +'<span class="ac-chip'+(ACC.filter==='all'?' on':'')+'" data-f="all">All</span>'
+      +'<span class="ac-chip'+(ACC.filter==='miss'?' on':'')+'" data-f="miss">Missing account</span></div>'
+      +'<table><thead><tr><th style="width:26%">Agent</th><th style="width:37%">Nissan</th><th style="width:37%">Unified Portal</th></tr></thead><tbody id="acRows">'+rowsHtml()+'</tbody></table>'
+      +'<div class="ac-note">🕘 Every copy is logged: who copied whose account, and when.</div>';
+    document.getElementById('acWho').onchange=function(){ACC.me=Number(this.value);render();};
+    document.getElementById('acQ').oninput=function(){ACC.q=this.value;document.getElementById('acRows').innerHTML=rowsHtml();};
+    box().querySelectorAll('.ac-chip').forEach(function(c){c.onclick=function(){ACC.filter=c.getAttribute('data-f');render();};});
+  }
+
+  document.addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('#accountsContent [data-acp]'); if(!b) return;
+    var agent=b.getAttribute('data-acp'), sys=b.getAttribute('data-sys');
+    var old=b.textContent; b.textContent='...'; b.disabled=true;
+    post({action:'accPass',code:getCode(),agent:agent,system:sys,by:who()||'Unknown'}).then(function(r){
+      if(!r||!r.ok){ if(r&&r.error==='Wrong code'){setCode('');renderLock('Wrong code');return;} toast(r&&r.error?r.error:'Not available'); return; }
+      return copyText(r.password).then(function(){toast('Password copied');},function(){toast('Copy failed');});
+    }).catch(function(){toast('Copy failed');}).then(function(){if(document.body.contains(b)){b.textContent=old;b.disabled=false;}});
+  });
+
+  window.renderAccounts=function(){ if(ACC.list) render(); else load(); };
+})();
+</script>
 </body>
 </html>
