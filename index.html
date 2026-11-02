@@ -8383,7 +8383,7 @@ async function renderDailyOff(){
           var num=dt?dt.split(' ')[0]:'';
           var lbl=k==='off'?'OFF':k==='voff'?'Off':k==='vac'?'Vacation':k==='none'?'':(/^multi[\s-]?camp$/i.test(v)&&grp==='call'&&d!=='Saturday'?'':v);
           h+='<div class="wks-t wk-'+k+(isT?' now':'')+'" title="'+SH[d]+' '+esc(dt)+(isT?' · Today':'')+'"><em>'+SH[d]+'</em>'+esc(num)+'<small>'+(lbl?esc(lbl):'&nbsp;')+'</small></div>';
-          if(d==='Thursday') h+='<div class="wks-t wks-br'+(wb?'':' empty')+'"><em>Break</em><small>'+(wb?esc(wb):'—')+'</small></div>';
+          if(d==='Thursday') h+='<div class="wks-t wks-br'+(wb?'':' empty')+'"><em>Weekly Break</em><small>'+(wb?esc(wb):'—')+'</small></div>';
           if(d==='Saturday'){ var _sb=(sk==='multi'||sk==='chat')&&sb; h+='<div class="wks-t wks-br sat'+(_sb?'':' empty')+'"><em>Sat break</em><small>'+(_sb?esc(sb):'—')+'</small></div>'; }
         });
         return h+'</div></div>';
