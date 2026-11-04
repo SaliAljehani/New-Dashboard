@@ -17,7 +17,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" defer></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--app-font:'DM Sans','NotoArS','Noto Sans Arabic',system-ui,sans-serif;--accent:#8A6A4A;--accent-rgb:138,106,74;--text:#333333;--st-multi:#7C7064;--st-multi-bg:#F7F4EF;--st-chat:#828B7C;--st-chat-bg:#F1F2EE;--st-off:#B48484;--st-off-bg:#FCF6F6;--st-vac:#9C8D63;--st-vac-bg:#FDFAF1;--st-ofc:#6A8A60;--st-ofc-bg:#F5F9F2;--st-rem:#7E78A8;--st-rem-bg:#F7F6FB;--st-sick:#A88068;--st-sick-bg:#FDF7F2;--st-abs:#9A6464;--st-abs-bg:#FAF1F1;--st-sat:#625E72;--st-sat-bg:#F7F6F9;--st-el:#6E5A68;--st-el-bg:#F9F6F8}
+:root{--app-font:'DM Sans','NotoArS','Noto Sans Arabic',system-ui,sans-serif;--accent:#8A6A4A;--accent-rgb:138,106,74;--text:#333333;--st-multi:#7C7064;--st-multi-bg:#F7F4EF;--st-chat:#828B7C;--st-chat-bg:#F1F2EE;--st-off:#B48484;--st-off-bg:#FCF6F6;--st-vac:#9C8D63;--st-vac-bg:#FDFAF1;--st-ofc:#6A8A60;--st-ofc-bg:#F5F9F2;--st-rem:#7E78A8;--st-rem-bg:#F7F6FB;--st-sick:#4E8A86;--st-sick-bg:#E7F2F1;--st-abs:#8E3F3F;--st-abs-bg:#F3DCDC;--st-sat:#625E72;--st-sat-bg:#F7F6F9;--st-el:#6E5A68;--st-el-bg:#F9F6F8}
 #recallVinInput{font-family:inherit}#recallVinInput:not(:placeholder-shown){letter-spacing:.06em}#recallVinInput::placeholder{direction:rtl}
 
 .pf-ar{font-style:normal;font-size:9px;margin-right:4px;opacity:.8}
@@ -1409,10 +1409,10 @@ function renderAttendanceTab(){
   });
   const ABSENT_BADGE={
     'Off':{bg:'#F6E6E6',color:'#A06E6E',label:'Off'},
-    'Absent':{bg:'#F2E0E0',color:'#8A5454',label:'Absent'},
+    'Absent':{bg:'#F3DCDC',color:'#8E3F3F',label:'Absent'},
     'Vacation':{bg:'#F6EFD8',color:'#887848',label:'Vacation'},
-    'Sick':{bg:'#F7EADF',color:'#966C52',label:'Sick Leave'},
-    'Sickleave':{bg:'#F7EADF',color:'#966C52',label:'Sick Leave'},
+    'Sick':{bg:'#E7F2F1',color:'#4E8A86',label:'Sick Leave'},
+    'Sickleave':{bg:'#E7F2F1',color:'#4E8A86',label:'Sick Leave'},
     'EL':{bg:'#F9F6F8',color:'#6E5A68',label:'EL'},
     'Saturday Shift':{bg:'#F7F6F9',color:'#625E72',label:'Sat Shift'},
   };
@@ -1941,8 +1941,8 @@ function renderAttendance(name){
   Object.values(rows).forEach(s=>{if(s in tot)tot[s]++;});
   const byM={};
   Object.entries(rows).forEach(([d,s])=>{const m=d.slice(0,7);if(!byM[m])byM[m]={};byM[m][d]=s;});
-  const ACOL={Office:'#C2D6B6',Remote:'#CDC9E5',Vacation:'#EADDB6',Sick:'#EAC7B0',Off:'#EDD2D2',Absent:'#DDB0B0','Saturday Shift':'#9996A3',EL:'#A1949D'};
-  const ACIR={Office:['#F5F9F2','#6A8A60','#D3E2C9'],Remote:['#F7F6FB','#7E78A8','#DCD9EE'],Vacation:['#FDFAF1','#9C8D63','#F0E7CB'],Sick:['#FDF7F2','#A88068','#F0DCCD'],Off:['#FCF6F6','#B48484','#F0DCDC'],Absent:['#FAF1F1','#9A6464','#EACACA'],'Saturday Shift':['#F7F6F9','#625E72','#DEDCE6'],EL:['#F9F6F8','#6E5A68','#E4DAE1']};
+  const ACOL={Office:'#C2D6B6',Remote:'#CDC9E5',Vacation:'#EADDB6',Sick:'#BFDAD7',Off:'#EDD2D2',Absent:'#DDAEAE','Saturday Shift':'#9996A3',EL:'#A1949D'};
+  const ACIR={Office:['#F5F9F2','#6A8A60','#D3E2C9'],Remote:['#F7F6FB','#7E78A8','#DCD9EE'],Vacation:['#FDFAF1','#9C8D63','#F0E7CB'],Sick:['#E7F2F1','#4E8A86','#BFDAD7'],Off:['#FCF6F6','#B48484','#F0DCDC'],Absent:['#F3DCDC','#8E3F3F','#DDAEAE'],'Saturday Shift':['#F7F6F9','#625E72','#DEDCE6'],EL:['#F9F6F8','#6E5A68','#E4DAE1']};
   const ALBL={Office:'Office',Remote:'Remote',Vacation:'Vacation',Sick:'Sick leave',Off:'Off',Absent:'Absent','Saturday Shift':'Saturday shift'};
   let html='<div class="sE" style="--n:'+Object.keys(ALBL).length+'">'+Object.keys(ALBL).map(k=>{const cc=ACIR[k]||['#fff','#808080','#ddd'];return '<div><b style="color:'+(tot[k]?cc[1]:'#d0cdc8')+'">'+tot[k]+'</b><span><i style="background:'+cc[2]+'"></i>'+ALBL[k]+'</span></div>';}).join('')+'</div>';
   const _nowM=new Date().toISOString().slice(0,7);
@@ -9704,7 +9704,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 <script>var CV_TAB='Contact Volume';
 var CV_ORDER=['Petromin','BAIC','Nissan','Stellantis','Body Shop','Foton','Energy','Volvo','National Oil'];
-var CV_COL={tot:'var(--accent)',ans:'var(--st-ofc)',ab:'var(--st-abs)',wa:'var(--st-chat)'};
+var CV_COL={tot:'var(--accent)',ans:'var(--st-ofc)',ab:'#9A6464',wa:'var(--st-chat)'};
 var CV_MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 var CV_MF=['January','February','March','April','May','June','July','August','September','October','November','December'];
 var CV_DW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
