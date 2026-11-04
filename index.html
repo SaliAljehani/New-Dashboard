@@ -593,6 +593,8 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
 #attContent .sE>div{padding:8px 6px!important}
 #attContent .sE b{font-size:18px!important}
 #attContent .sE span{font-size:11px!important}
+#attContent .sE.sE2{background:transparent;border:0;border-radius:0;gap:8px}
+#attContent .sE.sE2>div{border-radius:10px}
 .tp-wrap{gap:10px!important}
 
 .ag-kpis .ag-k{padding:5px 8px!important;display:flex!important;flex-direction:column;justify-content:center;align-items:center;min-height:0!important}
@@ -1944,7 +1946,7 @@ function renderAttendance(name){
   const ACOL={Office:'#C2D6B6',Remote:'#CDC9E5',Vacation:'#EADDB6',Sick:'#BFDAD7',Off:'#EDD2D2',Absent:'#DDAEAE','Saturday Shift':'#9996A3',EL:'#A1949D'};
   const ACIR={Office:['#F5F9F2','#6A8A60','#D3E2C9'],Remote:['#F7F6FB','#7E78A8','#DCD9EE'],Vacation:['#FDFAF1','#9C8D63','#F0E7CB'],Sick:['#E7F2F1','#4E8A86','#BFDAD7'],Off:['#FCF6F6','#B48484','#F0DCDC'],Absent:['#F3DCDC','#8E3F3F','#DDAEAE'],'Saturday Shift':['#F7F6F9','#625E72','#DEDCE6'],EL:['#F9F6F8','#6E5A68','#E4DAE1']};
   const ALBL={Office:'Office',Remote:'Remote',Vacation:'Vacation',Sick:'Sick leave',Off:'Off',Absent:'Absent','Saturday Shift':'Saturday shift'};
-  let html='<div class="sE" style="--n:'+Object.keys(ALBL).length+'">'+Object.keys(ALBL).map(k=>{const cc=ACIR[k]||['#fff','#808080','#ddd'];return '<div><b style="color:'+(tot[k]?cc[1]:'#d0cdc8')+'">'+tot[k]+'</b><span><i style="background:'+cc[2]+'"></i>'+ALBL[k]+'</span></div>';}).join('')+'</div>';
+  let html='<div class="sE sE2" style="--n:'+Object.keys(ALBL).length+'">'+Object.keys(ALBL).map(k=>{const cc=ACIR[k]||['#fff','#808080','#ddd'];const z=!tot[k];return '<div style="background:'+(z?'#FDFDFC':cc[0])+';border:1px solid '+(z?'#EFEBE6':cc[2])+'"><b style="color:'+(z?'#C9C4BE':cc[1])+'">'+tot[k]+'</b><span style="color:'+(z?'#C9C4BE':cc[1])+'">'+ALBL[k]+'</span></div>';}).join('')+'</div>';
   const _nowM=new Date().toISOString().slice(0,7);
   const _ms=Object.keys(byM).sort().reverse();
   _ms.forEach((m,mi)=>{
