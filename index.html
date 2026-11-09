@@ -1091,7 +1091,7 @@ function clearSheetCache(){
 }
 let FORCE_FRESH = false;
 let REF_FRESH = false;
-function refreshAll(){ clearSheetCache(); try{ REF_CACHE = {}; }catch(e){} FORCE_FRESH = true; REF_FRESH = true; try{ CV_ROWS = null; if(CP===14) cvOpen(); }catch(e){} loadAllData(); }
+function refreshAll(){ clearSheetCache(); try{ REF_CACHE = {}; }catch(e){} try{ INQ_DATA = null; }catch(e){} FORCE_FRESH = true; REF_FRESH = true; try{ CV_ROWS = null; if(CP===14) cvOpen(); }catch(e){} loadAllData(); }
 const FAST_SHEETS = [];
 let FAST_PATH_OFF = false;
 function normaliseCsvCell(v){
