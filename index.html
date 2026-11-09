@@ -257,6 +257,23 @@ tr:last-child td{border-bottom:none}
 .ref-info-panel{background:#FDFDFC;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .ref-panel-header{padding:12px 16px;font-size:13px;font-weight:700;color:var(--accent);display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(var(--accent-rgb),.07);text-align:center}
 .ref-panel-body{padding:14px 16px}
+#refInqPanel .iq-search{width:100%;padding:9px 12px;border:1px solid #E6DFD7;border-radius:10px;font-family:inherit;font-size:13px;outline:none;background:#FFF;margin-bottom:12px;box-sizing:border-box}
+#refInqPanel .iq-search:focus{border-color:var(--iq)}
+#refInqPanel .iq-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+#refInqPanel .iq-chip{border:1px solid #E6DFD7;background:#FDFDFC;color:#6A5A4A;border-radius:999px;padding:5px 12px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit}
+#refInqPanel .iq-chip.on{background:color-mix(in srgb,var(--iq) 12%,#FDFDFC);border-color:color-mix(in srgb,var(--iq) 45%,transparent);color:var(--iq)}
+#refInqPanel .iq-chip small{color:#A39A92;font-weight:500;margin-left:4px}
+#refInqPanel .iq-sec{margin-bottom:14px;border:1px solid #F0EBE5;border-radius:10px;overflow:hidden}
+#refInqPanel .iq-sh{display:flex;justify-content:space-between;padding:8px 14px;background:#FAF8F5;font-weight:700;font-size:12.5px;color:#4A3528}
+#refInqPanel .iq-row{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #F4F0EC}
+#refInqPanel .iq-row:hover{background:#FCFBF9}
+#refInqPanel .iq-cell{display:flex;align-items:center;gap:8px;padding:7px 12px;font-size:12.5px;line-height:1.45}
+#refInqPanel .iq-cell.ar{direction:rtl;border-left:1px solid #F4F0EC}
+#refInqPanel .iq-cell span{flex:1}
+#refInqPanel .iq-cp{flex:none;border:1px solid #E6DFD7;background:#FFF;color:#8A7F74;border-radius:7px;padding:3px 9px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit}
+#refInqPanel .iq-cp:hover{border-color:var(--iq);color:var(--iq)}
+#refInqPanel .iq-cp.ok{background:var(--iq);border-color:var(--iq);color:#fff}
+@media(max-width:800px){#refInqPanel .iq-row{grid-template-columns:1fr}#refInqPanel .iq-cell.ar{border-left:0;border-top:1px dashed #F4F0EC}}
 .ref-contact-pill{display:flex;align-items:center;gap:11px;background:#FEFEFD;border-radius:12px;padding:10px 13px;border:1px solid #eee;box-shadow:0 1px 4px rgba(0,0,0,.04);transition:.15s}
 .ref-contact-pill:hover{box-shadow:0 3px 10px rgba(0,0,0,.09)}
 .ref-contact-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;color:#fff}
@@ -509,7 +526,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#333333;border-top:1p
 .page-nav{border:none!important;background:transparent!important;padding:0!important;display:grid!important;grid-template-columns:repeat(6,207px);justify-content:center;gap:8px!important;width:auto!important;margin-top:34px!important;margin-bottom:14px!important}
 
 .ref-home .ref-brand-circles{display:grid!important;grid-template-columns:repeat(10,118px);gap:8px!important;background:transparent!important}
-.ref-tools{display:grid!important;grid-template-columns:repeat(5,244px);gap:8px!important;margin-top:12px!important}
+.ref-tools{display:grid!important;grid-template-columns:repeat(6,202px);gap:8px!important;margin-top:12px!important}
 .ref-home .ref-brand-circles,.ref-tools{width:fit-content;margin-left:auto!important;margin-right:auto!important;border:1px solid #EDE6DE;border-radius:14px!important;padding:30px 16px 16px!important;position:relative;box-shadow:none!important}
 .ref-home .ref-brand-circles::before{content:"BRANDS";position:absolute;top:9px;left:16px;font-size:10.5px;font-weight:700;letter-spacing:.1em;color:#A39A92}
 .ref-tools::before{content:"TOOLS";position:absolute;top:9px;left:16px;font-size:10.5px;font-weight:700;letter-spacing:.1em;color:#A39A92}
@@ -528,7 +545,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#333333;border-top:1p
   .page-nav{grid-template-columns:repeat(6,minmax(0,1fr))!important;width:calc(100% - 48px)!important;max-width:1287px}
   .ref-home .ref-brand-circles,.ref-tools{width:auto!important;box-sizing:border-box}
   .ref-home .ref-brand-circles{grid-template-columns:repeat(5,minmax(0,1fr))!important}
-  .ref-tools{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+  .ref-tools{grid-template-columns:repeat(6,minmax(0,1fr))!important}
   .pnav,.ref-home .ref-brand-circle,.ref-tool{overflow:hidden}
   .pnav{overflow:visible!important}
 }
@@ -2307,6 +2324,57 @@ async function openMonthlySummary(){
   }
   renderMonthlySummary(CA);
 }
+var INQ_DATA=null,INQ_SEL=-1;
+async function renderInquiries(){
+  var host=document.getElementById('inqContent'); if(!host) return;
+  var esc=function(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');};
+  try{
+    if(!INQ_DATA){
+      var rows=await fetchSheet(SHEET_ID,'Inquiries'), grid=[];
+      if(rows&&rows.length){
+        if(Array.isArray(rows[0])) grid=rows.map(function(r){return [String(r[0]==null?'':r[0]),String(r[1]==null?'':r[1])];});
+        else{ var ks=Object.keys(rows[0]); grid.push([ks[0]||'',ks[1]||'']); rows.forEach(function(r){ grid.push([String(r[ks[0]]==null?'':r[ks[0]]),String(r[ks[1]]==null?'':r[ks[1]])]); }); }
+      }
+      var secs=[],cur=null;
+      grid.forEach(function(g){
+        var a=g[0].trim(),b=g[1].trim(); if(!a&&!b) return;
+        if(/(inquiries|calls)$/i.test(a)){ cur={en:a.replace(/\s*inquiries$/i,''),ar:b,items:[]}; secs.push(cur); return; }
+        if(!cur){ cur={en:'General',ar:'',items:[]}; secs.push(cur); }
+        cur.items.push([a,b]);
+      });
+      INQ_DATA=secs.filter(function(s){return s.items.length;});
+    }
+    if(!INQ_DATA.length){ host.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">لا يوجد محتوى في تبويب Inquiries</div>'; return; }
+    if(!host.querySelector('.iq-search')){
+      host.innerHTML='<input class="iq-search" placeholder="ابحثي بالعربي أو الإنجليزي… / Search" oninput="drawInquiries()"><div class="iq-chips"></div><div class="iq-list"></div>';
+    }
+    host.querySelector('.iq-chips').innerHTML='<button class="iq-chip'+(INQ_SEL<0?' on':'')+'" onclick="INQ_SEL=-1;renderInquiries()">All</button>'
+      +INQ_DATA.map(function(s,i){return '<button class="iq-chip'+(INQ_SEL===i?' on':'')+'" onclick="INQ_SEL='+i+';renderInquiries()">'+esc(s.en)+'<small>'+s.items.length+'</small></button>';}).join('');
+    drawInquiries();
+  }catch(e){
+    host.innerHTML='<div style="text-align:center;padding:40px;color:#c0272d;font-size:13px">تعذّر تحميل تبويب Inquiries — '+esc(e.message||e)+'</div>';
+  }
+}
+function drawInquiries(){
+  var host=document.getElementById('inqContent'); if(!host||!INQ_DATA) return;
+  var esc=function(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');};
+  var inp=host.querySelector('.iq-search'), q=(inp?inp.value:'').trim().toLowerCase(), h='';
+  INQ_DATA.forEach(function(s,i){
+    if(INQ_SEL>=0&&INQ_SEL!==i) return;
+    var it=s.items.filter(function(x){return !q||x[0].toLowerCase().indexOf(q)>=0||x[1].indexOf(q)>=0;});
+    if(!it.length) return;
+    h+='<div class="iq-sec"><div class="iq-sh"><span>'+esc(s.en)+'</span><span style="direction:rtl">'+esc(s.ar)+'</span></div>'
+      +it.map(function(x){return '<div class="iq-row"><div class="iq-cell"><span>'+esc(x[0])+'</span>'+(x[0]?'<button class="iq-cp" data-t="'+esc(x[0])+'" onclick="inqCopy(this)">Copy</button>':'')+'</div>'
+        +'<div class="iq-cell ar"><span>'+esc(x[1])+'</span>'+(x[1]?'<button class="iq-cp" data-t="'+esc(x[1])+'" onclick="inqCopy(this)">نسخ</button>':'')+'</div></div>';}).join('')+'</div>';
+  });
+  host.querySelector('.iq-list').innerHTML=h||'<div style="text-align:center;padding:30px;color:#A39A92">لا توجد نتائج</div>';
+}
+function inqCopy(b){
+  var t=b.getAttribute('data-t'), o=b.textContent;
+  var done=function(){ b.classList.add('ok'); b.textContent='✓'; setTimeout(function(){ b.classList.remove('ok'); b.textContent=o; },1100); };
+  var fb=function(){ var a=document.createElement('textarea'); a.value=t; a.style.position='fixed'; a.style.opacity='0'; document.body.appendChild(a); a.select(); try{document.execCommand('copy');}catch(e){} a.remove(); done(); };
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done,fb); else fb();
+}
 async function renderCaseHandling(){
   var host=document.getElementById('caseHandlingContent');
   if(!host) return;
@@ -2710,7 +2778,7 @@ let REF_ACTIVE_TABS = {nissan:0, stellantis:0, bodyshop:0, baic:0, baicRecall:0}
 var __INFLIGHT = {};
 // Read reference tabs straight from Google (CSV export by tab id) — much faster than the Apps Script proxy.
 // Same row format as the proxy (row 1 = headers, empty rows skipped). The proxy stays as the fallback.
-var DIRECT_GIDS = {"1MRUWG3v9Neac-UselMf_HzlfiLtX64a9iJsIUV5FmRU": {"Announcement": 536403637, "Agent": 1123791969, "Agent Performance": 810269545, "Attendance": 1979596727, "Contact Volume": 903692081, "Weekly Schedule": 920710775, "Hide Schedule": 1153730417, "Vacation 2026": 644438759, "Time-Off": 1180491486, "Active Sessions": 660855050, "Subject": 124854438, "Case Handling": 136368249, "Call Data ": 95246895, "Reference ": 910779499, "Vacation 27": 92813193}, "1lXDeN1iUosG_JSADgdWhnkT5J1t3hhwXoSJdbmb4B88": {"Instruction": 501982434, "Showroom": 0, "Service": 892972528, "Spare Parts ": 1600462399, "PAC": 1439489903, "SMS & Location": 1108293933, "Nissan App 25-26": 2146369676}, "104CXGHd1raokgGijhvHgt6AI2gdsqzANBH74Ehm01dM": {"Instruction": 916076482, "Showroom ": 545350259, "Service": 0, "Spare Parts ": 748141236, "Showroom Sales Team": 579585715, "Appointment & Location SMS": 558313231}, "1_Z8Ry4-Y7kNFYnhXNvn7QP8jt1S_n9JHdVC2zT6R6WE": {"Body Shop & Paint": 0, "Location ": 988890877}, "1FQaNEkC-gKFIJLT5hBE9qzBL7pXf_m5Aot35h622hR4": {"Instruction": 208840535, "Showroom": 67999882, "Service": 0, "BAIC Location": 260555768}, "11M28wIA4Ee84ohrIqzXtobK7X-QsrruoL4MwjoGz-6k": {"Warranty": 5429095, "Instruction": 1559546758, "Autocare": 0, "Petromin Express Stations": 568317198, "Tire&Battery": 948382035, "Eco Wash": 1567633718, "DIESEL": 1216723660, "DIESEL Workshop": 879941377, "PE-Emailz": 781690816, "Complaints Emails": 5915921, "SMS": 1562070351}, "1PBhYlWtWqGZFZi_wgjDTlUaoN6O0QeS4P1CHcd40H4Y": {"Instruction": 647197376, "Showrooms": 1573282722, "PMS": 298690841, "Location SMS": 272923692}, "1gKtlJ2VNz8ddL5yOuIgGCgAGGkqeizzZ_r9NZ1FNaj0": {"Franchise Locations": 1948792148, "Price List": 1238827691, "NOS Complaint ": 862266020, "FAQ": 0}, "1Rr37Ojft0hnRjjSv8KF6Dmt4ywA0P7ObApKTMOHgmOc": {"Emails": 493567416, "EV Charging Stations": 378125153, "Fuel Station": 1768605692, "FAQ": 476705075, "SMS": 572847617}, "1gk4iGJ8Xs6QesKKSzT3bhfRu2qkLeb5VpiR09hptYE0": {"Instruction": 0, "Sales Prices ": 2008193375, "Aftersales": 555993991}};
+var DIRECT_GIDS = {"1MRUWG3v9Neac-UselMf_HzlfiLtX64a9iJsIUV5FmRU": {"Announcement": 536403637, "Agent": 1123791969, "Agent Performance": 810269545, "Attendance": 1979596727, "Contact Volume": 903692081, "Weekly Schedule": 920710775, "Hide Schedule": 1153730417, "Vacation 2026": 644438759, "Time-Off": 1180491486, "Active Sessions": 660855050, "Subject": 124854438, "Case Handling": 136368249, "Inquiries": 1915797033, "Call Data ": 95246895, "Reference ": 910779499, "Vacation 27": 92813193}, "1lXDeN1iUosG_JSADgdWhnkT5J1t3hhwXoSJdbmb4B88": {"Instruction": 501982434, "Showroom": 0, "Service": 892972528, "Spare Parts ": 1600462399, "PAC": 1439489903, "SMS & Location": 1108293933, "Nissan App 25-26": 2146369676}, "104CXGHd1raokgGijhvHgt6AI2gdsqzANBH74Ehm01dM": {"Instruction": 916076482, "Showroom ": 545350259, "Service": 0, "Spare Parts ": 748141236, "Showroom Sales Team": 579585715, "Appointment & Location SMS": 558313231}, "1_Z8Ry4-Y7kNFYnhXNvn7QP8jt1S_n9JHdVC2zT6R6WE": {"Body Shop & Paint": 0, "Location ": 988890877}, "1FQaNEkC-gKFIJLT5hBE9qzBL7pXf_m5Aot35h622hR4": {"Instruction": 208840535, "Showroom": 67999882, "Service": 0, "BAIC Location": 260555768}, "11M28wIA4Ee84ohrIqzXtobK7X-QsrruoL4MwjoGz-6k": {"Warranty": 5429095, "Instruction": 1559546758, "Autocare": 0, "Petromin Express Stations": 568317198, "Tire&Battery": 948382035, "Eco Wash": 1567633718, "DIESEL": 1216723660, "DIESEL Workshop": 879941377, "PE-Emailz": 781690816, "Complaints Emails": 5915921, "SMS": 1562070351}, "1PBhYlWtWqGZFZi_wgjDTlUaoN6O0QeS4P1CHcd40H4Y": {"Instruction": 647197376, "Showrooms": 1573282722, "PMS": 298690841, "Location SMS": 272923692}, "1gKtlJ2VNz8ddL5yOuIgGCgAGGkqeizzZ_r9NZ1FNaj0": {"Franchise Locations": 1948792148, "Price List": 1238827691, "NOS Complaint ": 862266020, "FAQ": 0}, "1Rr37Ojft0hnRjjSv8KF6Dmt4ywA0P7ObApKTMOHgmOc": {"Emails": 493567416, "EV Charging Stations": 378125153, "Fuel Station": 1768605692, "FAQ": 476705075, "SMS": 572847617}, "1gk4iGJ8Xs6QesKKSzT3bhfRu2qkLeb5VpiR09hptYE0": {"Instruction": 0, "Sales Prices ": 2008193375, "Aftersales": 555993991}};
 var DIRECT_SKIP = /^(time-off|active sessions|agent performance|attendance)$/i;
 function directGid(id, name){
   var m = DIRECT_GIDS[id]; if(!m) return null;
@@ -7361,11 +7429,12 @@ function renderRecallInRef(){
   renderRecallPage();
 }
 function refTool(id){
-  ['refContactsPanel','refTicketPanel','refCasePanel','refLinksPanel','refInboundPanel'].forEach(function(x){
+  ['refContactsPanel','refTicketPanel','refInqPanel','refCasePanel','refLinksPanel','refInboundPanel'].forEach(function(x){
     var p=document.getElementById(x); if(!p) return;
     var open=(x===id)&&p.style.display==='none';
     p.style.display=open?'block':'none';
     if(open&&x==='refCasePanel') renderCaseHandling();
+    if(open&&x==='refInqPanel') renderInquiries();
     var b=document.querySelector('.ref-tool[data-p="'+x+'"]'); if(b) b.classList.toggle('on',open);
     if(open) setTimeout(function(){p.scrollIntoView({behavior:'smooth',block:'nearest'});},50);
   });
@@ -7933,7 +8002,7 @@ async function renderRef(){
       +'</div>'
       +'<div class="ref-tools">'
       +(function(){
-        var TP={phone:'M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5-2.5l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2',clip:'M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2M9 12h6M9 16h6',file:'M14 3v4a1 1 0 0 0 1 1h4M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2M9 13h6M9 17h6',link:'M9 15l6-6M11 6l.5-.5a5 5 0 0 1 7 7l-.5.5M13 18l-.4.5a5 5 0 0 1-7-7l.4-.5',edit:'M4 20h4L18.5 9.5a2.8 2.8 0 1 0-4-4L4 16v4M13.5 6.5l4 4'};
+        var TP={phone:'M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5-2.5l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2',clip:'M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2M9 12h6M9 16h6',file:'M14 3v4a1 1 0 0 0 1 1h4M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2M9 13h6M9 17h6',link:'M9 15l6-6M11 6l.5-.5a5 5 0 0 1 7 7l-.5.5M13 18l-.4.5a5 5 0 0 1-7-7l.4-.5',edit:'M4 20h4L18.5 9.5a2.8 2.8 0 1 0-4-4L4 16v4M13.5 6.5l4 4',chat:'M8 9h8M8 13h6M18 4a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-5l-5 3v-3H6a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3z'};
         var D=(window.TOOL_STYLE==='D');
         var tb=function(panel,ic,label,col){
           var st=D?'color:'+col+'!important;border-color:color-mix(in srgb,'+col+' 25%,transparent)!important;background:color-mix(in srgb,'+col+' 7%,#FDFDFC)':'';
@@ -7942,6 +8011,7 @@ async function renderRef(){
         };
         return tb('refContactsPanel','phone','Contact Numbers','#B07070')
           +tb('refTicketPanel','clip','Ticket Type','#9C8D63')
+          +tb('refInqPanel','chat','Inquiries','#6F8A88')
           +(inboundCards?tb('refInboundPanel','file','Inbound Sheets','#6A8A60'):'')
           +(linkCards?tb('refLinksPanel','link','Links & Systems','#6E87A6'):'')
           +tb('refCasePanel','edit','Case Handling','#7E78A8');
@@ -7954,6 +8024,10 @@ async function renderRef(){
       +'<div class="ref-info-panel" id="refContactsPanel" style="display:none;margin-top:8px">'
       +'<div class="ref-panel-header" style="cursor:pointer" onclick="refTool(\'refContactsPanel\')">📞 Contact Numbers <span style="font-size:12px">▲</span></div>'
       +'<div class="ref-panel-body"><div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px">'+deptPills(tollFree,waNums)+'</div></div>'
+      +'</div>'
+      +'<div class="ref-info-panel" id="refInqPanel" style="display:none;margin-top:8px;--iq:#6F8A88">'
+      +'<div class="ref-panel-header" style="cursor:pointer;justify-content:center;color:var(--iq);background:color-mix(in srgb,var(--iq) 9%,#FDFDFC)" onclick="refTool(\'refInqPanel\')">💬 Inquiries <span style="margin-left:8px;font-size:12px">▲</span></div>'
+      +'<div class="ref-panel-body"><div id="inqContent"><div style="text-align:center;padding:30px;color:#aaa">Loading...</div></div></div>'
       +'</div>'
       +'<div class="ref-info-panel" id="refCasePanel" style="display:none;margin-top:8px">'
       +'<div class="ref-panel-header" style="cursor:pointer;justify-content:center" onclick="refTool(\'refCasePanel\')">📝 Case Handling <span style="margin-left:8px;font-size:12px">▲</span></div>'
