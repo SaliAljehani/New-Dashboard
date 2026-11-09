@@ -5000,7 +5000,7 @@ function renderPetrominTireBatteryTab(arr){
         if(_cut.length>1){_cut[0]=0;_gmNames=_cut.map((c,i)=>_gmNmRaw.slice(c,_cut[i+1]).trim()).filter(Boolean);}
       }
       const _gmRow='display:flex;align-items:center;min-height:22px';
-      pr.unshift({title:'General Manager',mid:_gmNames.map(n=>'<div style="'+_gmRow+'">'+RC_USER+n+'</div>').join(''),
+      pr.unshift({title:'General Manager',shade:1,mid:_gmNames.map(n=>'<div style="'+_gmRow+'">'+RC_USER+n+'</div>').join(''),
         emails:_gm.phone?_ph(_gm.phone):'', _em:(_gmAllEm.length?_gmAllEm.join(','):_gm.email)});
     }
     const _emc=v=>String(v||'').split(/[,;\/]/).map(x=>x.trim()).filter(x=>x.includes('@')).map(x=>'<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><a href="mailto:'+x+'" style="color:#808080;text-decoration:none;font-size:12px;word-break:break-all">'+x+'</a> <button type="button" class="bd-cp" data-cp="'+x+'">copy</button></div>').join('');
@@ -5356,7 +5356,7 @@ function rcRows(color, rows, cols){
     +rows.map(function(r,i){
       if(r.head) return '<div style="padding:8px 16px;'+(i?'border-top:1px solid #F2EEE8;':'')+'background:color-mix(in srgb,var(--brand,'+color+') 6%,#FFFFFF);font-size:12.5px;font-weight:800;color:'+color+';text-align:left;direction:ltr">'+r.head+'</div>';
       var ar=/[؀-ۿ]/.test(r.title||'')&&!/[A-Za-z]/.test(r.title||'');
-      return '<div style="display:grid;grid-template-columns:'+cols+';gap:14px;align-items:center;padding:10px 16px;direction:ltr;text-align:left;'+(i?'border-top:1px solid #F2EEE8':'')+'">'
+      return '<div style="display:grid;grid-template-columns:'+cols+';gap:14px;align-items:center;padding:10px 16px;direction:ltr;text-align:left;'+(r.shade?'background:color-mix(in srgb,var(--brand,'+color+') 6%,#FFFFFF);':'')+(i?'border-top:1px solid #F2EEE8':'')+'">'
         +'<div><div style="font-size:13px;font-weight:700;color:'+color+';word-break:break-word;'+(ar?'direction:rtl;text-align:left':'')+'">'+(r.icon||'')+(r.title||'')+'</div>'
           +(r.sub?'<div style="font-size:12px;color:#808080;margin-top:2px;word-break:break-word"><span style="unicode-bidi:plaintext">'+r.sub+'</span></div>':'')+'</div>'
         +(r.mid!==undefined?'<div style="font-size:12px;color:#333333;line-height:1.7">'+(r.mid||'')+'</div>':'')
