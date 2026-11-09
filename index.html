@@ -4987,8 +4987,21 @@ function renderPetrominTireBatteryTab(arr){
     pr.splice(0,pr.length,...pr.map(_inl)); pw.splice(0,pw.length,...pw.map(_inl));
     if(_gm){
       const _gmEm=String(_gm.email||'').split(/[,;]/).map(x=>x.trim()).filter(x=>x.includes('@'))[0]||'';
-      pr.unshift({head:'General Manager'},{title:'Central',mid:(_gm.manager?'<div>'+RC_USER+_gm.manager+'</div>':''),
-        emails:_gm.phone?_ph(_gm.phone):'', _em:_gm.email});
+      // General Manager cell can hold more than one person (names on separate lines, one email each): split them so each shows on its own line with its own email
+      const _gmAllEm=[];
+      const _k1=Object.keys(arr[0]||{}).map(k=>String(k)), _v1=Object.values(arr[0]||{}).map(k=>String(k==null?'':k));
+      const _ks1=_k1.some(k=>/general\s*manager/i.test(k))?_k1:(_v1.some(k=>/general\s*manager/i.test(k))?_v1:[]);
+      const _gi1=_ks1.findIndex(k=>/general\s*manager/i.test(k));
+      [_gm.email].concat(_gi1>=0?_ks1.slice(_gi1):[]).forEach(v=>{(String(v||'').match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g)||[]).forEach(e=>{if(_gmAllEm.indexOf(e.toLowerCase())<0)_gmAllEm.push(e.toLowerCase());});});
+      const _gmNmRaw=String(_gm.manager||'').trim();
+      let _gmNames=_gmNmRaw.split(/\s*(?:\r?\n|,|;|\/|&)\s*/).map(x=>x.trim()).filter(Boolean);
+      if(_gmNames.length<_gmAllEm.length){
+        const _cut=_gmAllEm.map(e=>{const t=e.split('@')[0].split(/[._-]/)[0];return t?_gmNmRaw.toLowerCase().indexOf(t):-1;}).filter(i=>i>=0).sort((a,b)=>a-b);
+        if(_cut.length>1){_cut[0]=0;_gmNames=_cut.map((c,i)=>_gmNmRaw.slice(c,_cut[i+1]).trim()).filter(Boolean);}
+      }
+      const _gmRow='display:flex;align-items:center;min-height:22px';
+      pr.unshift({title:'General Manager',mid:_gmNames.map(n=>'<div style="'+_gmRow+'">'+RC_USER+n+'</div>').join(''),
+        emails:_gm.phone?_ph(_gm.phone):'', _em:(_gmAllEm.length?_gmAllEm.join(','):_gm.email)});
     }
     const _emc=v=>String(v||'').split(/[,;\/]/).map(x=>x.trim()).filter(x=>x.includes('@')).map(x=>'<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><a href="mailto:'+x+'" style="color:#808080;text-decoration:none;font-size:12px;word-break:break-all">'+x+'</a> <button type="button" class="bd-cp" data-cp="'+x+'">copy</button></div>').join('');
     [pr,pw].forEach(L=>L.forEach(r=>{ if(r.head) return; r.mid=(r.mid||'')+'\u0001'+(r.emails||''); r.emails=_emc(r._em); }));
