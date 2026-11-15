@@ -8468,7 +8468,7 @@ async function renderDailyOff(){
         days.forEach(function(d){
           var v=String(ag[d]||'').trim(), k=kindOf(v), dt=w.dates&&w.dates[d]?String(w.dates[d]).trim():'';
           var isT=dt&&dt.replace(/\s+/g,' ').toLowerCase()===_tdStr;
-          var plain=(grp==='call'&&/^(multi[\s-]?camp|calls?)$/i.test(v))||(grp==='chat'&&/^live[\s-]?chat$/i.test(v));
+          var plain=d!=='Saturday'&&((grp==='call'&&/^(multi[\s-]?camp|calls?)$/i.test(v))||(grp==='chat'&&/^live[\s-]?chat$/i.test(v)));
           var lbl=k==='off'?'OFF':k==='voff'?'Off':k==='vac'?'Vacation':k==='none'?'':(plain?'':v);
           h+='<div class="wks-t wk-'+k+'" title="'+SH[d]+' '+esc(dt)+(isT?' · Today':'')+(v?' · '+esc(v):'')+'"><small>'+(lbl?esc(lbl):'&nbsp;')+'</small></div>';
           if(d==='Thursday') h+='<div class="wks-br'+(wb?'':' empty')+'">'+(wb?esc(wb):'')+'</div>';
