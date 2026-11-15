@@ -1415,7 +1415,7 @@ function renderAttendanceTab(){
     const isAbsent=['Off','Absent','Vacation','Sick','Sickleave','EL','Saturday Shift'].includes(r.status);
     if(isAbsent){absentList.push(r);return;}
     const isWhats=(camp==='WhatsApp'||camp.toLowerCase().includes('whatsapp'));
-    const isMulti=(camp==='Multi Campaign'||camp.toLowerCase().includes('multi'));
+    const isMulti=(camp==='Multi Campaign'||camp.toLowerCase().includes('multi')||/^calls?\b/i.test(camp.trim()));
     if(r.status==='Remote'){
       remoteList.push(r);
       if(isWhats){liveList.push({...r,_rmt:true});}
@@ -1468,7 +1468,7 @@ function renderAttendanceTab(){
   const html='<div class="att-summary-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:18px">'
     +mkCard('#FAF8F5','#6A8A60',officeList.length,'office','Office',officeList,false)
     +mkCard('#FAF8F5','#7E78A8',remoteList.length,'home','Work Remotely',remoteList,false)
-    +mkCard('#FAF8F5','#7C7064',multiList.length,'phone','Multi Camp',multiList,false)
+    +mkCard('#FAF8F5','#7C7064',multiList.length,'phone','Calls',multiList,false)
     +mkCard('#FAF8F5','#3E6545',liveList.length,'chat','Live Chat',liveList,false)
     +mkCard('#FAF8F5','#9A6464',absentList.length,'off','Off · Sick · Vacation · Absent',absentList,true)
     +'</div>';
@@ -7151,7 +7151,7 @@ function renderRoster(){
         var v=String(x.r[agKey]||'').trim();
         var isOff=v.toLowerCase()==='off';
         var isLive=v.toLowerCase()==='live chat'||(v.toLowerCase().indexOf('chat')>-1&&v.toLowerCase().indexOf('multi')<0);
-        var isMulti=v.toLowerCase()==='multi-camp'||v.toLowerCase()==='multi campaign';
+        var isMulti=v.toLowerCase()==='multi-camp'||v.toLowerCase()==='multi campaign'||v.toLowerCase()==='calls';
         var wknd=(x.dayIdx===5||x.dayIdx===6);
         var isT=(x.d.toISOString().slice(0,10)===todayStr);
         var cellBg=isT?'rgba(var(--accent-rgb),.04)':wknd?'rgba(212,196,168,.1)':'';
@@ -7174,7 +7174,7 @@ function renderRoster(){
   var legendHTML='<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:14px;padding:8px 0">'
     +'<span style="background:#FCF6F6;color:#B48484;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">OFF</span>'
     +'<span style="background:#F6F9F6;color:#3E6545;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Live Chat</span>'
-    +'<span style="background:#F7F4EF;color:#7C7064;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Multi-Camp</span>'
+    +'<span style="background:#F7F4EF;color:#7C7064;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px">Calls</span>'
     +'</div>';
   var allTablesHTML='<div id="daily_week_tables">';
   weekKeys.forEach(function(wk){
@@ -7219,7 +7219,7 @@ function renderRoster(){
       t+='</tbody></table></div></div>';
       return t;
     }
-    weeklyHTML += buildBreakTable(callRows,'📞 Multi Campaign','#c0272d');
+    weeklyHTML += buildBreakTable(callRows,'📞 Calls','#c0272d');
     weeklyHTML += buildBreakTable(chatRows,'💬 WhatsApp','#1565c0');
   } else {
     weeklyHTML = '<div style="text-align:center;padding:30px;color:#aaa">No weekly data.</div>';
@@ -8310,7 +8310,7 @@ async function renderDailyOff(){
       if(vl==='off'){col='#B48484';fw='500';}
       else if(vl==='vacation'||vl==='v'||vl==='vaction'){col='#9C8D63';}
       else if(vl.indexOf('live')===0||vl==='livechat'||(vl.indexOf('chat')>-1&&vl.indexOf('multi')<0)){col='#c0272d';}
-      else if(vl.includes('multi')){col='#333333';fw='500';}
+      else if(vl.includes('multi')||/^calls?\b/.test(vl)){col='#333333';fw='500';}
       else if(vl.indexOf('national')>-1){col='#808080';fw='500';fs='italic';}
       else{col='#808080';}
       return '<span style="display:block;color:'+col+';font-size:12px;font-weight:'+fw+';font-style:'+fs+';text-align:center;white-space:nowrap">'+v+'</span>';
@@ -8320,7 +8320,7 @@ async function renderDailyOff(){
       DAY_COLS.forEach(function(d){
         var vl=String(ag[d]||'').toLowerCase().trim();
         if(vl.indexOf('live')===0||vl==='livechat'||(vl.indexOf('chat')>-1&&vl.indexOf('multi')<0)) live++;
-        else if(vl.includes('multi')) multi++;
+        else if(vl.includes('multi')||/^calls?\b/.test(vl)) multi++;
       });
       if(live===0&&multi===0) return null;
       if(live>=multi) return {bg:'#FDF7F7',col:'#c0272d'};
@@ -8331,7 +8331,7 @@ async function renderDailyOff(){
       DAY_COLS.forEach(function(d){
         var vl=String(ag[d]||'').toLowerCase().trim();
         if(vl.indexOf('live')===0||vl==='livechat'||(vl.indexOf('chat')>-1&&vl.indexOf('multi')<0)) live++;
-        else if(vl.includes('multi')) multi++;
+        else if(vl.includes('multi')||/^calls?\b/.test(vl)) multi++;
       });
       return live>multi ? 'chat' : 'call';
     }
@@ -8393,7 +8393,7 @@ async function renderDailyOff(){
         return h+'</tbody></table></div>';
       };
       return '<div style="display:grid;grid-template-columns:1fr;gap:16px;align-items:start">'
-        +card('Multi-Camp',info.filter(function(x){return !x.chat;}),false)
+        +card('Calls',info.filter(function(x){return !x.chat;}),false)
         +card('Live Chat',info.filter(function(x){return x.chat;}),true)
         +card('Saturday'+(w.dates&&w.dates.Saturday?' <span style="font-weight:500;color:#9a6a3a">'+w.dates.Saturday+'</span>':''),
             info.filter(function(x){ var v=String(x.ag.Saturday||'').trim().toLowerCase(); return v&&v!=='off'&&v!=='-'; }),false,true)
@@ -8468,7 +8468,7 @@ async function renderDailyOff(){
         days.forEach(function(d){
           var v=String(ag[d]||'').trim(), k=kindOf(v), dt=w.dates&&w.dates[d]?String(w.dates[d]).trim():'';
           var isT=dt&&dt.replace(/\s+/g,' ').toLowerCase()===_tdStr;
-          var plain=(grp==='call'&&/^multi[\s-]?camp$/i.test(v))||(grp==='chat'&&/^live[\s-]?chat$/i.test(v));
+          var plain=(grp==='call'&&/^(multi[\s-]?camp|calls?)$/i.test(v))||(grp==='chat'&&/^live[\s-]?chat$/i.test(v));
           var lbl=k==='off'?'OFF':k==='voff'?'Off':k==='vac'?'Vacation':k==='none'?'':(plain?'':v);
           h+='<div class="wks-t wk-'+k+'" title="'+SH[d]+' '+esc(dt)+(isT?' · Today':'')+(v?' · '+esc(v):'')+'"><small>'+(lbl?esc(lbl):'&nbsp;')+'</small></div>';
           if(d==='Thursday') h+='<div class="wks-br'+(wb?'':' empty')+'">'+(wb?esc(wb):'')+'</div>';
@@ -8494,7 +8494,7 @@ async function renderDailyOff(){
           +'<div class="wks-list">'+(list.length?list.map(function(a){return block(a,grp);}).join(''):'<div class="wks-empty">—</div>')+'</div></div>';
       };
       return '<div class="wks"><div class="wks-scroll"><div class="wks-inner"><div class="wks-grp wks-grp-hd"><div></div>'+hdr()+'</div>'
-        +sec('multi','Multi Campaign',calls,'call')+sec('chat','Live chat',chats,'chat')+'</div></div></div>';
+        +sec('multi','Calls',calls,'call')+sec('chat','Live chat',chats,'chat')+'</div></div></div>';
     }
     var html='<div style="background:#FDFDFC;border-radius:14px;padding:4px 0 12px">';
     html+='<div style="display:flex;justify-content:flex-start;align-items:center;gap:8px;margin-bottom:10px;margin-top:2px">';
