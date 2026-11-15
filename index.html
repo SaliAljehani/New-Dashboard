@@ -7150,7 +7150,7 @@ function renderRoster(){
       days.forEach(function(x){
         var v=String(x.r[agKey]||'').trim();
         var isOff=v.toLowerCase()==='off';
-        var isLive=v.toLowerCase()==='live chat';
+        var isLive=v.toLowerCase()==='live chat'||(v.toLowerCase().indexOf('chat')>-1&&v.toLowerCase().indexOf('multi')<0);
         var isMulti=v.toLowerCase()==='multi-camp'||v.toLowerCase()==='multi campaign';
         var wknd=(x.dayIdx===5||x.dayIdx===6);
         var isT=(x.d.toISOString().slice(0,10)===todayStr);
@@ -8309,7 +8309,7 @@ async function renderDailyOff(){
       var fs='normal';
       if(vl==='off'){col='#B48484';fw='500';}
       else if(vl==='vacation'||vl==='v'||vl==='vaction'){col='#9C8D63';}
-      else if(vl.indexOf('live')===0||vl==='livechat'){col='#c0272d';}
+      else if(vl.indexOf('live')===0||vl==='livechat'||(vl.indexOf('chat')>-1&&vl.indexOf('multi')<0)){col='#c0272d';}
       else if(vl.includes('multi')){col='#333333';fw='500';}
       else if(vl.indexOf('national')>-1){col='#808080';fw='500';fs='italic';}
       else{col='#808080';}
@@ -8319,7 +8319,7 @@ async function renderDailyOff(){
       var live=0, multi=0;
       DAY_COLS.forEach(function(d){
         var vl=String(ag[d]||'').toLowerCase().trim();
-        if(vl.indexOf('live')===0||vl==='livechat') live++;
+        if(vl.indexOf('live')===0||vl==='livechat'||(vl.indexOf('chat')>-1&&vl.indexOf('multi')<0)) live++;
         else if(vl.includes('multi')) multi++;
       });
       if(live===0&&multi===0) return null;
@@ -8330,7 +8330,7 @@ async function renderDailyOff(){
       var live=0, multi=0;
       DAY_COLS.forEach(function(d){
         var vl=String(ag[d]||'').toLowerCase().trim();
-        if(vl.indexOf('live')===0||vl==='livechat') live++;
+        if(vl.indexOf('live')===0||vl==='livechat'||(vl.indexOf('chat')>-1&&vl.indexOf('multi')<0)) live++;
         else if(vl.includes('multi')) multi++;
       });
       return live>multi ? 'chat' : 'call';
@@ -8360,11 +8360,11 @@ async function renderDailyOff(){
         var notes=[]; if(vac.length) notes.push('Vacation '+span(vac));
         Object.keys(other).forEach(function(k){ notes.push(k+' '+span(other[k])); });
         var rl=role.toLowerCase();
-        return {ag:ag, role:role, notes:notes, chat:rl.indexOf('live')===0};
+        return {ag:ag, role:role, notes:notes, chat:(rl.indexOf('live')===0||(rl.indexOf('chat')>-1&&rl.indexOf('multi')<0))};
       });
       var pill=function(r){
         var rl=r.toLowerCase(), bg='#F3EFEA', col='#6B5A3A';
-        if(rl.indexOf('live')===0){bg='#FBEEEE';col='#a02030';}
+        if(rl.indexOf('live')===0||(rl.indexOf('chat')>-1&&rl.indexOf('multi')<0)){bg='#FBEEEE';col='#a02030';}
         else if(!r||rl==='-'){return '<span style="color:#D6D1CB">-</span>';}
         else if(rl==='off'){return '<span style="color:#D6D1CB;font-size:12px;font-weight:500">OFF</span>';}
         else if(rl==='vacation'||rl==='vaction'){bg='#FDFAF1';col='#9C8D63';}
@@ -8455,7 +8455,7 @@ async function renderDailyOff(){
         if(!vl||vl==='-'||vl==='—') return 'none';
         if(vl==='off') return 'off';
         if(vl==='vacation'||vl==='vaction'||vl==='v') return 'vac';
-        if(vl.indexOf('live')===0||vl==='livechat') return 'chat';
+        if(vl.indexOf('live')===0||vl==='livechat'||(vl.indexOf('chat')>-1&&vl.indexOf('multi')<0)) return 'chat';
         return 'multi'; };
       var mainRole=function(ag){ var cnt={},first={};
         ['Sunday','Monday','Tuesday','Wednesday','Thursday'].forEach(function(d,i){ var v=String(ag[d]||'').trim(); var k=kindOf(v);
