@@ -1038,7 +1038,7 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
   <div class="to-hero">
     <div>
       <div class="hi2">Off Change Requests</div>
-      <div class="hi3">Move your off day or swap it with a colleague — approved by Sali or Shahad</div>
+      <div class="hi3">Swap your off day with a colleague — approved by Sali or Shahad</div>
     </div>
     <div class="to-chip" id="offMonthChip">📅 Loading…</div>
   </div>
@@ -1046,8 +1046,8 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
   <div class="to-krow" id="toKrow2">
     <div class="kc c1"><div class="klbl">Pending</div><div class="kval" id="offKP">–</div></div>
     <div class="kc c2"><div class="klbl">Approved This Month</div><div class="kval" id="offKA">–</div></div>
-    <div class="kc c3"><div class="klbl">Moves</div><div class="kval" id="offKM">–</div></div>
-    <div class="kc c4"><div class="klbl">Swaps</div><div class="kval" id="offKS">–</div></div>
+    <div class="kc c3"><div class="klbl">Rejected This Month</div><div class="kval" id="offKM">–</div></div>
+    <div class="kc c4"><div class="klbl">Total This Month</div><div class="kval" id="offKS">–</div></div>
   </div>
 
   <div class="to-tabs">
@@ -1063,17 +1063,12 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
         <div class="to-field"><label>Employee Name</label><select id="offName" onchange="offFill()"></select></div>
         <div class="to-field"><label>Badge #</label><input id="offBadge" placeholder="Auto-filled from name" readonly style="background:#f4f4f5;cursor:not-allowed"></div>
       </div>
-      <div class="to-field" style="margin-bottom:6px"><label>Request Type</label></div>
-      <div class="or-type">
-        <div class="or-opt on" id="offTMove" onclick="offType('move')"><b>Move my off day</b><span>Take my off on another day</span></div>
-        <div class="or-opt" id="offTSwap" onclick="offType('swap')"><b>Swap with a colleague</b><span>I take her off day, she takes mine</span></div>
-      </div>
+      <div class="to-field"><label>Swap With</label><select id="offWith" onchange="offHint()"></select></div>
       <div class="to-row2">
-        <div class="to-field"><label>My Off Date</label><input type="date" id="offFrom" onchange="offHint()"></div>
-        <div class="to-field"><label id="offToLbl">New Off Date</label><input type="date" id="offTo" onchange="offHint()"></div>
+        <div class="to-field"><label>My Off Date <span style="font-weight:400;color:#808080">(I'll work this day)</span></label><input type="date" id="offFrom" onchange="offHint()"></div>
+        <div class="to-field"><label>Her Off Date <span style="font-weight:400;color:#808080">(I'll take it)</span></label><input type="date" id="offTo" onchange="offHint()"></div>
       </div>
-      <div class="to-field" id="offWithBox" style="display:none"><label>Swap With</label><select id="offWith" onchange="offHint()"></select></div>
-      <div class="or-hint" id="offHint">Pick your current off date and the new day.</div>
+      <div class="or-hint" id="offHint">Choose your colleague and the two off dates.</div>
       <div style="text-align:center;margin-top:6px"><button class="to-submitbtn" id="offSubmitBtn" onclick="offSubmit()">Submit for Approval</button></div>
       <div class="or-mail">✉️ Sali and Shahad get an email as soon as you submit</div>
     </div>
@@ -8320,6 +8315,13 @@ async function renderDailyOff(){
           if(dateCells.length>=2){
             curWeek.label = dateCells[0]+' - '+dateCells[dateCells.length-1];
           }
+          /* several weekday breaks under "Weekly Break" (Coffee / Lunch / Prayer) */
+          curWeek.multiBrk = [];
+          cells.forEach(function(c,ci){
+            var t=String(c||'').toLowerCase(); if(!/break/.test(t)||/sat/.test(t)) return;
+            curWeek.multiBrk.push({idx:ci, ic:/coffee/.test(t)?'☕':/lunch/.test(t)?'🍽':/prayer/.test(t)?'🕌':'•'});
+          });
+          if(curWeek.multiBrk.length<2) curWeek.multiBrk=null;
         }
         continue;
       }
@@ -8337,6 +8339,12 @@ async function renderDailyOff(){
         });
         var bIdx = curDayMap[BREAK_COL];
         agent[BREAK_COL] = (bIdx !== undefined && bIdx >= 0) ? (cells[bIdx]||'') : '';
+        if(curWeek.multiBrk){
+          agent.__brks = curWeek.multiBrk.map(function(b){
+            var m=String(cells[b.idx]||'').match(/(\d{1,2}:\d{2})/); return m?{ic:b.ic,t:m[1]}:null;
+          }).filter(Boolean);
+          agent[BREAK_COL] = agent.__brks.map(function(p){return p.ic+' '+p.t;}).join(' · ');
+        }
         var sbIdx = curDayMap[SAT_BREAK_COL];
         agent[SAT_BREAK_COL] = (sbIdx !== undefined && sbIdx >= 0) ? (cells[sbIdx]||'') : '';
         curWeek.agents.push(agent);
@@ -8504,14 +8512,16 @@ async function renderDailyOff(){
         var _bt=breakTint(ag);
         var _tBg=_bt?_bt.bg:'#F6F4F0';
         var _tCol=_bt?_bt.col:'#333333';
-        var _brkCell=function(v,_first){
+        var _brkCell=function(v,_first,_multi){
+          if(_multi&&_multi.length) return '<td class="dc brkcol" style="padding:5px 6px;text-align:center;border-left:2px solid #F0EBE5;border-right:2px solid #F0EBE5">'
+            +_multi.map(function(p){return '<div class="dv" style="color:'+_tCol+';font-size:11px;font-weight:600;line-height:1.55;white-space:nowrap">'+p.ic+' '+p.t+'</div>';}).join('')+_alt+'</td>';
           v=String(v||'').trim().replace(/^(\d{1,2}):(\d{2}):\d{2}\s*(AM|PM)$/i,'$1:$2 $3');
           var _empty=!v||v==='-'||v==='—';
           var col=v.toLowerCase()==='off'?'#D6D1CB':_tCol;
           return '<td class="dc brkcol"'+(_isOff(v)?' data-off="1"':'')+' style="padding:7px 6px;text-align:center;border-left:2px solid #F0EBE5;border-right:2px solid #F0EBE5"><span class="dv" style="color:'+(_empty?'#D6D1CB':col)+';font-size:12px;font-weight:'+(_empty?'400':'700')+';white-space:nowrap">'+(v||'—')+'</span>'+_alt+'</td>';
         };
         _ord.forEach(function(d){
-          if(d===BREAK_COL||d===SAT_BREAK_COL){ t+=_brkCell(ag[d]); return; }
+          if(d===BREAK_COL||d===SAT_BREAK_COL){ t+=_brkCell(ag[d],false,d===BREAK_COL?ag.__brks:null); return; }
           t+='<td class="dc"'+(_isOff(ag[d])?' data-off="1"':'')+(_isVac(ag[d])?' data-vac="1"':'')+' style="padding:7px 6px;text-align:center"><span class="dv">'+badge(ag[d])+'</span>'+_alt+'</td>';
         });
         t+='</tr>';
@@ -8545,7 +8555,9 @@ async function renderDailyOff(){
           var plain=d!=='Saturday'&&((grp==='call'&&/^(multi[\s-]?camp|calls?)$/i.test(v))||(grp==='chat'&&/^live[\s-]?chat$/i.test(v)));
           var lbl=k==='off'?'OFF':k==='voff'?'Off':k==='vac'?'Vacation':k==='none'?'':(plain?'':v);
           h+='<div class="wks-t wk-'+k+'" title="'+SH[d]+' '+esc(dt)+(isT?' · Today':'')+(v?' · '+esc(v):'')+'"><small>'+(lbl?esc(lbl):'&nbsp;')+'</small></div>';
-          if(d==='Thursday') h+='<div class="wks-br'+(wb?'':' empty')+'">'+(wb?esc(wb):'')+'</div>';
+          if(d==='Thursday') h+=(ag.__brks&&ag.__brks.length)
+            ? '<div class="wks-br wks-br3">'+ag.__brks.map(function(p){return '<div>'+p.ic+' '+esc(p.t)+'</div>';}).join('')+'</div>'
+            : '<div class="wks-br'+(wb?'':' empty')+'">'+(wb?esc(wb):'')+'</div>';
           if(d==='Saturday') h+='<div class="wks-br'+(_sb?'':' empty')+'">'+(_sb?esc(sb):'')+'</div>';
         });
         return h+'</div>';
@@ -8589,7 +8601,7 @@ async function renderDailyOff(){
     html+='<input type="search" id="dow_search" placeholder="Search name" oninput="dowSearch(this.value)" style="margin-left:12px;height:36px;padding:0 12px;border-radius:8px;border:1px solid #E2D6C8;background:#FEFEFD;font-size:12.5px;font-family:inherit;color:var(--text);min-width:180px">';
     html+='</div>';
     html+='<style>.wks-sec{display:flex;justify-content:space-between;padding:8px 12px;border-radius:10px;font-weight:700;font-size:12.5px;margin:12px 0 8px;scroll-margin-top:12px}.wks-sec.wk-multi{background:var(--st-multi-bg);color:var(--st-multi)}.wks-sec.wk-chat{background:var(--st-chat-bg);color:var(--st-chat);border:1px solid rgba(130,139,124,.14)}.wks-list{display:grid;gap:6px}.wks-empty{text-align:center;color:#C9C2B9;padding:12px}.wks-item{border:1px solid #EDE4DA;border-radius:10px;background:#FDFDFC;padding:6px 10px}.wks-hd{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px}.wks-nm{display:flex;align-items:center;gap:8px}.wks-nm b{font-size:12.5px;font-weight:600;color:var(--text)}.wks-days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr)) minmax(0,1.1fr) repeat(2,minmax(0,1fr)) minmax(0,1.1fr);gap:4px}.wks-br{background:#FDFDFC;border:1px dashed #D9CEC1;color:var(--accent)}.wks-br em{color:var(--accent)}.wks-br small{font-size:12px!important;font-weight:700!important}.wks-br.sat{border-color:rgba(var(--accent-rgb),.45);background:rgba(var(--accent-rgb),.05)}.wks-br.sat em,.wks-br.sat small{color:var(--accent)}.wks-br.empty small{color:#C9C2B9}.wks-t{text-align:center;border-radius:6px;padding:4px 2px;min-width:0;font-size:13px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}.wks-t em{font-style:normal;font-size:11.5px;font-weight:600;margin-right:4px;color:#5F5850}.wks-t small{display:block;font-size:10.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wks-t.wk-off small,.wks-t.wk-vac small{font-weight:600}.wks-t.now{box-shadow:inset 0 0 0 1.5px rgba(var(--accent-rgb),.4)}.wks-t.now em{color:var(--accent)}.wks-t i{position:absolute;top:-7px;left:50%;transform:translateX(-50%);font-style:normal;background:rgba(var(--accent-rgb),.75);color:#fff;font-size:8.5px;font-weight:700;padding:0 6px;border-radius:8px}.wk-multi{background:var(--st-multi-bg);color:var(--st-multi)}.wk-chat{background:var(--st-chat-bg);color:var(--st-chat)}.wk-off{background:#F9EDED;color:#A87676}.wk-voff{background:#EEDFB0;color:#7A6020}.wk-vac{background:#F9F3E1;color:#8E7F52}.wk-none{background:#FAF8F5;color:#C9C2B9}.wks-jump{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;border:1px solid #EDE4DA;font-family:inherit}.wks-jump .dow-fc{font-weight:500;opacity:.75}@media(max-width:820px){.wks-days{grid-template-columns:repeat(3,minmax(0,1fr))}.wks-t i{display:none}}.wks-t.now{box-shadow:none!important}.wks-t.now em{font-weight:800}.wks-t.now em::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:currentColor;margin-right:4px;vertical-align:2px}.wks-br.sat.empty{visibility:hidden}</style>';
-    html+='<style>.wks-sec{justify-content:center!important;font-size:13px!important;padding:7px 12px!important;margin:16px 0 4px!important}.wks-sec:first-child{margin-top:4px!important}.wks-sec i{font-style:normal;font-weight:500;opacity:.6}.wks-scroll{overflow-x:auto}.wks-list{gap:3px!important;display:grid}.wks-inner{min-width:900px}.wks-grp{display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px;margin-bottom:10px}.wks-grp-hd{margin-bottom:0;position:sticky;top:0;z-index:2;background:#FDFDFC}.wks-side{border-radius:10px;display:flex;align-items:center;justify-content:center;margin-top:0}.wks-side span{writing-mode:vertical-rl;transform:rotate(180deg);font-size:12.5px;font-weight:700;letter-spacing:.3px;white-space:nowrap}.wks-side i{font-style:normal;font-weight:500;opacity:.6}.wk-g-multi .wks-side{background:#F5F2EE;color:#7C7064}.wk-g-chat .wks-side{background:#EEF0EC;color:#66705F}.wks-row .wks-t.wk-multi,.wks-row .wks-t.wk-chat{background:#F7F5F2;color:#8A7F74}.wks-row{display:grid;grid-template-columns:165px repeat(5,minmax(0,1fr)) 104px repeat(2,minmax(0,1fr)) 112px;gap:3px;align-items:center}.wks-item.wks-row{border:1px solid #EDE4DA;border-radius:8px;background:#FDFDFC;padding:3px 8px}.wks-head{padding:2px 9px 4px;background:#FDFDFC;align-items:end}.wks-head>div{font-size:11px;font-weight:600;color:#8A7F74;text-align:center;white-space:nowrap}.wks-head>div.wks-nm{text-align:left}.wks-head>div.now{color:#7A5243;font-weight:800;font-size:12px;line-height:1.35}.wks-today{display:block;margin-bottom:3px;line-height:1.2;font-size:9.5px;font-weight:600;color:#B09484;letter-spacing:.3px}.wks-row .wks-nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wks-row .wks-nm b{font-size:12px!important}.wks-row .wks-t{height:26px;display:flex;align-items:center;justify-content:center;padding:0 2px;border-radius:6px}.wks-row .wks-t small{font-size:10.5px}.wks-row .wks-br{height:26px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:11.5px;font-weight:600;white-space:nowrap;background:transparent;border:none;color:#9A8D82;font-weight:500}</style>';
+    html+='<style>.wks-sec{justify-content:center!important;font-size:13px!important;padding:7px 12px!important;margin:16px 0 4px!important}.wks-sec:first-child{margin-top:4px!important}.wks-sec i{font-style:normal;font-weight:500;opacity:.6}.wks-scroll{overflow-x:auto}.wks-list{gap:3px!important;display:grid}.wks-inner{min-width:900px}.wks-grp{display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px;margin-bottom:10px}.wks-grp-hd{margin-bottom:0;position:sticky;top:0;z-index:2;background:#FDFDFC}.wks-side{border-radius:10px;display:flex;align-items:center;justify-content:center;margin-top:0}.wks-side span{writing-mode:vertical-rl;transform:rotate(180deg);font-size:12.5px;font-weight:700;letter-spacing:.3px;white-space:nowrap}.wks-side i{font-style:normal;font-weight:500;opacity:.6}.wk-g-multi .wks-side{background:#F5F2EE;color:#7C7064}.wk-g-chat .wks-side{background:#EEF0EC;color:#66705F}.wks-row .wks-t.wk-multi,.wks-row .wks-t.wk-chat{background:#F7F5F2;color:#8A7F74}.wks-row{display:grid;grid-template-columns:165px repeat(5,minmax(0,1fr)) 104px repeat(2,minmax(0,1fr)) 112px;gap:3px;align-items:center}.wks-item.wks-row{border:1px solid #EDE4DA;border-radius:8px;background:#FDFDFC;padding:3px 8px}.wks-head{padding:2px 9px 4px;background:#FDFDFC;align-items:end}.wks-head>div{font-size:11px;font-weight:600;color:#8A7F74;text-align:center;white-space:nowrap}.wks-head>div.wks-nm{text-align:left}.wks-head>div.now{color:#7A5243;font-weight:800;font-size:12px;line-height:1.35}.wks-today{display:block;margin-bottom:3px;line-height:1.2;font-size:9.5px;font-weight:600;color:#B09484;letter-spacing:.3px}.wks-row .wks-nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wks-row .wks-nm b{font-size:12px!important}.wks-row .wks-t{height:26px;display:flex;align-items:center;justify-content:center;padding:0 2px;border-radius:6px}.wks-row .wks-t small{font-size:10.5px}.wks-row .wks-br{height:26px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:11.5px;font-weight:600;white-space:nowrap;background:transparent;border:none;color:#9A8D82;font-weight:500}.wks-row .wks-br.wks-br3{height:auto;flex-direction:column;align-items:flex-start;padding:1px 0 1px 18px;font-size:10.5px;line-height:1.4}</style>';
     html+='<style>#dow_tables .dd,#dow_tables .do{display:none}'
       +'#dow_tables .dd{color:#D6D1CB;font-size:12px}'
       +'#dow_tables .do{background:#FCF6F6;color:#B48484;font-weight:700;font-size:12px;padding:3px 14px;border-radius:6px;letter-spacing:.3px}'
@@ -10083,76 +10095,109 @@ function aimPresent(date){ // number of agents working on that date, or null whe
 }
 function aimDay(s){var d=new Date(s+'T12:00:00');if(isNaN(d))return s;return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]+' '+d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];}
 
-/* ================= BREAKS TODAY ================= */
-var BK_SLOTS=[['Break 1',15],['Lunch',30],['Break 2',15]];
-function bkMin(v){
-  if(v==null||v==='') return null;
-  var s=String(v).trim(), m=s.match(/^(\d{1,2}):(\d{2})(?::\d{2})?\s*(am|pm|ص|م)?$/i);
-  if(m){var h=+m[1],mi=+m[2],ap=(m[3]||'').toLowerCase();if((ap==='pm'||ap==='م')&&h<12)h+=12;if((ap==='am'||ap==='ص')&&h===12)h=0;return h*60+mi;}
-  var d=new Date(s); if(!isNaN(d)&&/\d{4}-\d{2}-\d{2}T/.test(s)) return d.getHours()*60+d.getMinutes();
+/* ================= BREAKS TODAY (read from the Weekly Schedule sheet) ================= */
+var BK_DAYK=['sun','mon','tue','wed','thu','fri','sat'], BK_MON=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+async function bkSchedRaw(){
+  if(DAILY_OFF_CACHE) return DAILY_OFF_CACHE;
+  try{
+    var raw2d=await fetchCSVExportByGid(SHEET_ID,'920710775');
+    if(!raw2d||raw2d.length<2) throw new Error('empty');
+    DAILY_OFF_CACHE=raw2d.map(function(row){return row.map(function(c){return String(c||'').trim();});});
+  }catch(e){
+    try{
+      var pr=await loadSheet('Weekly Schedule'); if(!pr||pr.length<2) return null;
+      var pk=Object.keys(pr[0]||{});
+      DAILY_OFF_CACHE=[pk].concat(pr.map(function(r){return pk.map(function(k){return String(r[k]||'').trim();});}));
+    }catch(e2){ return null; }
+  }
+  return DAILY_OFF_CACHE;
+}
+function bkDayKey(c){ var t=String(c||'').trim().toLowerCase(); if(/break/.test(t)) return ''; t=t.replace(/[^a-z]/g,'').slice(0,3); return BK_DAYK.indexOf(t)>=0?t:''; }
+function bkDateTxt(c){ var m=String(c||'').trim().toLowerCase().match(/^(\d{1,2})\s*([a-z]{3})/); return m?(+m[1])+' '+m[2]:''; }
+/* One day out of the schedule: who works, her queue, and her break slots for that day. */
+function bkParse(raw,date){
+  if(!raw) return null;
+  var d=new Date(date+'T12:00:00'), dk=BK_DAYK[d.getDay()], want=d.getDate()+' '+BK_MON[d.getMonth()];
+  for(var i=0;i<raw.length;i++){
+    var H=raw[i]||[]; if(H.filter(bkDayKey).length<3) continue;
+    var D=raw[i+1]||[], col={};
+    H.forEach(function(c,ci){var k=bkDayKey(c); if(k&&col[k]===undefined) col[k]=ci;});
+    if(col[dk]===undefined||bkDateTxt(D[col[dk]])!==want) continue;
+    var nameCol=0; D.forEach(function(c,ci){ if(/agent/i.test(c)) nameCol=ci; });
+    var slots=[]; var w=Math.max(H.length,D.length);
+    for(var c=0;c<w;c++){
+      var txt=((H[c]||'')+' '+(D[c]||'')).trim(); if(!/break/i.test(txt)) continue;
+      var sat=/sat/i.test(txt); if(sat!==(dk==='sat')) continue;
+      var lm=txt.match(/(\d+)\s*min/i);
+      var src=/break/i.test(D[c]||'')?D[c]:H[c];
+      var lbl=String(src||'').replace(/\(.*?\)/g,'').replace(/saturday|weekly/ig,'').replace(/break/ig,'').trim()||'Break';
+      slots.push({col:c,label:lbl.charAt(0).toUpperCase()+lbl.slice(1),len:lm?+lm[1]:null});
+    }
+    var agents=[];
+    for(var r=i+2;r<raw.length;r++){
+      var row=raw[r]||[]; if(row.filter(bkDayKey).length>=3) break;
+      var nm=String(row[nameCol]||'').trim(); if(!nm||/agent/i.test(nm)||/\d{1,2}\s*[a-z]{3}\s*-/i.test(nm)) continue;
+      var v=String(row[col[dk]]||'').trim();
+      agents.push({name:nm,val:v,away:/^(off|vac|sick|absent|el)\b|vacation/i.test(v),chat:/chat|live/i.test(v),
+        br:slots.map(function(s){return bkRange(row[s.col],s.len);})});
+    }
+    return {slots:slots,agents:agents};
+  }
   return null;
 }
-function bkT(m){return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');}
-function bkWeek(v){
-  var s=String(v||'').trim(); if(!s) return '';
-  if(/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0,10);
-  var p=s.split('/'); if(p.length===3) return (p[2].length===4?p[2]:'20'+p[2])+'-'+p[0].padStart(2,'0')+'-'+p[1].padStart(2,'0');
-  var d=new Date(s); return isNaN(d)?'':aimISO(d);
+function bkRange(v,len){
+  v=String(v||'').trim(); if(!v||/off|vac|^[-–—]+$/i.test(v)) return null;
+  var re=/(\d{1,2})(?::(\d{2}))?\s*(am|pm|ص|م)?/gi, m, t=[];
+  while((m=re.exec(v))&&t.length<2) t.push({h:+m[1],m:+(m[2]||0),ap:(m[3]||'').toLowerCase().replace('ص','am').replace('م','pm')});
+  if(!t.length) return null;
+  if(t[1]&&!t[0].ap) t[0].ap=t[1].ap;
+  function mins(x){var h=x.h; if(x.ap==='pm'&&h<12)h+=12; else if(x.ap==='am'&&h===12)h=0; else if(!x.ap&&h>=1&&h<=7)h+=12; return h*60+x.m;}
+  var s=mins(t[0]), e=t[1]?mins(t[1]):null;
+  if(e!=null&&s>e&&s>=720) s-=720;
+  if(e==null||e<=s) e=s+(len||60);
+  return {s:s,e:e};
 }
-function bkPick(rows,date){ // latest row per agent whose Week Start <= date (blank Week Start = always)
-  var by={};
-  rows.forEach(function(r){
-    var ag=String(r['Agent']||'').trim(); if(!ag) return;
-    if(!BK_SLOTS.some(function(s){return bkMin(r[s[0]])!=null;})) return;
-    var w=bkWeek(r['Week Start']); if(w&&w>date) return;
-    var cur=by[ag]; if(!cur||(w||'')>=(cur._w||'')){ r._w=w; by[ag]=r; }
-  });
-  return by;
-}
+function bkT(m){ var h=Math.floor(m/60)%24, mi=m%60, ap=h>=12?'PM':'AM', h12=h%12||12; return h12+':'+String(mi).padStart(2,'0')+' '+ap; }
+function bkTs(r){ return bkT(r.s).replace(/ (AM|PM)$/,'')+' – '+bkT(r.e); }
 async function bkRender(date){
   var wrap=document.getElementById('bkWrap'); if(!wrap) return;
-  var rows; try{ rows=await fetchSheet(SHEET_ID,'Breaks'); }catch(e){ rows=[]; }
-  if(!document.getElementById('bkWrap')||wrap!==document.getElementById('bkWrap')) return;
-  if(!Array.isArray(rows)||!rows.length){ wrap.innerHTML=''; return; }
-  var by=bkPick(rows,date), bNames=Object.keys(by);
-  if(!bNames.length){ wrap.innerHTML=''; return; }
+  var raw=await bkSchedRaw(), day=bkParse(raw,date);
+  if(wrap!==document.getElementById('bkWrap')) return;
+  if(!day||!day.slots.length||!day.agents.some(function(a){return !a.away&&a.br.some(Boolean);})){ wrap.innerHTML=''; return; }
   var isToday=date===aimISO(), now=new Date(), nowM=now.getHours()*60+now.getMinutes();
-  function st(m,len){ if(!isToday||m==null) return ''; return nowM>=m+len?'done':(nowM>=m?'live':''); }
-  // who works that day (from the schedule), with their queue
-  var list=[], seen={};
-  Object.keys(ATT||{}).forEach(function(a){
-    var s=ATT[a][date]; if(!s||AIM_AWAY.indexOf(s)>=0) return;
-    var camp=((window.__ATT_CAMP__||{})[a]||{})[date]||'';
-    var b=aimFind(a,bNames); if(b) seen[b]=1;
-    list.push({name:a,chat:/whats|chat|live/i.test(camp),r:b?by[b]:null});
-  });
-  if(!list.length) bNames.forEach(function(b){ list.push({name:b,chat:false,r:by[b]}); });
-  if(!list.some(function(x){return x.r;})){ wrap.innerHTML=''; return; }
-  var me=currentAgentName?list.filter(function(x){return x.r&&aimFind(currentAgentName,[x.name]);})[0]:null;
-  var onNow=list.filter(function(x){return x.r&&BK_SLOTS.some(function(s){return st(bkMin(x.r[s[0]]),s[1])==='live';});});
+  function st(r){ if(!isToday||!r) return ''; return nowM>=r.e?'done':(nowM>=r.s?'live':''); }
+  var list=day.agents.filter(function(a){return !a.away&&a.br.some(Boolean);});
+  var me=currentAgentName?list.filter(function(a){return aimFind(currentAgentName,[a.name]);})[0]:null;
+  var onNow=list.filter(function(a){return a.br.some(function(r){return st(r)==='live';});});
   var h='<div class="bk-card"><div class="bk-head"><div class="bk-title">☕ Breaks '+(isToday?'Today':'· '+aimDay(date))+'</div>'
-    +(isToday?'<div class="bk-now">On break now: '+(onNow.length?onNow.map(function(x){return '<span class="bk-chip">'+toEsc(x.name.split(' ')[0])+'</span>';}).join(''):'—')+'</div>':'')+'</div>';
-  if(me&&isToday){
+    +(isToday?'<div class="bk-now">On break now: '+(onNow.length?onNow.map(function(a){return '<span class="bk-chip">'+toEsc(a.name.split(' ')[0])+'</span>';}).join(''):'—')+'</div>':'')+'</div>';
+  if(me&&isToday&&me.br.some(Boolean)){
     var cur=null,nx=null;
-    BK_SLOTS.forEach(function(s){var m=bkMin(me.r[s[0]]);if(m==null)return;var k=st(m,s[1]);if(k==='live')cur=[s[0],m,s[1]];else if(!k&&!nx)nx=[s[0],m,s[1]];});
+    me.br.forEach(function(r,i){ if(!r) return; var k=st(r); if(k==='live'&&!cur) cur=[day.slots[i].label,r]; else if(!k&&!nx) nx=[day.slots[i].label,r]; });
     var first=toEsc(currentAgentName.split(' ')[0]);
-    h+='<div class="bk-mine">'+(cur?'<div class="bk-slot big live"><div class="l">'+first+', you are on '+cur[0]+'</div><div class="v">until '+bkT(cur[1]+cur[2])+'</div></div>'
-      :nx?'<div class="bk-slot big"><div class="l">'+first+', your next break</div><div class="v">'+nx[0]+' · '+bkT(nx[1])+'</div><div class="l" style="margin-top:2px">in '+(nx[1]-nowM)+' min</div></div>'
+    h+='<div class="bk-mine" style="grid-template-columns:1.4fr'+' 1fr'.repeat(day.slots.length)+'">'
+      +(cur?'<div class="bk-slot big live"><div class="l">'+first+', you are on '+cur[0]+' break</div><div class="v">until '+bkT(cur[1].e)+'</div></div>'
+      :nx?'<div class="bk-slot big"><div class="l">'+first+', your next break</div><div class="v">'+nx[0]+' · '+bkT(nx[1].s)+'</div><div class="l" style="margin-top:2px">in '+(nx[1].s-nowM)+' min</div></div>'
       :'<div class="bk-slot big done"><div class="l">All breaks done today</div><div class="v">✓</div></div>')
-      +BK_SLOTS.map(function(s){var m=bkMin(me.r[s[0]]);if(m==null)return '<div class="bk-slot"><div class="l">'+s[0]+'</div><div class="v">—</div></div>';
-        return '<div class="bk-slot '+st(m,s[1])+'"><div class="l">'+s[0]+' · '+s[1]+' min</div><div class="v">'+bkT(m)+' – '+bkT(m+s[1])+'</div></div>';}).join('')+'</div>';
+      +day.slots.map(function(s,i){var r=me.br[i]; if(!r) return '<div class="bk-slot"><div class="l">'+toEsc(s.label)+'</div><div class="v">—</div></div>';
+        return '<div class="bk-slot '+st(r)+'"><div class="l">'+toEsc(s.label)+' · '+(r.e-r.s)+' min</div><div class="v">'+bkTs(r)+'</div></div>';}).join('')+'</div>';
   }
-  function row(x){
-    return '<tr class="'+(me&&x===me?'me':'')+'"><td>'+toEsc(x.name)+'</td><td style="color:#808080">'+toEsc(x.r?x.r['Shift']||'':'')+'</td>'
-      +BK_SLOTS.map(function(s){var m=x.r?bkMin(x.r[s[0]]):null;return '<td>'+(m==null?'<span class="bk-t none">—</span>':'<span class="bk-t '+st(m,s[1])+'">'+bkT(m)+' – '+bkT(m+s[1])+'</span>')+'</td>';}).join('')+'</tr>';
+  function row(a){
+    return '<tr class="'+(me&&a===me?'me':'')+'"><td>'+toEsc(a.name)+'</td><td style="color:#808080">'+toEsc(a.val||'Calls')+'</td>'
+      +a.br.map(function(r){return '<td>'+(r?'<span class="bk-t '+st(r)+'">'+bkTs(r)+'</span>':'<span class="bk-t none">—</span>')+'</td>';}).join('')+'</tr>';
   }
-  var srt=function(a,b){return a.name.localeCompare(b.name);};
-  var calls=list.filter(function(x){return !x.chat;}).sort(srt), chat=list.filter(function(x){return x.chat;}).sort(srt);
-  h+='<div style="overflow-x:auto"><table class="bk-tbl"><thead><tr><th>Agent</th><th>Shift</th>'+BK_SLOTS.map(function(s){return '<th>'+s[0]+'</th>';}).join('')+'</tr></thead><tbody>'
-    +(calls.length?'<tr class="bk-grp"><td colspan="5">CALLS</td></tr>'+calls.map(row).join(''):'')
-    +(chat.length?'<tr class="bk-grp"><td colspan="5">LIVE CHAT</td></tr>'+chat.map(row).join(''):'')
+  var calls=list.filter(function(a){return !a.chat;}), chat=list.filter(function(a){return a.chat;}), n=day.slots.length+2;
+  h+='<div style="overflow-x:auto"><table class="bk-tbl"><thead><tr><th>Agent</th><th>Shift</th>'+day.slots.map(function(s){return '<th>'+toEsc(s.label)+(s.len?' · '+s.len+' min':'')+'</th>';}).join('')+'</tr></thead><tbody>'
+    +(calls.length?'<tr class="bk-grp"><td colspan="'+n+'">CALLS</td></tr>'+calls.map(row).join(''):'')
+    +(chat.length?'<tr class="bk-grp"><td colspan="'+n+'">LIVE CHAT</td></tr>'+chat.map(row).join(''):'')
     +'</tbody></table></div></div>';
   wrap.innerHTML=h;
+}
+/* schedule value for one agent on one date (weekly sheet first, attendance as fallback) */
+function aimSchedVal(name,date){
+  var day=bkParse(DAILY_OFF_CACHE,date);
+  if(day){ var a=aimFind(name,day.agents.map(function(x){return x.name;})); if(a){ var r=day.agents.filter(function(x){return x.name===a;})[0]; return r.val||'Calls'; } }
+  var k=aimFind(name,Object.keys(ATT||{})); return k&&ATT[k]?ATT[k][date]||'':'';
 }
 
 /* ================= APPROVERS (Sali / Shahad) ================= */
@@ -10194,7 +10239,7 @@ async function apDecide(action,id,status,employee,done){
 }
 
 /* ================= OFF REQUESTS ================= */
-var OFF={rows:[],loaded:false,type:'move',tab:'submit'};
+var OFF={rows:[],loaded:false,tab:'submit'};
 async function offFetch(fresh){
   try{
     var res=await fetch(TO_API_URL+'?id='+SHEET_ID+'&sheetName='+encodeURIComponent('Off Requests')+(fresh?'&fresh=1':''));
@@ -10208,12 +10253,12 @@ function offBadge(){
 }
 async function renderOffRequests(fresh){
   if(!OFF.formReady) offInitForm();
-  if(fresh||!OFF.loaded){ OFF.rows=await offFetch(true); OFF.loaded=true; }
+  if(fresh||!OFF.loaded){ var _r=await Promise.all([offFetch(true),bkSchedRaw().catch(function(){})]); OFF.rows=_r[0]; OFF.loaded=true; offHint(); }
   var mk=aimISO().slice(0,7), mon=OFF.rows.filter(function(r){return String(r.Submitted||'').slice(0,7)===mk;});
   document.getElementById('offKP').textContent=OFF.rows.filter(function(r){return r.Status==='Pending';}).length;
   document.getElementById('offKA').textContent=mon.filter(function(r){return r.Status==='Approved';}).length;
-  document.getElementById('offKM').textContent=mon.filter(function(r){return r.Type==='Move';}).length;
-  document.getElementById('offKS').textContent=mon.filter(function(r){return r.Type==='Swap';}).length;
+  document.getElementById('offKM').textContent=mon.filter(function(r){return r.Status==='Rejected';}).length;
+  document.getElementById('offKS').textContent=mon.length;
   var M=['January','February','March','April','May','June','July','August','September','October','November','December'],d=new Date();
   document.getElementById('offMonthChip').textContent='📅 '+M[d.getMonth()]+' '+d.getFullYear();
   var srt=function(a,b){return String(b.Submitted||'').localeCompare(String(a.Submitted||''));};
@@ -10225,21 +10270,22 @@ async function renderOffRequests(fresh){
   offBadge(); apRefresh();
 }
 function offDesc(r){
-  return r.Type==='Swap'?'Swap with '+toEsc(r['Swap With'])+' · '+aimDay(r['My Off Date'])+' ↔ '+aimDay(r['New Off Date'])
-    :'Move off · '+aimDay(r['My Off Date'])+' → '+aimDay(r['New Off Date']);
+  return 'Swap with '+toEsc(r['Swap With'])+' · '+aimDay(r['My Off Date'])+' ↔ '+aimDay(r['New Off Date']);
+}
+function offSchedLine(r){
+  var a=aimSchedVal(r.Employee,r['My Off Date']), b=aimSchedVal(r['Swap With'],r['New Off Date']);
+  if(!a&&!b) return '';
+  var ok=function(v){return /^off$/i.test(String(v).trim());};
+  var bad=(a&&!ok(a))||(b&&!ok(b));
+  return '<div class="or-imp'+(bad?' bad':'')+'">Schedule: '+toEsc(r.Employee.split(' ')[0])+' '+aimDay(r['My Off Date'])+' = '+toEsc(a||'—')
+    +' · '+toEsc(String(r['Swap With']).split(' ')[0])+' '+aimDay(r['New Off Date'])+' = '+toEsc(b||'—')+(bad?' ⚠️ not OFF':'')+'</div>';
 }
 function offRow(r,act){
-  var sw=r.Type==='Swap', tb='<span class="or-type-b '+(sw?'sw':'mv')+'">'+(sw?'SWAP':'MOVE')+'</span>', imp='';
-  if(act){
-    if(sw) imp='<div class="or-imp">Attendance unchanged (swap)</div>';
-    else{ var p=aimPresent(r['New Off Date']);
-      if(p!=null){ var a=p-1; imp='<div class="or-imp'+(a<14?' bad':'')+'">'+aimDay(r['New Off Date'])+': '+p+' present → '+a+' after this move'+(a<14?' (below 14)':'')+' · '+aimDay(r['My Off Date'])+': +1</div>'; } }
-  }
   var cls=r.Status==='Approved'?'appr':r.Status==='Rejected'?'rej':'pend';
   var right=act?'<div class="to-btnrow"><button class="to-bsm to-b-appr" onclick="offDecide(\''+toEsc(r.ID)+'\',\'Approved\')">Approve</button><button class="to-bsm to-b-rej" onclick="offDecide(\''+toEsc(r.ID)+'\',\'Rejected\')">Reject</button></div>'
     :'<div><span class="to-badge '+cls+'">'+toEsc(r.Status)+'</span>'+(r['Decided By']?'<div class="ap-by">by '+toEsc(r['Decided By'])+'</div>':'')+'</div>';
-  return '<div class="to-req"><div><div class="rn">'+toEsc(r.Employee)+(r.Badge?' <span style="font-weight:400;color:#808080;font-size:11px">· Badge '+toEsc(r.Badge)+'</span>':'')+tb+'</div>'
-    +'<div class="rm">'+offDesc(r)+' · submitted '+toEsc(String(r.Submitted||'').slice(0,10))+'</div>'+imp+'</div>'+right+'</div>';
+  return '<div class="to-req"><div><div class="rn">'+toEsc(r.Employee)+(r.Badge?' <span style="font-weight:400;color:#808080;font-size:11px">· Badge '+toEsc(r.Badge)+'</span>':'')+'</div>'
+    +'<div class="rm">'+offDesc(r)+' · submitted '+toEsc(String(r.Submitted||'').slice(0,10))+'</div>'+(act?offSchedLine(r):'')+'</div>'+right+'</div>';
 }
 function offDecide(id,status){ apDecide('offDecide',id,status,'',function(){return renderOffRequests(true);}); }
 function offTab(t){
@@ -10261,29 +10307,14 @@ function offFill(){
   document.getElementById('offBadge').value=TO_BADGE_BY_NAME[n]||'';
   offHint();
 }
-function offType(t){
-  OFF.type=t;
-  document.getElementById('offTMove').classList.toggle('on',t==='move');
-  document.getElementById('offTSwap').classList.toggle('on',t==='swap');
-  document.getElementById('offWithBox').style.display=t==='swap'?'':'none';
-  document.getElementById('offToLbl').textContent=t==='swap'?"Her Off Date (I'll take it)":'New Off Date';
-  offHint();
-}
-function offAttStatus(name,date){
-  var a=aimFind(name,Object.keys(ATT||{})); return a&&ATT[a]?ATT[a][date]||'':'';
-}
 function offHint(){
-  var el=document.getElementById('offHint'), n=document.getElementById('offName').value;
-  var f=document.getElementById('offFrom').value, t=document.getElementById('offTo').value, w=document.getElementById('offWith').value;
-  if(!f||!t){ el.className='or-hint'; el.textContent=OFF.type==='swap'?'Pick your off date and her off date.':'Pick your current off date and the new day.'; return; }
-  var warn=[], s1=n?offAttStatus(n,f):'';
-  if(s1&&s1!=='Off') warn.push('The schedule shows '+s1+' for you on '+aimDay(f)+', not Off.');
-  if(OFF.type==='swap'){
-    var s2=w?offAttStatus(w,t):''; if(s2&&s2!=='Off') warn.push('The schedule shows '+s2+' for '+toEsc(w)+' on '+aimDay(t)+', not Off.');
-    el.innerHTML=(w?'You take <b>'+toEsc(w)+'</b>\'s off on '+aimDay(t)+', and she takes your off on '+aimDay(f)+'. Attendance stays the same.':'Choose the colleague you are swapping with.')+(warn.length?'<br>⚠️ '+warn.join(' '):'');
-  }else{
-    el.innerHTML='Your off moves from '+aimDay(f)+' to '+aimDay(t)+'. You\'ll work on '+aimDay(f)+'.'+(warn.length?'<br>⚠️ '+warn.join(' '):'');
-  }
+  var el=document.getElementById('offHint'); if(!el) return;
+  var n=document.getElementById('offName').value, f=document.getElementById('offFrom').value, t=document.getElementById('offTo').value, w=document.getElementById('offWith').value;
+  if(!w||!f||!t){ el.className='or-hint'; el.textContent='Choose your colleague and the two off dates.'; return; }
+  var warn=[], s1=n?aimSchedVal(n,f):'', s2=aimSchedVal(w,t);
+  if(s1&&!/^off$/i.test(s1)) warn.push('The schedule shows '+toEsc(s1)+' for you on '+aimDay(f)+', not OFF.');
+  if(s2&&!/^off$/i.test(s2)) warn.push('The schedule shows '+toEsc(s2)+' for '+toEsc(w.split(' ')[0])+' on '+aimDay(t)+', not OFF.');
+  el.innerHTML='You take <b>'+toEsc(w)+'</b>\'s off on '+aimDay(t)+', and she takes your off on '+aimDay(f)+'.'+(warn.length?'<br>⚠️ '+warn.join(' '):'');
   el.className='or-hint'+(warn.length?' warn':'');
 }
 async function offSubmit(){
@@ -10291,11 +10322,10 @@ async function offSubmit(){
   if(!n){ toToast('Please choose your name'); return; }
   if(!f||!t){ toToast('Please pick both dates'); return; }
   if(f===t){ toToast('The two dates must be different'); return; }
-  if(OFF.type==='swap'&&(!w||w===n)){ toToast('Please choose a colleague to swap with'); return; }
+  if(!w||w===n){ toToast('Please choose a colleague to swap with'); return; }
   var btn=document.getElementById('offSubmitBtn'); btn.disabled=true; btn.textContent='Submitting…';
   try{
-    var p=OFF.type==='move'?aimPresent(t):null;
-    var r=await toPost({action:'offSubmit',employee:n,badge:TO_BADGE_BY_NAME[n]||'',type:OFF.type,from:f,to:t,with:OFF.type==='swap'?w:'',present:p==null?'':p});
+    var r=await toPost({action:'offSubmit',employee:n,badge:TO_BADGE_BY_NAME[n]||'',type:'swap',from:f,to:t,with:w});
     if(!r||!r.ok){ toToast((r&&r.error)||'Failed to submit'); return; }
     document.getElementById('offFrom').value=''; document.getElementById('offTo').value=''; document.getElementById('offWith').value='';
     offHint(); toToast('Request sent — Sali and Shahad were notified ✅');
