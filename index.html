@@ -1040,7 +1040,7 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
   </div>
 
 </div>
-<div id="page16" style="display:none;max-width:1400px;margin:0 auto;padding:24px 24px"><div id="bkDate" style="text-align:center;font-size:15px;font-weight:600;color:var(--text);margin:0 0 16px"></div><div id="bkBoard"><div style="text-align:center;padding:40px;color:#aaa">⏳ Loading breaks…</div></div></div>
+<div id="page16" style="display:none;max-width:1400px;margin:0 auto;padding:24px 24px"><div id="bkDate" style="text-align:center;margin:0 0 14px"></div><div id="bkStrip" style="margin:0 0 18px"></div><div id="bkBoard"><div style="text-align:center;padding:40px;color:#aaa">⏳ Loading breaks…</div></div></div>
 <div id="page15" style="display:none;max-width:1200px;margin:0 auto;padding:24px 24px" class="to-wrap">
 
   <div class="to-hero">
@@ -10040,19 +10040,34 @@ function renderCV(){
 
 <!-- ================= AIM: Breaks Today + Off Requests + approvers ================= -->
 <style>
+/* Today → Breaks table */
+.bkT{background:#FEFEFD;border:1px solid #EFEBE6;border-radius:12px;overflow:hidden}
+.bkT table{width:100%;border-collapse:collapse;font-size:13px}
+.bkT th{background:#F5F0E8;color:#5D4037;padding:10px 16px;text-align:left;font-size:12px;font-weight:600;border-bottom:2px solid #E8DDD0;white-space:nowrap}
+.bkT th i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px}
+.bkT th span{font-weight:500;color:#A8A29A;margin-left:4px}
+.bkT td{padding:8px 16px;border-bottom:1px solid #F3EFEA;color:var(--text)}
+.bkT td.n{font-weight:500}.bkT td.q{color:#8A7F74;font-size:12px}
+.bkT tr.me td{background:#FBF9F4}.bkT tr.me td.n{font-weight:700}
+.bkT tr.g td{background:#FAF8F5;color:#8A857C;font-size:11px;font-weight:600;letter-spacing:.3px;padding:6px 16px}
+.bkT-t{display:inline-block;min-width:104px;text-align:center;padding:3px 10px;border-radius:7px;background:#F6F4F0;color:#4A3F36;font-weight:600;font-variant-numeric:tabular-nums}
+.bkT-t.live{background:var(--bb);color:#4F6040;box-shadow:inset 0 0 0 1px rgba(95,112,80,.25)}
+.bkT-t.live em{font-style:normal;font-size:10.5px;margin-left:4px;color:#5F7050}
+.bkT-t.done{opacity:.4;font-weight:500}
+.bkT-t.none{background:none;color:#C9C2B9;font-weight:400}
 /* Today → Breaks board */
 .sub-now{font-size:10.5px;font-weight:600;color:#5F7050;background:#EEF1EA;border-radius:6px;padding:1px 7px;margin-left:7px}
 .sub-cnt{min-width:16px;height:16px;line-height:16px;border-radius:8px;background:var(--accent);color:#fff;font-size:10.5px;font-weight:700;text-align:center;margin-left:6px;padding:0 4px;box-sizing:border-box}
 .bk-now{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;color:#808080}
 .bk-chip{background:#EEF1EA;color:#5F7050;border-radius:14px;padding:3px 10px;font-size:12px;font-weight:500}
-.bkD{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin:0 0 16px}
+.bkD{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:0 0 16px}
 .bkD-c{background:#FEFEFD;border:1px solid #EFEBE6;border-top:3px solid var(--bc);border-radius:12px;padding:12px 14px}
 .bkD-h{display:flex;justify-content:space-between;font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:8px}
 .bkD-h span{font-size:12px;color:#A8A29A;font-weight:500}
 .bkD-c.one{column-count:3;column-gap:28px}.bkD-c.one .bkD-h{column-span:all}.bkD-c.one .bkD-r{break-inside:avoid}
-.bkD-r{display:grid;grid-template-columns:118px 1fr auto;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;font-size:13px}
+.bkD-r{display:grid;grid-template-columns:100px minmax(0,1fr) auto;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;font-size:13px}
 .bkD-r b{font-weight:600;color:var(--text);font-variant-numeric:tabular-nums}
-.bkD-r span{color:#5F5850}
+.bkD-r span{color:#5F5850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .bkD-r em{font-style:normal;font-size:11px;font-weight:600;padding:1px 8px;border-radius:6px}
 .bkD-r.live{background:var(--bb)}.bkD-r.live em{background:#FEFEFD;color:#5F7050}
 .bkD-r.done{opacity:.4}.bkD-r.done em{color:#A8A29A}
@@ -10170,24 +10185,45 @@ function bkRange(v,len){
 }
 function bkShort(m){ var h=Math.floor(m/60)%24; return (h%12||12)+':'+String(m%60).padStart(2,'0'); }
 /* Today → Breaks: one column per break type (Coffee / Lunch / Prayer, or one "Break") */
+var BKV={off:0};
+function bkWeek(dir){ BKV.off+=dir; bkRenderBoard(); }
+function bkSun(off){ var d=new Date(); d.setHours(12,0,0,0); d.setDate(d.getDate()-d.getDay()+off*7); return d; }
+/* Today → Breaks: the week's breaks — Coffee / Lunch / Prayer (Sun–Thu) + Saturday break; each agent on the same row in every box */
 async function bkRenderBoard(){
   var box=document.getElementById('bkBoard'); if(!box) return;
-  var date=aimISO(), d=new Date();
-  document.getElementById('bkDate').textContent=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][d.getDay()]+', '+d.getDate()+' '+['January','February','March','April','May','June','July','August','September','October','November','December'][d.getMonth()]+' '+d.getFullYear();
-  var day=bkParse(await bkSchedRaw(),date);
-  var nowM=d.getHours()*60+d.getMinutes(), st=function(r){ return nowM>=r.e?'done':(nowM>=r.s?'live':''); };
-  var rows=day?day.agents.filter(function(a){return !a.away&&a.br.some(Boolean);}):[];
-  if(!day||!day.slots.length||!rows.length){ box.innerHTML='<div style="text-align:center;padding:40px;color:#aaa">No breaks in the schedule for today</div>'; bkNowBadge(0); return; }
-  var COL=[['#B89A7E','#F6F0E9'],['#8C9A7A','#EEF2E9'],['#8E9AA6','#EDF1F4']];
+  var sun=bkSun(BKV.off), sat=new Date(sun); sat.setDate(sun.getDate()+6);
+  var MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var nb='width:34px;height:34px;flex:0 0 34px;border-radius:8px;border:1px solid #E2D6C8;background:#FEFEFD;color:#8A6D5A;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center';
+  document.getElementById('bkDate').innerHTML='<div style="display:flex;align-items:center;justify-content:center;gap:10px"><div onclick="bkWeek(-1)" style="'+nb+'">‹</div>'
+    +'<div style="padding:7px 22px;border-radius:8px;border:2px solid rgba(var(--accent-rgb),.25);background:#FEFEFD;color:var(--accent);font-size:13px;font-weight:700;min-width:200px;text-align:center">'+sun.getDate()+' '+MN[sun.getMonth()]+' – '+sat.getDate()+' '+MN[sat.getMonth()]+'</div>'
+    +'<div onclick="bkWeek(1)" style="'+nb+'">›</div>'+(BKV.off?'<span onclick="BKV.off=0;bkRenderBoard()" style="margin-left:6px;font-size:12px;font-weight:600;color:var(--accent);border:1px solid rgba(var(--accent-rgb),.35);border-radius:8px;padding:5px 12px;cursor:pointer">This week</span>':'')+'</div>';
+  document.getElementById('bkStrip').innerHTML='';
+  var raw=await bkSchedRaw(), wk=bkParse(raw,aimISO(sun)), sd=bkParse(raw,aimISO(sat));
+  var now=new Date(), nowM=now.getHours()*60+now.getMinutes(), todayIso=aimISO(), inWeek=BKV.off===0, isSat=now.getDay()===6;
+  var todayDay=inWeek?bkParse(raw,todayIso):null;
+  var awayToday=function(n){ if(!todayDay) return true; var a=todayDay.agents.filter(function(x){return x.name===n;})[0]; return !a||a.away; };
+  var st=function(r,n,satBox){ if(!inWeek||!r||satBox!==isSat||now.getDay()===5||awayToday(n)) return ''; return nowM>=r.e?'done':(nowM>=r.s?'live':''); };
+  var COL=[['#B89A7E','#F6F0E9'],['#8C9A7A','#EEF2E9'],['#8E9AA6','#EDF1F4'],['#A89880','#F4F1EA']];
   var lab=function(l){ return /^break$/i.test(l)?'Break':l+' break'; };
-  var live=0;
-  box.innerHTML='<div class="bkD">'+day.slots.map(function(sl,i){
-    var L=rows.filter(function(x){return x.br[i];}).map(function(x){return {n:x.name,r:x.br[i]};}).sort(function(p,q){return p.r.s-q.r.s;});
-    return '<div class="bkD-c'+(day.slots.length===1?' one':'')+'" style="--bc:'+COL[i%3][0]+';--bb:'+COL[i%3][1]+'"><div class="bkD-h">'+toEsc(lab(sl.label))+'<span>'+(sl.len||60)+' min</span></div>'
-      +L.map(function(p){ var k=st(p.r); if(k==='live') live++;
-        return '<div class="bkD-r '+k+'"><b>'+bkShort(p.r.s)+' – '+bkShort(p.r.e)+'</b><span>'+toEsc(p.n)+'</span>'+(k==='live'?'<em>Now</em>':k==='done'?'<em>Done</em>':'')+'</div>'; }).join('')+'</div>';
-  }).join('')+'</div>';
-  bkNowBadge(live);
+  var live=0, boxes=[];
+  if(wk&&wk.slots.length){
+    var rows=wk.agents.filter(function(a){return a.br.some(Boolean);});
+    rows.sort(function(p,q){ var a1=p.br.filter(Boolean)[0], b1=q.br.filter(Boolean)[0]; return a1.s-b1.s || p.name.localeCompare(q.name); });
+    wk.slots.forEach(function(sl,i){
+      boxes.push('<div class="bkD-c" style="--bc:'+COL[i%3][0]+';--bb:'+COL[i%3][1]+'"><div class="bkD-h">'+toEsc(lab(sl.label))+'<span>'+(sl.len||60)+' min · Sun–Thu</span></div>'
+        +rows.map(function(x){ var r=x.br[i]; if(!r) return '<div class="bkD-r"><b style="color:#C9C2B9;font-weight:400">—</b><span>'+toEsc(x.name)+'</span></div>';
+          var k=st(r,x.name,false); if(k==='live') live++;
+          return '<div class="bkD-r '+k+'"><b>'+bkShort(r.s)+' – '+bkShort(r.e)+'</b><span>'+toEsc(x.name)+'</span>'+(k==='live'?'<em>Now</em>':k==='done'?'<em>Done</em>':'')+'</div>'; }).join('')+'</div>');
+    });
+  }
+  if(sd&&sd.slots.length){
+    var srows=sd.agents.filter(function(a){return !a.away&&a.br.some(Boolean);}).sort(function(p,q){return p.br[0].s-q.br[0].s||p.name.localeCompare(q.name);});
+    if(srows.length) boxes.push('<div class="bkD-c" style="--bc:'+COL[3][0]+';--bb:'+COL[3][1]+'"><div class="bkD-h">Saturday break<span>'+sat.getDate()+' '+MN[sat.getMonth()]+'</span></div>'
+      +srows.map(function(x){ var r=x.br[0]; var k=st(r,x.name,true); if(k==='live') live++;
+        return '<div class="bkD-r '+k+'"><b>'+bkShort(r.s)+' – '+bkShort(r.e)+'</b><span>'+toEsc(x.name)+'</span>'+(k==='live'?'<em>Now</em>':k==='done'?'<em>Done</em>':'')+'</div>'; }).join('')+'</div>');
+  }
+  box.innerHTML=boxes.length?'<div class="bkD">'+boxes.join('')+'</div>':'<div style="text-align:center;padding:40px;color:#aaa">No breaks in the schedule for this week</div>';
+  if(inWeek) bkNowBadge(live);
 }
 function bkNowBadge(n){ var b=document.getElementById('bkNowBadge'); if(!b) return; b.textContent='Now: '+n; b.style.display=n?'inline-block':'none'; }
 /* sub-tabs under Today (Attendance / Breaks) and Requests (Off Requests / Permissions) */
