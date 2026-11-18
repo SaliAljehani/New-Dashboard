@@ -57,7 +57,7 @@ select#agSel{font-size:14px;font-weight:600;color:var(--accent);min-width:180px}
 .rfbtn{padding:6px 14px;border-radius:8px;border:1.5px solid var(--accent);background:rgba(var(--accent-rgb),.07);color:var(--accent);font-size:12px;cursor:pointer;font-weight:600}
 .rfbtn:hover{background:var(--accent);color:#fff}
 .ptag{display:inline-block;background:rgba(var(--accent-rgb),.07);color:var(--accent);border:1px solid #fcc;border-radius:8px;padding:3px 10px;font-size:11px;font-weight:600}
-.page-nav{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;width:calc(100% - 48px);max-width:1352px;margin:30px auto 8px;padding:0;background:transparent}
+.page-nav{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:14px;width:calc(100% - 48px);max-width:1352px;margin:30px auto 8px;padding:0;background:transparent}
 @media(max-width:900px){.page-nav{grid-template-columns:repeat(3,minmax(0,1fr))}}
 .pnav{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:12px 6px;border-radius:12px;border:1px solid #EDE4DA;font-size:13px;font-weight:600;cursor:pointer;background:#FDFDFC;color:var(--text);transition:.15s;text-align:center;line-height:1.2}
 .team-subnav{display:flex;width:fit-content;margin:20px auto 10px;gap:3px;border:1px solid #E8E2DA;border-radius:12px;padding:4px;background:#FDFDFC}
@@ -523,7 +523,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#333333;border-top:1p
 .ref-brand-section div[onclick^="toggleRegion"]>span:nth-child(2){color:#A39A92!important}
 .ref-brand-section tbody td a[href^="tel:"],.ref-brand-section tbody td a[href^="tel:"] *,.ref-brand-section tbody td :is(b,strong):not(.td-code *){font-weight:400!important}
 
-.page-nav{border:none!important;background:transparent!important;padding:0!important;display:grid!important;grid-template-columns:repeat(6,207px);justify-content:center;gap:8px!important;width:auto!important;margin-top:34px!important;margin-bottom:14px!important}
+.page-nav{border:none!important;background:transparent!important;padding:0!important;display:grid!important;grid-template-columns:repeat(7,176px);justify-content:center;gap:8px!important;width:auto!important;margin-top:34px!important;margin-bottom:14px!important}
 
 .ref-home .ref-brand-circles{display:grid!important;grid-template-columns:repeat(10,118px);gap:8px!important;background:transparent!important}
 .ref-tools{display:grid!important;grid-template-columns:repeat(6,202px);gap:8px!important;margin-top:12px!important}
@@ -542,7 +542,7 @@ footer{text-align:center;padding:14px;font-size:11px;color:#333333;border-top:1p
 .ref-home .ref-brand-circle,.ref-tool{height:50px!important;gap:9px!important}
 .ref-home .ref-brand-circle-icon,.ref-tool-ic{width:30px!important;height:30px!important}
 @media(max-width:1440px){
-  .page-nav{grid-template-columns:repeat(6,minmax(0,1fr))!important;width:calc(100% - 48px)!important;max-width:1287px}
+  .page-nav{grid-template-columns:repeat(7,minmax(0,1fr))!important;width:calc(100% - 48px)!important;max-width:1287px}
   .ref-home .ref-brand-circles,.ref-tools{width:auto!important;box-sizing:border-box}
   .ref-home .ref-brand-circles{grid-template-columns:repeat(5,minmax(0,1fr))!important}
   .ref-tools{grid-template-columns:repeat(6,minmax(0,1fr))!important}
@@ -763,7 +763,8 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
     <button class="pnav active" onclick="showPage(4,this)">📁 Daily Reference</button>
     <button class="pnav" id="navCV" onclick="showPage(14,this)">📊 Contact Volume</button>
     <button class="pnav" id="navTeam" onclick="showTeamTab(TEAM_TAB||'perf')"><span class="ic-done" style="display:inline-flex"><svg viewBox="0 0 24 24" width="1.1em" height="1.1em" fill="none" stroke="#7a5cc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0-4 0M8 21v-1a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1M15 5a2 2 0 1 0 4 0a2 2 0 0 0-4 0M17 10h2a2 2 0 0 1 2 2v1M5 5a2 2 0 1 0 4 0a2 2 0 0 0-4 0M3 13v-1a2 2 0 0 1 2-2h2"/></svg></span>Team</button>
-    <button class="pnav" onclick="showPage(12,this)" style="position:relative">🕐 Permissions<span id="toNavBadge" style="display:none;position:absolute;top:-6px;right:-6px;min-width:16px;height:16px;background:var(--accent);border-radius:8px;font-size:11px;font-weight:700;color:#fff;text-align:center;line-height:16px;padding:0 4px;box-sizing:border-box"></span></button>
+    <button class="pnav" id="navPerm" onclick="showPage(12,this)" style="position:relative">🕐 Permissions<span id="toNavBadge" style="display:none;position:absolute;top:-6px;right:-6px;min-width:16px;height:16px;background:var(--accent);border-radius:8px;font-size:11px;font-weight:700;color:#fff;text-align:center;line-height:16px;padding:0 4px;box-sizing:border-box"></span></button>
+    <button class="pnav" id="navOff" onclick="showPage(15,this)" style="position:relative">🔁 Off Requests<span id="offNavBadge" style="display:none;position:absolute;top:-6px;right:-6px;min-width:16px;height:16px;background:var(--accent);border-radius:8px;font-size:11px;font-weight:700;color:#fff;text-align:center;line-height:16px;padding:0 4px;box-sizing:border-box"></span></button>
   </div>
   <div id="teamSubNav" class="team-subnav" style="display:none">
     <button class="tsub" data-t="perf" onclick="showTeamTab('perf')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><path d="M3 13a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM15 9a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1zM9 5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1zM4 20h14"/></svg>Team Performance</button>
@@ -1004,7 +1005,7 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
         <textarea id="toNotes" rows="2" placeholder="Any extra details..."></textarea>
       </div>
       <div style="text-align:center;margin-top:6px">
-        <button class="to-submitbtn" id="toSubmitBtn" onclick="toSubmitRequest()">Submit for Shahad's Approval</button>
+        <button class="to-submitbtn" id="toSubmitBtn" onclick="toSubmitRequest()">Submit for Approval</button>
       </div>
     </div>
   </div>
@@ -1012,9 +1013,10 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
   <div class="to-panel" id="toPanel-approvals">
     <div class="card">
       <div class="to-cardhead">
-        <div class="ctit" style="margin:0">Awaiting Shahad's Approval</div>
-        <button class="to-linkbtn" onclick="toOpenChangePassword()">🔒 Change password</button>
+        <div class="ctit" style="margin:0">Awaiting Approval</div>
+        <button class="to-linkbtn" onclick="toOpenChangePassword()">🔒 Change my password</button>
       </div>
+      <div class="ap-box"></div>
       <div id="toPendingList"></div>
     </div>
     <div class="card">
@@ -1027,6 +1029,75 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
     <div class="card">
       <div class="ctit">Employee Balance Summary — selected month</div>
       <div class="to-emp-grid" id="toEmpGrid"></div>
+    </div>
+  </div>
+
+</div>
+<div id="page15" style="display:none;max-width:1200px;margin:0 auto;padding:24px 24px" class="to-wrap">
+
+  <div class="to-hero">
+    <div>
+      <div class="hi2">Off Change Requests</div>
+      <div class="hi3">Move your off day or swap it with a colleague — approved by Sali or Shahad</div>
+    </div>
+    <div class="to-chip" id="offMonthChip">📅 Loading…</div>
+  </div>
+
+  <div class="to-krow" id="toKrow2">
+    <div class="kc c1"><div class="klbl">Pending</div><div class="kval" id="offKP">–</div></div>
+    <div class="kc c2"><div class="klbl">Approved This Month</div><div class="kval" id="offKA">–</div></div>
+    <div class="kc c3"><div class="klbl">Moves</div><div class="kval" id="offKM">–</div></div>
+    <div class="kc c4"><div class="klbl">Swaps</div><div class="kval" id="offKS">–</div></div>
+  </div>
+
+  <div class="to-tabs">
+    <div class="to-tab active" data-otab="submit" onclick="offTab('submit')">Submit Request</div>
+    <div class="to-tab" data-otab="approvals" onclick="offTab('approvals')">Approvals <span id="offPendCnt"></span></div>
+    <div class="to-tab" data-otab="history" onclick="offTab('history')">History</div>
+  </div>
+
+  <div class="to-panel active" id="offPanel-submit">
+    <div class="card">
+      <div class="ctit">New Off Change Request</div>
+      <div class="to-row2">
+        <div class="to-field"><label>Employee Name</label><select id="offName" onchange="offFill()"></select></div>
+        <div class="to-field"><label>Badge #</label><input id="offBadge" placeholder="Auto-filled from name" readonly style="background:#f4f4f5;cursor:not-allowed"></div>
+      </div>
+      <div class="to-field" style="margin-bottom:6px"><label>Request Type</label></div>
+      <div class="or-type">
+        <div class="or-opt on" id="offTMove" onclick="offType('move')"><b>Move my off day</b><span>Take my off on another day</span></div>
+        <div class="or-opt" id="offTSwap" onclick="offType('swap')"><b>Swap with a colleague</b><span>I take her off day, she takes mine</span></div>
+      </div>
+      <div class="to-row2">
+        <div class="to-field"><label>My Off Date</label><input type="date" id="offFrom" onchange="offHint()"></div>
+        <div class="to-field"><label id="offToLbl">New Off Date</label><input type="date" id="offTo" onchange="offHint()"></div>
+      </div>
+      <div class="to-field" id="offWithBox" style="display:none"><label>Swap With</label><select id="offWith" onchange="offHint()"></select></div>
+      <div class="or-hint" id="offHint">Pick your current off date and the new day.</div>
+      <div style="text-align:center;margin-top:6px"><button class="to-submitbtn" id="offSubmitBtn" onclick="offSubmit()">Submit for Approval</button></div>
+      <div class="or-mail">✉️ Sali and Shahad get an email as soon as you submit</div>
+    </div>
+  </div>
+
+  <div class="to-panel" id="offPanel-approvals">
+    <div class="card">
+      <div class="to-cardhead">
+        <div class="ctit" style="margin:0">Awaiting Approval</div>
+        <button class="to-linkbtn" onclick="toOpenChangePassword()">🔒 Change my password</button>
+      </div>
+      <div class="ap-box"></div>
+      <div id="offPendList"></div>
+    </div>
+    <div class="card">
+      <div class="ctit">Recently Decided</div>
+      <div id="offDecList"></div>
+    </div>
+  </div>
+
+  <div class="to-panel" id="offPanel-history">
+    <div class="card">
+      <div class="ctit">All Off Change Requests</div>
+      <div id="offHistList"></div>
     </div>
   </div>
 
@@ -1472,7 +1543,8 @@ function renderAttendanceTab(){
     +mkCard('#FAF8F5','#3E6545',liveList.length,'chat','Live Chat',liveList,false)
     +mkCard('#FAF8F5','#9A6464',absentList.length,'off','Off · Sick · Vacation · Absent',absentList,true)
     +'</div>';
-  container.innerHTML=html;
+  container.innerHTML=html+'<div id="bkWrap"></div>';
+  try{ bkRender(dateVal); }catch(e){ console.warn('breaks:',e); }
 }
 async function loadAllData(silent){
   if(!silent){
@@ -2119,6 +2191,8 @@ function showPage(n,btn){CP=n;
   var _p13=document.getElementById('page13'); if(_p13) _p13.style.display=n===13?'block':'none';
   var _p14=document.getElementById('page14'); if(_p14) _p14.style.display=n===14?'block':'none';
   if(n===14) cvOpen();
+  var _p15=document.getElementById('page15'); if(_p15) _p15.style.display=n===15?'block':'none';
+  if(n===15) renderOffRequests(false);
   teamSync(n);
 }
 var TEAM_TAB='perf';
@@ -9029,7 +9103,7 @@ function toReqRow(r, withActions){
       <button class="to-bsm to-b-rej" onclick="toDecide('${toEsc(r.ID)}','Rejected','${toEsc(r.Employee)}')">Reject</button>
     </div>`;
   }else{
-    actions = `<span class="to-badge ${cls}">${label}</span>`;
+    actions = `<div><span class="to-badge ${cls}">${label}</span>${r['Decided By']?`<div class="ap-by">by ${toEsc(r['Decided By'])}</div>`:''}</div>`;
   }
   return `<div class="to-req">
     <div><div class="rn">${toEsc(r.Employee)}${r.Badge?` <span style="font-weight:400;color:#808080;font-size:11px">· Badge ${toEsc(r.Badge)}</span>`:''}</div><div class="rm">${toEsc(r.Reason)} · ${(r.From&&r.To)?toEsc(r.From)+'–'+toEsc(r.To)+' · ':''}${toEsc(toFmtHrs(r.Hours))} hrs · ${toEsc(r.Date)}${r.Notes?' · '+toEsc(r.Notes):''}</div></div>
@@ -9037,6 +9111,7 @@ function toReqRow(r, withActions){
   </div>`;
 }
 function toRenderApprovals(){
+  apRefresh();
   const pending = TO_ROWS.filter(r=>r.Status==='Pending').sort((a,b)=>String(a.Date).localeCompare(String(b.Date)));
   const decided = TO_ROWS.filter(r=>r.Status!=='Pending').sort((a,b)=>String(b.Date).localeCompare(String(a.Date))).slice(0,30);
   document.getElementById('toPendingCount').textContent = pending.length ? `(${pending.length})` : '';
@@ -9106,19 +9181,17 @@ async function toSubmitRequest(){
     const _hc=document.getElementById('toHoursCalc'); if(_hc){ _hc.className='to-hours-hint'; _hc.textContent=''; }
     document.getElementById('toNotes').value='';
     document.getElementById('toDate').value=toTodayISO();
-    toToast("Request sent, awaiting Shahad's approval ✅");
+    toToast("Request sent — Sali and Shahad were notified ✅");
+    toPost({ action:'permNotify', employee:name }).catch(function(){});
     await renderTimeOff(true);
   }catch(err){
     toToast('Network error — please try again');
   }finally{
-    btn.disabled = false; btn.textContent = "Submit for Shahad's Approval";
+    btn.disabled = false; btn.textContent = "Submit for Approval";
   }
 }
 function toDecide(id, status, employee){
-  TO_PENDING_DECIDE = { id, status, employee };
-  document.getElementById('toPwTitle').textContent = status==='Approved' ? 'Confirm Approval' : 'Confirm Rejection';
-  document.getElementById('toPwMsg').textContent = `Enter the password to ${status==='Approved'?'approve':'reject'} ${employee}'s request`;
-  toOpenModal('toPwOverlay');
+  apDecide('decide2', id, status, employee, function(){ return renderTimeOff(true); });
 }
 async function toConfirmDecide(){
   const input = document.getElementById('toPwInput');
@@ -9141,17 +9214,18 @@ async function toConfirmDecide(){
     err.classList.add('show');
   }
 }
-function toOpenChangePassword(){ toOpenModal('toCpOverlay'); }
+function toOpenChangePassword(){ var t=document.getElementById('toCpTitle'); if(t) t.textContent='Change Password — '+AP.who; toOpenModal('toCpOverlay'); }
 async function toConfirmChangePassword(){
   const oldEl=document.getElementById('toCpOld'), n1=document.getElementById('toCpNew'), n2=document.getElementById('toCpNew2');
   const err=document.getElementById('toCpErr');
   if(!n1.value || n1.value.length<4){ err.textContent='New password must be at least 4 characters'; err.classList.add('show'); return; }
   if(n1.value!==n2.value){ err.textContent='Passwords do not match'; err.classList.add('show'); return; }
   try{
-    const result = await toPost({ action:'changePassword', oldPassword: oldEl.value, newPassword: n1.value });
+    const result = await toPost({ action:'apChangePassword', approver: AP.who, oldPassword: oldEl.value, newPassword: n1.value });
     if(!result.ok){ err.textContent = result.error || 'Failed'; err.classList.add('show'); return; }
+    if(AP.ok) AP.pw = n1.value;
     toCloseModal('toCpOverlay');
-    toToast('Password updated');
+    toToast('Password updated for '+AP.who);
   }catch(e){
     err.textContent='Network error — please try again'; err.classList.add('show');
   }
@@ -9191,8 +9265,8 @@ window.addEventListener('DOMContentLoaded', () => {
 <!-- Time-Off: change password modal -->
 <div class="to-modal-overlay" id="toCpOverlay">
   <div class="to-modal-box">
-    <h3>Change Password</h3>
-    <p>Enter current and new password</p>
+    <h3 id="toCpTitle">Change Password</h3>
+    <p>Pick Sali or Shahad in the approver box first, then enter the current and new password</p>
     <div class="to-modal-err" id="toCpErr">Check the fields</div>
     <input type="password" id="toCpOld" placeholder="Current password">
     <input type="password" id="toCpNew" placeholder="New password">
@@ -9938,5 +10012,310 @@ function renderCV(){
   }
   el.innerHTML=h;
 }</script>
+
+<!-- ================= AIM: Breaks Today + Off Requests + approvers ================= -->
+<style>
+/* Breaks Today (Today page) */
+.bk-card{margin-top:18px;background:#FEFEFD;border-radius:12px;box-shadow:0 1px 4px rgba(20,25,35,.05);overflow:hidden}
+.bk-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid #EFEBE6}
+.bk-title{font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+.bk-now{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;color:#808080}
+.bk-chip{background:#EEF1EA;color:#5F7050;border-radius:14px;padding:3px 10px;font-size:12px;font-weight:500}
+.bk-mine{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:12px;padding:16px 18px;background:#FAF8F5;border-bottom:1px solid #EFEBE6}
+.bk-slot{background:#FEFEFD;border:1px solid #EFEBE6;border-radius:10px;padding:10px 14px;text-align:left}
+.bk-slot .l{font-size:11.5px;color:#808080}
+.bk-slot .v{font-size:16px;font-weight:600;color:var(--text);margin-top:3px}
+.bk-slot.live{background:#F3F6F0;border-color:#DCE3D5}.bk-slot.live .v{color:#5F7050}
+.bk-slot.done{opacity:.5}
+.bk-slot.big .v{font-size:22px;color:var(--accent)}
+.bk-tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.bk-tbl th{background:#F5F0E8;color:#5D4037;padding:8px 14px;text-align:left;font-size:11px;font-weight:600;border-bottom:2px solid #E8DDD0}
+.bk-tbl td{padding:7px 14px;border-bottom:1px solid #F3EFEA;color:var(--text);text-align:left}
+.bk-tbl tr.me td{background:#FBF9F4;font-weight:600}
+.bk-t{display:inline-block;min-width:96px;text-align:center;padding:2px 10px;border-radius:7px;background:#F6F4F0;color:#6A5A4A;font-size:12px}
+.bk-t.live{background:#EEF1EA;color:#5F7050;font-weight:600}
+.bk-t.done{color:#B5AEA3;background:#FAF9F7}
+.bk-t.none{background:none;color:#C9C4BE}
+.bk-grp td{background:#FAF8F5!important;color:#8A857C;font-size:11px;font-weight:600;letter-spacing:.3px;padding:6px 14px}
+@media(max-width:820px){.bk-mine{grid-template-columns:1fr 1fr}}
+/* Off Requests */
+#toKrow2 .kc{background:#FDFDFC!important;border:1px solid #EFEDE9!important;border-top:1px solid #EFEDE9!important;border-radius:12px!important;box-shadow:none!important;text-align:center;padding:10px 8px}
+#toKrow2 .kc .klbl{font-size:11.5px;color:#808080;font-weight:500;letter-spacing:0}
+#toKrow2 .kc .kval{font-size:18px;font-weight:600;color:var(--text)}
+.or-type{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.or-opt{border:1.5px solid #ddd;border-radius:10px;padding:11px 14px;cursor:pointer;background:#FDFDFC}
+.or-opt b{display:block;font-size:12.5px;color:var(--text)}
+.or-opt span{font-size:11.5px;color:#808080}
+.or-opt.on{border-color:rgba(var(--accent-rgb),.45);background:rgba(var(--accent-rgb),.05)}
+.or-hint{font-size:11.5px;color:#808080;margin:-4px 0 12px;padding:8px 12px;background:#FAF8F5;border-radius:8px}
+.or-hint.warn{color:#A0565A;background:#FBF4F4}
+.or-mail{font-size:11.5px;color:#808080;text-align:center;margin-top:10px}
+.or-imp{font-size:11px;margin-top:5px;color:#6E7F5E}
+.or-imp.bad{color:#A0565A}
+.or-type-b{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:6px;margin-left:6px;vertical-align:1px}
+.or-type-b.mv{background:#F6F4F0;color:#6A5A4A}.or-type-b.sw{background:#EDF0F2;color:#5E6A75}
+/* Approver box (Off Requests + Permissions) */
+.ap-lock{display:flex;align-items:end;gap:10px;flex-wrap:wrap;padding:12px 14px;background:#FAF8F5;border:1px solid #EFEBE6;border-radius:10px;margin-bottom:14px}
+.ap-lock .to-field{margin:0;min-width:170px}
+.ap-who{display:flex;gap:6px}
+.ap-who div{padding:7px 14px;border-radius:8px;border:1.5px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#FEFEFD}
+.ap-who div.on{border-color:rgba(var(--accent-rgb),.45);background:rgba(var(--accent-rgb),.06);color:var(--accent)}
+.ap-msg{font-size:11.5px;color:#808080}
+.ap-msg.err{color:#A0565A}
+.ap-by{font-size:10.5px;color:#A8A29A;margin-top:4px;text-align:right}
+</style>
+<script>
+/* ---------- shared helpers ---------- */
+function aimISO(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function aimKey(s){return String(s||'').toLowerCase().replace(/[^a-z؀-ۿ]/g,'');}
+function aimFind(name,list){
+  var k=aimKey(name); if(!k) return null;
+  for(var i=0;i<list.length;i++) if(aimKey(list[i])===k) return list[i];
+  var f=String(name).trim().split(/\s+/)[0].toLowerCase();
+  var c=list.filter(function(x){return String(x).trim().split(/\s+/)[0].toLowerCase()===f;});
+  return c.length===1?c[0]:null;
+}
+var AIM_AWAY=['Off','Absent','Vacation','Sick','Sickleave','EL','Saturday Shift'];
+function aimPresent(date){ // number of agents working on that date, or null when the schedule has no data
+  var n=0,has=false;
+  Object.keys(ATT||{}).forEach(function(a){var s=ATT[a][date];if(!s)return;has=true;if(AIM_AWAY.indexOf(s)<0)n++;});
+  return has?n:null;
+}
+function aimDay(s){var d=new Date(s+'T12:00:00');if(isNaN(d))return s;return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()]+' '+d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];}
+
+/* ================= BREAKS TODAY ================= */
+var BK_SLOTS=[['Break 1',15],['Lunch',30],['Break 2',15]];
+function bkMin(v){
+  if(v==null||v==='') return null;
+  var s=String(v).trim(), m=s.match(/^(\d{1,2}):(\d{2})(?::\d{2})?\s*(am|pm|ص|م)?$/i);
+  if(m){var h=+m[1],mi=+m[2],ap=(m[3]||'').toLowerCase();if((ap==='pm'||ap==='م')&&h<12)h+=12;if((ap==='am'||ap==='ص')&&h===12)h=0;return h*60+mi;}
+  var d=new Date(s); if(!isNaN(d)&&/\d{4}-\d{2}-\d{2}T/.test(s)) return d.getHours()*60+d.getMinutes();
+  return null;
+}
+function bkT(m){return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');}
+function bkWeek(v){
+  var s=String(v||'').trim(); if(!s) return '';
+  if(/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0,10);
+  var p=s.split('/'); if(p.length===3) return (p[2].length===4?p[2]:'20'+p[2])+'-'+p[0].padStart(2,'0')+'-'+p[1].padStart(2,'0');
+  var d=new Date(s); return isNaN(d)?'':aimISO(d);
+}
+function bkPick(rows,date){ // latest row per agent whose Week Start <= date (blank Week Start = always)
+  var by={};
+  rows.forEach(function(r){
+    var ag=String(r['Agent']||'').trim(); if(!ag) return;
+    if(!BK_SLOTS.some(function(s){return bkMin(r[s[0]])!=null;})) return;
+    var w=bkWeek(r['Week Start']); if(w&&w>date) return;
+    var cur=by[ag]; if(!cur||(w||'')>=(cur._w||'')){ r._w=w; by[ag]=r; }
+  });
+  return by;
+}
+async function bkRender(date){
+  var wrap=document.getElementById('bkWrap'); if(!wrap) return;
+  var rows; try{ rows=await fetchSheet(SHEET_ID,'Breaks'); }catch(e){ rows=[]; }
+  if(!document.getElementById('bkWrap')||wrap!==document.getElementById('bkWrap')) return;
+  if(!Array.isArray(rows)||!rows.length){ wrap.innerHTML=''; return; }
+  var by=bkPick(rows,date), bNames=Object.keys(by);
+  if(!bNames.length){ wrap.innerHTML=''; return; }
+  var isToday=date===aimISO(), now=new Date(), nowM=now.getHours()*60+now.getMinutes();
+  function st(m,len){ if(!isToday||m==null) return ''; return nowM>=m+len?'done':(nowM>=m?'live':''); }
+  // who works that day (from the schedule), with their queue
+  var list=[], seen={};
+  Object.keys(ATT||{}).forEach(function(a){
+    var s=ATT[a][date]; if(!s||AIM_AWAY.indexOf(s)>=0) return;
+    var camp=((window.__ATT_CAMP__||{})[a]||{})[date]||'';
+    var b=aimFind(a,bNames); if(b) seen[b]=1;
+    list.push({name:a,chat:/whats|chat|live/i.test(camp),r:b?by[b]:null});
+  });
+  if(!list.length) bNames.forEach(function(b){ list.push({name:b,chat:false,r:by[b]}); });
+  if(!list.some(function(x){return x.r;})){ wrap.innerHTML=''; return; }
+  var me=currentAgentName?list.filter(function(x){return x.r&&aimFind(currentAgentName,[x.name]);})[0]:null;
+  var onNow=list.filter(function(x){return x.r&&BK_SLOTS.some(function(s){return st(bkMin(x.r[s[0]]),s[1])==='live';});});
+  var h='<div class="bk-card"><div class="bk-head"><div class="bk-title">☕ Breaks '+(isToday?'Today':'· '+aimDay(date))+'</div>'
+    +(isToday?'<div class="bk-now">On break now: '+(onNow.length?onNow.map(function(x){return '<span class="bk-chip">'+toEsc(x.name.split(' ')[0])+'</span>';}).join(''):'—')+'</div>':'')+'</div>';
+  if(me&&isToday){
+    var cur=null,nx=null;
+    BK_SLOTS.forEach(function(s){var m=bkMin(me.r[s[0]]);if(m==null)return;var k=st(m,s[1]);if(k==='live')cur=[s[0],m,s[1]];else if(!k&&!nx)nx=[s[0],m,s[1]];});
+    var first=toEsc(currentAgentName.split(' ')[0]);
+    h+='<div class="bk-mine">'+(cur?'<div class="bk-slot big live"><div class="l">'+first+', you are on '+cur[0]+'</div><div class="v">until '+bkT(cur[1]+cur[2])+'</div></div>'
+      :nx?'<div class="bk-slot big"><div class="l">'+first+', your next break</div><div class="v">'+nx[0]+' · '+bkT(nx[1])+'</div><div class="l" style="margin-top:2px">in '+(nx[1]-nowM)+' min</div></div>'
+      :'<div class="bk-slot big done"><div class="l">All breaks done today</div><div class="v">✓</div></div>')
+      +BK_SLOTS.map(function(s){var m=bkMin(me.r[s[0]]);if(m==null)return '<div class="bk-slot"><div class="l">'+s[0]+'</div><div class="v">—</div></div>';
+        return '<div class="bk-slot '+st(m,s[1])+'"><div class="l">'+s[0]+' · '+s[1]+' min</div><div class="v">'+bkT(m)+' – '+bkT(m+s[1])+'</div></div>';}).join('')+'</div>';
+  }
+  function row(x){
+    return '<tr class="'+(me&&x===me?'me':'')+'"><td>'+toEsc(x.name)+'</td><td style="color:#808080">'+toEsc(x.r?x.r['Shift']||'':'')+'</td>'
+      +BK_SLOTS.map(function(s){var m=x.r?bkMin(x.r[s[0]]):null;return '<td>'+(m==null?'<span class="bk-t none">—</span>':'<span class="bk-t '+st(m,s[1])+'">'+bkT(m)+' – '+bkT(m+s[1])+'</span>')+'</td>';}).join('')+'</tr>';
+  }
+  var srt=function(a,b){return a.name.localeCompare(b.name);};
+  var calls=list.filter(function(x){return !x.chat;}).sort(srt), chat=list.filter(function(x){return x.chat;}).sort(srt);
+  h+='<div style="overflow-x:auto"><table class="bk-tbl"><thead><tr><th>Agent</th><th>Shift</th>'+BK_SLOTS.map(function(s){return '<th>'+s[0]+'</th>';}).join('')+'</tr></thead><tbody>'
+    +(calls.length?'<tr class="bk-grp"><td colspan="5">CALLS</td></tr>'+calls.map(row).join(''):'')
+    +(chat.length?'<tr class="bk-grp"><td colspan="5">LIVE CHAT</td></tr>'+chat.map(row).join(''):'')
+    +'</tbody></table></div></div>';
+  wrap.innerHTML=h;
+}
+
+/* ================= APPROVERS (Sali / Shahad) ================= */
+var AP={who:'Sali',pw:'',ok:false,msg:'',err:false,busy:false};
+function apBoxHtml(){
+  if(AP.ok) return '<div class="ap-lock" style="align-items:center"><span class="ap-msg">🔓 Unlocked as <b style="color:var(--accent)">'+AP.who+'</b></span><button class="to-linkbtn" onclick="apLock()">Lock</button></div>';
+  return '<div class="ap-lock"><div class="to-field"><label>Approver</label><div class="ap-who">'
+    +['Sali','Shahad'].map(function(w){return '<div class="'+(AP.who===w?'on':'')+'" onclick="apWho(\''+w+'\')">'+w+'</div>';}).join('')+'</div></div>'
+    +'<div class="to-field"><label>Password</label><input type="password" class="ap-pw" placeholder="Your password" onkeydown="if(event.key===\'Enter\')apUnlock(this.value)"></div>'
+    +'<button class="to-submitbtn" style="padding:8px 18px" onclick="apUnlock(this.parentNode.querySelector(\'.ap-pw\').value)">Unlock</button>'
+    +'<span class="ap-msg'+(AP.err?' err':'')+'">'+(AP.msg||'Each approver has her own password — the name is saved with every decision')+'</span></div>';
+}
+function apRefresh(){ document.querySelectorAll('.ap-box').forEach(function(b){b.innerHTML=apBoxHtml();}); }
+function apWho(w){ AP.who=w; AP.msg=''; AP.err=false; apRefresh(); }
+function apLock(){ AP.ok=false; AP.pw=''; AP.msg=''; AP.err=false; apRefresh(); }
+async function apUnlock(pw){
+  if(!pw){ AP.msg='Enter your password'; AP.err=true; apRefresh(); return; }
+  AP.msg='Checking…'; AP.err=false; apRefresh();
+  try{
+    var r=await toPost({action:'apCheck',approver:AP.who,password:pw});
+    if(r&&r.ok){ AP.ok=true; AP.pw=pw; AP.msg=''; }
+    else { AP.msg=(r&&r.error==='Wrong password')?'Incorrect password':((r&&r.error)||'Failed'); AP.err=true; }
+  }catch(e){ AP.msg='Network error — please try again'; AP.err=true; }
+  apRefresh();
+}
+async function apDecide(action,id,status,employee,done){
+  if(!AP.ok){ toToast('Unlock as Sali or Shahad first'); var f=document.querySelector('.ap-box .ap-pw'); if(f) f.focus(); return; }
+  if(AP.busy) return; AP.busy=true;
+  try{
+    var r=await toPost({action:action,id:id,status:status,approver:AP.who,password:AP.pw});
+    if(!r||!r.ok){
+      if(r&&r.error==='Wrong password'){ apLock(); AP.msg='Password changed — unlock again'; AP.err=true; apRefresh(); }
+      toToast((r&&r.error)||'Failed'); return;
+    }
+    toToast(status==='Approved'?'Approved ✅':'Request rejected');
+    if(done) await done();
+  }catch(e){ toToast('Network error — please try again'); }
+  finally{ AP.busy=false; }
+}
+
+/* ================= OFF REQUESTS ================= */
+var OFF={rows:[],loaded:false,type:'move',tab:'submit'};
+async function offFetch(fresh){
+  try{
+    var res=await fetch(TO_API_URL+'?id='+SHEET_ID+'&sheetName='+encodeURIComponent('Off Requests')+(fresh?'&fresh=1':''));
+    var rows=await res.json(); return Array.isArray(rows)?rows.filter(function(r){return r&&r.ID;}):[];
+  }catch(e){ return []; }
+}
+function offBadge(){
+  var n=OFF.rows.filter(function(r){return r.Status==='Pending';}).length;
+  var b=document.getElementById('offNavBadge'); if(b){ b.textContent=n; b.style.display=n?'':'none'; }
+  var c=document.getElementById('offPendCnt'); if(c) c.textContent=n?'('+n+')':'';
+}
+async function renderOffRequests(fresh){
+  if(!OFF.formReady) offInitForm();
+  if(fresh||!OFF.loaded){ OFF.rows=await offFetch(true); OFF.loaded=true; }
+  var mk=aimISO().slice(0,7), mon=OFF.rows.filter(function(r){return String(r.Submitted||'').slice(0,7)===mk;});
+  document.getElementById('offKP').textContent=OFF.rows.filter(function(r){return r.Status==='Pending';}).length;
+  document.getElementById('offKA').textContent=mon.filter(function(r){return r.Status==='Approved';}).length;
+  document.getElementById('offKM').textContent=mon.filter(function(r){return r.Type==='Move';}).length;
+  document.getElementById('offKS').textContent=mon.filter(function(r){return r.Type==='Swap';}).length;
+  var M=['January','February','March','April','May','June','July','August','September','October','November','December'],d=new Date();
+  document.getElementById('offMonthChip').textContent='📅 '+M[d.getMonth()]+' '+d.getFullYear();
+  var srt=function(a,b){return String(b.Submitted||'').localeCompare(String(a.Submitted||''));};
+  var pend=OFF.rows.filter(function(r){return r.Status==='Pending';}).sort(function(a,b){return String(a['My Off Date']).localeCompare(String(b['My Off Date']));});
+  var dec=OFF.rows.filter(function(r){return r.Status!=='Pending';}).sort(srt);
+  document.getElementById('offPendList').innerHTML=pend.length?pend.map(function(r){return offRow(r,true);}).join(''):'<div class="to-empty">📭 No pending requests</div>';
+  document.getElementById('offDecList').innerHTML=dec.length?dec.slice(0,10).map(function(r){return offRow(r,false);}).join(''):'<div class="to-empty">No history yet</div>';
+  document.getElementById('offHistList').innerHTML=OFF.rows.length?OFF.rows.slice().sort(srt).map(function(r){return offRow(r,false);}).join(''):'<div class="to-empty">No requests yet</div>';
+  offBadge(); apRefresh();
+}
+function offDesc(r){
+  return r.Type==='Swap'?'Swap with '+toEsc(r['Swap With'])+' · '+aimDay(r['My Off Date'])+' ↔ '+aimDay(r['New Off Date'])
+    :'Move off · '+aimDay(r['My Off Date'])+' → '+aimDay(r['New Off Date']);
+}
+function offRow(r,act){
+  var sw=r.Type==='Swap', tb='<span class="or-type-b '+(sw?'sw':'mv')+'">'+(sw?'SWAP':'MOVE')+'</span>', imp='';
+  if(act){
+    if(sw) imp='<div class="or-imp">Attendance unchanged (swap)</div>';
+    else{ var p=aimPresent(r['New Off Date']);
+      if(p!=null){ var a=p-1; imp='<div class="or-imp'+(a<14?' bad':'')+'">'+aimDay(r['New Off Date'])+': '+p+' present → '+a+' after this move'+(a<14?' (below 14)':'')+' · '+aimDay(r['My Off Date'])+': +1</div>'; } }
+  }
+  var cls=r.Status==='Approved'?'appr':r.Status==='Rejected'?'rej':'pend';
+  var right=act?'<div class="to-btnrow"><button class="to-bsm to-b-appr" onclick="offDecide(\''+toEsc(r.ID)+'\',\'Approved\')">Approve</button><button class="to-bsm to-b-rej" onclick="offDecide(\''+toEsc(r.ID)+'\',\'Rejected\')">Reject</button></div>'
+    :'<div><span class="to-badge '+cls+'">'+toEsc(r.Status)+'</span>'+(r['Decided By']?'<div class="ap-by">by '+toEsc(r['Decided By'])+'</div>':'')+'</div>';
+  return '<div class="to-req"><div><div class="rn">'+toEsc(r.Employee)+(r.Badge?' <span style="font-weight:400;color:#808080;font-size:11px">· Badge '+toEsc(r.Badge)+'</span>':'')+tb+'</div>'
+    +'<div class="rm">'+offDesc(r)+' · submitted '+toEsc(String(r.Submitted||'').slice(0,10))+'</div>'+imp+'</div>'+right+'</div>';
+}
+function offDecide(id,status){ apDecide('offDecide',id,status,'',function(){return renderOffRequests(true);}); }
+function offTab(t){
+  OFF.tab=t;
+  document.querySelectorAll('#page15 .to-tab').forEach(function(x){x.classList.toggle('active',x.dataset.otab===t);});
+  ['submit','approvals','history'].forEach(function(k){document.getElementById('offPanel-'+k).classList.toggle('active',k===t);});
+}
+function offInitForm(){
+  OFF.formReady=true;
+  var opts='<option value="">— Select name —</option>'+TO_ROSTER.map(function(p){return '<option value="'+toEsc(p[0])+'">'+toEsc(p[0])+'</option>';}).join('');
+  document.getElementById('offName').innerHTML=opts;
+  document.getElementById('offWith').innerHTML='<option value="">— Select colleague —</option>'+TO_ROSTER.map(function(p){return '<option value="'+toEsc(p[0])+'">'+toEsc(p[0])+'</option>';}).join('');
+  var me=currentAgentName?aimFind(currentAgentName,TO_ROSTER.map(function(p){return p[0];})):null;
+  if(me){ document.getElementById('offName').value=me; }
+  offFill();
+}
+function offFill(){
+  var n=document.getElementById('offName').value;
+  document.getElementById('offBadge').value=TO_BADGE_BY_NAME[n]||'';
+  offHint();
+}
+function offType(t){
+  OFF.type=t;
+  document.getElementById('offTMove').classList.toggle('on',t==='move');
+  document.getElementById('offTSwap').classList.toggle('on',t==='swap');
+  document.getElementById('offWithBox').style.display=t==='swap'?'':'none';
+  document.getElementById('offToLbl').textContent=t==='swap'?"Her Off Date (I'll take it)":'New Off Date';
+  offHint();
+}
+function offAttStatus(name,date){
+  var a=aimFind(name,Object.keys(ATT||{})); return a&&ATT[a]?ATT[a][date]||'':'';
+}
+function offHint(){
+  var el=document.getElementById('offHint'), n=document.getElementById('offName').value;
+  var f=document.getElementById('offFrom').value, t=document.getElementById('offTo').value, w=document.getElementById('offWith').value;
+  if(!f||!t){ el.className='or-hint'; el.textContent=OFF.type==='swap'?'Pick your off date and her off date.':'Pick your current off date and the new day.'; return; }
+  var warn=[], s1=n?offAttStatus(n,f):'';
+  if(s1&&s1!=='Off') warn.push('The schedule shows '+s1+' for you on '+aimDay(f)+', not Off.');
+  if(OFF.type==='swap'){
+    var s2=w?offAttStatus(w,t):''; if(s2&&s2!=='Off') warn.push('The schedule shows '+s2+' for '+toEsc(w)+' on '+aimDay(t)+', not Off.');
+    el.innerHTML=(w?'You take <b>'+toEsc(w)+'</b>\'s off on '+aimDay(t)+', and she takes your off on '+aimDay(f)+'. Attendance stays the same.':'Choose the colleague you are swapping with.')+(warn.length?'<br>⚠️ '+warn.join(' '):'');
+  }else{
+    el.innerHTML='Your off moves from '+aimDay(f)+' to '+aimDay(t)+'. You\'ll work on '+aimDay(f)+'.'+(warn.length?'<br>⚠️ '+warn.join(' '):'');
+  }
+  el.className='or-hint'+(warn.length?' warn':'');
+}
+async function offSubmit(){
+  var n=document.getElementById('offName').value, f=document.getElementById('offFrom').value, t=document.getElementById('offTo').value, w=document.getElementById('offWith').value;
+  if(!n){ toToast('Please choose your name'); return; }
+  if(!f||!t){ toToast('Please pick both dates'); return; }
+  if(f===t){ toToast('The two dates must be different'); return; }
+  if(OFF.type==='swap'&&(!w||w===n)){ toToast('Please choose a colleague to swap with'); return; }
+  var btn=document.getElementById('offSubmitBtn'); btn.disabled=true; btn.textContent='Submitting…';
+  try{
+    var p=OFF.type==='move'?aimPresent(t):null;
+    var r=await toPost({action:'offSubmit',employee:n,badge:TO_BADGE_BY_NAME[n]||'',type:OFF.type,from:f,to:t,with:OFF.type==='swap'?w:'',present:p==null?'':p});
+    if(!r||!r.ok){ toToast((r&&r.error)||'Failed to submit'); return; }
+    document.getElementById('offFrom').value=''; document.getElementById('offTo').value=''; document.getElementById('offWith').value='';
+    offHint(); toToast('Request sent — Sali and Shahad were notified ✅');
+    await renderOffRequests(true);
+  }catch(e){ toToast('Network error — please try again'); }
+  finally{ btn.disabled=false; btn.textContent='Submit for Approval'; }
+}
+
+/* ---------- open from email links (#off / #permissions) + nav badge ---------- */
+function aimOpenHash(){
+  var h=(location.hash||'').toLowerCase();
+  if(h==='#off'){ var b=document.getElementById('navOff'); if(b) showPage(15,b); }
+  else if(h==='#permissions'){ var p=document.getElementById('navPerm'); if(p) showPage(12,p); }
+}
+document.addEventListener('DOMContentLoaded',function(){
+  setTimeout(aimOpenHash,0);
+  setTimeout(function(){ offFetch(false).then(function(rows){ if(!OFF.loaded){ OFF.rows=rows; } offBadge(); }); },2500);
+});
+window.addEventListener('hashchange',aimOpenHash);
+</script>
+
 </body>
 </html>
