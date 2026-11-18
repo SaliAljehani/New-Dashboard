@@ -1045,8 +1045,7 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
 
   <div class="to-hero">
     <div>
-      <div class="hi2">Off Change Requests</div>
-      <div class="hi3">Swap your off day with a colleague — approved by Sali or Shahad</div>
+      <div class="hi2">Off Requests</div>
     </div>
     <div class="to-chip" id="offMonthChip">📅 Loading…</div>
   </div>
@@ -1066,19 +1065,18 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
 
   <div class="to-panel active" id="offPanel-submit">
     <div class="card">
-      <div class="ctit">New Off Change Request</div>
+      <div class="ctit">Swap Off Day</div>
       <div class="to-row2">
         <div class="to-field"><label>Employee Name</label><select id="offName" onchange="offFill()"></select></div>
         <div class="to-field"><label>Badge #</label><input id="offBadge" placeholder="Auto-filled from name" readonly style="background:#f4f4f5;cursor:not-allowed"></div>
       </div>
       <div class="to-field"><label>Swap With</label><select id="offWith" onchange="offHint()"></select></div>
       <div class="to-row2">
-        <div class="to-field"><label>My Off Date <span style="font-weight:400;color:#808080">(I'll work this day)</span></label><input type="date" id="offFrom" onchange="offHint()"></div>
-        <div class="to-field"><label>Her Off Date <span style="font-weight:400;color:#808080">(I'll take it)</span></label><input type="date" id="offTo" onchange="offHint()"></div>
+        <div class="to-field"><label>My Off Day</label><input type="date" id="offFrom" onchange="offHint()"></div>
+        <div class="to-field"><label>Her Off Day</label><input type="date" id="offTo" onchange="offHint()"></div>
       </div>
-      <div class="or-hint" id="offHint">Choose your colleague and the two off dates.</div>
+      <div class="or-hint" id="offHint" style="display:none"></div>
       <div style="text-align:center;margin-top:6px"><button class="to-submitbtn" id="offSubmitBtn" onclick="offSubmit()">Submit for Approval</button></div>
-      <div class="or-mail">✉️ Sali and Shahad get an email as soon as you submit</div>
     </div>
   </div>
 
@@ -10095,6 +10093,11 @@ function renderCV(){
 .or-imp.bad{color:#A0565A}
 .or-type-b{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:6px;margin-left:6px;vertical-align:1px}
 .or-type-b.mv{background:#F6F4F0;color:#6A5A4A}.or-type-b.sw{background:#EDF0F2;color:#5E6A75}
+/* swap table */
+.swC{border-collapse:collapse;margin-top:8px;font-size:12.5px;min-width:440px}
+.swC th{font-size:11px;font-weight:600;color:#A8A29A;text-align:left;padding:3px 24px 3px 0;border-bottom:1px solid #EFEBE6}
+.swC td{padding:5px 24px 5px 0;border-bottom:1px solid #F5F1EC;text-align:left;color:#5F5850}.swC td b{color:var(--text);font-weight:600}
+.swC td.to{color:#5F7050;font-weight:600}
 /* Approver box (Off Requests + Permissions) */
 .ap-lock{display:flex;align-items:end;gap:10px;flex-wrap:wrap;padding:12px 14px;background:#FAF8F5;border:1px solid #EFEBE6;border-radius:10px;margin-bottom:14px}
 .ap-lock .to-field{margin:0;min-width:170px}
@@ -10274,7 +10277,7 @@ function apBoxHtml(){
     +['Sali','Shahad'].map(function(w){return '<div class="'+(AP.who===w?'on':'')+'" onclick="apWho(\''+w+'\')">'+w+'</div>';}).join('')+'</div></div>'
     +'<div class="to-field"><label>Password</label><input type="password" class="ap-pw" placeholder="Your password" onkeydown="if(event.key===\'Enter\')apUnlock(this.value)"></div>'
     +'<button class="to-submitbtn" style="padding:8px 18px" onclick="apUnlock(this.parentNode.querySelector(\'.ap-pw\').value)">Unlock</button>'
-    +'<span class="ap-msg'+(AP.err?' err':'')+'">'+(AP.msg||'Each approver has her own password — the name is saved with every decision')+'</span></div>';
+    +'<span class="ap-msg'+(AP.err?' err':'')+'">'+(AP.msg||'')+'</span></div>';
 }
 function apRefresh(){ document.querySelectorAll('.ap-box').forEach(function(b){b.innerHTML=apBoxHtml();}); }
 function apWho(w){ AP.who=w; AP.msg=''; AP.err=false; apRefresh(); }
@@ -10337,9 +10340,12 @@ async function renderOffRequests(fresh){
   offBadge(); apRefresh();
 }
 function offDesc(r){
-  return 'Swap with '+toEsc(r['Swap With'])+' · '+aimDay(r['My Off Date'])+' ↔ '+aimDay(r['New Off Date']);
+  return r['Swap With']?'Swap with '+toEsc(r['Swap With'])+' · '+aimDay(r['My Off Date'])+' ↔ '+aimDay(r['New Off Date'])
+    :'Off '+aimDay(r['My Off Date'])+' → '+aimDay(r['New Off Date']);
 }
 function offSchedLine(r){
+  if(!r['Swap With']){ var v=aimSchedVal(r.Employee,r['My Off Date']); if(!v) return ''; var ok=/^off$/i.test(String(v).trim());
+    return '<div class="or-imp'+(ok?'':' bad')+'">Schedule: '+aimDay(r['My Off Date'])+' = '+toEsc(v)+(ok?'':' ⚠️ not OFF')+'</div>'; }
   var a=aimSchedVal(r.Employee,r['My Off Date']), b=aimSchedVal(r['Swap With'],r['New Off Date']);
   if(!a&&!b) return '';
   var ok=function(v){return /^off$/i.test(String(v).trim());};
@@ -10352,7 +10358,8 @@ function offRow(r,act){
   var right=act?'<div class="to-btnrow"><button class="to-bsm to-b-appr" onclick="offDecide(\''+toEsc(r.ID)+'\',\'Approved\')">Approve</button><button class="to-bsm to-b-rej" onclick="offDecide(\''+toEsc(r.ID)+'\',\'Rejected\')">Reject</button></div>'
     :'<div><span class="to-badge '+cls+'">'+toEsc(r.Status)+'</span>'+(r['Decided By']?'<div class="ap-by">by '+toEsc(r['Decided By'])+'</div>':'')+'</div>';
   return '<div class="to-req"><div><div class="rn">'+toEsc(r.Employee)+(r.Badge?' <span style="font-weight:400;color:#808080;font-size:11px">· Badge '+toEsc(r.Badge)+'</span>':'')+'</div>'
-    +'<div class="rm">'+offDesc(r)+' · submitted '+toEsc(String(r.Submitted||'').slice(0,10))+'</div>'+(act?offSchedLine(r):'')+'</div>'+right+'</div>';
+    +(r['Swap With']?offSwapBox(r.Employee,r['Swap With'],r['My Off Date'],r['New Off Date']):'<div class="rm">'+offDesc(r)+'</div>')
+    +'<div class="rm" style="margin-top:4px">Submitted '+toEsc(String(r.Submitted||'').slice(0,10))+'</div></div>'+right+'</div>';
 }
 function offDecide(id,status){ apDecide('offDecide',id,status,'',function(){return renderOffRequests(true);}); }
 function offTab(t){
@@ -10364,9 +10371,9 @@ function offInitForm(){
   OFF.formReady=true;
   var opts='<option value="">— Select name —</option>'+TO_ROSTER.map(function(p){return '<option value="'+toEsc(p[0])+'">'+toEsc(p[0])+'</option>';}).join('');
   document.getElementById('offName').innerHTML=opts;
-  document.getElementById('offWith').innerHTML='<option value="">— Select colleague —</option>'+TO_ROSTER.map(function(p){return '<option value="'+toEsc(p[0])+'">'+toEsc(p[0])+'</option>';}).join('');
   var me=currentAgentName?aimFind(currentAgentName,TO_ROSTER.map(function(p){return p[0];})):null;
   if(me){ document.getElementById('offName').value=me; }
+  document.getElementById('offWith').innerHTML='<option value="">— Select colleague —</option>'+TO_ROSTER.map(function(p){return '<option value="'+toEsc(p[0])+'">'+toEsc(p[0])+'</option>';}).join('');
   offFill();
 }
 function offFill(){
@@ -10374,28 +10381,30 @@ function offFill(){
   document.getElementById('offBadge').value=TO_BADGE_BY_NAME[n]||'';
   offHint();
 }
+/* swap shown as a small table: each employee, her off day now → new */
+function offSwapBox(a,b,f,t){
+  var tr=function(n,from,to){ return '<tr><td><b>'+toEsc(n)+'</b></td><td>'+aimDay(from)+'</td><td class="to">'+aimDay(to)+'</td></tr>'; };
+  return '<table class="swC"><thead><tr><th>Employee</th><th>Off now</th><th>New off</th></tr></thead><tbody>'+tr(a,f,t)+tr(b,t,f)+'</tbody></table>';
+}
 function offHint(){
   var el=document.getElementById('offHint'); if(!el) return;
-  var n=document.getElementById('offName').value, f=document.getElementById('offFrom').value, t=document.getElementById('offTo').value, w=document.getElementById('offWith').value;
-  if(!w||!f||!t){ el.className='or-hint'; el.textContent='Choose your colleague and the two off dates.'; return; }
-  var warn=[], s1=n?aimSchedVal(n,f):'', s2=aimSchedVal(w,t);
-  if(s1&&!/^off$/i.test(s1)) warn.push('The schedule shows '+toEsc(s1)+' for you on '+aimDay(f)+', not OFF.');
-  if(s2&&!/^off$/i.test(s2)) warn.push('The schedule shows '+toEsc(s2)+' for '+toEsc(w.split(' ')[0])+' on '+aimDay(t)+', not OFF.');
-  el.innerHTML='You take <b>'+toEsc(w)+'</b>\'s off on '+aimDay(t)+', and she takes your off on '+aimDay(f)+'.'+(warn.length?'<br>⚠️ '+warn.join(' '):'');
-  el.className='or-hint'+(warn.length?' warn':'');
+  var n=document.getElementById('offName').value, w=document.getElementById('offWith').value, f=document.getElementById('offFrom').value, t=document.getElementById('offTo').value;
+  if(!n||!w||!f||!t){ el.style.display='none'; return; }
+  el.style.display=''; el.className='or-hint'; el.style.padding='6px 8px';
+  el.innerHTML=offSwapBox(n,w,f,t);
 }
 async function offSubmit(){
-  var n=document.getElementById('offName').value, f=document.getElementById('offFrom').value, t=document.getElementById('offTo').value, w=document.getElementById('offWith').value;
+  var n=document.getElementById('offName').value, w=document.getElementById('offWith').value, f=document.getElementById('offFrom').value, t=document.getElementById('offTo').value;
   if(!n){ toToast('Please choose your name'); return; }
-  if(!f||!t){ toToast('Please pick both dates'); return; }
-  if(f===t){ toToast('The two dates must be different'); return; }
-  if(!w||w===n){ toToast('Please choose a colleague to swap with'); return; }
+  if(!w||w===n){ toToast('Please choose a colleague'); return; }
+  if(!f||!t){ toToast('Please pick both days'); return; }
+  if(f===t){ toToast('The two days must be different'); return; }
   var btn=document.getElementById('offSubmitBtn'); btn.disabled=true; btn.textContent='Submitting…';
   try{
     var r=await toPost({action:'offSubmit',employee:n,badge:TO_BADGE_BY_NAME[n]||'',type:'swap',from:f,to:t,with:w});
     if(!r||!r.ok){ toToast((r&&r.error)||'Failed to submit'); return; }
     document.getElementById('offFrom').value=''; document.getElementById('offTo').value=''; document.getElementById('offWith').value='';
-    offHint(); toToast('Request sent — Sali and Shahad were notified ✅');
+    offHint(); toToast('Request sent ✅');
     await renderOffRequests(true);
   }catch(e){ toToast('Network error — please try again'); }
   finally{ btn.disabled=false; btn.textContent='Submit for Approval'; }
