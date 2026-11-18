@@ -664,6 +664,21 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
 .wkb .all{grid-column:1/-1}
 .wkb .e{color:#CFC8C0}
 .wkb .live{background:#EEF1EA;color:#4E6A52;font-weight:700;border-radius:5px;margin:0 3px}
+
+/* swap request from Weekly Schedule */
+.wks-t.sw-off{cursor:pointer}
+.wks-t.sw-off:hover{filter:brightness(.97)}
+.wks-t.sw-me{outline:2.5px solid #C98A8A;outline-offset:-1px}
+.wks-t.sw-me small{font-weight:800!important}
+.wks-t.sw-her{outline:2.5px solid #8FA67F;outline-offset:-1px;background:#EEF3EE!important}
+.wks-t.sw-her small{color:#4E6A52!important;font-weight:800!important}
+.wks-t.sw-pend{background:#F6F2EC!important}
+.wks-t.sw-pend small{color:#8A6A4A!important}
+.wks-item.wks-mine{background:#FBF6F1!important;border-color:#E8D8C8!important}
+.wks-you{font-size:10px;font-weight:600;color:#8A6A4A;background:#F4EFE9;border-radius:6px;padding:1px 6px;margin-left:4px}
+#swapBar{display:none;position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:9999;background:#FFFDFB;border:1px solid #E6DED4;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.10);padding:8px 18px;gap:18px;align-items:center;font-size:13px;color:#4A3528;max-width:94vw}
+#swapBar .sb{border:1px solid #DCE6D8;background:#EEF3EE;color:#4E6A52;border-radius:9px;padding:9px 20px;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;white-space:nowrap}
+#swapBar .sx{color:#B0A898;cursor:pointer;font-size:16px}
 </style>
 <style>
 
@@ -1095,13 +1110,14 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
     <div class="kc c4"><div class="klbl">Total This Month</div><div class="kval" id="offKS">–</div></div>
   </div>
 
+  <div style="text-align:center;background:#FAF8F5;border-radius:10px;padding:10px 14px;font-size:13px;color:#6A5A4A;margin:0 0 14px">To ask for a swap: open <b style="color:#4A3528;cursor:pointer" onclick="showTeamTab('wk')">Team → Weekly Schedule</b>, click your OFF, then your colleague's OFF.</div>
   <div class="to-tabs">
-    <div class="to-tab active" data-otab="submit" onclick="offTab('submit')">Submit Request</div>
-    <div class="to-tab" data-otab="approvals" onclick="offTab('approvals')">Approvals <span id="offPendCnt"></span></div>
+    <div class="to-tab" data-otab="submit" onclick="offTab('submit')" style="display:none">Submit Request</div>
+    <div class="to-tab active" data-otab="approvals" onclick="offTab('approvals')">Approvals <span id="offPendCnt"></span></div>
     <div class="to-tab" data-otab="history" onclick="offTab('history')">History</div>
   </div>
 
-  <div class="to-panel active" id="offPanel-submit">
+  <div class="to-panel" id="offPanel-submit" style="display:none">
     <div class="card">
       <div class="ctit">Swap Off Day</div>
       <div class="to-row2">
@@ -1118,7 +1134,7 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
     </div>
   </div>
 
-  <div class="to-panel" id="offPanel-approvals">
+  <div class="to-panel active" id="offPanel-approvals">
     <div class="card">
       <div class="to-cardhead">
         <div class="ctit" style="margin:0">Awaiting Approval</div>
@@ -1417,7 +1433,10 @@ function brBanner(){
   b.style.display=need?'flex':'none';
 }
 function brToast(title,body){
-  var t=document.getElementById('brToast'); if(!t) return;
+  var t=document.getElementById('brToast');
+  if(!t){ t=document.createElement('div'); t.id='brToast'; document.body.appendChild(t); }
+  else if(t.parentNode!==document.body) document.body.appendChild(t);
+  t.style.cssText='display:none;position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:99999;background:#F3F6F1;border:1px solid #DCE6D8;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.10);padding:12px 16px;gap:14px;align-items:center;color:#3E5A42;font-size:13px;min-width:280px;font-family:inherit';
   t.innerHTML='<div><b>'+title+'</b><span>'+body+'</span></div><i onclick="this.parentNode.style.display=\'none\'">×</i>';
   t.style.display='flex'; clearTimeout(t._h); t._h=setTimeout(function(){t.style.display='none';},5*60*1000);
 }
@@ -1611,15 +1630,13 @@ function renderAttendanceTab(){
     if(chat){ var m=c.match(/^(pe|ni|st)\b/i); var t=m?m[1].toUpperCase():/live/i.test(c)?'Live':/whatsapp/i.test(c)?'WA':c; return t; }
     if(/^(calls?|multi.*)$/i.test(c)||/line/i.test(c)) return ''; return c; }
   function mkName2(r,chat){ var tg=_campTag(r.campaign,chat);
-    return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 0">'
-      +'<span style="font-size:13px;font-weight:500;color:var(--text)">'+(r._rmt?tdIc('home','#7E78A8',13)+' ':'')+r.name+'</span>'
-      +(tg?'<span style="font-size:11.5px;background:'+(chat?'#EEF3EE':'#F3EFEA')+';color:'+(chat?'#4E6A52':'#7C7064')+';padding:1px 8px;border-radius:8px;white-space:nowrap">'+tg+'</span>':'')
+    return '<div style="font-size:13px;font-weight:500;color:var(--text);text-align:center;padding:4px 0">'+(r._rmt?tdIc('home','#7E78A8',13)+' ':'')+r.name
+      +(tg?'<span style="font-size:11px;font-weight:400;background:'+(chat?'#EEF3EE':'#F3EFEA')+';color:'+(chat?'#4E6A52':'#7C7064')+';padding:1px 7px;border-radius:8px;white-space:nowrap;margin-left:6px">'+tg+'</span>':'')
       +'</div>'; }
   function mkNameBadge(r){
     const b=ABSENT_BADGE[r.status]||{bg:'#F8ECEC',color:'#7A3A3A',label:r.status};
-    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0">'
-      +'<span style="font-size:13px;font-weight:500;color:var(--text)">'+r.name+'</span>'
-      +'<span style="font-size:11.5px;background:'+b.bg+';color:'+b.color+';padding:1px 7px;border-radius:8px;white-space:nowrap">'+b.label+'</span>'
+    return '<div style="font-size:13px;font-weight:500;color:var(--text);text-align:center;padding:4px 0">'+r.name
+      +'<span style="font-size:11px;font-weight:400;background:'+b.bg+';color:'+b.color+';padding:1px 7px;border-radius:8px;white-space:nowrap;margin-left:6px">'+b.label+'</span>'
       +'</div>';
   }
   function mkCard(bg,borderColor,count,icon,label,rows,isAbsent,mode){
@@ -8724,13 +8741,15 @@ async function renderDailyOff(){
       var block=function(ag,grp){
         var wb=nb(ag[BREAK_COL]), sv=String(ag.Saturday||'').trim(), sk=kindOf(sv), sb=nb(ag[SAT_BREAK_COL]);
         var _sb=(sk==='multi'||sk==='chat')&&sb;
-        var h='<div class="wks-item wks-row" data-n="'+esc(ag.name.toLowerCase())+'"><div class="wks-nm"><b>'+esc(ag.name)+'</b></div>';
+        var _mine=offIsMe(ag.name);
+        var h='<div class="wks-item wks-row'+(_mine?' wks-mine':'')+'" data-n="'+esc(ag.name.toLowerCase())+'"><div class="wks-nm"><b>'+esc(ag.name)+'</b>'+(_mine?' <span class="wks-you">You</span>':'')+'</div>';
         days.forEach(function(d){
           var v=String(ag[d]||'').trim(), k=kindOf(v), dt=w.dates&&w.dates[d]?String(w.dates[d]).trim():'';
           var isT=dt&&dt.replace(/\s+/g,' ').toLowerCase()===_tdStr;
           var plain=d!=='Saturday'&&((grp==='call'&&/^(multi[\s-]?camp|calls?)$/i.test(v))||(grp==='chat'&&/^live[\s-]?chat$/i.test(v)));
           var lbl=k==='off'?'OFF':k==='voff'?'Off':k==='vac'?'Vacation':k==='none'?'':(plain?'':v);
-          h+='<div class="wks-t wk-'+k+'" title="'+SH[d]+' '+esc(dt)+(isT?' · Today':'')+(v?' · '+esc(v):'')+'"><small>'+(lbl?esc(lbl):'&nbsp;')+'</small></div>';
+          var _iso=(k==='off'||k==='voff')&&d!=='Friday'?offDtIso(dt):'';
+          h+='<div class="wks-t wk-'+k+(_iso?' sw-off':'')+'"'+(_iso?' data-sn="'+esc(ag.name)+'" data-sd="'+_iso+'" onclick="offPick(this)"':'')+' title="'+SH[d]+' '+esc(dt)+(isT?' · Today':'')+(v?' · '+esc(v):'')+'"><small>'+(lbl?esc(lbl):'&nbsp;')+'</small></div>';
           var _bs=(d==='Thursday'&&!_bkSat)||(d==='Saturday'&&_bkSat)?_bkSt(ag):null;
           if(d==='Thursday') h+=_wkbCell(ag,w,_bkCur&&!_bkSat&&_td.getDay()!==5?_bs:null);
           if(d==='Saturday') h+='<div class="wks-br'+(_sb?'':' empty')+(_sb&&_bs&&_bs[0]?' bk-'+_bs[0]:'')+'">'+(_sb?esc(sb):'')+'</div>';
@@ -8748,7 +8767,7 @@ async function renderDailyOff(){
         });
         return h+'</div>';
       };
-      var az=function(l){ return l.slice().sort(function(a,b){ return String(a.name||'').localeCompare(String(b.name||''),'en',{sensitivity:'base'}); }); };
+      var az=function(l){ return l.slice(); }; /* keep the same order as the Weekly Schedule sheet */
       var calls=az(w.agents.filter(function(a){return agentGroup(a)!=='chat';})), chats=az(w.agents.filter(function(a){return agentGroup(a)==='chat';}));
       var sec=function(id,title,list,grp){
         return '<div class="wks-grp wk-g-'+(grp==='chat'?'chat':'multi')+'" id="dows_'+wi+'_'+id+'"><div class="wks-side"><span>'+title+' <i>· '+list.length+'</i></span></div>'
@@ -8797,7 +8816,7 @@ async function renderDailyOff(){
       var c=w.agents.filter(function(a){return agentGroup(a)==='chat';}).length;
       return {all:w.agents.length, chat:c, call:w.agents.length-c};
     });
-    el.innerHTML = html;
+    el.innerHTML = html; try{ offMarkPending(); }catch(_e){}
     updateDowCounts(activeIdx);
     setDowFilter(window.DOW_FILTER==='roles'?'roles':'all');
   }catch(e){
@@ -10535,7 +10554,7 @@ async function apDecide(action,id,status,employee,done){
 }
 
 /* ================= OFF REQUESTS ================= */
-var OFF={rows:[],loaded:false,tab:'submit'};
+var OFF={rows:[],loaded:false,tab:'approvals'};
 async function offFetch(fresh){
   try{
     var res=await fetch(TO_API_URL+'?id='+SHEET_ID+'&sheetName='+encodeURIComponent('Off Requests')+(fresh?'&fresh=1':''));
@@ -10564,7 +10583,7 @@ async function renderOffRequests(fresh){
   document.getElementById('offPendList').innerHTML=pend.length?pend.map(function(r){return offRow(r,true);}).join(''):'<div class="to-empty">📭 No pending requests</div>';
   document.getElementById('offDecList').innerHTML=dec.length?dec.slice(0,10).map(function(r){return offRow(r,false);}).join(''):'<div class="to-empty">No history yet</div>';
   document.getElementById('offHistList').innerHTML=OFF.rows.length?OFF.rows.slice().sort(srt).map(function(r){return offRow(r,false);}).join(''):'<div class="to-empty">No requests yet</div>';
-  offBadge(); apRefresh();
+  offBadge(); apRefresh(); try{ offMarkPending(); }catch(e){}
 }
 function offDesc(r){
   return r['Swap With']?'Swap with '+toEsc(r['Swap With'])+' · '+aimDay(r['My Off Date'])+' ↔ '+aimDay(r['New Off Date'])
@@ -10637,6 +10656,62 @@ async function offSubmit(){
   finally{ btn.disabled=false; btn.textContent='Submit for Approval'; }
 }
 
+
+/* ---------- Swap request straight from the Weekly Schedule ---------- */
+var OFFPICK={me:null,her:null};
+function offMeName(){ if(!currentAgentName) return null; var all=(typeof TO_ROSTER!=='undefined'&&TO_ROSTER.length)?TO_ROSTER.map(function(p){return p[0];}):(AGENTS_DIR||[]).map(function(a){return a.name;}); return aimFind(currentAgentName,all)||null; }
+function offIsMe(n){ var me=offMeName(); if(!me) return false; return aimFind(me,[String(n).trim()])!==null || String(n).trim().toLowerCase()===me.toLowerCase(); }
+function offDtIso(dt){ var m=String(dt||'').trim().toLowerCase().match(/^(\d{1,2})\s*([a-z]{3})/); if(!m) return '';
+  var mi=BK_MON.indexOf(m[2]); if(mi<0) return ''; var now=new Date(), y=now.getFullYear(); if(mi-now.getMonth()>6) y--; else if(now.getMonth()-mi>6) y++;
+  return y+'-'+String(mi+1).padStart(2,'0')+'-'+String(+m[1]).padStart(2,'0'); }
+function offPick(el){
+  var n=el.getAttribute('data-sn'), d=el.getAttribute('data-sd');
+  if(el.classList.contains('sw-pend')){ toToast('This day already has a request waiting for approval'); return; }
+  var me=offMeName();
+  if(!me){ toToast('Please choose your name first'); try{ ensureAgentNameSelected(); }catch(e){} return; }
+  if(offIsMe(n)){ OFFPICK.me={n:n,d:d}; if(OFFPICK.her&&OFFPICK.her.d===d) OFFPICK.her=null; }
+  else{ if(!OFFPICK.me){ toToast('First click your own OFF day'); return; }
+    if(d===OFFPICK.me.d){ toToast('Pick a different day from your OFF'); return; }
+    OFFPICK.her={n:n,d:d}; }
+  offPickPaint();
+}
+function offPickPaint(){
+  document.querySelectorAll('.sw-off.sw-me,.sw-off.sw-her').forEach(function(x){x.classList.remove('sw-me','sw-her');});
+  var sel=function(p){ return p?document.querySelectorAll('.sw-off[data-sd="'+p.d+'"]'):[]; };
+  sel(OFFPICK.me).forEach(function(x){ if(x.getAttribute('data-sn')===OFFPICK.me.n) x.classList.add('sw-me'); });
+  sel(OFFPICK.her).forEach(function(x){ if(x.getAttribute('data-sn')===OFFPICK.her.n) x.classList.add('sw-her'); });
+  var bar=document.getElementById('swapBar');
+  if(!bar){ bar=document.createElement('div'); bar.id='swapBar'; document.body.appendChild(bar); }
+  if(!OFFPICK.me||!OFFPICK.her){ bar.style.display=OFFPICK.me?'flex':'none';
+    if(OFFPICK.me) bar.innerHTML='<span style="color:#6A5A4A">Now click your colleague’s <b>OFF</b> day you want to take</span><span class="sx" onclick="offPickClear()">✕</span>'; return; }
+  bar.style.display='flex';
+  bar.innerHTML=offSwapBox(OFFPICK.me.n,OFFPICK.her.n,OFFPICK.me.d,OFFPICK.her.d).replace('class="swC"','class="swC" style="margin:0;min-width:0"')
+    +'<button class="sb" id="swapSend" onclick="offPickSend()">Submit for approval</button><span class="sx" onclick="offPickClear()">✕</span>';
+}
+function offPickClear(){ OFFPICK.me=null; OFFPICK.her=null; offPickPaint(); }
+async function offPickSend(){
+  var a=OFFPICK.me, b=OFFPICK.her; if(!a||!b) return;
+  var btn=document.getElementById('swapSend'); if(btn){ btn.disabled=true; btn.textContent='Sending…'; }
+  try{
+    var r=await toPost({action:'offSubmit',employee:a.n.trim(),badge:TO_BADGE_BY_NAME[a.n.trim()]||TO_BADGE_BY_NAME[offMeName()]||'',type:'swap',from:a.d,to:b.d,with:b.n.trim()});
+    if(!r||!r.ok){ toToast((r&&r.error)||'Failed to submit'); if(btn){btn.disabled=false;btn.textContent='Submit for approval';} return; }
+    toToast('Request sent ✅ — waiting for approval');
+    offPickClear();
+    OFF.rows=await offFetch(true); OFF.loaded=true; offBadge(); offMarkPending();
+  }catch(e){ toToast('Network error — please try again'); if(btn){btn.disabled=false;btn.textContent='Submit for approval';} }
+}
+function offMarkPending(){
+  document.querySelectorAll('.sw-off.sw-pend').forEach(function(x){ x.classList.remove('sw-pend'); var sm=x.querySelector('small'); if(sm&&sm.getAttribute('data-o')) sm.innerHTML=sm.getAttribute('data-o'); });
+  (OFF.rows||[]).filter(function(r){return r.Status==='Pending';}).forEach(function(r){
+    [[r.Employee,r['My Off Date']],[r['Swap With'],r['New Off Date']]].forEach(function(p){
+      if(!p[0]||!p[1]) return; var d=String(p[1]).slice(0,10);
+      document.querySelectorAll('.sw-off[data-sd="'+d+'"]').forEach(function(x){
+        var xn=x.getAttribute('data-sn'); if(String(xn).trim().toLowerCase()!==String(p[0]).trim().toLowerCase() && aimFind(p[0],[String(xn).trim()])===null) return;
+        x.classList.add('sw-pend'); var sm=x.querySelector('small'); if(sm){ if(!sm.getAttribute('data-o')) sm.setAttribute('data-o',sm.innerHTML); sm.innerHTML='OFF ⇄'; }
+      });
+    });
+  });
+}
 /* ---------- open from email links (#off / #permissions) + nav badge ---------- */
 function aimOpenHash(){
   var h=(location.hash||'').toLowerCase();
@@ -10645,7 +10720,7 @@ function aimOpenHash(){
 }
 document.addEventListener('DOMContentLoaded',function(){
   setTimeout(aimOpenHash,0);
-  setTimeout(function(){ offFetch(false).then(function(rows){ if(!OFF.loaded){ OFF.rows=rows; } offBadge(); }); },2500);
+  setTimeout(function(){ offFetch(false).then(function(rows){ if(!OFF.loaded){ OFF.rows=rows; } offBadge(); try{ offMarkPending(); }catch(e){} }); },2500);
 });
 window.addEventListener('hashchange',aimOpenHash);
 </script>
