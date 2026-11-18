@@ -10040,6 +10040,9 @@ function renderCV(){
 
 <!-- ================= AIM: Breaks Today + Off Requests + approvers ================= -->
 <style>
+.bkS{text-align:center;font-size:12.5px;font-weight:700;letter-spacing:.4px;color:#7C7064;background:#F5F2EE;border-radius:10px;padding:7px 12px;margin:4px 0 12px}
+.bkS i{font-style:normal;font-weight:500;opacity:.6}
+.bkD+.bkS{margin-top:22px}
 /* Today → Breaks table */
 .bkT{background:#FEFEFD;border:1px solid #EFEBE6;border-radius:12px;overflow:hidden}
 .bkT table{width:100%;border-collapse:collapse;font-size:13px}
@@ -10165,7 +10168,7 @@ function bkParse(raw,date){
       var nm=String(row[nameCol]||'').trim(); if(!nm||/agent/i.test(nm)||/\d{1,2}\s*[a-z]{3}\s*-/i.test(nm)) continue;
       var v=String(row[col[dk]]||'').trim();
       agents.push({name:nm,val:v,away:/^(off|vac|sick|absent|el)\b|vacation/i.test(v),chat:/chat|live/i.test(v),
-        br:slots.map(function(s){return bkRange(row[s.col],s.len);})});
+        br:slots.map(function(s){return bkRange(row[s.col],s.len);}), raw:slots.map(function(s){return String(row[s.col]||'').trim();})});
     }
     return {slots:slots,agents:agents};
   }
@@ -10203,26 +10206,39 @@ async function bkRenderBoard(){
   var todayDay=inWeek?bkParse(raw,todayIso):null;
   var awayToday=function(n){ if(!todayDay) return true; var a=todayDay.agents.filter(function(x){return x.name===n;})[0]; return !a||a.away; };
   var st=function(r,n,satBox){ if(!inWeek||!r||satBox!==isSat||now.getDay()===5||awayToday(n)) return ''; return nowM>=r.e?'done':(nowM>=r.s?'live':''); };
-  var COL=[['#B89A7E','#F6F0E9'],['#8C9A7A','#EEF2E9'],['#8E9AA6','#EDF1F4'],['#A89880','#F4F1EA']];
+  var COL=[['#B89A7E','#F6F0E9'],['#8C9A7A','#EEF2E9'],['#8E9AA6','#EDF1F4'],['#A89880','#F4F1EA'],['#7F9A93','#EBF2F0']];
   var lab=function(l){ return /^break$/i.test(l)?'Break':l+' break'; };
-  var live=0, boxes=[];
+  var live=0, callBoxes=[], sideBoxes=[];
+  var rowHtml=function(r,name,satBox){ if(!r) return '<div class="bkD-r"><b style="color:#C9C2B9;font-weight:400">—</b><span>'+toEsc(name)+'</span></div>';
+    var k=st(r,name,satBox); if(k==='live') live++;
+    return '<div class="bkD-r '+k+'"><b>'+bkShort(r.s)+' – '+bkShort(r.e)+'</b><span>'+toEsc(name)+'</span>'+(k==='live'?'<em>Now</em>':k==='done'?'<em>Done</em>':'')+'</div>'; };
+  var box1=function(ci,title,sub,inner){ return '<div class="bkD-c" style="--bc:'+COL[ci][0]+';--bb:'+COL[ci][1]+'"><div class="bkD-h">'+title+'<span>'+sub+'</span></div>'+inner+'</div>'; };
+  var nCall=0,nChat=0;
   if(wk&&wk.slots.length){
-    var rows=wk.agents.filter(function(a){return a.br.some(Boolean);});
-    rows.sort(function(p,q){ var a1=p.br.filter(Boolean)[0], b1=q.br.filter(Boolean)[0]; return a1.s-b1.s || p.name.localeCompare(q.name); });
-    wk.slots.forEach(function(sl,i){
-      boxes.push('<div class="bkD-c" style="--bc:'+COL[i%3][0]+';--bb:'+COL[i%3][1]+'"><div class="bkD-h">'+toEsc(lab(sl.label))+'<span>'+(sl.len||60)+' min · Sun–Thu</span></div>'
-        +rows.map(function(x){ var r=x.br[i]; if(!r) return '<div class="bkD-r"><b style="color:#C9C2B9;font-weight:400">—</b><span>'+toEsc(x.name)+'</span></div>';
-          var k=st(r,x.name,false); if(k==='live') live++;
-          return '<div class="bkD-r '+k+'"><b>'+bkShort(r.s)+' – '+bkShort(r.e)+'</b><span>'+toEsc(x.name)+'</span>'+(k==='live'?'<em>Now</em>':k==='done'?'<em>Done</em>':'')+'</div>'; }).join('')+'</div>');
+    /* queue for the week: WhatsApp if most of Sun–Thu are chat */
+    var chatCnt={};
+    for(var di=0;di<5;di++){ var dd=new Date(sun); dd.setDate(sun.getDate()+di); var pd=bkParse(raw,aimISO(dd)); if(pd) pd.agents.forEach(function(a){ if(a.away) return; chatCnt[a.name]=(chatCnt[a.name]||0)+(a.chat?1:-1); }); }
+    var isChat=function(a){ return (chatCnt[a.name]||0)>0; };
+    var srt=function(p,q){ var a1=p.br.filter(Boolean)[0], b1=q.br.filter(Boolean)[0]; return a1.s-b1.s || p.name.localeCompare(q.name); };
+    var calls=wk.agents.filter(function(a){return !isChat(a)&&a.br.some(Boolean);}).sort(srt);
+    var chats=wk.agents.filter(function(a){return isChat(a)&&a.raw.some(Boolean);}).map(function(a){
+      return {name:a.name,r:bkRange(a.raw.filter(Boolean)[0],60)}; }).filter(function(x){return x.r;}).sort(function(p,q){return p.r.s-q.r.s||p.name.localeCompare(q.name);});
+    nCall=calls.length; nChat=chats.length;
+    if(calls.length) wk.slots.forEach(function(sl,i){
+      callBoxes.push(box1(i%3,toEsc(lab(sl.label)),(sl.len||60)+' min',calls.map(function(x){return rowHtml(x.br[i],x.name,false);}).join('')));
     });
+    if(chats.length) sideBoxes.push(box1(4,'WhatsApp break','60 min',chats.map(function(x){return rowHtml(x.r,x.name,false);}).join('')));
   }
   if(sd&&sd.slots.length){
-    var srows=sd.agents.filter(function(a){return !a.away&&a.br.some(Boolean);}).sort(function(p,q){return p.br[0].s-q.br[0].s||p.name.localeCompare(q.name);});
-    if(srows.length) boxes.push('<div class="bkD-c" style="--bc:'+COL[3][0]+';--bb:'+COL[3][1]+'"><div class="bkD-h">Saturday break<span>'+sat.getDate()+' '+MN[sat.getMonth()]+'</span></div>'
-      +srows.map(function(x){ var r=x.br[0]; var k=st(r,x.name,true); if(k==='live') live++;
-        return '<div class="bkD-r '+k+'"><b>'+bkShort(r.s)+' – '+bkShort(r.e)+'</b><span>'+toEsc(x.name)+'</span>'+(k==='live'?'<em>Now</em>':k==='done'?'<em>Done</em>':'')+'</div>'; }).join('')+'</div>');
+    var srows=sd.agents.filter(function(a){return !a.away&&a.raw.some(Boolean);}).map(function(a){return {name:a.name,r:bkRange(a.raw.filter(Boolean)[0],60)};}).filter(function(x){return x.r;}).sort(function(p,q){return p.r.s-q.r.s||p.name.localeCompare(q.name);});
+    if(srows.length) sideBoxes.push(box1(3,'Saturday break',sat.getDate()+' '+MN[sat.getMonth()]+' · 60 min',srows.map(function(x){return rowHtml(x.r,x.name,true);}).join('')));
   }
-  box.innerHTML=boxes.length?'<div class="bkD">'+boxes.join('')+'</div>':'<div style="text-align:center;padding:40px;color:#aaa">No breaks in the schedule for this week</div>';
+  var sec=function(t,n){ return '<div class="bkS">'+t+(n?' <i>· '+n+'</i>':'')+'</div>'; };
+  var out='';
+  if(callBoxes.length) out+=sec('CALLS',nCall)+'<div class="bkD">'+callBoxes.join('')+'</div>';
+  if(sideBoxes.length) out+=sec(nChat?'WHATSAPP · SATURDAY':'SATURDAY','')+'<div class="bkD">'+sideBoxes.join('')+'</div>';
+  var boxes=out?[out]:[];
+  box.innerHTML=boxes.length?boxes[0]:'<div style="text-align:center;padding:40px;color:#aaa">No breaks in the schedule for this week</div>';
   if(inWeek) bkNowBadge(live);
 }
 function bkNowBadge(n){ var b=document.getElementById('bkNowBadge'); if(!b) return; b.textContent='Now: '+n; b.style.display=n?'inline-block':'none'; }
