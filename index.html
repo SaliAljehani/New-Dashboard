@@ -1216,6 +1216,37 @@ body,button,input,select,textarea{font-family:var(--app-font)!important}
 #page5 .wkb span:not(:last-child)::after{content:"·";color:#D9D2C9;margin:0 6px}
 #page5 .wkb-h{background:transparent!important}
 #page5 .wks-br{color:#4A423B!important}
+
+/* ===== Weekly Schedule: final look (Hairline) ===== */
+#page5 .wks-inner{min-width:1040px}
+#page5 .wks-row{grid-template-columns:190px repeat(5,minmax(0,1fr)) 210px repeat(2,minmax(0,1fr)) 130px!important;column-gap:0!important;padding:0!important;min-height:40px!important;align-items:stretch!important}
+#page5 .wks-row>*{min-width:0}
+#page5 .wks-side{padding-left:18px!important}
+#page5 .wks-row .wks-nm{display:flex;align-items:center;padding-left:18px;border-right:1px solid #ECE6DF;min-height:40px}
+#page5 .wks-row .wks-c{display:flex;align-items:center;justify-content:center;min-height:40px}
+#page5 .wks-row .wks-c.wk-now{background:rgba(224,122,127,.04)}
+#page5 .wks-row .wks-t{display:flex;align-items:center;justify-content:center;white-space:nowrap}
+#page5 .wks-row .wks-t.wk-off,#page5 .wks-row .wks-t.wk-voff,#page5 .wks-row .wks-t.wk-vac{width:64px!important;padding:0!important;margin:0!important}
+#page5 .wks-row .wkb{display:grid!important;grid-template-columns:repeat(3,1fr);align-items:center;gap:0;padding:0!important;min-height:40px;border-left:1px solid #ECE6DF;border-right:1px solid #ECE6DF}
+#page5 .wkb span{text-align:center;color:#4A423B;font-variant-numeric:tabular-nums}
+#page5 .wkb span:not(:last-child)::after{content:none!important}
+#page5 .wkb .all{grid-column:1/-1}
+#page5 .wkb .e{color:#D9D2C9}
+#page5 .wks-row .wks-br{display:flex;align-items:center;justify-content:center;min-height:40px;border:0!important;border-left:1px solid #ECE6DF!important;border-radius:0!important;font-size:12.5px!important;font-variant-numeric:tabular-nums}
+#page5 .wks-row .wks-br:not([class*=" bk-"]){background:transparent!important}
+#page5 .wks-row.wks-head{min-height:62px!important;background:#FAF8F5!important;border-bottom:2px solid #A07E62!important}
+#page5 .wks-head>div{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8A8077;white-space:nowrap;text-align:center;line-height:1.2}
+#page5 .wks-head>.wks-nm{align-items:flex-start;justify-content:center;border-right:1px solid #ECE6DF}
+#page5 .wks-head>.wkb-h{gap:6px;border-left:1px solid #ECE6DF;border-right:1px solid #ECE6DF;background:transparent!important;padding:0!important}
+#page5 .wks-head>div:last-child{border-left:1px solid #ECE6DF}
+#page5 .wks-head .wkb-3{display:grid;grid-template-columns:repeat(3,1fr);width:100%;margin:0;font-size:9.5px;font-weight:600;letter-spacing:.06em;color:#8A8077}
+#page5 .wks-head .wkb-3 span{text-align:center}
+#page5 .wk-dh .wks-today{display:block;visibility:hidden;margin:0;height:13px;line-height:13px;padding:0 7px;border-radius:99px;background:#E07A7F;color:#fff;font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+#page5 .wk-dh.now .wks-today{visibility:visible}
+#page5 .wk-dn{font-size:10.5px;font-weight:700;letter-spacing:.08em}
+#page5 .wk-dd{font-size:18px;font-weight:700;color:#4A423B;line-height:1.1;letter-spacing:0}
+#page5 .wk-dh.now{background:rgba(224,122,127,.07)}
+#page5 .wk-dh.now .wk-dn,#page5 .wk-dh.now .wk-dd{color:#C9636A}
 /* ===== Contact Numbers: 2 cards per row ===== */
 #refContactsPanel .ref-panel-header{justify-content:flex-start!important;background:transparent!important;color:#4A423B!important;font-weight:600!important;padding:14px 4px!important;border:0!important}
 #refContactsPanel{background:transparent!important;box-shadow:none!important;border:0!important}
@@ -1405,15 +1436,15 @@ body,button,input,select,textarea{font-family:var(--app-font)!important}
               <th colspan="4" style="text-align:center;background:rgba(var(--accent-rgb),.06);color:#5A6A58;font-weight:700;font-size:11px;border-bottom:2px solid #C8D0C0;border-left:2px solid #E4DDD4;padding:6px">📞 Volume</th>
             </tr>
             <tr style="background:#FDFDFC">
-              <th class="tr" style="color:#7A3A3A;font-size:11px;font-weight:600;white-space:nowrap">Login Time<br><span style="color:var(--accent);font-size:11px;font-weight:400">9:00:00</span></th>
-              <th class="tr" style="color:#7A3A3A;font-size:11px;font-weight:600;white-space:nowrap">Total Ready Duration<br><span style="color:var(--accent);font-size:11px;font-weight:400">8:00:00</span></th>
-              <th class="tr" style="color:#7A3A3A;font-size:11px;font-weight:600;white-space:nowrap">Auto Call-Off<br><span style="color:var(--accent);font-size:11px;font-weight:400">0:30:00</span></th>
-              <th class="tr" style="color:#7A3A3A;font-size:11px;font-weight:600;white-space:nowrap">Total Break<br><span style="color:var(--accent);font-size:11px;font-weight:400">1:00:00</span></th>
-              <th class="tr" style="color:#6B5A3A;font-size:11px;font-weight:600;white-space:nowrap">Avg. Talk Time<br><span style="color:var(--accent);font-size:11px;font-weight:400">0:04:00</span></th>
+              <th class="tr" style="color:#7A3A3A;font-size:11px;font-weight:600;white-space:nowrap">Login time<br><span style="color:var(--accent);font-size:11px;font-weight:400">9:00:00</span></th>
+              <th class="tr" style="color:#7A3A3A;font-size:11px;font-weight:600;white-space:nowrap">Total ready duration<br><span style="color:var(--accent);font-size:11px;font-weight:400">8:00:00</span></th>
+              <th class="tr" style="color:#7A3A3A;font-size:11px;font-weight:600;white-space:nowrap">Auto call-off<br><span style="color:var(--accent);font-size:11px;font-weight:400">0:30:00</span></th>
+              <th class="tr" style="color:#7A3A3A;font-size:11px;font-weight:600;white-space:nowrap">Total break<br><span style="color:var(--accent);font-size:11px;font-weight:400">1:00:00</span></th>
+              <th class="tr" style="color:#6B5A3A;font-size:11px;font-weight:600;white-space:nowrap">Avg. talk time<br><span style="color:var(--accent);font-size:11px;font-weight:400">0:04:00</span></th>
               <th class="tr" style="color:#6B5A3A;font-size:11px;font-weight:600;white-space:nowrap">Avg. ACW<br><span style="color:var(--accent);font-size:11px;font-weight:400">0:00:30</span></th>
-              <th class="tr" style="color:#6B5A3A;font-size:11px;font-weight:600;white-space:nowrap">Avg. Handling Time<br><span style="color:var(--accent);font-size:11px;font-weight:400">0:04:00</span></th>
-              <th class="tr" style="color:#4A5A42;font-size:11px;font-weight:600">Manual Dials</th>
-              <th class="tr" style="color:#4A5A42;font-size:11px;font-weight:600">Connected Inbound</th>
+              <th class="tr" style="color:#6B5A3A;font-size:11px;font-weight:600;white-space:nowrap">Avg. handling time<br><span style="color:var(--accent);font-size:11px;font-weight:400">0:04:00</span></th>
+              <th class="tr" style="color:#4A5A42;font-size:11px;font-weight:600">Manual dials</th>
+              <th class="tr" style="color:#4A5A42;font-size:11px;font-weight:600">Connected inbound</th>
               <th class="tr" style="color:#4A5A42;font-size:11px;font-weight:600">Tickets</th>
               <th class="tr" style="color:#4A5A42;font-size:11px;font-weight:600">WhatsApp</th>
             </tr>
@@ -2593,24 +2624,24 @@ function renderTeamCompare(data,sorted){
     return '<div>'+l+'<b>'+v+'</b>'+line+'</div>';
   }
   var sum='<div class="tc-sum">'
-    +bx('Avg Talk',fmtS(Math.round(cur.talk)),cur.talk,P&&P.talk,true,true)
-    +bx('Avg ACW',fmtS(Math.round(cur.acw)),cur.acw,P&&P.acw,true,true)
-    +bx('Avg Handling',fmtS(Math.round(cur.aht)),cur.aht,P&&P.aht,true,true)
-    +bx('Team Inbound',N(cur.inb),cur.inb,P&&P.inb,false,false)
-    +bx('Tickets',N(cur.tic),cur.tic,P&&P.tic,false,false)
-    +bx('WhatsApp',N(cur.wa),cur.wa,P&&P.wa,false,false)
+    +bx('⏱ Avg talk',fmtS(Math.round(cur.talk)),cur.talk,P&&P.talk,true,true)
+    +bx('⏱ Avg ACW',fmtS(Math.round(cur.acw)),cur.acw,P&&P.acw,true,true)
+    +bx('⏱ Avg handling',fmtS(Math.round(cur.aht)),cur.aht,P&&P.aht,true,true)
+    +bx('📞 Team inbound',N(cur.inb),cur.inb,P&&P.inb,false,false)
+    +bx('📞 Tickets',N(cur.tic),cur.tic,P&&P.tic,false,false)
+    +bx('📞 WhatsApp',N(cur.wa),cur.wa,P&&P.wa,false,false)
     +'</div>';
-  function c(v,bad,cls){return '<td class="'+(cls||'')+(bad?' bad':'')+'">'+(bad?'<span class="dot"></span>':'')+v+'</td>';}
+  function c(v,bad,cls){return '<td class="'+(cls||'')+'">'+(bad?'<span class="tg">'+v+'</span>':v)+'</td>';}
   var rows=sorted.map(function(nm,i){
     var a=_tcAgg(data[nm]); var dir=(AGENTS_DIR||[]).find(function(x){return x.name===nm;})||{};
-    var md=i<3?['🥇','🥈','🥉'][i]:(i+1);
+    var md=i+1;
     var esc=nm.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-    return '<tr><td onclick="selAgent(\''+esc+'\')"><div class="nm"><span class="md'+(i<3?'':' n')+'">'+md+'</span><span><b>'+nm+'</b><small>'+(dir.badge?'Badge '+dir.badge+' · ':'')+a.days+' Day</small></span></div></td>'
+    return '<tr><td onclick="selAgent(\''+esc+'\')"><div class="nm"><span class="md mc'+(i<3?' mc'+(i+1):' n')+'">'+md+'</span><span><b>'+nm+'</b><small>'+(dir.badge?'Badge '+dir.badge+' · ':'')+a.days+' Day</small></span></div></td>'
       +c(fmtH(a.login),a.login>9)+c(fmtH(a.ready),a.ready<8)+c(fmtS(Math.round(a.acof)),a.acof>1800)+c(fmtM(a.brk),a.brk>60)
       +c(fmtS(Math.round(a.talk)),a.talk>240,'gl')+c(fmtS(Math.round(a.acw)),a.acw>30)+c(fmtS(Math.round(a.aht)),a.aht>240)
       +'<td class="gl vb">'+N(a.dials)+'</td><td class="vb">'+N(a.inb)+'</td><td class="vb">'+N(a.tic)+'</td><td class="vb">'+N(a.wa)+'</td></tr>';
   }).join('');
-  box.innerHTML=sum+'<div class="tc-wrap"><table class="tc no-border"><thead><tr><th style="text-align:left;padding-left:12px">Agent</th><th>Login</th><th>Ready</th><th>Call-Off</th><th>Break</th><th class="gl">Talk</th><th>ACW</th><th>AHT</th><th class="gl">Dials</th><th>Inbound</th><th>Tickets</th><th>WhatsApp</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  box.innerHTML=sum+'<div class="tc-wrap"><table class="tc no-border"><colgroup><col style="width:190px"><col style="width:92px"><col style="width:124px"><col style="width:88px"><col style="width:84px"><col style="width:90px"><col style="width:80px"><col style="width:108px"><col style="width:80px"><col style="width:100px"><col style="width:72px"><col style="width:84px"></colgroup><thead><tr class="g1"><th rowspan="2" class="ha">Agent</th><th colspan="4" class="gl">⏱ Time</th><th colspan="3" class="gl">📊 Quality</th><th colspan="4" class="gl">📞 Volume</th></tr><tr class="g2"><th class="gl">Login time<small>9:00:00</small></th><th>Total ready duration<small>8:00:00</small></th><th>Auto call-off<small>0:30:00</small></th><th>Total break<small>1:00:00</small></th><th class="gl">Avg. talk time<small>0:04:00</small></th><th>Avg. ACW<small>0:00:30</small></th><th>Avg. handling time<small>0:04:00</small></th><th class="gl">Manual dials</th><th>Connected inbound</th><th>Tickets</th><th>WhatsApp</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
 }
 function renderAll(){
   const data=fall();
@@ -2702,7 +2733,7 @@ function renderAgent(name){
     +_k('WhatsApp',a.W,_lm&&_lm.W,false,false)
     +_k('Avg Talk Time',a.avgTalk,_lm&&_lm.avgTalk,true,true)
     +_k('Avg Handling Time',a.avgAHT,_lm&&_lm.avgAHT,true,true)
-    +'<div class="ag-k"><div class="l">Working Days</div><div class="v">'+a.days+'</div><div class="p">'+avgDay+' calls/day</div></div>';
+    +'<div class="ag-k"><div class="l">Working days</div><div class="v">'+a.days+'</div><div class="p">'+avgDay+' calls/day</div></div>';
   const dates=rows.map(r=>r[0].slice(5));
   document.getElementById('dtbody').innerHTML=[...rows].reverse().map(r=>{
     const loginBad = r[8]>9;
@@ -2717,13 +2748,13 @@ function renderAgent(name){
     const gc='';
     return`<tr>
       <td style="font-weight:600">${r[0]}</td>
-      <td class="tr" ${loginBad?rc:gc}>${loginBad?_UP:''}${fmtH(r[8])}</td>
-      <td class="tr" ${readyBad?rc:gc}>${readyBad?_DN:''}${fmtH(r[9])}</td>
-      <td class="tr" ${callOffBad?rc:gc}>${callOffBad?_UP:''}${fmtS(r[11]||0)}</td>
-      <td class="tr" ${breakBad?rc:gc}>${breakBad?_UP:''}${fmtM(r[10])}</td>
-      <td class="tr" ${talkBad?rc:gc}>${talkBad?_UP:''}${fmtS(r[5])}</td>
-      <td class="tr" ${acwBad?rc:gc}>${acwBad?_UP:''}${fmtS(r[6])}</td>
-      <td class="tr" ${ahtBad?rc:gc}>${ahtBad?_UP:''}${fmtS(r[7])}</td>
+      <td class="tr">${loginBad?'<span class="tg">'+fmtH(r[8])+'</span>':fmtH(r[8])}</td>
+      <td class="tr">${readyBad?'<span class="tg">'+fmtH(r[9])+'</span>':fmtH(r[9])}</td>
+      <td class="tr">${callOffBad?'<span class="tg">'+fmtS(r[11]||0)+'</span>':fmtS(r[11]||0)}</td>
+      <td class="tr">${breakBad?'<span class="tg">'+fmtM(r[10])+'</span>':fmtM(r[10])}</td>
+      <td class="tr">${talkBad?'<span class="tg">'+fmtS(r[5])+'</span>':fmtS(r[5])}</td>
+      <td class="tr">${acwBad?'<span class="tg">'+fmtS(r[6])+'</span>':fmtS(r[6])}</td>
+      <td class="tr">${ahtBad?'<span class="tg">'+fmtS(r[7])+'</span>':fmtS(r[7])}</td>
       <td class="tr">${r[4]}</td>
       <td class="tr">${r[1]}</td>
       <td class="tr">${r[2]}</td>
@@ -2759,22 +2790,22 @@ function renderAgent(name){
     const avgAht=s.ahtN?s.aht/s.ahtN:0;
     var _UP='<i class="pf-ar">▲</i>',_DN='<i class="pf-ar">▼</i>';
     const rc='background:rgba(192,39,45,.07);color:#a02030;font-weight:700';
-    summaryHtml+=`<tr style="background:#FAF8F5;border-top:1px solid #E6E1DB">
+    summaryHtml+=`<tr class="sumrow">
       <td style="font-weight:700;color:#333333;white-space:nowrap">📊 ${MNAMES2[m]||m}<br><span style="font-size:11px;color:#808080">${s.days} days</span></td>
-      <td class="tr" style="${avgLogin>9?rc:''}">${avgLogin>9?_UP:''}${fmtH(avgLogin)}</td>
-      <td class="tr" style="${avgReady<8?rc:''}">${avgReady<8?_DN:''}${fmtH(avgReady)}</td>
-      <td class="tr" style="${(s.days?s.acof/s.days:0)>1800?rc:''}">${(s.days?s.acof/s.days:0)>1800?_UP:''}${fmtS(s.days?s.acof/s.days:0)}</td>
-      <td class="tr" style="${avgBrk>60?rc:''}">${avgBrk>60?_UP:''}${fmtM(avgBrk)}</td>
-      <td class="tr" style="${avgTalk>240?rc:''}">${avgTalk>240?_UP:''}${fmtS(avgTalk)}</td>
-      <td class="tr" style="${avgAcw>30?rc:''}">${avgAcw>30?_UP:''}${fmtS(avgAcw)}</td>
-      <td class="tr" style="${avgAht>240?rc:''}">${avgAht>240?_UP:''}${fmtS(avgAht)}</td>
+      <td class="tr">${avgLogin>9?'<span class="tg">'+fmtH(avgLogin)+'</span>':fmtH(avgLogin)}</td>
+      <td class="tr">${avgReady<8?'<span class="tg">'+fmtH(avgReady)+'</span>':fmtH(avgReady)}</td>
+      <td class="tr">${(s.days?s.acof/s.days:0)>1800?'<span class="tg">'+fmtS(s.days?s.acof/s.days:0)+'</span>':fmtS(s.days?s.acof/s.days:0)}</td>
+      <td class="tr">${avgBrk>60?'<span class="tg">'+fmtM(avgBrk)+'</span>':fmtM(avgBrk)}</td>
+      <td class="tr">${avgTalk>240?'<span class="tg">'+fmtS(avgTalk)+'</span>':fmtS(avgTalk)}</td>
+      <td class="tr">${avgAcw>30?'<span class="tg">'+fmtS(avgAcw)+'</span>':fmtS(avgAcw)}</td>
+      <td class="tr">${avgAht>240?'<span class="tg">'+fmtS(avgAht)+'</span>':fmtS(avgAht)}</td>
       <td class="tr" style="font-weight:700">${s.dials}</td>
       <td class="tr" style="font-weight:700;color:#c0272d">${s.inbound}</td>
       <td class="tr" style="font-weight:700">${s.tickets}</td>
       <td class="tr" style="font-weight:700">${s.wa}</td>
     </tr>`;
   });
-  document.getElementById('dtbody').innerHTML += summaryHtml;
+  document.getElementById('dtbody').innerHTML = summaryHtml + document.getElementById('dtbody').innerHTML;
   document.getElementById('adaily').style.display='block';
   document.getElementById('aattendance').style.display='none';
   document.getElementById('amonthly').style.display='none';
@@ -3074,21 +3105,32 @@ function renderMonthlySummary(name){
       return '<div class="ms-c'+(bad?' bad':'')+'"><div class="ms-l">'+l+'</div><div class="ms-vr2"><span class="ms-v">'+vt+'</span>'+(dt||'<span class="ms-p eq">—</span>')+'</div></div>';
     };
     var P=prev||{};
-    var row=function(n,cls,cells){return '<div class="ms-tr"><div class="ms-th '+cls+'">'+n+'</div>'+cells.join('')+'</div>';};
-    perf='<div class="ms-tb">'
-      +row(apIc('clock',13)+'Time','t',[
-        cell('Total Ready Duration',msFmtMin(cur.ready),cur.ready,prev?P.ready:null,false,'min',cur.ready<480),
-        cell('Auto Call-Off',fmtS(cur.acof),cur.acof,prev?P.acof:null,true,'sec',cur.acof>1800),
-        cell('Total Break',msFmtMin(cur.brk),cur.brk,prev?P.brk:null,true,'min',cur.brk>60)])
-      +row(apIc('star',13)+'Quality','q',[
-        cell('Average Talk Time',msFmtSec(cur.talk),cur.talk,prev?P.talk:null,true,'sec',cur.talk>240),
-        cell('Average ACW',msFmtSec(cur.acw),cur.acw,prev?P.acw:null,true,'sec',cur.acw>30),
-        cell('Average Handling Time',msFmtSec(cur.aht),cur.aht,prev?P.aht:null,true,'sec',cur.aht>240)])
-      +row(apIc('phone',13)+'Volume','v',[
-        cell('Connected Inbound',cur.inb.toLocaleString(),cur.inb,prev?P.inb:null,false,'n'),
-        cell('Tickets',cur.tic.toLocaleString(),cur.tic,prev?P.tic:null,false,'n'),
-        cell('WhatsApp',cur.wa.toLocaleString(),cur.wa,prev?P.wa:null,false,'n')])
-      +'</div>';
+    var _mn=AP_MONFULL[+k.slice(5,7)-1], _pn=AP_MONFULL[+pk.slice(5,7)-1];
+    var fSec=function(x){return fmtS(Math.round(x));}, fMin=function(x){return fmtS(Math.round(x*60));}, fN=function(x){return Number(x).toLocaleString();};
+    var trw=function(l,v,pv,c,p,lb,unit,tgt,bad){
+      var chip='<span class="mu">—</span>';
+      if(p!==null&&p!==undefined&&!isNaN(p)){var d=c-p,rd=Math.round(d);
+        if(!rd) chip='<span class="mchip eq">no change</span>';
+        else{var good=lb?d<0:d>0,ar=d>0?'▲ ':'▼ ',txt=unit==='n'?Math.abs(rd).toLocaleString()+(d>0?' more':' less'):msDiffTime(d,unit);
+          chip='<span class="mchip '+(good?'g':'r')+'">'+ar+txt+'</span>';}}
+      return '<tr><td>'+l+'</td><td class="nv">'+(bad?'<span class="tg">'+v+'</span>':v)+'</td><td class="mu">'+(pv||'—')+'</td><td>'+chip+'</td><td class="mu">'+(tgt||'—')+'</td></tr>';
+    };
+    var gr=function(cl,ic,t){return '<tr class="gr"><td colspan="5"><span class="gi '+cl+'">'+ic+'</span>'+t+'</td></tr>';};
+    var hp=!!prev;
+    perf='<div class="ms-tbl"><table><thead><tr><th>Metric</th><th>'+_mn+'</th><th>'+(hp?_pn:'—')+'</th><th>Change</th><th>Target</th></tr></thead><tbody>'
+      +gr('t',apIc('clock',13),'Time')
+      +trw('Total ready duration',fMin(cur.ready),hp?fMin(P.ready):'',cur.ready,hp?P.ready:null,false,'min','8:00:00',cur.ready<480)
+      +trw('Auto call-off',fSec(cur.acof),hp?fSec(P.acof):'',cur.acof,hp?P.acof:null,true,'sec','0:30:00',cur.acof>1800)
+      +trw('Total break',fMin(cur.brk),hp?fMin(P.brk):'',cur.brk,hp?P.brk:null,true,'min','1:00:00',cur.brk>60)
+      +gr('q',apIc('star',13),'Quality')
+      +trw('Avg. talk time',fSec(cur.talk),hp?fSec(P.talk):'',cur.talk,hp?P.talk:null,true,'sec','0:04:00',cur.talk>240)
+      +trw('Avg. ACW',fSec(cur.acw),hp?fSec(P.acw):'',cur.acw,hp?P.acw:null,true,'sec','0:00:30',cur.acw>30)
+      +trw('Avg. handling time',fSec(cur.aht),hp?fSec(P.aht):'',cur.aht,hp?P.aht:null,true,'sec','0:04:00',cur.aht>240)
+      +gr('v',apIc('phone',13),'Volume')
+      +trw('Connected inbound',fN(cur.inb),hp?fN(P.inb):'',cur.inb,hp?P.inb:null,false,'n','',false)
+      +trw('Tickets',fN(cur.tic),hp?fN(P.tic):'',cur.tic,hp?P.tic:null,false,'n','',false)
+      +trw('WhatsApp',fN(cur.wa),hp?fN(P.wa):'',cur.wa,hp?P.wa:null,false,'n','',false)
+      +'</tbody></table></div>';
   }
   var junk=function(v){var s=String(v==null?'':v).trim();return !s||/^[-–—_.\s]+$/.test(s);};
   var att=apFind(ATT,name)||{}, camp=apFind(window.__ATT_CAMP__,name)||{};
@@ -9363,7 +9405,7 @@ async function renderDailyOff(){
           var plain=d!=='Saturday'&&((grp==='call'&&/^(multi[\s-]?camp|calls?)$/i.test(v))||(grp==='chat'&&/^live[\s-]?chat$/i.test(v)));
           var lbl=k==='off'?'OFF':k==='voff'?'Off':k==='vac'?'Vacation':k==='none'?'':(plain?'':v);
           var _iso=(k==='off'||k==='voff')&&d!=='Friday'?offDtIso(dt):'';
-          h+='<div class="wks-t wk-'+k+(_iso?' sw-off':'')+'"'+(_iso?' data-sn="'+esc(ag.name)+'" data-sd="'+_iso+'" onclick="offPick(this)"':'')+' title="'+SH[d]+' '+esc(dt)+(isT?' · Today':'')+(v?' · '+esc(v):'')+'"><small>'+(lbl?esc(lbl):'&nbsp;')+'</small></div>';
+          h+='<div class="wks-c'+(isT?' wk-now':'')+'"><div class="wks-t wk-'+k+(_iso?' sw-off':'')+'"'+(_iso?' data-sn="'+esc(ag.name)+'" data-sd="'+_iso+'" onclick="offPick(this)"':'')+' title="'+SH[d]+' '+esc(dt)+(isT?' · Today':'')+(v?' · '+esc(v):'')+'"><small>'+(lbl?esc(lbl):'&nbsp;')+'</small></div></div>';
           var _bs=(d==='Thursday'&&!_bkSat)||(d==='Saturday'&&_bkSat)?_bkSt(ag):null;
           if(d==='Thursday') h+=_wkbCell(ag,w,_bkCur&&!_bkSat&&_td.getDay()!==5?_bs:null);
           if(d==='Saturday') h+='<div class="wks-br'+(_sb?'':' empty')+(_sb&&_bs&&_bs[0]?' bk-'+_bs[0]:'')+'">'+(_sb?esc(sb):'')+'</div>';
@@ -9375,7 +9417,7 @@ async function renderDailyOff(){
         days.forEach(function(d){
           var dt=w.dates&&w.dates[d]?String(w.dates[d]).trim():'', num=dt?dt.split(' ')[0]:'';
           var isT=dt&&dt.replace(/\s+/g,' ').toLowerCase()===_tdStr;
-          h+='<div'+(isT?' class="now"':'')+'>'+(isT?'<span class="wks-today">Today</span>':'')+SH[d]+(num?' '+esc(num):'')+'</div>';
+          h+='<div class="wk-dh'+(isT?' now':'')+'"><span class="wks-today">Today</span><span class="wk-dn">'+SH[d]+'</span><span class="wk-dd">'+esc(num)+'</span></div>';
           if(d==='Thursday') h+='<div class="wkb-h">Weekly breaks'+(w.multiBrk?'<div class="wkb-3">'+w.multiBrk.map(function(b){return '<span>'+b.lbl+'</span>';}).join('')+'</div>':'')+'</div>';
           if(d==='Saturday') h+='<div>Saturday break</div>';
         });
@@ -9406,7 +9448,6 @@ async function renderDailyOff(){
     var _pill=function(f,lbl){
       return '<button type="button" class="dow-fb" data-f="'+f+'" onclick="setDowFilter(\''+f+'\')" style="padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">'+lbl+' <span class="dow-fc" data-f="'+f+'" style="font-weight:500;opacity:.75"></span></button>';
     };
-    html+='<input type="text" readonly onfocus="this.removeAttribute(\'readonly\')" id="dow_search" name="dow_q_'+Date.now()+'" autocomplete="off" autocorrect="off" spellcheck="false" data-lpignore="true" data-form-type="other" placeholder="Search…" onkeydown="this.dataset.typed=1" onpaste="this.dataset.typed=1" oninput="if(!this.dataset.typed){var q=this;setTimeout(function(){if(!q.dataset.typed){q.value=String();dowSearch(String());}},0);return;}dowSearch(this.value)" style="margin-left:12px;height:36px;padding:0 12px;border-radius:8px;border:1px solid #E2D6C8;background:#FEFEFD;font-size:12.5px;font-family:inherit;color:var(--text);min-width:180px">';
     html+='</div>';
     html+='<style>.wks-sec{display:flex;justify-content:space-between;padding:8px 12px;border-radius:10px;font-weight:700;font-size:12.5px;margin:12px 0 8px;scroll-margin-top:12px}.wks-sec.wk-multi{background:var(--st-multi-bg);color:var(--st-multi)}.wks-sec.wk-chat{background:var(--st-chat-bg);color:var(--st-chat);border:1px solid rgba(130,139,124,.14)}.wks-list{display:grid;gap:6px}.wks-empty{text-align:center;color:#C9C2B9;padding:12px}.wks-item{border:1px solid #EDE4DA;border-radius:10px;background:#FDFDFC;padding:6px 10px}.wks-hd{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px}.wks-nm{display:flex;align-items:center;gap:8px}.wks-nm b{font-size:12.5px;font-weight:600;color:var(--text)}.wks-days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr)) minmax(0,1.1fr) repeat(2,minmax(0,1fr)) minmax(0,1.1fr);gap:4px}.wks-br{background:#FDFDFC;border:1px dashed #D9CEC1;color:var(--accent)}.wks-br em{color:var(--accent)}.wks-br small{font-size:12px!important;font-weight:700!important}.wks-br.sat{border-color:rgba(var(--accent-rgb),.45);background:rgba(var(--accent-rgb),.05)}.wks-br.sat em,.wks-br.sat small{color:var(--accent)}.wks-br.empty small{color:#C9C2B9}.wks-t{text-align:center;border-radius:6px;padding:4px 2px;min-width:0;font-size:13px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}.wks-t em{font-style:normal;font-size:11.5px;font-weight:600;margin-right:4px;color:#5F5850}.wks-t small{display:block;font-size:10.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wks-t.wk-off small,.wks-t.wk-vac small{font-weight:600}.wks-t.now{box-shadow:inset 0 0 0 1.5px rgba(var(--accent-rgb),.4)}.wks-t.now em{color:var(--accent)}.wks-t i{position:absolute;top:-7px;left:50%;transform:translateX(-50%);font-style:normal;background:rgba(var(--accent-rgb),.75);color:#fff;font-size:8.5px;font-weight:700;padding:0 6px;border-radius:8px}.wk-multi{background:var(--st-multi-bg);color:var(--st-multi)}.wk-chat{background:var(--st-chat-bg);color:var(--st-chat)}.wk-off{background:#F9EDED;color:#A87676}.wk-voff{background:#EEDFB0;color:#7A6020}.wk-vac{background:#F9F3E1;color:#8E7F52}.wk-none{background:#FAF8F5;color:#C9C2B9}.wks-jump{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;border:1px solid #EDE4DA;font-family:inherit}.wks-jump .dow-fc{font-weight:500;opacity:.75}@media(max-width:820px){.wks-days{grid-template-columns:repeat(3,minmax(0,1fr))}.wks-t i{display:none}}.wks-t.now{box-shadow:none!important}.wks-t.now em{font-weight:800}.wks-t.now em::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:currentColor;margin-right:4px;vertical-align:2px}.wks-br.sat.empty{visibility:hidden}</style>';
     html+='<style>.wks-sec{justify-content:center!important;font-size:13px!important;padding:7px 12px!important;margin:16px 0 4px!important}.wks-sec:first-child{margin-top:4px!important}.wks-sec i{font-style:normal;font-weight:500;opacity:.6}.wks-scroll{overflow-x:auto}.wks-list{gap:3px!important;display:grid}.wks-inner{min-width:900px}.wks-grp{display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px;margin-bottom:10px}.wks-grp-hd{margin-bottom:0;position:sticky;top:0;z-index:2;background:#FDFDFC}.wks-side{border-radius:10px;display:flex;align-items:center;justify-content:center;margin-top:0}.wks-side span{writing-mode:vertical-rl;transform:rotate(180deg);font-size:12.5px;font-weight:700;letter-spacing:.3px;white-space:nowrap}.wks-side i{font-style:normal;font-weight:500;opacity:.6}.wk-g-multi .wks-side{background:#F5F2EE;color:#7C7064}.wk-g-chat .wks-side{background:#EEF0EC;color:#66705F}.wks-row .wks-t.wk-multi,.wks-row .wks-t.wk-chat{background:#F7F5F2;color:#8A7F74}.wks-row{display:grid;grid-template-columns:165px repeat(5,minmax(0,1fr)) 190px repeat(2,minmax(0,1fr)) 112px;gap:3px;align-items:center}.wks-item.wks-row{border:1px solid #EDE4DA;border-radius:8px;background:#FDFDFC;padding:3px 8px}.wks-head{padding:2px 9px 4px;background:#FDFDFC;align-items:end}.wks-head>div{font-size:11px;font-weight:600;color:#8A7F74;text-align:center;white-space:nowrap}.wks-head>div.wks-nm{text-align:left}.wks-head>div.now{color:#7A5243;font-weight:800;font-size:12px;line-height:1.35}.wks-today{display:block;margin-bottom:3px;line-height:1.2;font-size:9.5px;font-weight:600;color:#B09484;letter-spacing:.3px}.wks-row .wks-nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.wks-row .wks-nm b{font-size:12px!important}.wks-row .wks-t{height:26px;display:flex;align-items:center;justify-content:center;padding:0 2px;border-radius:6px}.wks-row .wks-t small{font-size:10.5px}.wks-row .wks-br{height:26px;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:11.5px;font-weight:600;white-space:nowrap;background:transparent;border:none;color:#9A8D82;font-weight:500}.wks-row .wks-br.wks-br3{height:auto;flex-direction:column;align-items:flex-start;padding:1px 0 1px 18px;font-size:10.5px;line-height:1.4}</style>';
@@ -11561,5 +11602,63 @@ window.addEventListener('hashchange',aimOpenHash);
   new MutationObserver(function(){ clearTimeout(window.__xct); window.__xct=setTimeout(run,100); }).observe(document.body,{childList:true,subtree:true});
 })();
 </script>
+
+<style id="final-look">
+/* ===== Final look: Team table ===== */
+#tcmp .tc-wrap{background:#fff;border:1px solid #ECE6DF;border-radius:14px;overflow-x:auto}
+#tcmp table.tc{border-collapse:collapse!important;border-spacing:0!important;table-layout:fixed;min-width:1000px;width:100%}
+#tcmp table.tc thead th{background:#FAF8F5!important;color:#8A8077!important;font-size:11.5px;font-weight:600;padding:0 4px!important;height:46px;border:0!important;border-bottom:2px solid #A07E62!important;vertical-align:middle;text-align:center}
+#tcmp table.tc thead tr.g1 th{height:30px;border-bottom:1px solid #ECE6DF!important;color:#4A423B!important;font-weight:700;font-size:12px}
+#tcmp table.tc thead tr.g1 th.ha{height:76px;border-bottom:2px solid #A07E62!important;text-align:left;padding-left:18px!important;border-right:1px solid #ECE6DF!important}
+#tcmp table.tc thead th small{display:block;font-size:10px;font-weight:500;margin-top:2px;opacity:.85}
+#tcmp table.tc thead th.gl{border-left:1px solid #ECE6DF!important}
+#tcmp table.tc td{background:transparent!important;border:0!important;border-bottom:1px solid #F3EEE8!important;border-radius:0!important;height:44px;padding:0 4px!important;text-align:center}
+#tcmp table.tc td:first-child{border-right:1px solid #ECE6DF!important;padding-left:14px!important;text-align:left}
+#tcmp table.tc td.gl{border-left:1px solid #ECE6DF!important}
+#tcmp table.tc tr:hover td{background:#FAF8F5!important}
+#tcmp .tg,.ag-daily .tg,.ms-tbl .tg{background:#F7EEEE;color:#A06A6A;padding:3px 9px;border-radius:6px;font-weight:600}
+#tcmp .md.mc{width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;margin-right:10px;flex:none}
+#tcmp .md.mc1{background:#D4AE5A}#tcmp .md.mc2{background:#A9ABB8}#tcmp .md.mc3{background:#C28B5C}
+#tcmp .md.mc.n{background:none;color:#8A8077;font-size:12px}
+/* ===== Final look: Agent daily table ===== */
+.ag-daily table{border-collapse:collapse!important}
+.ag-daily thead th{background:#FAF8F5!important;color:#8A8077!important;font-weight:600!important;border-top:0!important;border-right:0!important;border-bottom:1px solid #ECE6DF!important}
+.ag-daily thead tr:first-child th{color:#4A423B!important;font-weight:700!important}
+.ag-daily thead tr:nth-child(2) th{border-bottom:2px solid #A07E62!important}
+.ag-daily thead th[rowspan]{border-bottom:2px solid #A07E62!important}
+.ag-daily thead th span{color:#8A8077!important}
+.ag-daily tbody td{background:transparent!important;border-bottom:1px solid #F3EEE8!important;height:40px}
+.ag-daily tbody tr.sumrow td{background:#F5F1EC!important;font-weight:700;border-bottom:2px solid #ECE6DF!important;height:48px}
+.ag-daily .pf-ar{display:none}
+/* ===== Final look: Monthly summary table ===== */
+.ms-tbl{border:1px solid #ECE6DF;border-radius:12px;overflow:hidden;background:#fff;margin-top:10px}
+.ms-tbl table{width:100%;border-collapse:collapse;table-layout:fixed}
+.ms-tbl th,.ms-tbl td{padding:0 14px;text-align:center;height:40px;border-bottom:1px solid #F3EEE8;font-variant-numeric:tabular-nums}
+.ms-tbl th{background:#FAF8F5;color:#8A8077;font-size:11.5px;font-weight:600;border-bottom:2px solid #A07E62;height:36px}
+.ms-tbl th:first-child,.ms-tbl td:first-child{text-align:left;padding-left:18px;width:30%;border-right:1px solid #ECE6DF}
+.ms-tbl tr.gr td{background:#FAF8F5;font-weight:700;height:32px;border-top:1px solid #ECE6DF}
+.ms-tbl td.nv{font-weight:700;font-size:13px}
+.ms-tbl .mu{color:#8A8077}
+.ms-tbl .mchip{display:inline-block;padding:2px 9px;border-radius:6px;font-weight:600;font-size:11.5px}
+.ms-tbl .mchip.g{background:#F1F6EE;color:#5F8556}.ms-tbl .mchip.r{background:#F7EEEE;color:#B4545A}.ms-tbl .mchip.eq{color:#8A8077}
+.ms-tbl .gi{display:inline-flex;vertical-align:-2px;margin-right:6px}
+.ms-tbl .gi.t{color:#C08A4E}.ms-tbl .gi.q{color:#7E78A8}.ms-tbl .gi.v{color:#4E8A86}
+/* ===== Final look: filter bar a bit lower ===== */
+#perfCtrl{margin-top:20px!important}
+/* ===== Final look: colored sidebar icons (color only, no size change) ===== */
+#xSide #navToday .ic-done{color:#EDA79B}
+#xSide .page-nav>.pnav:nth-child(3) .ic-done{color:#E8C27D}
+#xSide .page-nav>.pnav:nth-child(4) .ic-done{color:#D9BC94}
+#xSide #navCV .ic-done{color:#A8C7A0}
+#xSide #navTeam .ic-done{color:#BDB6E2}
+#xSide #navReq .ic-done{color:#8FC8C2}
+#xSide .x-subs[data-for="teamSubNav"] .x-sub:nth-child(1) svg{color:#BDB6E2}
+#xSide .x-subs[data-for="teamSubNav"] .x-sub:nth-child(2) svg{color:#9CC3E6}
+#xSide .x-subs[data-for="teamSubNav"] .x-sub:nth-child(3) svg{color:#F0B58E}
+#xSide .x-subs[data-for="todaySubNav"] .x-sub:nth-child(1) svg{color:#F0A99B}
+#xSide .x-subs[data-for="todaySubNav"] .x-sub:nth-child(2) svg{color:#E8C27D}
+#xSide .x-subs[data-for="reqSubNav"] .x-sub:nth-child(1) svg{color:#8FC8C2}
+#xSide .x-subs[data-for="reqSubNav"] .x-sub:nth-child(2) svg{color:#9CC3E6}
+</style>
 </body>
 </html>
