@@ -813,9 +813,10 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
 <style>.tt-val span{line-height:1.45!important;vertical-align:middle}</style>
 <style>[id^="refTab_"]{transition:opacity .18s ease}[id^="refTab_"].rc-hold{opacity:0;transition:none}</style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800&family=Noto+Sans:wght@400;500;600;700;800&display=swap">
 <style id="xExec">
 /* ===== Executive redesign (Taupe) ===== */
-:root{--app-font:'Albert Sans','NotoArS','Noto Sans Arabic',system-ui,sans-serif;--x-sb:#5B524A;--x-sbt:#E2DAD1;--x-sbm:#B3A89C;--x-sba:#E6D3BC;--x-bg:#F6F4F1;--x-bd:#E6E0D8;--x-tx:#2A2521;--x-mu:#857C73;--x-w:224px;--x-hh:84px}
+:root{--app-font:'Noto Sans','Noto Sans Arabic','NotoArS',system-ui,sans-serif;--x-sb:#5B524A;--x-sbt:#E2DAD1;--x-sbm:#B3A89C;--x-sba:#E6D3BC;--x-bg:#F6F4F1;--x-bd:#E6E0D8;--x-tx:#2A2521;--x-mu:#857C73;--x-w:224px;--x-hh:84px}
 body{background:var(--x-bg)!important;padding-left:var(--x-w);transition:padding-left .22s ease}
 #xSide{position:fixed;left:0;top:0;bottom:0;width:var(--x-w);background:var(--x-sb);color:var(--x-sbt);z-index:120;display:flex;flex-direction:column;overflow:hidden;transition:width .22s ease}
 #xSide .x-pt{height:var(--x-hh);box-sizing:border-box;padding:0 22px;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid rgba(255,255,255,.1);flex:none;white-space:nowrap}
@@ -1219,22 +1220,22 @@ body,button,input,select,textarea{font-family:var(--app-font)!important}
 
 /* ===== Weekly Schedule: final look (Hairline) ===== */
 #page5 .wks-inner{min-width:1040px}
-#page5 .wks-row{grid-template-columns:190px repeat(5,minmax(0,1fr)) 210px repeat(2,minmax(0,1fr)) 130px!important;column-gap:0!important;padding:0!important;min-height:40px!important;align-items:stretch!important}
+#page5 .wks-row{grid-template-columns:190px repeat(5,minmax(0,1fr)) 210px repeat(2,minmax(0,1fr)) 130px!important;column-gap:0!important;padding:0!important;min-height:32px!important;align-items:stretch!important}
 #page5 .wks-row>*{min-width:0}
 #page5 .wks-side{padding-left:18px!important}
-#page5 .wks-row .wks-nm{display:flex;align-items:center;padding-left:18px;border-right:1px solid #ECE6DF;min-height:40px}
-#page5 .wks-row .wks-c{display:flex;align-items:center;justify-content:center;min-height:40px}
+#page5 .wks-row .wks-nm{display:flex;align-items:center;padding-left:18px;border-right:1px solid #ECE6DF;min-height:32px}
+#page5 .wks-row .wks-c{display:flex;align-items:center;justify-content:center;min-height:32px}
 #page5 .wks-row .wks-c.wk-now{background:rgba(224,122,127,.04)}
 #page5 .wks-row .wks-t{display:flex;align-items:center;justify-content:center;white-space:nowrap}
 #page5 .wks-row .wks-t.wk-off,#page5 .wks-row .wks-t.wk-voff,#page5 .wks-row .wks-t.wk-vac{width:64px!important;padding:0!important;margin:0!important}
-#page5 .wks-row .wkb{display:grid!important;grid-template-columns:repeat(3,1fr);align-items:center;gap:0;padding:0!important;min-height:40px;border-left:1px solid #ECE6DF;border-right:1px solid #ECE6DF}
+#page5 .wks-row .wkb{display:grid!important;grid-template-columns:repeat(3,1fr);align-items:center;gap:0;padding:0!important;min-height:32px;border-left:1px solid #ECE6DF;border-right:1px solid #ECE6DF}
 #page5 .wkb span{text-align:center;color:#4A423B;font-variant-numeric:tabular-nums}
 #page5 .wkb span:not(:last-child)::after{content:none!important}
 #page5 .wkb .all{grid-column:1/-1}
 #page5 .wkb .e{color:#D9D2C9}
-#page5 .wks-row .wks-br{display:flex;align-items:center;justify-content:center;min-height:40px;border:0!important;border-left:1px solid #ECE6DF!important;border-radius:0!important;font-size:12.5px!important;font-variant-numeric:tabular-nums}
+#page5 .wks-row .wks-br{display:flex;align-items:center;justify-content:center;min-height:32px;border:0!important;border-left:1px solid #ECE6DF!important;border-radius:0!important;font-size:12.5px!important;font-variant-numeric:tabular-nums}
 #page5 .wks-row .wks-br:not([class*=" bk-"]){background:transparent!important}
-#page5 .wks-row.wks-head{min-height:62px!important;background:#FAF8F5!important;border-bottom:2px solid #A07E62!important}
+#page5 .wks-row.wks-head{min-height:54px!important;background:#FAF8F5!important;border-bottom:2px solid #A07E62!important}
 #page5 .wks-head>div{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8A8077;white-space:nowrap;text-align:center;line-height:1.2}
 #page5 .wks-head>.wks-nm{align-items:flex-start;justify-content:center;border-right:1px solid #ECE6DF}
 #page5 .wks-head>.wkb-h{gap:6px;border-left:1px solid #ECE6DF;border-right:1px solid #ECE6DF;background:transparent!important;padding:0!important}
@@ -1305,8 +1306,8 @@ body,button,input,select,textarea{font-family:var(--app-font)!important}
     <button class="pnav" id="navToday" onclick="showToday()">📍 Today</button>
     <button class="pnav" onclick="showPage(6,this)">📢 Announcements</button>
     <button class="pnav active" onclick="showPage(4,this)">📁 Daily Reference</button>
-    <button class="pnav" id="navCV" onclick="showPage(14,this)">📊 Contact Volume</button>
     <button class="pnav" id="navTeam" onclick="showTeamTab(TEAM_TAB||'perf')"><span class="ic-done" style="display:inline-flex"><svg viewBox="0 0 24 24" width="1.1em" height="1.1em" fill="none" stroke="#7a5cc4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0-4 0M8 21v-1a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1M15 5a2 2 0 1 0 4 0a2 2 0 0 0-4 0M17 10h2a2 2 0 0 1 2 2v1M5 5a2 2 0 1 0 4 0a2 2 0 0 0-4 0M3 13v-1a2 2 0 0 1 2-2h2"/></svg></span>Team</button>
+    <button class="pnav" id="navCV" onclick="showPage(14,this)">📊 Contact Volume</button>
     <button class="pnav" id="navReq" onclick="showReq('off')" style="position:relative">📝 Requests<span id="reqNavBadge" style="display:none;position:absolute;top:-6px;right:-6px;min-width:16px;height:16px;background:var(--accent);border-radius:8px;font-size:11px;font-weight:700;color:#fff;text-align:center;line-height:16px;padding:0 4px;box-sizing:border-box"></span></button>
   </div>
   <div id="teamSubNav" class="team-subnav" style="display:none">
@@ -2267,9 +2268,11 @@ function renderAttendanceTab(){
   }
   function mkCard(bg,borderColor,count,icon,label,rows,isAbsent,mode){
     const body = isAbsent
-      ? rows.map(mkNameBadge).join('')
+      ? (function(){var g={},ord=[];rows.forEach(function(r){var k=r.status;if(!g[k]){g[k]=[];ord.push(k);}g[k].push(r);});
+          var pr=['Off','Sick','Sickleave','Vacation','Absent'];ord.sort(function(a,b){var x=pr.indexOf(a),y=pr.indexOf(b);return (x<0?99:x)-(y<0?99:y);});
+          return ord.map(function(k){var b=ABSENT_BADGE[k]||{label:k};return '<div class="att-gh">'+b.label+' · '+g[k].length+'</div>'+g[k].map(mkNameBadge).join('');}).join('');})()
       : rows.map(function(r){return mode?mkName2(r,mode==='chat'):mkName(r);}).join('');
-    return '<div style="background:'+bg+';border-radius:12px;overflow:hidden">'
+    return '<div style="background:#FFFFFF;border:1px solid #ECE6DF;border-radius:14px;overflow:hidden">'
       +'<div style="padding:14px 10px 12px;text-align:center">'
       +'<div style="font-size:28px;font-weight:600;color:'+borderColor+';line-height:1.1">'+count+'</div>'
       +'<div style="font-size:12.5px;color:'+borderColor+';margin-top:5px;opacity:.9;display:flex;align-items:center;justify-content:center;gap:6px">'+(icon?tdIc(icon,borderColor):'')+'<span>'+label+'</span></div>'
@@ -8269,7 +8272,7 @@ function annCard(it){
     +'<div style="border:1px solid #EFEDE9;border-radius:12px;overflow:hidden;background:#FDFDFC">'
     +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 16px;background:'+annTint(accent,0.07)+';direction:'+dir+'">'
       +'<span style="font-size:14px;font-weight:700;color:'+accent+'">'+title+'</span>'
-      +'<span style="font-size:10.5px;font-weight:600;padding:1px 9px;border-radius:10px;background:#FDFDFC;color:'+accent+';border:1px solid '+annTint(accent,0.18)+'">'+brand+'</span>'
+      +'<span style="font-size:11px;font-weight:600;padding:1px 9px;border-radius:10px;background:#FDFDFC;color:'+accent+';border:1px solid '+annTint(accent,0.18)+'">'+brand+'</span>'
       +(it.type?'<span style="font-size:10.5px;color:#808080">'+it.type+'</span>':'')
     +'</div>'
     +'<div style="padding:12px 16px">'
@@ -8305,13 +8308,15 @@ function renderAnnouncements(){
   const _wd=new Date(); const _wnDate=(_wd.toLocaleDateString('en-US',{weekday:'short'})+' · '+_wd.getDate()+' '+_wd.toLocaleDateString('en-US',{month:'short'})+' '+_wd.getFullYear()).toUpperCase();
   ANN_SEQ=0;
   var _brands=[]; items.forEach(function(it){ var b=annBrandName(annBrandColor((it.tag||'')+' '+(it.type||'')+' '+(it.text||''))); it.__b=b; if(b&&_brands.indexOf(b)<0) _brands.push(b); });
-  var F='';
-  let html='<div class="xan"><div class="xan-h"><div><div class="xan-t">Announcements</div><div class="xan-s">Latest updates for the team</div></div></div>';
+  var F=window.__ANN_F||'';
+  let html='<div class="xan"><div class="xan-h"><div><div class="xan-k">TEAM UPDATES</div><div class="xan-t">Announcements</div></div></div>';
+  html+='<div class="xan-chips"><button class="'+(F?'':'on')+'" onclick="annSetF(\'\')">All · '+items.length+'</button>'+_brands.map(function(b){var n=items.filter(function(i){return i.__b===b;}).length;return '<button class="'+(F===b?'on':'')+'" onclick="annSetF(\''+b.replace(/'/g,"\\'")+'\')">'+b+' · '+n+'</button>';}).join('')+'</div>';
   items.filter(function(it){return !F||it.__b===F;}).forEach(function(it){ html+=annCardX(it); });
   if(!items.length) html+='<div class="xan-empty">No announcements yet</div>';
   html+='</div>';
   el.innerHTML = html;
 }
+function annSetF(b){window.__ANN_F=b;renderAnnouncements();}
 function annCardX(it){
   var accent=annBrandColor((it.tag||'')+' '+(it.type||'')+' '+(it.text||''));
   var brand=annBrandName(accent);
@@ -8321,7 +8326,7 @@ function annCardX(it){
   var body=lines.map(function(l){return '<div class="xan-l" style="direction:'+dir+';text-align:'+ta+'">'+annHL(l,accent)+'</div>';}).join('');
   var id='annb_'+(ANN_SEQ++), long=lines.length>4, title=it.tag||brand;
   var ico=''; try{ var key={'Petromin':'petromin','BAIC':'baic','Nissan':'nissan','Stellantis':'stellantis','Body Shop':'bodyshop','Foton':'foton','Volvo':'volvo','Energy':'electromin','National Oil':'nos'}[brand]; if(key&&typeof brandLineIcon==='function') ico=brandLineIcon(key,accent); }catch(e){}
-  return '<div class="xan-c ann-it" style="direction:'+dir+'">'
+  return '<div class="xan-c ann-it" style="direction:'+dir+'" onclick="if(!event.target.closest(\'a\'))this.classList.toggle(\'open\')">'
     +'<div class="xan-ic" style="background:color-mix(in srgb,'+accent+' 10%,#fff);color:'+accent+'">'+(ico||'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15 9a3 3 0 0 1 0 6"/></svg>')+'</div>'
     +'<div class="xan-b"><div class="xan-tags"><span class="xan-chip" style="background:color-mix(in srgb,'+accent+' 10%,#fff);color:'+accent+'">'+brand+'</span>'+(it.type?'<span class="xan-chip">'+it.type+'</span>':'')+'</div>'
     +'<div class="xan-tt" style="text-align:'+ta+'">'+title+'</div>'
@@ -9693,7 +9698,7 @@ async function renderVacation2026(){
       return h+'</div>';
     }
     var _yr=_today.getFullYear();
-    var html='<div style="background:#FDFDFC;border-radius:14px;padding:4px 0 12px">';
+    var html='<div style="background:#FDFDFC;border-radius:14px;padding:16px 18px 18px;box-sizing:border-box">';
     html+='<div style="display:flex;justify-content:flex-start;align-items:center;gap:8px;margin-bottom:14px;margin-top:2px">';
     var _navBtn='width:36px;height:36px;flex:none;border-radius:8px;border:1px solid #E2D6C8;background:#FEFEFD;color:#8A6D5A;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center';
     html+='<button type="button" onclick="stepVacMonth(-1)" aria-label="Previous month" style="'+_navBtn+'">\u2039</button>';
@@ -11633,10 +11638,10 @@ window.addEventListener('hashchange',aimOpenHash);
 /* ===== Final look: Monthly summary table ===== */
 .ms-tbl{border:1px solid #ECE6DF;border-radius:12px;overflow:hidden;background:#fff;margin-top:10px}
 .ms-tbl table{width:100%;border-collapse:collapse;table-layout:fixed}
-.ms-tbl th,.ms-tbl td{padding:0 14px;text-align:center;height:40px;border-bottom:1px solid #F3EEE8;font-variant-numeric:tabular-nums}
-.ms-tbl th{background:#FAF8F5;color:#8A8077;font-size:11.5px;font-weight:600;border-bottom:2px solid #A07E62;height:36px}
+.ms-tbl th,.ms-tbl td{padding:0 14px;text-align:center;height:32px;border-bottom:1px solid #F3EEE8;font-variant-numeric:tabular-nums}
+.ms-tbl th{background:#FAF8F5;color:#8A8077;font-size:11.5px;font-weight:600;border-bottom:2px solid #A07E62;height:32px}
 .ms-tbl th:first-child,.ms-tbl td:first-child{text-align:left;padding-left:18px;width:30%;border-right:1px solid #ECE6DF}
-.ms-tbl tr.gr td{background:#FAF8F5;font-weight:700;height:32px;border-top:1px solid #ECE6DF}
+.ms-tbl tr.gr td{background:#FAF8F5;font-weight:700;height:28px;border-top:1px solid #ECE6DF}
 .ms-tbl td.nv{font-weight:700;font-size:13px}
 .ms-tbl .mu{color:#8A8077}
 .ms-tbl .mchip{display:inline-block;padding:2px 9px;border-radius:6px;font-weight:600;font-size:11.5px}
@@ -11659,6 +11664,57 @@ window.addEventListener('hashchange',aimOpenHash);
 #xSide .x-subs[data-for="todaySubNav"] .x-sub:nth-child(2) svg{color:#E8C27D}
 #xSide .x-subs[data-for="reqSubNav"] .x-sub:nth-child(1) svg{color:#8FC8C2}
 #xSide .x-subs[data-for="reqSubNav"] .x-sub:nth-child(2) svg{color:#9CC3E6}
+</style>
+
+<style id="final-look-2">
+/* Team table: lighter agent names */
+#tcmp table.tc td:first-child b{font-weight:500!important}
+/* Today: group headings in Off column (text as it comes from the sheet) */
+.att-gh{text-align:center;font-size:11.5px;font-weight:600;color:#8A8077;margin:10px 0 2px;padding-top:2px}
+.att-gh:first-child{margin-top:0}
+/* Announcements: compact list */
+.xan-chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:14px}
+.xan-chips button{height:30px;padding:0 13px;border-radius:8px;border:1px solid #ECE6DF;background:#FDFDFC;color:#8A8077;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.xan-chips button.on{border-color:#A07E62;color:#A07E62;background:rgba(160,126,98,.08)}
+.xan-c{padding:11px 16px!important;gap:12px!important;margin-bottom:8px!important;cursor:pointer;align-items:center!important}
+.xan-ic{width:36px!important;height:36px!important;border-radius:9px!important}
+.xan-ic svg{width:18px!important;height:18px!important}
+.xan-b{padding-inline-start:14px!important}
+.xan-tags{margin-bottom:3px!important}
+.xan-tt{font-size:13.5px!important;margin-bottom:2px!important}
+.xan-c:not(.open) .xan-l:not(:first-child){display:none}
+.xan-c:not(.open) .xan-l:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.6}
+.xan-c:not(.open) .xan-x,.xan-more{display:none!important}
+.xan-c [id^="annb_"]{max-height:none!important;overflow:visible!important}
+/* Contact Volume: smaller top box */
+#page14 .cv-kpis{padding:4px 10px!important}
+#page14 .cv-k{padding:8px 18px!important}
+#page14 .cv-k .v{font-size:22px!important;margin-top:2px!important}
+#page14 .cv-k .l{font-size:11.5px!important}
+/* Weekly schedule nav: a little side/top space inside the card */
+#dow_prev{margin-left:16px}
+#dow_prev,#dow_label,#dow_next{margin-top:12px}
+</style>
+<style id="final-sizes">
+/* Font sizes: final scale */
+#xSide .pnav{font-size:14px!important}
+#xSide .x-sub{font-size:13px!important}
+#page14 .cv-k .v{font-size:21px!important}
+#page14 .cv-k .l{font-size:11px!important}
+#tcmp table.tc td:first-child,#tcmp table.tc td:first-child b{font-size:12px!important}
+.xan-tt{font-size:14px!important}
+</style>
+<style id="final-look-3">
+/* Announcements header: small label + title + line under */
+.xan-h{justify-content:flex-start!important;text-align:left!important;border-bottom:2px solid #A07E62;padding-bottom:12px;margin-bottom:16px!important}
+.xan-k{font-size:11px;font-weight:700;letter-spacing:.14em;color:#A07E62}
+.xan-h .xan-t{font-size:22px;font-weight:700;margin-top:2px}
+/* Sidebar icons: unified size and position */
+#xSide .pnav{gap:12px!important}
+#xSide .pnav .ic-done{width:22px!important;height:22px!important;flex:none!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;margin:0!important;font-size:0!important}
+#xSide .pnav .ic-done svg{width:20px!important;height:20px!important}
+#xSide .x-sub{gap:10px!important}
+#xSide .x-sub svg{width:16px!important;height:16px!important;flex:none!important;margin:0!important;vertical-align:0!important}
 </style>
 </body>
 </html>
