@@ -1108,6 +1108,47 @@ body #page4 .bd-rw a.em{white-space:nowrap!important;overflow-wrap:normal!import
 body>div[id^="page"],body>[id^="page"].main,#page1,#page3,#page4,#page5,#page6,#page7,#page8,#page10,#page11,#page12,#page13,#page14,#page15,#page16{max-width:none!important;width:auto!important;margin:0!important;padding:24px 40px 40px!important;box-sizing:border-box}
 #page6 .xan{max-width:none!important;margin:0!important}
 .team-subnav{margin:24px 0 0 40px!important}
+
+/* ===== round 2 ===== */
+.team-subnav{margin:24px auto 0!important;justify-content:center}
+#todaySubNav,#teamSubNav,#reqSubNav{gap:0!important}
+#todaySubNav .tsub+.tsub,#teamSubNav .tsub+.tsub,#reqSubNav .tsub+.tsub{position:relative}
+#todaySubNav .tsub+.tsub::before,#teamSubNav .tsub+.tsub::before,#reqSubNav .tsub+.tsub::before{content:"";position:absolute;left:0;top:25%;bottom:25%;width:1px;background:#DDD5CB}
+#todaySubNav .tsub.on::before,#todaySubNav .tsub.on+.tsub::before,#teamSubNav .tsub.on::before,#teamSubNav .tsub.on+.tsub::before,#reqSubNav .tsub.on::before,#reqSubNav .tsub.on+.tsub::before{opacity:0}
+.tsub svg,.tsub svg *{stroke:currentColor!important}
+/* announcements centered + neutral */
+.xan-h{justify-content:center!important;text-align:center}
+.xan{max-width:none!important;margin:0!important}
+.xan-ic{background:#F5F1EC!important;color:#8A8077!important}
+.xan-ic svg,.xan-ic svg *{stroke:#8A8077!important}
+.xan-chip{background:#F5F1EC!important;color:#8A8077!important}
+.xan-l span,.xan-l b,.xan-l strong{color:inherit!important;background:transparent!important}
+.xan-more{color:#8A8077!important}
+/* neutral content colors across pages (except brand icon) */
+#page1 svg:not(.keep) *, #page5 svg *, #page12 svg *, #page14 svg *, #page15 svg *, #page16 svg *{stroke:currentColor}
+
+/* full-width content inside every page */
+[id^="page"]>*:not(script):not(style){max-width:none!important;margin-left:0!important;margin-right:0!important;box-sizing:border-box}
+[id^="page"] .cv-wrap,[id^="page"] .to-wrap,[id^="page"] #blWrap,[id^="page"] .ref-page{max-width:none!important;width:100%!important}
+
+/* Contact Volume: numbers inside one table box, no colors */
+#page14 .cv-kpis{background:#fff!important;border:1px solid #ECE6DF!important;border-radius:14px!important;padding:0!important;margin:16px 0!important;overflow:hidden;gap:0!important}
+#page14 .cv-k{padding:16px 10px!important;border-right:1px solid #ECE6DF!important;border-left:0!important;background:#fff!important}
+#page14 .cv-k:last-child{border-right:0!important}
+#page14 .cv-k *{color:#4A423B!important}
+#page14 .cv-k .cv-lbl,#page14 .cv-lbl{color:#8A8077!important;font-weight:500!important}
+#page14 .cv-c{border-color:#ECE6DF!important;border-top-color:#ECE6DF!important;box-shadow:none!important;background:#fff!important}
+#page14 .cv-c *:not(svg):not(path){color:#4A423B}
+#page14 .cv-c [style*="color"]{color:#4A423B!important}
+#page14 .cv-seg button.on,#page14 .cv-seg button.active{background:#F5F1EC!important;color:#4A423B!important}
+#page14 .cv-range input{color:#4A423B!important;border:1px solid #ECE6DF!important;box-shadow:none!important}
+/* Team performance numbers row: same table look, centered header */
+#page1 [style*="grid-template-columns:repeat(6"]{background:#fff!important;border:1px solid #ECE6DF!important;border-radius:14px!important}
+
+/* side margins 20px everywhere */
+#page1,#page3,#page4,#page5,#page6,#page7,#page8,#page10,#page11,#page12,#page13,#page14,#page15,#page16{padding:20px 20px 32px!important}
+.header{padding:0 20px!important}
+#brStrip{padding:9px 20px!important}
 </style>
 </head>
 <body>
@@ -8140,10 +8181,8 @@ function renderAnnouncements(){
   const _wd=new Date(); const _wnDate=(_wd.toLocaleDateString('en-US',{weekday:'short'})+' · '+_wd.getDate()+' '+_wd.toLocaleDateString('en-US',{month:'short'})+' '+_wd.getFullYear()).toUpperCase();
   ANN_SEQ=0;
   var _brands=[]; items.forEach(function(it){ var b=annBrandName(annBrandColor((it.tag||'')+' '+(it.type||'')+' '+(it.text||''))); it.__b=b; if(b&&_brands.indexOf(b)<0) _brands.push(b); });
-  var F=window.__ANN_F||'';
-  let html='<div class="xan"><div class="xan-h"><div><div class="xan-t">Announcements</div><div class="xan-s">Updates and policies for the inbound team</div></div>'
-    +'<div class="xan-seg"><span class="'+(F?'':'on')+'" onclick="window.__ANN_F=\'\';renderAnnouncements()">All</span>'
-    +_brands.map(function(b){return '<span class="'+(F===b?'on':'')+'" onclick="window.__ANN_F=\''+String(b).replace(/'/g,"\\'")+'\';renderAnnouncements()">'+b+'</span>';}).join('')+'</div></div>';
+  var F='';
+  let html='<div class="xan"><div class="xan-h"><div><div class="xan-t">Announcements</div><div class="xan-s">Latest updates for the team</div></div></div>';
   items.filter(function(it){return !F||it.__b===F;}).forEach(function(it){ html+=annCardX(it); });
   if(!items.length) html+='<div class="xan-empty">No announcements yet</div>';
   html+='</div>';
@@ -11260,7 +11299,7 @@ window.addEventListener('hashchange',aimOpenHash);
   function openTool(t){
     var go=function(){ if(typeof refTool==='function') refTool(t); var el=document.getElementById(t); if(el&&el.scrollIntoView) setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},60); };
     if(document.querySelector('.ref-tool[data-p="'+t+'"]')){ go(); return; }
-    var b=navDR(); if(b&&typeof showPage==='function') showPage(4,b);
+    window.__xToolOpen=1; setTimeout(function(){window.__xToolOpen=0;},3000); var b=navDR(); if(b&&typeof showPage==='function') showPage(4,b);
     var n=0,iv=setInterval(function(){ n++; if(document.querySelector('.ref-tool[data-p="'+t+'"]')){clearInterval(iv);go();} else if(n>60) clearInterval(iv); },100);
   }
   function sync(){
@@ -11360,6 +11399,19 @@ window.addEventListener('hashchange',aimOpenHash);
   var t=null; function run(){ clearTimeout(t); t=setTimeout(function(){ var p=document.getElementById('page4'); if(!p) return; try{phones(p);}catch(e){}  },80); }
   var p4=document.getElementById('page4'); if(p4) new MutationObserver(run).observe(p4,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
   window.__x2run=run;
+})();
+</script>
+<script id="xOpen">
+(function(){
+  var last='petromin'; try{ last=localStorage.getItem('xLastBrand')||'petromin'; }catch(e){}
+  function wrapBrand(){ if(typeof window.showRefBrandPage!=='function'||window.showRefBrandPage.__xo) return false;
+    var o=window.showRefBrandPage; window.showRefBrandPage=function(b){ last=b; try{localStorage.setItem('xLastBrand',b);}catch(e){} return o.apply(this,arguments); }; window.showRefBrandPage.__xo=1; return true; }
+  function openLast(){ var n=0; var iv=setInterval(function(){ n++; var home=document.querySelector('#page4 .ref-home'); var sec=document.querySelector('#page4 .ref-brand-section');
+      if(sec){ clearInterval(iv); return; } if(home){ clearInterval(iv); try{ window.showRefBrandPage(last); }catch(e){} } if(n>100) clearInterval(iv); },60); }
+  function wrapRef(){ if(typeof window.renderRef!=='function'||window.renderRef.__xo) return false;
+    var o=window.renderRef; window.renderRef=function(){ var r=o.apply(this,arguments); if(!window.__xToolOpen) openLast(); return r; }; window.renderRef.__xo=1; return true; }
+  var k=0, iv=setInterval(function(){ k++; var a=wrapBrand(), b=wrapRef(); if((window.showRefBrandPage&&window.showRefBrandPage.__xo&&window.renderRef&&window.renderRef.__xo)||k>50) clearInterval(iv); },100);
+  setTimeout(function(){ var p4=document.getElementById('page4'); if(p4&&p4.style.display!=='none') openLast(); },1500);
 })();
 </script>
 </body>
