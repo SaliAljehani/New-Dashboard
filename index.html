@@ -713,6 +713,13 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
 #blWrap .late{color:#a02030;font-weight:700}#blWrap .ok{color:#5A6A52}
 #blWrap .onb{background:#F5F3F0;color:#5A524A;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:600}
 #blWrap .ns{color:#B0A898}
+
+#brCap .pill{display:flex;align-items:center;gap:10px;background:#FFFDFB;border:1px solid #E6DED4;border-radius:22px;padding:6px 6px 6px 14px;font-size:14px;color:#4A3F36;box-shadow:0 3px 10px rgba(0,0,0,.07);white-space:nowrap;font-variant-numeric:tabular-nums;cursor:default}
+#brCap .pill.run{background:#F6F2EC}
+#brCap .pill.ov{background:#FBF1F1;border-color:#EBCFCF;color:#9A3A3A}
+#brCap .pill[onclick]{cursor:pointer}
+#brCap .pb{font-size:12px;font-weight:600;background:#F5F3F0;border:1px solid #E6E1DB;border-radius:14px;padding:4px 14px;color:#4A3F36;cursor:pointer}
+#brStrip .mu{color:#9A9088}#brStrip .sep{color:#D0C8BE}#brStrip .nxn{color:#4A3F36;font-weight:600}
 </style>
 <style>
 
@@ -1479,8 +1486,10 @@ function brStripRender(){
     if(!on.length){ el.style.display='none'; return; }
     nx.sort(function(x,y){return x.b.r.s-y.b.r.s;});
     var esc=function(t){return String(t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
-    el.innerHTML='☕ On break now: '+on.map(function(o){return '<span class="chip">'+esc(o.n.trim())+' <small>'+brLabel(o.b.lbl)+' · until '+brHM(o.b.r.e)+'</small></span>';}).join('')
-      +(nx.length?'<span class="nx">· Next: <b>'+esc(nx[0].n.trim())+'</b> '+brLabel(nx[0].b.lbl)+' '+brHM(nx[0].b.r.s)+'</span>':'');
+    var first=function(n){ return esc(String(n).trim().split(/\s+/)[0]); };
+    var groups={}, order=[]; on.sort(function(x,y){return x.b.r.e-y.b.r.e;}).forEach(function(o){ var k=o.b.r.e; if(!groups[k]){groups[k]=[];order.push(k);} groups[k].push(o); });
+    el.innerHTML='☕ On break '+order.map(function(k){ return groups[k].map(function(o){return '<span class="chip">'+first(o.n)+'</span>';}).join('')+' <span class="mu">until '+brHM(+k)+'</span>'; }).join(' <span class="mu">·</span> ')
+      +(nx.length?' <span class="sep">|</span> <span class="mu">Next</span> <b class="nxn">'+first(nx[0].n)+'</b> <span class="mu">'+brHM(nx[0].b.r.s)+'</span>':'');
     el.style.display='flex';
   }catch(e){ el.style.display='none'; }
 }
@@ -1500,31 +1509,26 @@ function brMine(){
 }
 function brCapRender(){
   var box=document.getElementById('brCap'); if(!box){ box=document.createElement('div'); box.id='brCap'; document.body.appendChild(box); }
-  var me=brMine(); if(!me||!me.list.length){ if(box.innerHTML){ box.innerHTML=''; box.__h=''; } return; }
   var _set=function(h){ if(box.__h!==h){ box.__h=h; box.innerHTML=h; } };
+  var me=brMine(); if(!me||!me.list.length){ _set(''); return; }
   var st=brState(); st.done=st.done||{};
   var m=brNowM(), nowMs=Date.now();
+  var mmss=function(x){x=Math.abs(x);return String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0');};
   if(st.active){
     var b=me.list[st.active.i]||{lbl:'Break',r:{s:0,e:15}};
-    var len=(b.r.e-b.r.s)*60, el=Math.floor((nowMs-st.active.t)/1000), left=len-el;
-    var mmss=function(x){x=Math.abs(x);return String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0');};
-    var ov=left<0, pct=Math.min(100,Math.round(el/len*100));
-    _set('<div class="w'+(ov?' ov':'')+'"><div class="t"'+(ov?' style="color:#9A3A3A"':'')+'>☕ '+(/^break$/i.test(b.lbl)?'Break':brLabel(b.lbl)+' break')+(ov?' · over time':'')+'</div><div class="big">'+(ov?'+':'')+mmss(left)+'</div><div class="bar"><i style="width:'+pct+'%"></i></div><div class="s"'+(ov?' style="color:#9A3A3A"':'')+'>'+(ov?'Please get back to the line':'left of '+mmss(len))+'</div><span class="btn end" onclick="brBack()">■ I\'m back</span></div>');
-    return;
+    var len=(b.r.e-b.r.s)*60, el=Math.floor((nowMs-st.active.t)/1000), left=len-el, ov=left<0;
+    _set('<div class="pill'+(ov?' ov':' run')+'">☕ '+(ov?'+':'')+mmss(left)+' <span class="pb" onclick="brBack()">Back</span></div>'); return;
   }
-  if(st.flash&&nowMs-st.flash.t<60000){ _set('<div class="cap">✓ '+brLabel(st.flash.lbl)+': <b>'+st.flash.took+' min</b>'+(st.flash.next?' <small>· Next: '+st.flash.next+'</small>':'')+'</div>'); return; }
-  var nextI=-1; for(var i=0;i<me.list.length;i++){ if(st.done[i]) continue; if(m>=me.list[i].r.e+30) continue; nextI=i; break; }
-  if(nextI<0){
-    var anyDone=Object.keys(st.done).length; var lastEnd=Math.max.apply(null,me.list.map(function(x){return x.r.e;}));
-    _set((anyDone&&st.allDoneAt&&nowMs-st.allDoneAt<60000)?'<div class="cap">✓ All breaks done</div>':''); return;
+  if(st.flash&&nowMs-st.flash.t<60000){
+    var L=st.flash.late||0;
+    _set('<div class="pill'+(L>0?' ov':'')+'" onclick="brUndo()" title="Pressed Back by mistake? Click to undo">✓ '+st.flash.took+' min'+(L>0?' · +'+L:'')+'</div>'); return;
   }
-  var nb=me.list[nextI], mins=nb.r.e-nb.r.s;
-  if(m>=nb.r.s-5){
-    var inM=nb.r.s-m;
-    _set('<div class="w"><div class="t">Next break · '+brLabel(nb.lbl)+'</div><div class="big" style="font-size:26px">'+brHM(nb.r.s)+'</div><div class="s">'+mins+' min · '+(inM>0?'starts in '+inM+' min':'time for your break')+'</div><span class="btn go" onclick="brStartBreak('+nextI+')">▶ Start break</span></div>');
-  } else {
-    _set('<div class="cap">☕ Next: <b>'+brLabel(nb.lbl)+' '+brHM(nb.r.s)+'</b> <small>· '+mins+' min</small> <span class="mini" onclick="brStartBreak('+nextI+')">▶ Start</span></div>');
+  for(var i=0;i<me.list.length;i++){
+    var x=me.list[i]; if(st.done[i]) continue; if(m>=x.r.e+30) continue;
+    if(m>=x.r.s-10){ _set('<div class="pill">☕ '+brLabel(x.lbl)+' '+brHM(x.r.s)+' <span class="pb" onclick="brStartBreak('+i+')">Start</span></div>'); return; }
+    break;
   }
+  _set('');
 }
 function brHHMM(d){ return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
 async function brStartBreak(i){
@@ -1536,13 +1540,22 @@ async function brStartBreak(i){
 }
 async function brBack(){
   var me=brMine(), st=brState(); if(!st.active) return;
-  var a=st.active, b=(me&&me.list[a.i])||{lbl:'Break',r:{s:0,e:15}}, now=new Date();
+  var a=st.active, now=new Date();
+  if(now.getTime()-a.t<60000){ /* pressed Start by mistake → cancel */
+    st.active=null; brSave(st); brCapRender();
+    try{ await toPost({action:'brCancel',id:a.id}); }catch(e){} return;
+  }
+  var b=(me&&me.list[a.i])||{lbl:'Break',r:{s:0,e:15}};
   var took=Math.max(1,Math.round((now.getTime()-a.t)/60000)), late=Math.max(0,took-(b.r.e-b.r.s));
   st.done=st.done||{}; st.done[a.i]={took:took}; st.active=null;
-  var nxt=null; if(me){ for(var j=0;j<me.list.length;j++){ if(!st.done[j]&&brNowM()<me.list[j].r.e+30){ nxt=brLabel(me.list[j].lbl)+' '+brHM(me.list[j].r.s); break; } } }
-  st.flash={t:now.getTime(),lbl:b.lbl,took:took,next:nxt}; if(!nxt) st.allDoneAt=now.getTime()+60000;
+  st.flash={t:now.getTime(),took:took,late:late,a:a};
   brSave(st); brCapRender();
   try{ await toPost({action:'brEnd',id:a.id,back:brHHMM(now),took:took,late:late}); }catch(e){}
+}
+async function brUndo(){ /* pressed Back by mistake → timer comes back */
+  var st=brState(); if(!st.flash||!st.flash.a||Date.now()-st.flash.t>=60000) return;
+  var a=st.flash.a; if(st.done) delete st.done[a.i]; st.active=a; st.flash=null; brSave(st); brCapRender();
+  try{ await toPost({action:'brUndo',id:a.id}); }catch(e){}
 }
 /* ---- Break Log page (Today → Break Log) ---- */
 var BL={date:null};
