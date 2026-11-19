@@ -679,6 +679,40 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
 #swapBar{display:none;position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:9999;background:#FFFDFB;border:1px solid #E6DED4;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.10);padding:8px 18px;gap:18px;align-items:center;font-size:13px;color:#4A3528;max-width:94vw}
 #swapBar .sb{border:1px solid #DCE6D8;background:#EEF3EE;color:#4E6A52;border-radius:9px;padding:9px 20px;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit;white-space:nowrap}
 #swapBar .sx{color:#B0A898;cursor:pointer;font-size:16px}
+
+/* ===== Breaks: strip (everyone), capsule (agent), Break Log ===== */
+#brStrip{align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;padding:7px 16px;font-size:13px;background:#F5F3F0;color:#5A524A;border:1px solid #E6E1DB;border-radius:10px;margin:14px auto 0;max-width:1180px}
+#brStrip .chip{border:1px solid #E6E1DB;border-radius:20px;padding:2px 12px;background:#fff}
+#brStrip .chip small{color:#9A9088;margin-left:4px}
+#brStrip .nx{color:#9A9088}#brStrip .nx b{color:#5A524A;font-weight:600}
+#brCap{position:fixed;right:22px;bottom:22px;z-index:9990;font-family:inherit}
+#brCap .cap{background:#FFFDFB;border:1px solid #E6DED4;border-radius:30px;box-shadow:0 6px 18px rgba(0,0,0,.07);padding:8px 10px 8px 16px;font-size:13px;color:#4A3F36;display:flex;align-items:center;gap:10px}
+#brCap .cap small{color:#9A9088}
+#brCap .mini{font-size:11.5px;font-weight:600;color:#4A3F36;background:#F5F3F0;border:1px solid #E6E1DB;border-radius:14px;padding:4px 12px;cursor:pointer}
+#brCap .w{width:230px;background:#FFFDFB;border:1px solid #E6DED4;border-radius:14px;padding:14px;box-shadow:0 6px 18px rgba(0,0,0,.08);text-align:center}
+#brCap .w .t{font-size:12px;color:#8A7A6A;font-weight:600}
+#brCap .w .big{font-size:30px;font-weight:700;color:#4A3F36;margin:6px 0;font-variant-numeric:tabular-nums}
+#brCap .w .s{font-size:12px;color:#8A857C}
+#brCap .btn{display:inline-block;margin-top:10px;padding:8px 20px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+#brCap .go{background:#F5F3F0;color:#4A3F36;border:1px solid #E6E1DB}
+#brCap .end{background:#F6F2EC;color:#7A5A3A;border:1px solid #E8DED2}
+#brCap .bar{height:6px;background:#EFEAE4;border-radius:4px;overflow:hidden;margin:8px 0 2px}
+#brCap .bar i{display:block;height:100%;background:#B5AA9C}
+#brCap .w.ov{background:#FBF1F1;border-color:#EBCFCF}#brCap .w.ov .big{color:#a02030}#brCap .w.ov .bar i{background:#C98A8A}
+#blWrap .card{background:#fff;border:1px solid #EEE9E3;border-radius:16px;padding:20px}
+#blWrap .dp{display:flex;justify-content:center;align-items:center;gap:8px;margin-bottom:14px;font-size:13px}
+#blWrap .dp button{border:1px solid #E5DED6;border-radius:8px;padding:6px 12px;background:#fff;cursor:pointer;font-family:inherit}
+#blWrap .dp span{border:1px solid #E5DED6;border-radius:8px;padding:6px 16px;background:#fff;font-weight:600}
+#blWrap .top{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+#blWrap .top div{background:#FAF8F5;border-radius:10px;text-align:center;padding:10px;font-size:12px;color:#8A7A6A;font-weight:600}
+#blWrap .top b{display:block;font-size:20px;color:#4A3F36;margin-top:3px}
+#blWrap table{width:100%;border-collapse:collapse;font-size:13px}
+#blWrap th{font-size:12px;color:#8A7A6A;font-weight:600;padding:8px;border-bottom:1px solid #E6E1DB;text-align:center;background:none}
+#blWrap td{padding:8px;border-bottom:1px solid #F3EFEA;text-align:center}
+#blWrap .l{text-align:left}#blWrap td.l{font-weight:600}
+#blWrap .late{color:#a02030;font-weight:700}#blWrap .ok{color:#5A6A52}
+#blWrap .onb{background:#F5F3F0;color:#5A524A;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:600}
+#blWrap .ns{color:#B0A898}
 </style>
 <style>
 
@@ -806,6 +840,7 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
 
 <div id="motivationText" class="quotes-bar"></div>
 </div>
+  <div id="brStrip" style="display:none"></div>
   <div class="page-nav">
     <button class="pnav" id="navToday" onclick="showToday()">📍 Today</button>
     <button class="pnav" onclick="showPage(6,this)">📢 Announcements</button>
@@ -822,7 +857,7 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
 
   <div id="todaySubNav" class="team-subnav" style="display:none">
     <button class="tsub" data-t="att" onclick="showToday()"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 3h6v4H9zM9 14l2 2l4-4"/></svg>Attendance</button>
-    <button class="tsub" data-t="brk" onclick="showBreaks()"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><path d="M3 14c.83 .642 2.077 1.017 3.5 1c1.423 .017 2.67 -.358 3.5 -1c.83 -.642 2.077 -1.017 3.5 -1c1.423 -.017 2.67 .358 3.5 1M3 10h14v5a6 6 0 0 1 -6 6h-2a6 6 0 0 1 -6 -6v-5zM16.746 16.726a3 3 0 1 0 .252 -5.555"/></svg>Breaks<span id="bkNowBadge" class="sub-now" style="display:none"></span></button>
+    <button class="tsub" data-t="brk" onclick="showBreaks()"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><path d="M3 14c.83 .642 2.077 1.017 3.5 1c1.423 .017 2.67 -.358 3.5 -1c.83 -.642 2.077 -1.017 3.5 -1c1.423 -.017 2.67 .358 3.5 1M3 10h14v5a6 6 0 0 1 -6 6h-2a6 6 0 0 1 -6 -6v-5zM16.746 16.726a3 3 0 1 0 .252 -5.555"/></svg>Break Log</button>
   </div>
   <div id="reqSubNav" class="team-subnav" style="display:none">
     <button class="tsub" data-t="off" onclick="showReq('off')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><path d="M7 10h14l-4 -4M17 14h-14l4 4"/></svg>Off Requests<span id="offNavBadge" class="sub-cnt" style="display:none"></span></button>
@@ -1093,7 +1128,7 @@ footer:has(>#lupd_footer){padding:7px 24px!important;border-top-width:1px!import
   </div>
 
 </div>
-<div id="page16" style="display:none;max-width:1400px;margin:0 auto;padding:24px 24px"><div id="bkDate" style="text-align:center;margin:0 0 14px"></div><div id="bkStrip" style="margin:0 0 18px"></div><div id="bkBoard"><div style="text-align:center;padding:40px;color:#aaa">⏳ Loading breaks…</div></div></div>
+<div id="page16" style="display:none;max-width:1200px;margin:0 auto;padding:24px 24px"><div id="blWrap"><div style="text-align:center;padding:40px;color:#aaa">⏳ Loading…</div></div></div>
 <div id="page15" style="display:none;max-width:1200px;margin:0 auto;padding:24px 24px" class="to-wrap">
 
   <div class="to-hero">
@@ -1419,6 +1454,129 @@ function changeAgentName(){
   ensureAgentNameSelected();
 }
 
+
+/* ================= BREAKS: strip · capsule · Break Log ================= */
+var BL_SHEET='Break Log';
+function brHM(m){ return bkShort(m); }
+function brNowM(){ var d=new Date(); return d.getHours()*60+d.getMinutes(); }
+/* all breaks of one agent for a day: [{lbl,r:{s,e}}] (chat agents = one 60-min break) */
+function brAgentBreaks(day,a){
+  if(!a||a.away) return [];
+  var filled=a.raw.map(function(v,i){return {v:v,i:i};}).filter(function(x){return x.v&&!/^[-–—]+$/.test(x.v)&&!/off|vac/i.test(x.v);});
+  if(filled.length===1&&day.slots.length>1){ var r=bkRange(filled[0].v,60); return r?[{lbl:'Break',r:r,i:filled[0].i}]:[]; }
+  return a.br.map(function(r,i){ return r?{lbl:(day.slots[i]&&day.slots[i].label)||'Break',r:r,i:i}:null; }).filter(Boolean);
+}
+function brLabel(l){ return /^break$/i.test(l)?'Break':l; }
+/* ---- strip: who is on break now (everyone) ---- */
+function brStripRender(){
+  var el=document.getElementById('brStrip'); if(!el) return;
+  try{
+    var now=new Date(); if(now.getDay()===5||!DAILY_OFF_CACHE){ el.style.display='none'; return; }
+    var day=bkParse(DAILY_OFF_CACHE,aimISO(now)); if(!day){ el.style.display='none'; return; }
+    var m=brNowM(), on=[], nx=[];
+    day.agents.forEach(function(a){ brAgentBreaks(day,a).forEach(function(b){
+      if(m>=b.r.s&&m<b.r.e) on.push({n:a.name,b:b}); else if(b.r.s>m) nx.push({n:a.name,b:b}); }); });
+    if(!on.length){ el.style.display='none'; return; }
+    nx.sort(function(x,y){return x.b.r.s-y.b.r.s;});
+    var esc=function(t){return String(t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+    el.innerHTML='☕ On break now: '+on.map(function(o){return '<span class="chip">'+esc(o.n.trim())+' <small>'+brLabel(o.b.lbl)+' · until '+brHM(o.b.r.e)+'</small></span>';}).join('')
+      +(nx.length?'<span class="nx">· Next: <b>'+esc(nx[0].n.trim())+'</b> '+brLabel(nx[0].b.lbl)+' '+brHM(nx[0].b.r.s)+'</span>':'');
+    el.style.display='flex';
+  }catch(e){ el.style.display='none'; }
+}
+/* ---- capsule (only the agent herself) ---- */
+function brStateKey(){ return 'brState_'+aimISO(); }
+function brState(){ try{ return JSON.parse(localStorage.getItem(brStateKey())||'{}'); }catch(e){ return {}; } }
+function brSave(st){ try{ localStorage.setItem(brStateKey(),JSON.stringify(st)); }catch(e){} }
+function brMine(){
+  if(!currentAgentName||!DAILY_OFF_CACHE) return null;
+  var now=new Date(); if(now.getDay()===5) return null;
+  var key=aimISO(now)+'|'+Math.floor(Date.now()/60000);
+  if(!window.__brDay||window.__brDay.k!==key||window.__brDay.src!==DAILY_OFF_CACHE) window.__brDay={k:key,src:DAILY_OFF_CACHE,d:bkParse(DAILY_OFF_CACHE,aimISO(now))};
+  var day=window.__brDay.d; if(!day) return null;
+  var nm=aimFind(currentAgentName,day.agents.map(function(x){return x.name;})); if(!nm) return null;
+  var a=day.agents.filter(function(x){return x.name===nm;})[0];
+  return {name:nm.trim(),list:brAgentBreaks(day,a)};
+}
+function brCapRender(){
+  var box=document.getElementById('brCap'); if(!box){ box=document.createElement('div'); box.id='brCap'; document.body.appendChild(box); }
+  var me=brMine(); if(!me||!me.list.length){ if(box.innerHTML){ box.innerHTML=''; box.__h=''; } return; }
+  var _set=function(h){ if(box.__h!==h){ box.__h=h; box.innerHTML=h; } };
+  var st=brState(); st.done=st.done||{};
+  var m=brNowM(), nowMs=Date.now();
+  if(st.active){
+    var b=me.list[st.active.i]||{lbl:'Break',r:{s:0,e:15}};
+    var len=(b.r.e-b.r.s)*60, el=Math.floor((nowMs-st.active.t)/1000), left=len-el;
+    var mmss=function(x){x=Math.abs(x);return String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0');};
+    var ov=left<0, pct=Math.min(100,Math.round(el/len*100));
+    _set('<div class="w'+(ov?' ov':'')+'"><div class="t"'+(ov?' style="color:#9A3A3A"':'')+'>☕ '+brLabel(b.lbl)+' break'+(ov?' · over time':'')+'</div><div class="big">'+(ov?'+':'')+mmss(left)+'</div><div class="bar"><i style="width:'+pct+'%"></i></div><div class="s"'+(ov?' style="color:#9A3A3A"':'')+'>'+(ov?'Please get back to the line':'left of '+mmss(len))+'</div><span class="btn end" onclick="brBack()">■ I\'m back</span></div>');
+    return;
+  }
+  if(st.flash&&nowMs-st.flash.t<60000){ _set('<div class="cap">✓ '+brLabel(st.flash.lbl)+': <b>'+st.flash.took+' min</b>'+(st.flash.next?' <small>· Next: '+st.flash.next+'</small>':'')+'</div>'); return; }
+  var nextI=-1; for(var i=0;i<me.list.length;i++){ if(st.done[i]) continue; if(m>=me.list[i].r.e+30) continue; nextI=i; break; }
+  if(nextI<0){
+    var anyDone=Object.keys(st.done).length; var lastEnd=Math.max.apply(null,me.list.map(function(x){return x.r.e;}));
+    _set((anyDone&&st.allDoneAt&&nowMs-st.allDoneAt<60000)?'<div class="cap">✓ All breaks done</div>':''); return;
+  }
+  var nb=me.list[nextI], mins=nb.r.e-nb.r.s;
+  if(m>=nb.r.s-5){
+    var inM=nb.r.s-m;
+    _set('<div class="w"><div class="t">Next break · '+brLabel(nb.lbl)+'</div><div class="big" style="font-size:26px">'+brHM(nb.r.s)+'</div><div class="s">'+mins+' min · '+(inM>0?'starts in '+inM+' min':'time for your break')+'</div><span class="btn go" onclick="brStartBreak('+nextI+')">▶ Start break</span></div>');
+  } else {
+    _set('<div class="cap">☕ Next: <b>'+brLabel(nb.lbl)+' '+brHM(nb.r.s)+'</b> <small>· '+mins+' min</small> <span class="mini" onclick="brStartBreak('+nextI+')">▶ Start</span></div>');
+  }
+}
+function brHHMM(d){ return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+async function brStartBreak(i){
+  var me=brMine(); if(!me) return; var b=me.list[i]; if(!b) return;
+  var st=brState(); if(st.active) return;
+  var now=new Date(), lid='b_'+now.getTime()+'_'+Math.random().toString(36).slice(2,6);
+  st.active={i:i,t:now.getTime(),id:lid}; st.flash=null; brSave(st); brCapRender();
+  try{ await toPost({action:'brStart',id:lid,date:aimISO(now),agent:me.name,brk:brLabel(b.lbl),planned:brHM(b.r.s)+' – '+brHM(b.r.e),started:brHHMM(now)}); }catch(e){}
+}
+async function brBack(){
+  var me=brMine(), st=brState(); if(!st.active) return;
+  var a=st.active, b=(me&&me.list[a.i])||{lbl:'Break',r:{s:0,e:15}}, now=new Date();
+  var took=Math.max(1,Math.round((now.getTime()-a.t)/60000)), late=Math.max(0,took-(b.r.e-b.r.s));
+  st.done=st.done||{}; st.done[a.i]={took:took}; st.active=null;
+  var nxt=null; if(me){ for(var j=0;j<me.list.length;j++){ if(!st.done[j]&&brNowM()<me.list[j].r.e+30){ nxt=brLabel(me.list[j].lbl)+' '+brHM(me.list[j].r.s); break; } } }
+  st.flash={t:now.getTime(),lbl:b.lbl,took:took,next:nxt}; if(!nxt) st.allDoneAt=now.getTime()+60000;
+  brSave(st); brCapRender();
+  try{ await toPost({action:'brEnd',id:a.id,back:brHHMM(now),took:took,late:late}); }catch(e){}
+}
+/* ---- Break Log page (Today → Break Log) ---- */
+var BL={date:null};
+function blStep(d){ var x=new Date((BL.date||aimISO())+'T12:00:00'); x.setDate(x.getDate()+d); BL.date=aimISO(x); blRender(); }
+async function blRender(){
+  var wrap=document.getElementById('blWrap'); if(!wrap) return;
+  BL.date=BL.date||aimISO();
+  var D0=new Date(BL.date+'T12:00:00'), DN=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var head='<div class="dp"><button onclick="blStep(-1)">‹</button><span>'+DN[D0.getDay()]+' '+D0.getDate()+' '+MN[D0.getMonth()]+' '+D0.getFullYear()+'</span><button onclick="blStep(1)">›</button></div>';
+  wrap.innerHTML='<div class="card">'+head+'<div style="text-align:center;padding:30px;color:#aaa">⏳ Loading…</div></div>';
+  var raw=DAILY_OFF_CACHE||await bkSchedRaw().catch(function(){return null;}), rows=[];
+  try{ var res=await fetch(TO_API_URL+'?id='+SHEET_ID+'&sheetName='+encodeURIComponent(BL_SHEET)+'&fresh=1&since='+BL.date); rows=await res.json(); if(!Array.isArray(rows)) rows=[]; }catch(e){ rows=[]; }
+  rows=rows.filter(function(r){return String(r.Date||'').slice(0,10)===BL.date;});
+  var day=raw?bkParse(raw,BL.date):null, plan=[];
+  if(day&&D0.getDay()!==5) day.agents.forEach(function(a){ brAgentBreaks(day,a).forEach(function(b){ plan.push({n:a.name.trim(),lbl:brLabel(b.lbl),pl:brHM(b.r.s)+' – '+brHM(b.r.e),s:b.r.s}); }); });
+  var used={}, out=[];
+  plan.sort(function(x,y){return x.s-y.s;}).forEach(function(p){
+    var r=rows.filter(function(x,ix){ return !used[ix]&&String(x.Agent||'').trim().toLowerCase()===p.n.toLowerCase()&&String(x.Break||'')===p.lbl&&(used[ix]=true); })[0];
+    out.push({n:p.n,lbl:p.lbl,pl:p.pl,r:r});
+  });
+  rows.forEach(function(r,ix){ if(!out.some(function(o){return o.r===r;})) out.push({n:String(r.Agent||''),lbl:String(r.Break||''),pl:String(r.Planned||''),r:r}); });
+  var taken=0,onb=0,late=0,lateM=0;
+  var trs=out.map(function(o){
+    var r=o.r, st='', bk='', tk='', lt='';
+    if(!r||!r.Started){ st='<span class="ns">not started</span>'; }
+    else{ st=r.Started; if(!r.Back){ bk='<span class="onb">On break</span>'; onb++; } else { bk=r.Back; taken++; tk=(r.Took||'')+' min'; var L=+r.Late||0; if(L>0){ late++; lateM+=L; lt='<span class="late">+'+L+' min</span>'; } else lt='<span class="ok">—</span>'; } }
+    return '<tr><td class="l">'+toEsc(o.n)+'</td><td>'+toEsc(o.lbl)+'</td><td>'+toEsc(o.pl)+'</td><td>'+st+'</td><td>'+bk+'</td><td>'+tk+'</td><td>'+lt+'</td></tr>';
+  }).join('');
+  wrap.innerHTML='<div class="card">'+head
+    +'<div class="top"><div>Breaks taken<b>'+taken+'</b></div><div>On break now<b>'+onb+'</b></div><div>Late<b>'+late+'</b></div><div>Total late time<b>'+lateM+' min</b></div></div>'
+    +(out.length?'<table><thead><tr><th class="l">Agent</th><th>Break</th><th>Planned</th><th>Started</th><th>Back</th><th>Took</th><th>Late</th></tr></thead><tbody>'+trs+'</tbody></table>':'<div style="text-align:center;padding:30px;color:#A8A29A">No breaks for this day.</div>')
+    +'</div>';
+}
+function brLoop(){ brStripRender(); brCapRender(); }
 /* ================= BREAK REMINDERS (per agent, from the Weekly Schedule) =================
    Each agent picks her name once (saved in this browser). While the dashboard tab is open,
    she gets a reminder 5 min before each of her breaks and when the break ends. */
@@ -1473,6 +1631,8 @@ function brStart(){
   var tries=0, go=function(){ if(!currentAgentName){ if(AGENTS_DIR.length) ensureAgentNameSelected(); else if(tries++<6) return setTimeout(go,3000); } brBanner(); brTick(); };
   setTimeout(go,4000);
   setInterval(brTick,30000);
+  (async function(){ try{ if(!DAILY_OFF_CACHE) await bkSchedRaw(); }catch(e){} brLoop(); })();
+  setInterval(brCapRender,1000); setInterval(brStripRender,30000);
 }
 function sendHeartbeat(){
   if(!currentAgentName) return;
@@ -2360,7 +2520,7 @@ function showPage(n,btn){CP=n;
   var _p15=document.getElementById('page15'); if(_p15) _p15.style.display=n===15?'block':'none';
   if(n===15) renderOffRequests(false);
   var _p16=document.getElementById('page16'); if(_p16) _p16.style.display=n===16?'block':'none';
-  if(n===16) bkRenderBoard();
+  if(n===16) blRender();
   teamSync(n);
   if(typeof aimSubSync==='function') aimSubSync(n);
 }
@@ -10495,7 +10655,7 @@ function bkNowBadge(n){ var b=document.getElementById('bkNowBadge'); if(!b) retu
 function aimSubSync(n){
   var tSub=document.getElementById('todaySubNav'), rSub=document.getElementById('reqSubNav');
   var isToday=(n===5&&window.__SCHED_TAB__==='attendance')||n===16, isReq=(n===12||n===15);
-  if(tSub){ tSub.style.display='none'; /* Breaks moved into Weekly Schedule */ tSub.querySelectorAll('.tsub').forEach(function(b){ b.classList.toggle('on',(b.dataset.t==='brk')===(n===16)); }); }
+  if(tSub){ tSub.style.display=isToday?'flex':'none'; tSub.querySelectorAll('.tsub').forEach(function(b){ b.classList.toggle('on',(b.dataset.t==='brk')===(n===16)); }); }
   if(rSub){ rSub.style.display=isReq?'flex':'none'; rSub.querySelectorAll('.tsub').forEach(function(b){ b.classList.toggle('on',(b.dataset.t==='off')===(n===15)); }); }
   if(isToday||isReq){
     document.querySelectorAll('.pnav').forEach(function(b){b.classList.remove('active');});
