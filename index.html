@@ -1119,8 +1119,6 @@ body>div[id^="page"],body>[id^="page"].main,#page1,#page3,#page4,#page5,#page6,#
 /* announcements centered + neutral */
 .xan-h{justify-content:center!important;text-align:center}
 .xan{max-width:none!important;margin:0!important}
-.xan-ic{background:#F5F1EC!important;color:#8A8077!important}
-.xan-ic svg,.xan-ic svg *{stroke:#8A8077!important}
 .xan-chip{background:#F5F1EC!important;color:#8A8077!important}
 .xan-l span,.xan-l b,.xan-l strong{color:inherit!important;background:transparent!important}
 .xan-more{color:#8A8077!important}
@@ -1131,17 +1129,8 @@ body>div[id^="page"],body>[id^="page"].main,#page1,#page3,#page4,#page5,#page6,#
 [id^="page"]>*:not(script):not(style){max-width:none!important;margin-left:0!important;margin-right:0!important;box-sizing:border-box}
 [id^="page"] .cv-wrap,[id^="page"] .to-wrap,[id^="page"] #blWrap,[id^="page"] .ref-page{max-width:none!important;width:100%!important}
 
-/* Contact Volume: numbers inside one table box, no colors */
-#page14 .cv-kpis{background:#fff!important;border:1px solid #ECE6DF!important;border-radius:14px!important;padding:0!important;margin:16px 0!important;overflow:hidden;gap:0!important}
-#page14 .cv-k{padding:16px 10px!important;border-right:1px solid #ECE6DF!important;border-left:0!important;background:#fff!important}
-#page14 .cv-k:last-child{border-right:0!important}
-#page14 .cv-k *{color:#4A423B!important}
-#page14 .cv-k .cv-lbl,#page14 .cv-lbl{color:#8A8077!important;font-weight:500!important}
-#page14 .cv-c{border-color:#ECE6DF!important;border-top-color:#ECE6DF!important;box-shadow:none!important;background:#fff!important}
-#page14 .cv-c *:not(svg):not(path){color:#4A423B}
-#page14 .cv-c [style*="color"]{color:#4A423B!important}
-#page14 .cv-seg button.on,#page14 .cv-seg button.active{background:#F5F1EC!important;color:#4A423B!important}
-#page14 .cv-range input{color:#4A423B!important;border:1px solid #ECE6DF!important;box-shadow:none!important}
+/* Contact Volume: top bar inside a box */
+#page14 .cv-top{background:#fff!important;border:1px solid #ECE6DF!important;border-radius:14px!important;padding:12px 16px!important;margin-bottom:16px!important}
 /* Team performance numbers row: same table look, centered header */
 #page1 [style*="grid-template-columns:repeat(6"]{background:#fff!important;border:1px solid #ECE6DF!important;border-radius:14px!important}
 
@@ -1149,6 +1138,14 @@ body>div[id^="page"],body>[id^="page"].main,#page1,#page3,#page4,#page5,#page6,#
 #page1,#page3,#page4,#page5,#page6,#page7,#page8,#page10,#page11,#page12,#page13,#page14,#page15,#page16{padding:20px 20px 32px!important}
 .header{padding:0 20px!important}
 #brStrip{padding:9px 20px!important}
+
+/* Weekly Schedule sizes */
+.wks-grp{grid-template-columns:26px minmax(0,1fr)!important;gap:6px!important;margin-bottom:8px!important}
+.wks-list{gap:4px!important}
+.wks-row{grid-template-columns:170px repeat(5,minmax(0,1fr)) 150px repeat(2,minmax(0,1fr)) 110px!important;padding:3px 8px!important;gap:4px!important}
+.wks-row .wks-t{height:28px!important;font-size:12px!important}
+.wks-row .wks-br{height:auto!important;min-height:28px}
+.wks-head{padding-top:6px!important;padding-bottom:6px!important}
 </style>
 </head>
 <body>
@@ -9562,7 +9559,7 @@ async function renderVacation2026(){
       nums.forEach(function(n,ci){
         var w=(firstW+ci)%7,fri=w===5,tdy=isCur&&n===_today.getDate();
         var names=byDay[n]||[];
-        h+='<div style="border:1px solid '+(tdy?'#E07A7F':'#EFEAE4')+';border-radius:10px;min-height:118px;padding:8px 10px;background:'+(fri?'#F4F1EC':'#FDFDFC')+'">'
+        h+='<div style="border:1px solid '+(tdy?'#E07A7F':'#EFEAE4')+';border-radius:10px;min-height:92px;padding:8px 10px;background:'+(fri?'#F4F1EC':'#FDFDFC')+'">'
           +'<div style="font-size:12px;font-weight:700;color:'+(tdy?'#E07A7F':(fri?'#b3aca3':'#333333'))+'">'+n+(tdy?' · Today':'')+'</div>'
           +names.map(function(nm){return'<div title="'+nm+'" style="font-size:11px;font-weight:600;color:#9C8D63;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px">● '+nm+'</div>';}).join('')
           +'</div>';
