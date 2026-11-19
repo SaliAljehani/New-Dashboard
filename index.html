@@ -1179,6 +1179,21 @@ body.x-dr #xSide .x-subs{display:none!important}
 #xSide .x-dr-subs .x-ic{width:auto!important;height:auto!important;background:transparent!important;display:inline-flex}
 #xSide .x-dr-subs .x-ic svg{width:15px!important;height:15px!important}
 #page4 div:has(>button[onclick^="renderRef"]){display:none!important}
+
+/* 1 sidebar scrollbar */
+#xSide{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.18) transparent}
+#xSide::-webkit-scrollbar{width:6px}#xSide::-webkit-scrollbar-track{background:transparent}#xSide::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:6px}
+#xSide::-webkit-scrollbar-button{display:none;height:0}
+/* 2 hide brands/tools strip inside Daily Reference */
+#page4 .ref-home .ref-brand-circles,#page4 .ref-tools{display:none!important}
+#page4 .ref-home{padding:0!important;border:0!important;background:transparent!important;margin:0!important}
+/* 3 weekly schedule compact */
+.wks-row .wks-br.wks-br3{font-size:10.5px!important;line-height:1.1!important;padding:0!important}
+.wks-row .wks-br.wks-br3 small,.wks-row .wks-br small{font-size:9px!important}
+.wks-row{min-height:30px}
+/* page fills to bottom */
+body{min-height:100vh;display:flex;flex-direction:column}
+footer{margin-top:auto!important}
 </style>
 </head>
 <body>
@@ -9592,7 +9607,7 @@ async function renderVacation2026(){
       nums.forEach(function(n,ci){
         var w=(firstW+ci)%7,fri=w===5,tdy=isCur&&n===_today.getDate();
         var names=byDay[n]||[];
-        h+='<div style="border:1px solid '+(tdy?'#E07A7F':'#EFEAE4')+';border-radius:8px;min-height:68px;padding:6px 8px;background:'+(fri?'#F4F1EC':'#FDFDFC')+'">'
+        h+='<div style="border:1px solid '+(tdy?'#E07A7F':'#EFEAE4')+';border-radius:8px;min-height:calc((100vh - 330px) / 5);padding:6px 8px;background:'+(fri?'#F4F1EC':'#FDFDFC')+'">'
           +'<div style="font-size:12px;font-weight:700;color:'+(tdy?'#E07A7F':(fri?'#b3aca3':'#333333'))+'">'+n+(tdy?' · Today':'')+'</div>'
           +names.map(function(nm){return'<div title="'+nm+'" style="font-size:10.5px;font-weight:600;color:#9C8D63;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px">● '+nm+'</div>';}).join('')
           +'</div>';
