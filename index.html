@@ -13583,5 +13583,63 @@ html body #page4 .x51-card .x51-lb.x51-ltr{display:table!important;margin-right:
     else if(n>60) clearInterval(iv); },250);
 })();
 </script>
+<script id="brand-instruction">
+/* Fixed Warranty / Maintenance wording per brand (approved layout: bold label, key words in colour) */
+(function(){
+  var C='#A07E62';
+  function k(t){return '<span class="bk-k">'+t+'</span>';}
+  function lb(t){return '<span class="bk-l">'+t+'</span> ';}
+  function ln(h){return '<div class="x51-sub bk-ln">'+h+'</div>';}
+  function ft(h){return '<div class="x51-foot bk-f">'+h+'</div>';}
+  function gap(){return '<div class="bk-gap"></div>';}
+  function card(b){return '<div class="x51-tile x51-card bk-card" dir="rtl">'+b+'</div>';}
+  var START=ft('يبدأ من تاريخ إصدار لوحات المركبة.');
+  var B={
+    baic:{
+      war: card(ln(lb('ضمان البطارية:')+k('سنة واحدة')+' أو ممشى '+k('20 ألف كيلومتر')+' (أيهما يأتي أولاً).')+START)
+          +card(ln(lb('ضمان السيارة:')+k('10 سنوات')+' أو '+k('150,000 كيلومتر')+' (أيهما يأتي أولاً).')+START),
+      mnt: card(ln(lb('الصيانة الدورية:')+'تُجرى أول صيانة دورية على ممشى '+k('5,000 كم')+' أو '+k('6 أشهر')+' (أيهما يأتي أولًا).'))
+    },
+    nissan:{
+      war: card(ln(lb('ضمان البطارية:')+'سياسة ضمان بطارية المركبة')
+               +ln('السنة الأولى: '+k('تغيير البطارية مجانًا بالكامل')+'.')
+               +ln('السنة الثانية: خصم بنسبة '+k('50٪')+' على تكلفة البطارية الجديدة.')
+               +ln('السنة الثالثة: خصم بنسبة '+k('25٪')+' على تكلفة البطارية الجديدة.')+gap()
+               +ln(lb('أماكن الاستفادة من الضمان:')+'يتم تغيير البطارية وفقًا لشروط الضمان في '+k('مراكز بترومين نيسان فقط')+'.'))
+          +card(ln(lb('ضمان السيارة:')+k('3 سنوات')+' أو '+k('100,000 كيلومتر')+' (أيهما يأتي أولاً).')+START+gap()
+               +ln(lb('تفعيل الضمان:')+'لا يتطلب أي إجراء من المالك.')
+               +ln('يتم تفعيل الضمان '+k('تلقائيًا')+' بمجرد إصدار اللوحات.')+gap()
+               +ln(lb('شروط استمرارية الضمان:')+'لضمان بقاء الضمان ساريًا طيلة المدة المحددة')
+               +ln('يجب إجراء جميع خدمات الصيانة الدورية في '+k('مركز الوكالة')+'، أو مراكز صيانة معتمدة من وزارة التجارة.')
+               +ft('إجراء الصيانة خارج هذه المراكز قد يؤدي إلى فقدان التغطية بموجب الضمان.')),
+      mnt: card(ln(lb('الصيانة الدورية:')+'تُجرى الصيانة الدورية كل '+k('10,000 كيلومتر')+' أو كل '+k('6 أشهر')+' (أيهما يأتي أولًا) '+k('مجانًا')+' داخل الوكالة لسيارات '+k('<bdi dir="ltr">2025-2026</bdi>')+'.'))
+          +card(ln(lb('الفحص المجاني:')+'تتوفر خدمة فحص مجانية للمركبة عند قطع مسافة تتراوح بين '+k('1,000')+' إلى '+k('2,000 كيلومتر')+'.'))
+    }
+  };
+  function paint(root){
+    [].forEach.call(root.querySelectorAll('.bk-k, .bk-k *'),function(e){e.style.setProperty('color',C,'important');e.style.setProperty('font-weight','700','important');});
+    [].forEach.call(root.querySelectorAll('.bk-l, .bk-l *'),function(e){e.style.setProperty('color','#4A423B','important');e.style.setProperty('font-weight','700','important');});
+    [].forEach.call(root.querySelectorAll('.bk-f'),function(e){e.style.setProperty('color','#8A7F74','important');});
+    [].forEach.call(root.querySelectorAll('.bk-gap'),function(e){e.style.setProperty('height','10px','important');});
+    [].forEach.call(root.querySelectorAll('.bk-card .x51-sub, .bk-card .x51-foot'),function(e){e.style.setProperty('margin','0','important');e.style.setProperty('padding','0','important');e.style.setProperty('border','0','important');e.style.setProperty('line-height','1.9','important');});
+  }
+  function run(){
+    Object.keys(B).forEach(function(id){
+      var tab=document.getElementById('refTab_'+id); if(!tab) return;
+      [].forEach.call(tab.querySelectorAll('.x51-sec'),function(sec){
+        var h=sec.querySelector(':scope>.x51-h'), g=sec.querySelector('.x51-grid'); if(!h||!g||g.querySelector('.bk-card')) return;
+        var n=h.textContent.trim();
+        if(/^warranty/i.test(n)) g.innerHTML=B[id].war; else if(/^maintenance/i.test(n)) g.innerHTML=B[id].mnt;
+      });
+      paint(tab);
+    });
+  }
+  new MutationObserver(function(){clearTimeout(window.__bk);window.__bk=setTimeout(run,150);}).observe(document.body,{childList:true,subtree:true});
+})();
+</script>
+<style id="inner-cards-bg">
+/* inner cards use exactly the page background colour */
+html body #page4 .x51-grid>.x51-tile{background:#F4F0EB!important}
+</style>
 </body>
 </html>
