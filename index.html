@@ -6030,17 +6030,13 @@ function renderPetrominEmailzTab(arr){
   if(!topRows.length && !sections.length) return '<div style="text-align:center;padding:24px;color:#6F665D">No data</div>';
   const _lab=t=>'<span style="font-size:11px;font-weight:800;color:#6F665D;letter-spacing:.08em;margin-right:4px;min-width:22px;display:inline-block">'+t+'</span>';
   const _em=v=>rcChips(String(v||'').split('|').join(','),color);
-  const rowHTML=(r,i)=>'<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.7fr);gap:14px;align-items:center;padding:10px 16px;direction:ltr;text-align:left;'+(i?'border-top:1px solid #E6DED5':'')+'">'
-    +'<div><div style="font-size:12px;font-weight:700;color:'+color+';word-break:break-word">'+r.dept+'</div>'
-      +(r.subj?'<div style="font-size:12px;color:#6F665D;direction:rtl;text-align:left;margin-top:2px;word-break:break-word"><span style="direction:rtl;unicode-bidi:embed">'+r.subj+'</span></div>':'')+'</div>'
-    +'<div>'+(r.to?'<div>'+_lab('TO')+_em(r.to)+'</div>':'')+(r.cc?'<div>'+_lab('CC')+_em(r.cc)+'</div>':'')+'</div>'
-    +'</div>';
-  const box=rows=>'<div class="rc-box" style="background:#FEFEFE;border:1px solid color-mix(in srgb,var(--brand,'+color+') 30%,#E6DED5);border-radius:10px;margin-bottom:16px">'+rows.map(rowHTML).join('')+'</div>';
+  /* v51 Emails (option A): one white box per group, items split by a thin line, titles outside, copy on each email */
+  const rowHTML=(r,i)=>'<div class="x51-erow"><div><b>'+x51Esc(r.dept)+'</b>'+(r.subj?'<div class="x51-lb" dir="rtl" style="text-align:left">'+x51Esc(r.subj)+'</div>':'')+'</div>'
+    +'<div class="x51-tc">'+(r.to?'<b class="x51-k">TO</b><div>'+x51Emails(String(r.to).split('|').join(','))+'</div>':'')+(r.cc?'<b class="x51-k">CC</b><div>'+x51Emails(String(r.cc).split('|').join(','))+'</div>':'')+'</div></div>';
   let out='';
-  if(topRows.length) out+=box(topRows);
-  sections.forEach(s=>{
-    out+='<div style="font-size:13px;font-weight:800;color:'+color+';margin:6px 0 8px 2px;padding:2px 10px;border-left:3px solid '+color+';text-align:left;direction:ltr">'+s.title+'</div>'+box(s.rows);
-  });
+  if(topRows.length) out+=x51Box('',topRows.map(rowHTML).join(''));
+  sections.forEach(s=>{ out+=x51Box(x51Esc(s.title),s.rows.map(rowHTML).join('')); });
+  out='<div class="x51 x51-emails">'+out+'</div>';
   return out;
 }
 function renderPetrominComplaintsTab(arr){
@@ -7080,33 +7076,15 @@ function renderNissanAppTab(arr){
     {f:'User ID or Email',m:true},{f:'Phone Device Model',m:true},
     {f:'Phone OS (iOS / Android + version)',m:true},{f:'Nissan App Version',m:true}
   ];
-  return '<div style="margin:0 auto;direction:ltr;text-align:left">'
-    +'<div style="background:#FEFEFE;border-radius:10px;border:1px solid #E6DED5;padding:12px 16px;margin-bottom:10px">'
-    +'<div style="margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="background:#A85A5A;color:#FEFEFE;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px">TO</span>'+fmtPills(toEmails)+'</div>'
-    +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="background:#5F7A8C;color:#FEFEFE;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px">CC</span>'+fmtPills(ccEmail)+'</div>'
-    +'</div>'
-    +'<div style="background:#FBF4EE;border-radius:10px;border:1px solid #e8cbb8;padding:10px 16px;margin-bottom:12px">'
-    +'<div style="font-size:11px;color:#4A423B;line-height:1.7">⚠️ <strong>My Nissan App</strong> — Patrol only (Platinum, Titanium, Pro-4X, NISMO) · 2025–2026 · Petromin or Manahil only<br>📱 <strong>My Nissan Ownership</strong> — All other models</div>'
-    +'</div>'
-    +'<div style="background:#FEFEFE;border-radius:12px;overflow:hidden;box-shadow:none">'
-    +'<div style="background:#A85A5A;color:#FEFEFE;padding:10px 16px;font-size:12px;font-weight:700;text-align:center">📋 My Nissan App (CCS) — Y63</div>'
-    +'<div style="padding:12px 16px">'
-    +'<div style="font-size:11px;font-weight:700;color:#6F665D;letter-spacing:.05em;margin-bottom:8px">👤 User Information</div>'
-    +fields.map(({f,m})=>'<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #FAF8F5">'
-      +'<span style="font-size:12px;color:var(--text);flex:1">'+f+(m?' <span style="color:#A85A5A;font-size:11px">*</span>':'')+'</span>'
-      +'<span style="font-size:11px;color:#D6C8B9;background:#FAF8F5;padding:2px 10px;border-radius:5px;border:1px solid #E6DED5;min-width:100px;text-align:center">___</span>'
-      +'</div>').join('')
-    +'<div style="font-size:11px;font-weight:700;color:#6F665D;letter-spacing:.05em;margin:10px 0 8px">💬 Inquiry</div>'
-    +['Title','Description'].map(f=>'<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #FAF8F5">'
-      +'<span style="font-size:12px;color:var(--text);flex:1">'+f+'</span>'
-      +'<span style="font-size:11px;color:#D6C8B9;background:#FAF8F5;padding:2px 10px;border-radius:5px;border:1px solid #E6DED5;min-width:100px;text-align:center">___</span>'
-      +'</div>').join('')
-    +'</div>'
-    +'<div style="padding:10px 16px;background:#FAF8F5;display:flex;align-items:center;justify-content:center;gap:12px">'
-    +'<button onclick="copyNissanAppForm()" style="padding:7px 20px;background:#A85A5A;color:#FEFEFE;border:none;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer">📋 Copy Form</button>'
-    +'<span style="font-size:11px;color:#6F665D">* Required</span>'
-    +'<span id="nissanAppCopied" style="font-size:11px;color:#4D7E4F;display:none">✅ Copied!</span>'
-    +'</div></div></div>';
+  /* v51: Emails box, app note as two cards, form as a tidy table with beige fields, no brown button */
+  const fld=(f,m,tall)=>'<div class="x51-frow"><span>'+x51Esc(f)+(m?' <span class="x51-req">*</span>':'')+'</span><div class="x51-fld'+(tall?' x51-fld-t':'')+'"></div></div>';
+  return '<div class="x51">'
+    +x51Box('Emails','<div class="x51-tc"><b class="x51-k">TO</b><div>'+x51Emails(toEmails)+'</div><b class="x51-k">CC</b><div>'+x51Emails(ccEmail)+'</div></div>')
+    +x51Box('Which app?','<div class="x51-grid x51-g2"><div class="x51-tile"><div class="x51-tt">My Nissan App</div><div class="x51-sub">Patrol only (Platinum, Titanium, Pro-4X, NISMO) · 2025–2026 · Petromin or Manahil only</div></div><div class="x51-tile"><div class="x51-tt">My Nissan Ownership</div><div class="x51-sub">All other models</div></div></div>')
+    +x51Box('My Nissan App (CCS) — Y63','<div class="x51-lb x51-fs">User Information</div>'+fields.map(x=>fld(x.f,x.m)).join('')
+      +'<div class="x51-lb x51-fs">Inquiry</div>'+fld('Title')+fld('Description',false,true)
+      +'<div class="x51-ffoot"><button type="button" class="x51-btn" onclick="copyNissanAppForm()">Copy Form</button><span class="x51-lb"><span class="x51-req">*</span> Required</span><span id="nissanAppCopied" class="x51-lb" style="display:none">Copied ✓</span></div>')
+    +'</div>';
 }
 function copyNissanAppForm(){
   var form='My Nissan App ( CCS ) - Y63\n\nUser Information:\nVIN: ___\nCustomer Name: ___\nPhone number: ___\nCity: ___\nModel Year: ___\nUser ID or Email: ___\nPhone Device Model: ___\nPhone OS: ___\nNissan Mobile App Version: ___\n\nInquiry:\nTitle: ___\nDescription: ___';
@@ -12884,6 +12862,26 @@ html body #page4 .loc-cp,html body #page4 .bd-cp[data-cp^="http"],html body #pag
 /* email box titles */
 html body #page4 .rc-box .em-copy:not(.em-wide)>span{display:none!important}
 html body .xan-c{margin-bottom:16px!important}
+/* SMS cards (all brands): title outside, white box, beige cards, small pill toggles */
+html body #page4 div:has(>.ref-cards-grid>.sms-card)>div:first-child{background:transparent!important;border:0!important;padding:0 41px!important;margin:0 0 10px!important}
+html body #page4 div:has(>.ref-cards-grid>.sms-card)>div:first-child *{color:#4A423B!important;font-size:14px!important;font-weight:600!important}
+html body #page4 div:has(>.ref-cards-grid>.sms-card)>div:first-child .ic-done{display:none!important}
+html body #page4 .ref-cards-grid:has(>.sms-card){background:#FEFEFE;border:1px solid #E6DED5;border-radius:12px;padding:16px 22px!important;gap:10px!important;margin:0!important}
+html body #page4 #refContent .ref-cards-grid>.ref-card.sms-card{background:#FAF8F5!important;border:0!important;border-radius:10px!important;box-shadow:none!important}
+html body #page4 .sms-card>div:first-child{border:0!important;padding:14px 16px 6px!important}
+html body #page4 .sms-card>div:first-child b{color:#4A423B!important;font-weight:600!important;font-size:13.5px!important}
+html body #page4 .sms-card>div:first-child span{color:#8A7F74!important;font-size:12.5px!important}
+html body #page4 .sms-card>div:nth-child(2){border:0!important;padding:4px 16px 10px!important;align-items:center}
+html body #page4 .sms-card>div:nth-child(2)>div{display:inline-flex;background:#EFE9E2;border-radius:8px;padding:2px;gap:2px}
+html body #page4 .sms-card .smsT{margin:0!important;padding:3px 10px!important;border-radius:6px!important;box-shadow:none!important;color:#6F665D!important;font-weight:500!important;font-size:12px!important}
+html body #page4 .sms-card .smsT[style*="inset"]{background:#FEFEFE!important;color:#4A423B!important;font-weight:600!important}
+html body #page4 .sms-card .smsX{background:#FEFEFE;border-radius:8px;margin:0 16px;padding:12px 14px!important;font-size:13px!important}
+html body #page4 .sms-card>div:last-child{padding:10px 16px 14px!important;justify-content:flex-start!important}
+html body #page4 .sms-card .smsCp{border:1px solid #E6DED5!important;color:#4A423B!important;background:#FEFEFE!important}
+/* email boxes / any brand block: no extra side inset, 16px between blocks */
+html body #page4 .ref-brand-section *:has(> .rc-box):not(.rc-wrap){padding:0!important}
+html body #page4 .ref-brand-section .rc-box,html body #page4 .ref-brand-section .rc-wrap{margin:0 0 16px!important}
+html body #page4 [id^="refTab_"]>div>*+*{margin-top:0}
 /*x51*/html body #page4 .x51{text-align:left;color:#4A423B;font-size:13.5px}
 html body #page4 .x51 *{box-shadow:none!important}
 html body #page4 .x51-sec{margin:0 0 16px}
@@ -12892,10 +12890,10 @@ html body #page4 .x51-box{background:#FEFEFE;border:1px solid #E6DED5;border-rad
 html body #page4 .x51-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
 html body #page4 .x51-tile{background:#FAF8F5;border-radius:10px;padding:14px 18px;border:0}
 html body #page4 .x51-lb{font-size:12.5px;color:#8A7F74}
-html body #page4 .x51-big{font-size:20px;font-weight:600;color:#4A423B;margin:6px 0 2px;text-align:left;line-height:1.4}
-html body #page4 .x51-sub{color:#6F665D;text-align:left;line-height:1.7}
+html body #page4 .x51-big{font-size:16px;font-weight:600;color:#4A423B;margin:6px 0 2px;text-align:left;line-height:1.4}
+html body #page4 .x51-sub{color:#6F665D;text-align:left;line-height:1.7;font-size:13px}
 html body #page4 .x51-foot{font-size:12.5px;color:#8A7F74;margin-top:8px;padding-top:8px;border-top:1px solid #EEE8E1;text-align:left}
-html body #page4 .x51-det{margin-top:10px;padding-top:6px;border-top:1px solid #EEE8E1;text-align:right;line-height:1.8}
+html body #page4 .x51-det{margin-top:10px;padding-top:6px;border-top:1px solid #EEE8E1;text-align:right;line-height:1.8;font-size:13px}
 html body #page4 .x51-card .x51-lb+.x51-det{border-top:0;margin-top:4px;padding-top:0}
 html body #page4 .x51-dh{font-size:12.5px;color:#8A7F74;margin-top:8px}
 html body #page4 .x51-tt{font-weight:600;margin-bottom:6px}
@@ -12926,9 +12924,23 @@ html body #page4 .x51-kv b{color:#4A423B}
 html body #page4 .x51-fn{font-size:12.5px;color:#8A7F74;margin-top:10px}
 html body #page4 .x51-hs{font-size:12px;font-weight:500;color:#8A7F74;margin-left:6px}
 html body #page4 .x51-h>span{display:inline-flex;align-items:baseline}
-html body #page4 .x51-city{font-size:18px;font-weight:600;margin:4px 0 2px}
+html body #page4 .x51-city{font-size:16px;font-weight:600;margin:4px 0 2px}
 html body #page4 .x51-sub2{color:#6F665D;margin-bottom:6px}
 html body #page4 .x51-off{color:#A06A6A}
+html body #page4 .x51-erow{display:grid;grid-template-columns:300px minmax(0,1fr);gap:18px;align-items:center;padding:12px 18px}
+html body #page4 .x51-erow+.x51-erow{border-top:1px solid #EEE8E1}
+html body #page4 .x51-emails .x51-box{padding:4px 22px}
+html body #page4 .x51-emails .x51-chip{background:#F6F2EE}
+html body #page4 .x51-fs{margin:6px 0 4px}
+html body #page4 .x51-box>.x51-tc,html body #page4 .x51-box>.x51-frow,html body #page4 .x51-box>.x51-fs,html body #page4 .x51-box>.x51-ffoot{margin-left:18px;margin-right:18px}
+html body #page4 .x51-box>.x51-tc .x51-chip{background:#F6F2EE}
+html body #page4 .x51-frow{display:grid;grid-template-columns:260px minmax(0,1fr);gap:18px;align-items:center;padding:7px 0;border-top:1px solid #EEE8E1}
+html body #page4 .x51-fs+.x51-frow{border-top:0}
+html body #page4 .x51-fld{height:32px;background:#FAF8F5;border-radius:8px}
+html body #page4 .x51-fld-t{height:60px}
+html body #page4 .x51-req{color:#A06A6A}
+html body #page4 .x51-ffoot{display:flex;align-items:center;gap:14px;margin-top:12px;padding-top:12px;border-top:1px solid #EEE8E1}
+html body #page4 .x51-ffoot .x51-btn{margin:0;cursor:pointer;font-family:inherit}
 html body #page4 .x51-btn{display:inline-block;margin-top:10px;background:#FEFEFE;border:1px solid #E6DED5;border-radius:8px;padding:5px 12px;font-size:12.5px;font-weight:600;color:#4A423B!important;text-decoration:none!important}
 </style>
 <script id="v51-js">
@@ -12950,7 +12962,8 @@ html body #page4 .x51-btn{display:inline-block;margin-top:10px;background:#FEFEF
       [].forEach.call(t.childNodes,function(n){ if(n.nodeType===3&&/Copy emails|Copied/.test(n.nodeValue)) n.nodeValue=n.nodeValue.replace(/Copy emails|Copied\s*✓?/g,''); });
     });
   }
-  function run(){ try{stationEmail();}catch(e){} try{rcTitles();}catch(e){} }
+  function heads(){ [].forEach.call(document.querySelectorAll('#page4 .na-head'),function(h){ if(h.style.getPropertyValue('background')!=='rgb(254, 254, 254)'){ h.style.setProperty('background','#FEFEFE','important'); h.style.setProperty('border','1px solid #E6DED5','important'); h.style.setProperty('border-radius','12px','important'); h.style.setProperty('padding','14px 18px','important'); } }); }
+  function run(){ try{stationEmail();}catch(e){} try{rcTitles();}catch(e){} try{heads();}catch(e){} }
   if(window.__watchDom) window.__watchDom(run,250);
   if(document.readyState!=='loading') setTimeout(run,600); else document.addEventListener('DOMContentLoaded',function(){setTimeout(run,600);});
 })();
