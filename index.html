@@ -13465,7 +13465,7 @@ html body #page4 .x51-card .x51-det>.x51-dh{font-size:13px!important;font-weight
 <style id="batch-a">
 /* single card in a grid: half width, right side (like the RTL text) */
 html body #page4 .x51-grid:has(>.x51-card:only-child){grid-template-columns:1fr 1fr!important}
-html body #page4 .x51-grid>.x51-card:only-child{grid-column:1!important}
+html body #page4 .x51-grid>.x51-card:only-child{grid-column:1/-1!important;width:calc(50% - 6px)!important;justify-self:center!important}
 /* Extra Information: one row per group, emails in one line, copy per TO / CC line */
 html body #page4 .x51-exsec .x51-grid{grid-template-columns:1fr!important}
 html body #page4 .x51-exsec .x51-tile{display:grid!important;grid-template-columns:240px minmax(0,1fr);gap:16px;align-items:start}
@@ -14103,7 +14103,8 @@ html body #page4 .bdx-g>.bk-stem{flex:0 0 100%!important}
 html body #page4 .bdx-c.bk-stem{grid-column:1/-1!important;background:transparent!important;border:0!important;padding:2px 0 0!important;display:flex!important;flex-wrap:wrap!important;align-items:center!important;justify-content:center!important;gap:4px 14px!important;overflow:visible!important}
 html body #page4 .bdx-c.bk-stem>.bdx-lb.bdx-lb{display:inline!important;background:transparent!important;border:0!important;margin:0!important;padding:0!important;font-weight:400!important;font-size:12.5px!important;color:#8A7F74!important}
 html body #page4 .bdx-c.bk-stem>*{padding:0!important;margin:0!important}
-html body #page4 .x51-card.x51-card,html body #page4 .x51-card.bk-card{background:#FEFEFE!important}
+html body #page4 .x51-card.x51-card,html body #page4 .x51-card.bk-card{background:#F4F0EB!important;border:0!important;box-shadow:none!important;border-radius:10px!important}
+html body #page4 .x51-card.x51-card:has(>.x51-lb:not([style*="display: none"])){border:1px solid #E9E2D9!important;overflow:hidden!important}
 html body #page4 .u7-tb .u7-t{font-size:12.5px!important;font-weight:600!important}
 html body #page4 .bdx-c{background:#FEFEFE!important;text-align:center!important}
 html body #page4 .bdx-c>*:not(.bdx-lb){justify-content:center!important;text-align:center!important}
