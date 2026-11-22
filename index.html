@@ -4270,6 +4270,143 @@ function smsCardHTML(city,apptAR,apptEN,locAR,locEN,id,c){
     +'<div class="smsX" style="padding:10px 14px;font-size:12px;line-height:1.85;color:#4A423B;white-space:pre-wrap;flex:1;direction:'+(ar?'rtl':'ltr')+';text-align:'+(ar?'right':'left')+'">'+esc(txt)+'</div>'
     +'<div style="display:flex;justify-content:flex-end;padding:0 14px 10px"><button class="smsCp" style="border:1px solid #EEE8E1;background:#FEFEFE;border-radius:6px;padding:3px 12px;color:'+c+';font-size:11px;font-weight:600;cursor:pointer">Copy</button></div></div>';
 }
+/* ===== Unified SMS format (Petromin) — branch name + link change, the wording stays the same ===== */
+(function(){
+  if(typeof smsCardHTML!=='function'||window.__SMS_UNIFIED)return;
+  window.__SMS_UNIFIED=true;
+  // code (end of Google Maps link) -> [Arabic name, English name, type]   type: s = service, b = body & paint
+  var B=[
+    // Petromin Nissan
+    ['6ZkjYXaE2SMrSoKW7','جدة – أوتومول','Jeddah – Automall','s'],
+    ['zs75YtzNAvprMdoD9','جدة – طريق المدينة المنورة','Jeddah – Madinah Road','s'],
+    ['pnMUw5YiNw4Wsgjh6','جدة – طريق الأمير ماجد','Jeddah – Prince Majed Road','s'],
+    ['hDSP96iBQFju31A58','مكة المكرمة','Makkah','s'],
+    ['jMeFBnurCu7Wz24R9','المدينة المنورة','Madinah','s'],
+    ['ZDfD1rb82nQFM9Vw7','الرياض – قرطبة','Riyadh – Qurtubah','s'],
+    ['ZDfD1rb82nQFM9Vw7','الرياض – خريص','Riyadh – Khurais','s'],
+    ['VGVQkWHjYvu2VmjK7','الرياض – مخرج 15','Riyadh – Exit 15','s'],
+    ['KvWWRbhZJaG5EJJ76','الرياض – مخرج 28','Riyadh – Exit 28','s'],
+    ['gZSYKbDzg7JkPcJo6','القصيم – بريدة، طريق الملك عبدالعزيز','Qassim – Buraydah, King Abdulaziz Road','s'],
+    ['kHNbqdcKdCLeh5LT6','الدمام','Dammam','s'],
+    ['Bzntfo25LFEnZteN8','الخبر – طريق خادم الحرمين','Al Khobar – Custodian of the Two Holy Mosques Road','s'],
+    ['yBiSSt6oP61shSNh9','الأحساء','Al Ahsa','s'],
+    ['ecaMCBBy276PAV7J7','الجبيل','Jubail','s'],
+    ['gVHmXFecgdBmUVcLA','جيزان','Jazan','s'],
+    ['ry6FNRZsyk82EqDr6','حائل','Hail','s'],
+    // Petromin Autocare (PAC)
+    ['AdCU4AS2akwQFhN36','سكاكا – الطازج','Sakaka – Al Tazaj','s'],
+    ['serXfYgLnucYJsJT9','الدوادمي','Dawadmi','s'],
+    ['uR9UD2W8Honsn38u7','الخرج','Al Kharj','s'],
+    ['kGgyiHNzgQbBMzmQ9','الخفجي – الزويمل','Khafji – Zuwaymel','s'],
+    ['vMZFYU3dbsULgNbH6','محايل – الأسمري','Muhayil – Al Asmari','s'],
+    ['mbBbdC45TL8GkNeg6','خميس مشيط – عبور','Khamis Mushayt – Obour','s'],
+    ['1Gdo4n56gNjYc3Bt9','ينبع – الجابرية','Yanbu – Jabriya','s'],
+    ['gu9xCPKDrFNCgG8s7','تبوك – ترايستار','Tabuk – Tristar','s'],
+    ['VurubfTKn245jQwz9','تبوك – العليا','Tabuk – Al Ulaya','s'],
+    ['LnV1oWvdeaHLJwEbA','الطائف – فولان','Taif – Fulan','s'],
+    ['1DvM5dvJX7yFxFCx6','الطائف – السلامة','Taif – As Salamah','s'],
+    // BAIC
+    ['N2YAkUAsg2sEfxKr8','الرياض – الثمامة','Riyadh – Al Thumama Road','s'],
+    ['3sU8jGgAjonjEHBx8','الرياض – المصيف المرسلات - طريق الإمام سعود','Riyadh – Al-Masif Al-Marsalat - Imam Saud Road','s'],
+    ['fznYmBpdh8rQv4zP9','الرياض – مخرج 14','Riyadh – Exit 14','s'],
+    ['Ca3LkHhsvm1FDuWPA','الرياض – العزيزية','Riyadh – Al-Azizia Road','s'],
+    ['cQ1hTEmHDe4XpFRi8','الرياض – خريص','Riyadh – Khurais Road','s'],
+    ['QLwk42xr3uXXqZpA8','الرياض – البديعة','Riyadh – Al-Badia Road','s'],
+    ['qMhDS4HeLjsXeghs9','القصيم – بريدة','Qassim – Buraydah','s'],
+    ['YX3fjQDoKqwCh6bp6','الدمام – المزروعية','Dammam – Al Mazrouya Road','s'],
+    ['N9dzCn6CAnJHMm7A7','الدمام – السابانية','Dammam – Sabaniya','s'],
+    ['wjC6g3FvEA8mB4eT7','الخبر – السلطانية','Al Khobar – Sultaniya','s'],
+    ['JCV69NjvKXFnRXjq6','الأحساء – الشقيق - المبرز','Al Ahsa – Al Shaqeeq','s'],
+    ['Z2ux2o6r7TM1AJZt7','جدة – المربع لاند','Jeddah – Al-Murabba Land Road','s'],
+    ['UyKLvxsvFNwpP6tU8','جدة – السامر - الربيع','Jeddah – Al-Rabia Road','s'],
+    ['3eXmutjLXXB3deYA7','جدة – الحمدانية','Jeddah – Al Hamdaniya','s'],
+    ['eE2kMWyn2v7MkK298','جدة – النهضة','Jeddah – Al-Nahda Road','s'],
+    ['V8ixeDxKfPL9aETa8','جدة – الأمل','Jeddah – Al-Amal Road','s'],
+    ['ByamdnE9ZdDjbs7U8','المدينة المنورة – الإمام البخاري - الأربعين','Madinah – Imam Al-Bukhari - 40','s'],
+    ['BpGDbXtGS6oyVPCT8','خميس مشيط – عبور','Khamis Mushayt – Obour','s'],
+    ['2P7GFMi2njpLdQet9','تبوك – العليا','Tabuk – Al Olaya','s'],
+    ['eqZqRNNaQr5xDFg57','سكاكا – الطازج','Sakaka – Al Tazaj','s'],
+    // Stellantis
+    ['CYfPjt13wv18MZFH7','جدة – النخيل','Jeddah – Al Nakheel','s'],
+    ['wLVKn12JaBvYTLBH8','جدة – أوتو مول','Jeddah – Auto Mall','s'],
+    ['xiiQ7tBURQWtGFAG7','جدة – طريق المدينة','Jeddah – Madinah Road','s'],
+    ['WKpfLNmzsYwHLJ9u9','مكة المكرمة','Makkah','s'],
+    ['TATdshgR84mUXqKW7','الرياض – خريص','Riyadh – Khurais','s'],
+    ['n2Q7bU3NBJU7HedX9','حائل','Hail','s'],
+    ['TmrmoNQZiCXAGprFA','الدمام','Dammam','s'],
+    ['HSs7SEpQJHicRzTFA','الخبر – الراكة الشمالية','Al Khobar – Al Rakah','s'],
+    ['pRHxZAT3K52kd6Pa9','الجبيل','Jubail','s'],
+    // Body & Paint
+    ['Vg8hSck9miTFacXA6','جدة – عسفان','Jeddah – Asfan','b'],
+    ['JVjAWyrcrx5eqnKm6','جدة – النخيل','Jeddah – Al-Nakheel','b'],
+    ['UN4FT3xvwc61e6u1A','الرياض – الفيصلية مخرج 18','Riyadh – Al-Faisalia Exit 18','b'],
+    ['Yc9b6yMh3WSm9Jm19','الرياض – الصناعية مخرج 17','Riyadh – Exit 17','b'],
+    ['TKVpLoNr1mkApGto6','القصيم – بريدة، طريق الملك عبدالعزيز','Qassim – Buraydah, King Abdulaziz Road','b'],
+    ['DqWK6jBC2XgEa3kS6','الدمام – الخضرية','Dammam – Al-Khodaryah','b'],
+    ['twh3zXwn5m99qjV8A','الأحساء – الهفوف','Al Ahsa – Al Hofuf','b'],
+    ['TwdbA1cw1wGPCEjz8','خميس مشيط','Khamis Mushait','b']
+  ];
+  var BY={};B.forEach(function(r){(BY[r[0]]=BY[r[0]]||[]).push(r);});
+  var BRANDS={nissan:1,stellantis:1,bodyshop:1,baic:1,baicRecall:1,petromin:1};
+  var LINK=/https?:\/\/(?:maps\.app\.goo\.gl|goo\.gl\/maps|maps\.google\.[a-z.]+|www\.google\.[a-z.]+\/maps)\/?[^\s)\]]*/i;
+  function linkOf(){for(var i=0;i<arguments.length;i++){var m=String(arguments[i]||'').match(LINK);if(m)return m[0].replace(/[.,،]+$/,'');}return '';}
+  function codeOf(u){var p=String(u||'').split('?')[0].replace(/\/+$/,'').split('/');return p[p.length-1]||'';}
+  function pick(list,hint){
+    if(list.length===1)return list[0];
+    var h=String(hint||'').toLowerCase();
+    for(var i=0;i<list.length;i++){var en=list[i][2].toLowerCase().split('–').pop().trim(),ar=list[i][1].split('–').pop().trim();
+      if((en&&h.indexOf(en)>=0)||(ar&&h.indexOf(ar)>=0))return list[i];}
+    return list[0];
+  }
+  function arNameFrom(t){
+    t=String(t||'');var m=t.match(/(?:بفرع|في فرع|فرع)\s+([^\n.،(]+?)(?:\s+بتاريخ|\s*\(|[.،\n]|$)/)||t.match(/مركز\s*(?:ال)?خدمة\s*[-–]\s*([^\n]+?)\s*(?:https?:|\n|$)/);
+    return m?m[1].trim():'';
+  }
+  function T(ar,en,type,link){
+    if(type==='r'){var L0=link||'( )';return {
+      aAR:'عزيزي العميل،\n\nتم تأكيد موعد زيارتكم لمعرض '+ar+' بتاريخ 00-00-2026 الساعة 00:00 صباحًا / مساءً.\n\n🔹 رقم الحجز: ( )\n\n📍 لمعرفة موقع المعرض: '+L0+'\n\nشكرًا لتواصلكم معنا، ونتطلع لزيارتكم.',
+      aEN:'Dear Customer,\n\nYour visit to our '+en+' showroom has been confirmed on 00-00-2026 at 00:00 AM / PM.\n\n🔹 Booking No.: ( )\n\n📍 Showroom location: '+L0+'\n\nThank you for contacting us. We look forward to your visit.',
+      lAR:'عزيزي العميل،\n\nيسعدنا استقبالكم في معرض '+ar+'.\n\n📍 لمعرفة موقع المعرض: '+L0+'\n\nشكرًا لتواصلكم معنا، ونتطلع لزيارتكم.',
+      lEN:'Dear Customer,\n\nWe look forward to welcoming you at our '+en+' showroom.\n\n📍 Showroom location: '+L0+'\n\nThank you for contacting us. We look forward to your visit.'};}
+    var arB=ar+(type==='b'?' (السمكرة والدهان)':''),enB=en+(type==='b'?' (Body & Paint)':'');
+    var L=link||'( )';
+    return {
+      aAR:'عزيزي العميل،\n\nتم تأكيد موعد الصيانة الدورية / الإصلاح الخاص بمركبتكم في فرع '+arB+' بتاريخ 00-00-2026 الساعة 00:00 صباحًا / مساءً.\n\n🔹 رقم الحجز: ( )\n\n📍 لمعرفة موقع مركز الخدمة: '+L+'\n\nشكرًا لثقتكم بنا، ونتمنى لكم رحلة آمنة.',
+      aEN:'Dear Customer,\n\nYour vehicle\'s periodic maintenance / repair appointment has been confirmed at our '+enB+' branch on 00-00-2026 at 00:00 AM / PM.\n\n🔹 Booking No.: ( )\n\n📍 Service center location: '+L+'\n\nThank you for your trust. We wish you a safe journey.',
+      lAR:'عزيزي العميل،\n\nيسعدنا استقبالكم في مركز الخدمة بفرع '+arB+'.\n\n📍 لمعرفة موقع مركز الخدمة: '+L+'\n\nشكرًا لثقتكم بنا، ونتمنى لكم رحلة آمنة.',
+      lEN:'Dear Customer,\n\nWe look forward to welcoming you at our '+enB+' service center.\n\n📍 Service center location: '+L+'\n\nThank you for your trust. We wish you a safe journey.'
+    };
+  }
+  window.unifySMS=function(city,aAR,aEN,lAR,lEN){
+    var brand=typeof REF_CURRENT_BRAND!=='undefined'?REF_CURRENT_BRAND:null;
+    if(!brand||!BRANDS[brand])return null;
+    var all=[aAR,aEN,lAR,lEN].join('\n');
+    if(!String(all).trim())return null;
+    // link always comes live from the Google Sheet
+    var link=linkOf(lEN,lAR,aEN,aAR);
+    var hit=link&&BY[codeOf(link)]?pick(BY[codeOf(link)],String(city||'')+' '+all):null;
+    var type=hit?hit[3]:(brand==='bodyshop'||/body\s*(shop|&\s*paint)|السمكرة/i.test(all)?'b':'s');
+    var ar,en;
+    if(hit){ar=hit[1];en=hit[2];}
+    else{
+      en=String(city||'').replace(/\s+/g,' ').replace(/^Branch\s+\d+$/i,'').trim();
+      ar=arNameFrom(aAR)||arNameFrom(lAR);
+      if(/[؀-ۿ]/.test(en)){if(!ar)ar=en;en='';}
+      if(!en){var mm=String(aEN||lEN).match(/our\s+(.+?)\s+(?:branch|service\s*cent)/i)||String(aEN||lEN).match(/Petromin[^(\n]*\(\s*([^)\n]+?)\s*\)/i);en=mm?mm[1].trim():'';}
+      if(!en&&!ar)return null;
+      ar=ar||en;en=en||ar;
+    }
+    if(window.__SMS_SHOWROOM&&type!=='b')type='r';
+    var o=T(ar,en,type,link);o.title=en;return o;
+  };
+  var orig=smsCardHTML;
+  smsCardHTML=function(city,apptAR,apptEN,locAR,locEN,id,c){
+    var u=null;try{u=window.unifySMS(city,apptAR,apptEN,locAR,locEN);}catch(e){u=null;}
+    if(!u)return orig.apply(this,arguments);
+    return orig.call(this,u.title,u.aAR,u.aEN,u.lAR,u.lEN,id,c);
+  };
+})();
+
 document.addEventListener('click',function(ev){
   var t=ev.target.closest&&ev.target.closest('.smsT');var cp=ev.target.closest&&ev.target.closest('.smsCp');
   var card=(t||cp)&&(t||cp).closest('.sms-card');if(!card)return;
@@ -7075,6 +7212,11 @@ function renderSMSTab(arr, sheetName, brand){
   var cardsPAC = sections.pac.map(function(r,i){
     return mkCard(gv(r,k2), gv(r,k0), gv(r,k1), gv(r,k3), gv(r,k4), 'pp'+i, '#A07E62');
   }).join('');
+  window.__SMS_SHOWROOM=true;
+  var cardsShow = '';
+  try{ cardsShow = sections.s3.map(function(r,i){
+    return mkCard(gv(r,k2), gv(r,k0), gv(r,k1), gv(r,k3), gv(r,k4), 'sr'+i, '#A07E62');
+  }).join(''); } finally { window.__SMS_SHOWROOM=false; }
   var cardsBody = sections.body.map(function(r,i){
     return mkCard('Branch '+(i+1), '', '', gv(r,k0), gv(r,k1), 'bb'+i, '#37474f');
   }).join('');
@@ -7091,6 +7233,7 @@ function renderSMSTab(arr, sheetName, brand){
   return '<div>'
     +sec('sms3s','&#128203; 3S — Appointment & Location SMS','#A85A5A',cards3S)
     +sec('smspac','&#128295; PAC — Appointment & Location SMS','#A07E62',cardsPAC)
+    +sec('smsshow','&#127970; Showroom — Visit Appointment & Location SMS','#A07E62',cardsShow)
     +'</div>';
 }
 function copySMS(id){
