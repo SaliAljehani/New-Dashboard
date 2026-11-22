@@ -1282,6 +1282,12 @@ body,button,input,select,textarea{font-family:var(--app-font)!important}
 #refContactsPanel .ref-panel-header{font-size:14px!important}
 </style>
 <style id="sms-no-flash">.ref-brand-section .sms-card:not(.sms-ready){visibility:hidden}.ref-brand-section .sms-card.sms-ready{animation:smsIn .18s ease-out}@keyframes smsIn{from{opacity:0}to{opacity:1}}</style>
+<style id="sms-brand-look">
+.ref-brand-section .sms-card .smsX{background:color-mix(in srgb,var(--brand,#A07E62) 7%,#FEFEFE);border-radius:8px;margin:8px 12px 10px}
+.ref-brand-section .sms-sub,.sms-sub{display:inline-flex;background:color-mix(in srgb,var(--brand,#A07E62) 8%,#FEFEFE);border-radius:9px;padding:3px;margin:0 0 14px}
+.sms-sub span{font-size:12px;padding:6px 16px;border-radius:7px;cursor:pointer;color:#6F665D}
+.sms-sub span.on{background:#FEFEFE;color:var(--brand,#A07E62);font-weight:700;box-shadow:0 0 0 1px color-mix(in srgb,var(--brand,#A07E62) 30%,#E6DED5)}
+</style>
 </head>
 <body>
 
@@ -7335,42 +7341,68 @@ function smsTitle(vals,o){
   var n=(short[short.length-1]||short[0]||'').split(/\n+/);
   return n.length>1?(n[1]+' – '+n[0]):n[0];
 }
+var SMS_REG_ORDER=['West','Central','East','South','North','Other'];
+var SMS_REG_KEYS={West:/jeddah|jedda|makkah|mecca|makka|madinah|madina|medina|taif|yanbu|asfan|جدة|جده|مكة|مكه|المدينة|الطائف|ينبع|عسفان/i,
+  Central:/riyadh|riyad|qassim|buraydah|kharj|dawadmi|الرياض|القصيم|بريدة|الخرج|الدوادمي/i,
+  East:/dammam|khobar|ahsa|hofuf|hufuf|hassa|jubail|khafji|الدمام|الخبر|الأحساء|الاحساء|الهفوف|الجبيل|الخفجي/i,
+  South:/jazan|jizan|gizan|khamis|abha|najran|muhayil|mahayel|جيزان|جازان|خميس|أبها|ابها|نجران|محايل/i,
+  North:/tabuk|hail|sakaka|jouf|arar|تبوك|حائل|سكاكا|الجوف|عرعر/i};
+function smsRegion(vals,title,o){
+  for(var i=0;i<vals.length;i++){var v=String(vals[i]||'').trim().toLowerCase();
+    if(/^(west|western|wr)$/.test(v))return'West'; if(/^(center|central|centre|cr)$/.test(v))return'Central';
+    if(/^(east|eastern|er)$/.test(v))return'East'; if(/^(south|southern|sr)$/.test(v))return'South'; if(/^(north|northern|nr)$/.test(v))return'North';}
+  var t=String(title||'')+' '+String(o.lEN||o.aEN||o.sEN||o.saEN||'').slice(0,160)+' '+vals.filter(function(v){return String(v||'').length<40;}).join(' ');
+  var best='Other',pos=1e9;
+  SMS_REG_ORDER.slice(0,5).forEach(function(r){var m=t.search(SMS_REG_KEYS[r]);if(m>=0&&m<pos){pos=m;best=r;}});
+  return best;
+}
 function renderUnifiedSMSTab(arr, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#6F665D">No data</div>';
   var __c=(window.__smsOrig||smsCardHTML);
   var card=function(t,aAR,aEN,lAR,lEN,id,c){ var h=__c(t,aAR,aEN,lAR,lEN,id,c); if(!aAR&&!aEN) h=h.replace(/<span class="smsT" data-g="t" data-v="appt"[^>]*>Appointment<\/span>/,''); if(!lAR&&!lEN) h=h.replace(/<span class="smsT" data-g="t" data-v="loc"[^>]*>Location<\/span>/,''); return h; };
-  var color='#A07E62';
+  var color='var(--brand,#A07E62)';
   var S={svc:[],show:[],pac:[]}, mode='svc', n=0;
   var heads=Object.keys(arr[0]||{});
   var all=[heads].concat(arr.map(function(r){return Object.values(r);}));
-  all.forEach(function(vals,ri){
+  all.forEach(function(vals){
     var txt=vals.map(function(v){return String(v||'').trim();});
     if(txt.some(function(v){return /^PAC\s+(Branch|Appointment|Location)/i.test(v);})){mode='pac';return;}
     if(txt.some(function(v){return /^Showroom\s+(SMS|Location|Appointment)/i.test(v);}) && !txt.some(function(v){return /^3S\b|^City$|^Regions$/i.test(v);})){mode='show';return;}
     var o=smsClassify(vals);
     if(!(o.aEN||o.aAR||o.lEN||o.lAR||o.sEN||o.sAR||o.saEN||o.saAR)) return;
     var title=smsTitle(vals,o); n++;
-    if(mode==='show'){ S.show.push(card(title,o.saAR,o.saEN,o.sAR||o.lAR,o.sEN||o.lEN,'us'+brand+n,color)); return; }
-    if(o.aEN||o.aAR||o.lEN||o.lAR) S[mode].push(card(title,o.aAR,o.aEN,o.lAR,o.lEN,'u'+mode+brand+n,color));
+    var reg=smsRegion(vals,title,o);
+    if(mode==='show'){ S.show.push({r:reg,h:card(title,o.saAR,o.saEN,o.sAR||o.lAR,o.sEN||o.lEN,'us'+brand+n,color)}); return; }
+    if(o.aEN||o.aAR||o.lEN||o.lAR) S[mode].push({r:reg,h:card(title,o.aAR,o.aEN,o.lAR,o.lEN,'u'+mode+brand+n,color)});
     if(o.sEN||o.sAR||o.saEN||o.saAR){
       var st=smsTitle([],{sEN:o.sEN||o.saEN})||title;
-      S.show.push(card(st,o.saAR,o.saEN,o.sAR,o.sEN,'us'+brand+n,color));
+      S.show.push({r:reg,h:card(st,o.saAR,o.saEN,o.sAR,o.sEN,'us'+brand+n,color)});
     }
   });
   var groups=[['svc','Service SMS'],['show','Showroom SMS'],['pac','PAC SMS']].filter(function(g){return S[g[0]].length;});
   if(!groups.length) return '<div style="text-align:center;padding:24px;color:#6F665D">No data</div>';
   var uid='smsU'+brand;
-  var tabs=groups.length>1?('<div class="sms-sub" style="display:inline-flex;background:#F4F1ED;border-radius:9px;padding:3px;margin:0 0 14px">'
-    +groups.map(function(g,i){return '<span data-k="'+g[0]+'" onclick="smsSubTab(this,\''+uid+'\')" style="font-size:12px;padding:6px 16px;border-radius:7px;cursor:pointer;'+(i===0?'background:#FEFEFE;color:#4A423B;font-weight:600;box-shadow:0 0 0 1px #E6DED5':'color:#8A7F74')+'">'+g[1]+' · '+S[g[0]].length+'</span>';}).join('')
+  function regions(gk,items){
+    return SMS_REG_ORDER.map(function(r){
+      var list=items.filter(function(x){return x.r===r;}); if(!list.length) return '';
+      var id=uid+'_'+gk+'_'+r;
+      return '<div style="margin-bottom:12px">'
+        +'<div onclick="toggleRegion(\''+id+'\')" style="display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-left:4px solid '+color+';border-radius:0 8px 8px 0;cursor:pointer;margin-bottom:10px">'
+        +'<span style="font-size:12px;font-weight:700;color:'+color+'">'+(r==='Other'?'Other':r)+' <span style="color:#6F665D;font-weight:500">· '+list.length+'</span></span>'
+        +'<span id="ico_'+id+'" style="color:'+color+'">&#9660;</span></div>'
+        +'<div id="'+id+'"><div class="ref-cards-grid">'+list.map(function(x){return x.h;}).join('')+'</div></div></div>';
+    }).join('');
+  }
+  var tabs=groups.length>1?('<div class="sms-sub">'
+    +groups.map(function(g,i){return '<span data-k="'+g[0]+'" class="'+(i===0?'on':'')+'" onclick="smsSubTab(this,\''+uid+'\')">'+g[1]+' · '+S[g[0]].length+'</span>';}).join('')
     +'</div>'):'';
   return '<div id="'+uid+'">'+tabs+groups.map(function(g,i){
-    return '<div class="sms-sub-pane" data-k="'+g[0]+'" style="'+(i===0?'':'display:none')+'">'
-      +'<div class="ref-cards-grid">'+S[g[0]].join('')+'</div></div>';
+    return '<div class="sms-sub-pane" data-k="'+g[0]+'" style="'+(i===0?'':'display:none')+'">'+regions(g[0],S[g[0]])+'</div>';
   }).join('')+'</div>';
 }
 function smsSubTab(el,uid){
   var root=document.getElementById(uid); if(!root) return; var k=el.getAttribute('data-k');
-  [].forEach.call(root.querySelectorAll('.sms-sub span'),function(s){var on=s===el;s.style.background=on?'#FEFEFE':'transparent';s.style.color=on?'#4A423B':'#8A7F74';s.style.fontWeight=on?'600':'400';s.style.boxShadow=on?'0 0 0 1px #E6DED5':'none';});
+  [].forEach.call(root.querySelectorAll('.sms-sub span'),function(s){s.classList.toggle('on',s===el);});
   [].forEach.call(root.querySelectorAll('.sms-sub-pane'),function(p){p.style.display=p.getAttribute('data-k')===k?'':'none';});
 }
 
@@ -10848,7 +10880,7 @@ window.addEventListener('DOMContentLoaded', () => {
   
   function recolour(root,col){ if(!root||!col) return; var T=h2rgb(col);
     [root].concat([].slice.call(root.querySelectorAll('*'))).forEach(function(e){
-      if(e.closest&&e.closest('.rc-box')) return;
+      if(e.closest&&e.closest('.rc-box,.sms-card,.sms-sub')) return;
       var st=e.getAttribute&&e.getAttribute('style'); if(st){var n=fixStr(st,T); if(n!==st) e.setAttribute('style',n);}
       ['fill','stroke','color'].forEach(function(a){var v=e.getAttribute&&e.getAttribute(a); if(v&&v.charAt(0)==='#'){var n=fixVal(v,T,'text'); if(n!==v) e.setAttribute(a,n);}});
     });
@@ -10933,10 +10965,17 @@ window.addEventListener('DOMContentLoaded', () => {
   function onMut(muts){
     muts.forEach(function(m){ var t=m.target; /* hold only when a whole tab is (re)drawn — not for small changes like a copy button */ var c=(t&&t.id&&t.id.indexOf('refTab_')===0)?t:null;
       if(c&&!c.classList.contains('rc-hold')){ c.classList.add('rc-hold'); held.push(c); } });
+    var big=false; for(var i=0;i<muts.length&&!big;i++){ var a=muts[i].addedNodes; for(var j=0;j<a.length;j++){ var n=a[j]; if(n.nodeType===1&&n.querySelector&&n.querySelector('*')){ big=true; break; } } }
+    if(big){ /* recolour before the browser paints: no grey-then-beige flash */
+      try{ run(); }catch(e){ console.warn('recolour',e); }
+      if(OBS) OBS.takeRecords();
+      clearTimeout(holdT); release(); return;
+    }
     if(held.length){ if(!holdStart) holdStart=Date.now(); clearTimeout(holdT); holdT=setTimeout(release, Date.now()-holdStart>600?0:230); }
     sched();
   }
-  function init(){ var rc=document.getElementById('refContent')||document.body; new MutationObserver(onMut).observe(rc,{childList:true,subtree:true}); sched(); }
+  var OBS=null;
+  function init(){ var rc=document.getElementById('refContent')||document.body; OBS=new MutationObserver(onMut); OBS.observe(rc,{childList:true,subtree:true}); sched(); }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
 })();</script>
 
