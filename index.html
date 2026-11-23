@@ -211,9 +211,6 @@ select#agSel{font-size:13px;font-weight:600;color:var(--accent);min-width:180px}
 .br-list::-webkit-scrollbar-track{background:transparent}
 .br-list::-webkit-scrollbar-thumb{border-radius:10px;opacity:.7}
 .br-it .ds{display:block;font-size:11px;color:#6F665D;padding-left:40px;margin-top:1px}
-.ref-cards-grid:has(> .sms-card){grid-template-columns:repeat(4,minmax(0,1fr))!important}
-@media(max-width:1300px){.ref-cards-grid:has(> .sms-card){grid-template-columns:repeat(2,minmax(0,1fr))!important}}
-@media(max-width:900px){.ref-cards-grid:has(> .sms-card){grid-template-columns:1fr!important}}
 .br-hidden{display:none!important}
 .br-md{display:grid;grid-template-columns:320px minmax(0,1fr);gap:14px;align-items:start;margin-bottom:16px}.br-right{min-width:0;position:sticky;top:10px}.rc-over{margin-left:334px!important}@media(max-width:900px){.rc-over{margin-left:0!important}}.br-right>.br-detail{position:static}.rc-box,.rc-wrap{margin-top:20px!important;margin-bottom:20px!important}.rc-box+.rc-box{margin-top:0!important}#tbPirelli .rc-box{margin:0!important;border:0!important;border-radius:0 0 10px 10px!important}.rc-box:has(+.rc-box){margin-bottom:12px!important}.br-right>.rc-box,.br-right>.rc-wrap{margin-bottom:12px!important}
 .br-list{scrollbar-width:thin;text-align:left;background:#FEFEFE;border:0.5px solid #E6DED5;border-radius:14px;box-shadow:none;padding:10px;max-height:72vh;overflow-y:auto;position:sticky;top:10px}
@@ -543,13 +540,10 @@ footer{text-align:center;padding:14px;font-size:11px;color:#4A423B}
 }
 .ref-brand-section .piTab[style*="solid transparent"]{color:color-mix(in srgb,var(--tt,var(--brand)) 62%,#FEFEFE)!important}
 .ref-brand-section .piTab:not([style*="solid transparent"]){color:var(--tt,var(--brand))!important;border-bottom-color:var(--tt,var(--brand))!important}
-
-.ref-brand-section .sms-card{background:#FEFEFE!important;border:1px solid #E6DED5!important}
 .ref-brand-section .bd-head{background:color-mix(in srgb,var(--brand) 6%,#FEFEFE)!important}
 .ref-brand-section div[onclick^="toggleRegion"]{background:color-mix(in srgb,var(--brand) 6%,#FEFEFE)!important;border-left:4px solid var(--brand)!important;border-radius:0 8px 8px 0!important;padding:9px 14px!important}
 .ref-brand-section div:has(> div > .ref-email-tag.to),.ref-brand-section .ref-email-card{background:#FEFEFE!important;border:1px solid color-mix(in srgb,var(--brand) 30%,#E6DED5)!important;box-shadow:none!important}
 .ref-brand-section div[onclick^="toggleRegion"] span[id^="ico_"]{color:var(--tt,var(--brand))!important}
-.ref-brand-section .sms-card button{border:1px solid #E6DED5!important;background:#FEFEFE!important}
 .ref-brand-section .bd-head,.ref-brand-section div[onclick^="toggleRegion"],.ref-brand-section .br-rg{background:color-mix(in srgb,var(--brand) 8%,#FEFEFE)!important}
 
 .ref-brand-section :is(div[style*="border-left:4px solid"],div[style*="border-left: 4px solid"]){background:color-mix(in srgb,var(--brand) 8%,#FEFEFE)!important;border-left-color:var(--brand)!important}
@@ -1219,13 +1213,8 @@ body,button,input,select,textarea{font-family:var(--app-font)!important}
 #refContactsPanel .xcrow b{font-size:14px!important;font-weight:600!important;color:#4A423B!important}
 #refContactsPanel .ref-panel-header{font-size:14px!important}
 </style>
-<style id="sms-no-flash">.ref-brand-section .sms-card:not(.sms-ready){visibility:hidden}.ref-brand-section .sms-card.sms-ready{animation:smsIn .18s ease-out}@keyframes smsIn{from{opacity:0}to{opacity:1}}</style>
-<style id="sms-brand-look">
-.ref-brand-section .sms-card .smsX{background:color-mix(in srgb,var(--brand,#A07E62) 7%,#FEFEFE);border-radius:8px;margin:8px 12px 10px}
-.ref-brand-section .sms-sub,.sms-sub{display:inline-flex;background:color-mix(in srgb,var(--brand,#A07E62) 8%,#FEFEFE);border-radius:9px;padding:3px;margin:0 0 14px}
-.sms-sub span{font-size:12px;padding:6px 16px;border-radius:7px;cursor:pointer;color:#6F665D}
-.sms-sub span.on{background:#FEFEFE;color:var(--brand,#A07E62);font-weight:700;box-shadow:0 0 0 1px color-mix(in srgb,var(--brand,#A07E62) 30%,#E6DED5)}
-</style>
+
+
 </head>
 <body>
 
@@ -4166,66 +4155,95 @@ function brandLineIcon(key,col){
   var d=P[K[key]||'link'];
   return '<svg data-bk="'+(key||'')+'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="'+col+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+d+'"/></svg>';
 }
-function smsCardHTML(city,apptAR,apptEN,locAR,locEN,id,c){
-  if(!apptAR&&!apptEN&&!locAR&&!locEN)return'';
-  var esc=function(t){return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+var SMS_CP_SVG='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>';
+var SMS_OK_SVG='<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>';
+function smsEsc(t){return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function smsNorm(t){return String(t||'').split('\n').map(function(l){return l.replace(/^\s+|\s+$/g,'');}).join('\n').replace(/\n{3,}/g,'\n\n').replace(/^\n+|\n+$/g,'');}
+function smsMsgHTML(t){t=smsNorm(t);return smsEsc(t).replace(/(https?:\/\/[^\s<]+)/g,'<span class="s-url">$1</span>');}
+/* title + city shown on the card, worked out from the branch name or the message text */
+function smsCardTitle(city,apptAR,apptEN,locAR,locEN){
   var EN=String(apptEN||locEN||''),AR=String(apptAR||locAR||''),AR2=String(locAR||apptAR||''),EN2=String(locEN||apptEN||'');
   var CAN={Riaydh:'Riyadh',Ryiadh:'Riyadh',Riyad:'Riyadh',Mecca:'Makkah',Makka:'Makkah',Madina:'Madinah',Medina:'Madinah',Jazan:'Jizan','Al Khobar':'Khobar',Hofuf:'Al Hassa',Hufouf:'Al Hassa',Hofouf:'Al Hassa',Ahsa:'Al Hassa'};
   var CITIES=['Khamis Mushait','Al Khobar','Al Hassa','Jeddah','Makkah','Mecca','Makka','Madinah','Madina','Medina','Riyadh','Riaydh','Ryiadh','Riyad','Dammam','Khobar','Qassim','Buraydah','Hufouf','Hofuf','Hofouf','Ahsa','Abha','Jizan','Jazan','Tabuk','Taif','Yanbu','Jubail','Hail','Najran','Khamis'];
   var ARC=[['مكة المكرمة','Makkah'],['المدينة المنورة','Madinah'],['خميس مشيط','Khamis Mushait'],['جدة','Jeddah'],['جده','Jeddah'],['مكة','Makkah'],['مكه','Makkah'],['المدينه','Madinah'],['الرياض','Riyadh'],['الدمام','Dammam'],['الخبر','Khobar'],['القصيم','Qassim'],['بريدة','Buraydah'],['الأحساء','Al Hassa'],['الاحساء','Al Hassa'],['الهفوف','Al Hassa'],['أبها','Abha'],['ابها','Abha'],['جازان','Jizan'],['جيزان','Jizan'],['تبوك','Tabuk'],['الطائف','Taif'],['ينبع','Yanbu'],['الجبيل','Jubail'],['حائل','Hail'],['نجران','Najran']];
   var can=function(x){x=String(x||'').trim();return CAN[x]||x;};
   var arCity=function(x){x=String(x||'').trim();for(var i=0;i<ARC.length;i++){if(x===ARC[i][0]||x.indexOf(ARC[i][0])===0)return ARC[i][1];}return '';};
-  var isLatin=function(x){return x&&!/[\u0600-\u06FF]/.test(x);};
-  var cityClean=String(city||'').replace(/\s+/g,' ').trim();
-  var pc='',pb='';
+  var isLatin=function(x){return x&&!/[؀-ۿ]/.test(x);};
+  var cityClean=String(city||'').replace(/\s+/g,' ').trim(),pc='',pb='';
   for(var ci=0;ci<CITIES.length;ci++){var cc=CITIES[ci];if(cityClean.toLowerCase().indexOf(cc.toLowerCase())===0&&(cityClean.length===cc.length||/[\s\-–]/.test(cityClean.charAt(cc.length)))){pc=can(cc);pb=cityClean.slice(cc.length).replace(/^[\s\-–]+/,'').trim();break;}}
-  if(!pc&&cityClean){var ac=arCity(cityClean);if(ac&&ac.length){pc=ac;}else pb=cityClean;}
-  var bm=EN.match(/Branch\s*:\s*([^\n]+)/i)||AR.match(/الفرع\s*[:：]\s*([^\n]+)/);
-  var mBranch=bm?bm[1].trim():'';
+  if(!pc&&cityClean){var ac=arCity(cityClean);if(ac)pc=ac;else pb=cityClean;}
+  var bm=EN.match(/Branch\s*:\s*([^\n]+)/i)||AR.match(/الفرع\s*[:：]\s*([^\n]+)/),mBranch=bm?bm[1].trim():'';
   var cm=EN.match(/City\s*:\s*([^\n]+)/i)||AR.match(/المدينة\s*[:：]\s*([^\n]+)/);
   var mCity=cm?(isLatin(cm[1].trim())?can(cm[1].trim()):(arCity(cm[1])||cm[1].trim())):'';
-  var enP='',enPC='';
-  var pm=EN2.match(/Petromin[^(\n]*\(\s*([^)\n]+?)\s*\)/i)||EN.match(/Petromin[^(\n]*\(\s*([^)\n]+?)\s*\)/i);
-  if(pm){var inner=pm[1];var ix=inner.search(/\s*,\s*|\s+[-–]\s+/);if(ix>-1){enPC=inner.slice(0,ix).trim();enP=inner.slice(ix).replace(/^\s*[,\-–]\s*/,'').trim();}else{enPC=inner.trim();}}
-  var scB='';
-  var se=EN2.match(/service\s*cent(?:er|re)\s*[-–]\s*([^\n]+?)\s*(?:https?:|\n|$)/i);
+  var enP='',enPC='',pm=EN2.match(/Petromin[^(\n]*\(\s*([^)\n]+?)\s*\)/i)||EN.match(/Petromin[^(\n]*\(\s*([^)\n]+?)\s*\)/i);
+  if(pm){var inner=pm[1],ix=inner.search(/\s*,\s*|\s+[-–]\s+/);if(ix>-1){enPC=inner.slice(0,ix).trim();enP=inner.slice(ix).replace(/^\s*[,\-–]\s*/,'').trim();}else enPC=inner.trim();}
+  var scB='',se=EN2.match(/service\s*cent(?:er|re)\s*[-–]\s*([^\n]+?)\s*(?:https?:|\n|$)/i);
   if(se){var sp=se[1].split(',').map(function(x){return x.trim();}).filter(Boolean);if(sp.length>1)scB=sp[sp.length-1];}
   if(!scB){var sa=AR2.match(/مركز\s*خدمة\s*[-–]\s*([^\n]+)/);if(sa){var spa=sa[1].split('،').map(function(x){return x.trim();}).filter(Boolean);if(spa.length>1)scB=spa[spa.length-1];}}
   var cityF=pc||mCity||(enPC?can(enPC.replace(/\s+Al\s+Mukar+amah$/i,'')):'');
   var mbIsCity=mBranch&&(arCity(mBranch)===cityF||can(mBranch).toLowerCase()===String(cityF).toLowerCase());
   var enIsCity=enP&&(can(enP).toLowerCase()===String(cityF).toLowerCase());
-  var branch=pb||(enP&&!enIsCity?enP:'')||(isLatin(mBranch)&&!mbIsCity?mBranch:'')||(isLatin(scB)?scB:'')||(enPC&&!pc&&!mCity?'':'')||(!mbIsCity&&isLatin(mBranch)?mBranch:'');
+  var branch=pb||(enP&&!enIsCity?enP:'')||(isLatin(mBranch)&&!mbIsCity?mBranch:'')||(isLatin(scB)?scB:'')||(!mbIsCity&&isLatin(mBranch)?mBranch:'');
   if(!branch&&!enP&&!pb){var arB=scB||(!mbIsCity?mBranch:'');if(arB&&!cityF)branch=arB;}
   if(!branch){branch=cityF;cityF='';}
-  var title=branch||'—',sub=cityF&&branch&&cityF.toLowerCase()!==branch.toLowerCase()?cityF:'';
-  var M={appt:{ar:apptAR,en:apptEN},loc:{ar:locAR,en:locEN}};
-  var t0=(apptAR||apptEN)?'appt':'loc',l0=M[t0].ar?'ar':'en';
-  var data=' data-appt-ar="'+esc(apptAR)+'" data-appt-en="'+esc(apptEN)+'" data-loc-ar="'+esc(locAR)+'" data-loc-en="'+esc(locEN)+'"';
-  var tab=function(grp,v,lbl,on,dis){return '<span class="smsT" data-g="'+grp+'" data-v="'+v+'" style="display:inline-block;padding:7px 0;margin-right:14px;font-size:11px;font-weight:600;cursor:'+(dis?'default':'pointer')+';color:'+(on?c:(dis?'#E6DED5':'#8A7F74'))+';box-shadow:'+(on?'inset 0 -2px '+c:'none')+'">'+lbl+'</span>';};
-  var txt=M[t0][l0]||'';var ar=l0==='ar';
-  return '<div class="ref-card sms-card" id="smsc_'+id+'" data-city="'+esc(sub||(!sub&&title!=='—'?title:''))+'" data-hasbranch="'+(sub?'1':'0')+'" data-c="'+c+'" data-t="'+t0+'" data-l="'+l0+'"'+data+' style="padding:0;overflow:hidden;text-align:left;background:#FEFEFE;border:1px solid #EEE8E1;border-radius:12px;display:flex;flex-direction:column">'
-    +'<div style="padding:10px 14px;border-bottom:1px solid #F4EDE6"><b style="font-size:13px;font-weight:700;color:'+c+'">'+esc(title)+'</b>'+(sub?'<span style="color:#6F665D;font-size:11px;font-weight:500;margin-left:6px">'+esc(sub)+'</span>':'')+'</div>'
-    +'<div style="display:flex;justify-content:space-between;padding:0 14px;border-bottom:1px solid #F4EDE6">'
-    +'<div>'+tab('t','appt','Appointment',t0==='appt',!(apptAR||apptEN))+tab('t','loc','Location',t0==='loc',!(locAR||locEN))+'</div>'
-    +'<div>'+tab('l','ar','AR',l0==='ar',false)+tab('l','en','EN',l0==='en',false).replace('margin-right:14px','margin-right:0')+'</div></div>'
-    +'<div class="smsX" style="padding:10px 14px;font-size:12px;line-height:1.85;color:#4A423B;white-space:pre-wrap;flex:1;direction:'+(ar?'rtl':'ltr')+';text-align:'+(ar?'right':'left')+'">'+esc(txt)+'</div>'
-    +'<div style="display:flex;justify-content:flex-end;padding:0 14px 10px"><button class="smsCp" style="border:1px solid #EEE8E1;background:#FEFEFE;border-radius:6px;padding:3px 12px;color:'+c+';font-size:11px;font-weight:600;cursor:pointer">Copy</button></div></div>';
+  return {title:branch||'—',sub:cityF&&branch&&cityF.toLowerCase()!==branch.toLowerCase()?cityF:''};
 }
-
+/* one SMS card: title, Appointment/Location + AR/EN switches, message, copy */
+function smsCardHTML(city,apptAR,apptEN,locAR,locEN,id){
+  if(!apptAR&&!apptEN&&!locAR&&!locEN)return'';
+  apptAR=smsNorm(apptAR);apptEN=smsNorm(apptEN);locAR=smsNorm(locAR);locEN=smsNorm(locEN);
+  var T=smsCardTitle(city,apptAR,apptEN,locAR,locEN);
+  var hasA=!!(apptAR||apptEN),hasL=!!(locAR||locEN);
+  var M={appt:{ar:apptAR,en:apptEN},loc:{ar:locAR,en:locEN}};
+  var t0=hasA?'appt':'loc',l0=M[t0].ar?'ar':'en',ar=l0==='ar';
+  var pill=function(g,v,lbl,on){return '<span class="s-t'+(on?' on':'')+'" data-g="'+g+'" data-v="'+v+'">'+lbl+'</span>';};
+  var types=(hasA?pill('t','appt','Appointment',t0==='appt'):'')+(hasL?pill('t','loc','Location',t0==='loc'):'');
+  var hasAr=!!(apptAR||locAR),hasEn=!!(apptEN||locEN);
+  var langs=(hasAr?pill('l','ar','AR',l0==='ar'):'')+(hasEn?pill('l','en','EN',l0==='en'):'');
+  return '<div class="s-card" id="smsc_'+id+'" data-t="'+t0+'" data-l="'+l0+'" data-appt-ar="'+smsEsc(apptAR)+'" data-appt-en="'+smsEsc(apptEN)+'" data-loc-ar="'+smsEsc(locAR)+'" data-loc-en="'+smsEsc(locEN)+'">'
+    +'<div class="s-hd"><span class="s-ttl"><b>'+smsEsc(T.title)+'</b>'+(T.sub?'<span>'+smsEsc(T.sub)+'</span>':'')+'</span><button type="button" class="s-cpy" title="Copy" aria-label="Copy message">'+SMS_CP_SVG+'</button></div>'
+    +'<div class="s-sw"><div class="s-seg">'+types+'</div><div class="s-seg">'+langs+'</div></div>'
+    +'<div class="s-msg" dir="'+(ar?'rtl':'ltr')+'">'+smsMsgHTML(M[t0][l0])+'</div></div>';
+}
+/* Foton / Electromin tabs still build their old message boxes: turn them into SMS cards before they are shown */
+function smsFromLegacy(html){
+  var w=document.createElement('div');w.innerHTML=html;
+  [].slice.call(w.querySelectorAll('.ref-card')).forEach(function(card,ci){
+    var boxes=card.querySelectorAll('[id^="sms_"]');if(!boxes.length)return;
+    var M={appt:{},loc:{}},mode='';
+    [].slice.call(card.querySelectorAll('*')).forEach(function(el){
+      if(el.children.length===0){var tx=(el.textContent||'').trim();if(/appointment/i.test(tx)&&tx.length<40)mode='appt';else if(/location/i.test(tx)&&tx.length<40)mode='loc';}
+      if(el.id&&el.id.indexOf('sms_')===0){var txt=el.textContent||'',isAR=/[؀-ۿ]/.test(txt.slice(0,40));
+        var m=mode||(/loc/i.test(el.id)?'loc':(/appt|a_/i.test(el.id)?'appt':'loc'));M[m][isAR?'ar':'en']=txt;}
+    });
+    var head=card.firstElementChild,title=head&&!head.querySelector('[id^="sms_"]')?(head.textContent||'').replace(/\s+/g,' ').trim():'';
+    if(/^(ar|en|appointment sms|location sms)$/i.test(title))title='';
+    var h=smsCardHTML(title,M.appt.ar||'',M.appt.en||'',M.loc.ar||'',M.loc.en||'','l'+ci);if(!h)return;
+    var d=document.createElement('div');d.innerHTML=h;
+    if(card.parentNode&&card.parentNode.classList.contains('ref-cards-grid'))card.parentNode.classList.add('s-grid');
+    card.parentNode.replaceChild(d.firstChild,card);
+  });
+  return w.innerHTML;
+}
 document.addEventListener('click',function(ev){
-  var t=ev.target.closest&&ev.target.closest('.smsT');var cp=ev.target.closest&&ev.target.closest('.smsCp');
-  var card=(t||cp)&&(t||cp).closest('.sms-card');if(!card)return;
-  var c=card.getAttribute('data-c');
-  if(t){var g=t.getAttribute('data-g'),v=t.getAttribute('data-v');
+  var el=ev.target.closest&&ev.target.closest('.s-t,.s-cpy');if(!el)return;
+  var card=el.closest('.s-card');if(!card)return;
+  var msg=card.querySelector('.s-msg');
+  if(el.classList.contains('s-t')){
+    var g=el.getAttribute('data-g'),v=el.getAttribute('data-v');
     var tt=g==='t'?v:card.getAttribute('data-t'),ll=g==='l'?v:card.getAttribute('data-l');
-    if(!card.getAttribute('data-'+tt+'-'+ll)&&g==='t'){ll=card.getAttribute('data-'+tt+'-ar')?'ar':'en';}
+    if(!card.getAttribute('data-'+tt+'-'+ll))ll=card.getAttribute('data-'+tt+'-ar')?'ar':'en';
     if(!card.getAttribute('data-'+tt+'-'+ll))return;
     card.setAttribute('data-t',tt);card.setAttribute('data-l',ll);
-    card.querySelectorAll('.smsT').forEach(function(x){var on=(x.getAttribute('data-g')==='t'?tt:ll)===x.getAttribute('data-v');x.style.color=on?c:'#8A7F74';x.style.boxShadow=on?'inset 0 -2px '+c:'none';});
-    var box=card.querySelector('.smsX');box.textContent=card.getAttribute('data-'+tt+'-'+ll);var ar=ll==='ar';box.style.direction=ar?'rtl':'ltr';box.style.textAlign=ar?'right':'left';return;}
-  if(cp){var v2=card.querySelector('.smsX').textContent;var done=function(){cp.textContent='Copied ✓';setTimeout(function(){cp.textContent='Copy';},1200);};
-    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(v2).then(done,done);else{var ta=document.createElement('textarea');ta.value=v2;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}ta.remove();done();}}
+    [].forEach.call(card.querySelectorAll('.s-t'),function(x){x.classList.toggle('on',(x.getAttribute('data-g')==='t'?tt:ll)===x.getAttribute('data-v'));});
+    msg.innerHTML=smsMsgHTML(card.getAttribute('data-'+tt+'-'+ll));msg.setAttribute('dir',ll==='ar'?'rtl':'ltr');return;
+  }
+  var text=card.getAttribute('data-'+card.getAttribute('data-t')+'-'+card.getAttribute('data-l'))||msg.textContent;
+  var done=function(){el.innerHTML=SMS_OK_SVG;el.classList.add('ok');setTimeout(function(){el.innerHTML=SMS_CP_SVG;el.classList.remove('ok');},1200);};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(done,done);
+  else{var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}ta.remove();done();}
 });
+
 function sheetPersonLabel(h){var _h=String(h||'').replace(/\s*(name|#)\s*$/i,'').trim();var _ab={BM:'Branch Manager',AM:'Area Manager',RM:'Regional Manager',SM:'Station Manager',GM:'General Manager'};if(_ab[_h.toUpperCase()])return _ab[_h.toUpperCase()];if(/advisor/i.test(String(h||'')))return'Branch Manager';h=String(h||'').replace(/\s*(name|#)\s*$/i,'').replace(/managers\b/i,'Manager').replace(/\s+/g,' ').trim();return h||'Branch Manager';}
 const NISSAN_AM_FALLBACK={West:{name:'Ahmed Ateeq',phone:'545733753',email:'ahmed.ateeq@petromin.com'},South:{name:'Ahmed Ateeq',phone:'545733753',email:'ahmed.ateeq@petromin.com'},Central:{name:'Simon White',phone:'',email:'simon.white@petromin.com'},North:{name:'Simon White',phone:'',email:'simon.white@petromin.com'},East:{name:'Zuhair Bakhurji',phone:'',email:'z.bakhurji@petromin.com'}};
 window.__NISSAN_RM=window.__NISSAN_RM||null;
@@ -6951,8 +6969,7 @@ function smsRegion(vals,title,o){
 }
 function renderUnifiedSMSTab(arr, brand){
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#6F665D">No data</div>';
-  var __c=(window.__smsOrig||smsCardHTML);
-  var card=function(t,aAR,aEN,lAR,lEN,id,c){ var h=__c(t,aAR,aEN,lAR,lEN,id,c); if(!aAR&&!aEN) h=h.replace(/<span class="smsT" data-g="t" data-v="appt"[^>]*>Appointment<\/span>/,''); if(!lAR&&!lEN) h=h.replace(/<span class="smsT" data-g="t" data-v="loc"[^>]*>Location<\/span>/,''); return h; };
+  var card=function(t,aAR,aEN,lAR,lEN,id){ return smsCardHTML(t,aAR,aEN,lAR,lEN,id); };
   var color='var(--brand,#A07E62)';
   var S={svc:[],show:[],pac:[]}, mode='svc', n=0;
   var heads=Object.keys(arr[0]||{});
@@ -6983,7 +7000,7 @@ function renderUnifiedSMSTab(arr, brand){
         +'<div onclick="toggleRegion(\''+id+'\')" style="display:flex;align-items:center;justify-content:space-between;padding:9px 14px;border-left:4px solid '+color+';border-radius:0 8px 8px 0;cursor:pointer;margin-bottom:10px">'
         +'<span style="font-size:12px;font-weight:700;color:'+color+'">'+(r==='Other'?'Other':r)+' <span style="color:#6F665D;font-weight:500">· '+list.length+'</span></span>'
         +'<span id="ico_'+id+'" style="color:'+color+'">&#9660;</span></div>'
-        +'<div id="'+id+'"><div class="ref-cards-grid">'+list.map(function(x){return x.h;}).join('')+'</div></div></div>';
+        +'<div id="'+id+'"><div class="ref-cards-grid s-grid">'+list.map(function(x){return x.h;}).join('')+'</div></div></div>';
     }).join('');
   }
   var tabs=groups.length>1?('<div class="sms-sub">'
@@ -7578,7 +7595,7 @@ async function renderRefBrand(brand,tabIdx){
         container.innerHTML=__fuelEmails+renderPetrominLocationListTab(__fuel,'fuel','#3A6048'); }
       else if(t==='PAC'){ var __st=await fetchCSVRaw(cfg.id,'EV Charging Stations'); container.innerHTML=renderElectrominPACTab(arr,__st); }
       else if(t==='FAQ') container.innerHTML=renderElectrominFAQTab(arr);
-      else if(t==='SMS') container.innerHTML=noAnsHeader('electromin')+renderElectrominSMSTab(arr);
+      else if(t==='SMS') container.innerHTML=noAnsHeader('electromin')+smsFromLegacy(renderElectrominSMSTab(arr));
       else container.innerHTML='<div style="text-align:center;padding:24px;color:#6F665D">No renderer for '+t+'</div>';
     }catch(e){
       container.innerHTML='<div style="color:#A07E62;padding:24px;text-align:center;background:#FEFEFE;border-radius:12px"><div style="font-size:16px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#6F665D;margin-top:4px">'+e.message+'</div></div>';
@@ -7605,7 +7622,7 @@ async function renderRefBrand(brand,tabIdx){
       if(t==='Instruction') container.innerHTML=renderFotonInstructionTab(arr);
       else if(t==='Showrooms') container.innerHTML=renderFotonShowroomTab(arr);
       else if(t==='PMS') container.innerHTML=renderFotonPMSTab(arr);
-      else if(t==='Location SMS') container.innerHTML=renderFotonSMSLocationTab(arr);
+      else if(t==='Location SMS') container.innerHTML=smsFromLegacy(renderFotonSMSLocationTab(arr));
       else container.innerHTML='<div style="text-align:center;padding:24px;color:#6F665D">No renderer for '+t+'</div>';
     }catch(e){
       container.innerHTML='<div style="color:#A07E62;padding:24px;text-align:center;background:#FEFEFE;border-radius:12px"><div style="font-size:16px;margin-bottom:8px">⚠️</div><div style="font-weight:700">Failed to load</div><div style="font-size:12px;color:#6F665D;margin-top:4px">'+e.message+'</div></div>';
@@ -9891,7 +9908,7 @@ window.addEventListener('DOMContentLoaded', () => {
   function fix(tc){
     var sub=tc.previousElementSibling; if(!sub||!sub.classList||!sub.classList.contains('ref-sub-tabs')) return;
     var el=tc.firstElementChild; if(!el||!el.offsetParent) return;
-    if(tc.closest('#page4')){ var flush=!!el.querySelector('.rc-box,.br-md,.x51,.sms-card');
+    if(tc.closest('#page4')){ var flush=!!el.querySelector('.rc-box,.br-md,.x51,.s-card');
       el.classList.toggle('x-card',!flush); el.style.setProperty('padding-left',flush?'0':'22px','important'); el.style.setProperty('padding-right',flush?'0':'22px','important');
       if(flush){ el.style.setProperty('padding-top','0','important'); el.style.setProperty('padding-bottom','0','important'); return; } }
     // 1px padding while measuring stops child margins from collapsing through, so they are counted
@@ -9940,6 +9957,22 @@ window.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('visibilitychange',function(){if(!document.hidden&&pending){pending=false;schedule();}});}
   return function(fn){fns.push(fn);if(document.readyState!=='loading')start();else document.addEventListener('DOMContentLoaded',start);};
 })();</script>
+<script id="render-pipeline">
+/* One ordered post-render step: every layout helper below registers here instead of watching the page on its own.
+   Big redraws are finished before the browser paints; small changes are batched into the next frame. */
+window.__pipe=(function(){
+  var fns=[],tail=[],pend=0,obs=null,busy=false;
+  function runAll(){ if(busy) return; busy=true; var all=fns.concat(tail); for(var i=0;i<all.length;i++){ try{ all[i](); }catch(e){ console.warn('pipe',e); } } busy=false; if(obs) obs.takeRecords(); }
+  function big(ms){ for(var i=0;i<ms.length;i++){ var a=ms[i].addedNodes; for(var j=0;j<a.length;j++){ var n=a[j]; if(n.nodeType===1&&n.querySelectorAll&&n.querySelectorAll('*').length>=5) return true; } } return false; }
+  function start(){ if(obs) return; obs=new MutationObserver(function(ms){ if(busy) return; if(big(ms)){ if(pend){cancelAnimationFrame(pend);pend=0;} runAll(); return; } if(!pend) pend=requestAnimationFrame(function(){ pend=0; runAll(); }); });
+    obs.observe(document.body,{childList:true,subtree:true}); }
+  /* start after the page's other watchers exist, so this step always runs last (same order as before) */
+  function boot(){ setTimeout(function(){ start(); runAll(); },0); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
+  return function(fn,last){ if(last){ tail.push(fn); fns.splice(fns.length,0); } else fns.push(fn); };
+})();
+</script>
+
 <script>(function(){
   var CODE_RE=/^\s*\d{2,10}\s*[-–—]\s*\S/;
   function deIcon(card){if(!card||!card.querySelector||!card.querySelector('.ic-done[data-emo]'))return card;var c=card.cloneNode(true);[].slice.call(c.querySelectorAll('.ic-done[data-emo]')).forEach(function(sp){sp.parentNode.replaceChild(document.createTextNode(sp.getAttribute('data-emo')+' '),sp);});return c;}
@@ -10310,14 +10343,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(v).then(done,done);
     else{var ta=document.createElement('textarea');ta.value=v;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(x){}document.body.removeChild(ta);done();}
   },true);
-  function smsCityOnly(){
-    [].slice.call(document.querySelectorAll('.ref-cards-grid')).forEach(function(g){
-      var cards=[].slice.call(g.querySelectorAll('.sms-card[data-hasbranch="1"]:not([data-co])'));if(!cards.length)return;
-      var all=[].slice.call(g.querySelectorAll('.sms-card'));var cnt={};all.forEach(function(c){var k=(c.getAttribute('data-city')||'').toLowerCase();if(k)cnt[k]=(cnt[k]||0)+1;});
-      cards.forEach(function(c){c.setAttribute('data-co','1');var city=c.getAttribute('data-city')||'';if(cnt[city.toLowerCase()]===1){var h=c.firstElementChild;var b=h&&h.querySelector('b');var sp=b&&b.nextElementSibling;if(b){b.textContent=city;}if(sp)sp.remove();}});
-    });
-  }
-  function run(){try{smsCityOnly();}catch(e){}try{styleEmailCards();}catch(e){console.warn('email style',e);}try{iconize();}catch(e){console.warn('icons',e);}try{iconizeInfo();}catch(e){console.warn('info icons',e);}try{locButtons();}catch(e){console.warn('loc btn',e);}}
+  function run(){try{styleEmailCards();}catch(e){console.warn('email style',e);}try{iconize();}catch(e){console.warn('icons',e);}try{iconizeInfo();}catch(e){console.warn('info icons',e);}try{locButtons();}catch(e){console.warn('loc btn',e);}}
   window.__iconRun=run;
   window.__watchDom(run,150);
   if(document.readyState!=='loading')run();else document.addEventListener('DOMContentLoaded',run);
@@ -10333,23 +10359,6 @@ window.addEventListener('DOMContentLoaded', () => {
     else if(rc)rc.removeAttribute('data-brand-color');
     [].slice.call(document.querySelectorAll('.ref-brand-section[data-brand-color],#refContent[data-brand-color]')).forEach(function(sec){
       var c=sec.getAttribute('data-brand-color');if(!/^#[0-9a-fA-F]{6}$/.test(c))return;
-      if(typeof smsCardHTML==='function'){
-        [].slice.call(sec.querySelectorAll('.ref-card:not(.sms-card)')).forEach(function(card,ci){
-          var boxes=[].slice.call(card.querySelectorAll('[id^="sms_"]'));if(!boxes.length)return;
-          var M={appt:{},loc:{}},mode='';
-          var walker=[].slice.call(card.querySelectorAll('*'));
-          walker.forEach(function(el){
-            if(el.children.length===0){var tx=(el.textContent||'').trim();
-              if(/appointment/i.test(tx)&&tx.length<40)mode='appt';else if(/location/i.test(tx)&&tx.length<40)mode='loc';}
-            if(el.id&&el.id.indexOf('sms_')===0){var txt=el.textContent||'';var isAR=/[\u0600-\u06FF]/.test(txt.slice(0,40));
-              var m=mode||(/loc/i.test(el.id)?'loc':(/appt|a_/i.test(el.id)?'appt':'loc'));M[m][isAR?'ar':'en']=txt;}
-          });
-          var head=card.firstElementChild;var title=head&&!head.querySelector('[id^="sms_"]')?(head.textContent||'').replace(/\s+/g,' ').trim():'';
-          if(/^(ar|en|appointment sms|location sms)$/i.test(title))title='';
-          var html=smsCardHTML(title,M.appt.ar||'',M.appt.en||'',M.loc.ar||'',M.loc.en||'','x'+Date.now()+ci,c);
-          if(!html)return;var w=document.createElement('div');w.innerHTML=html;card.parentNode.replaceChild(w.firstChild,card);
-        });
-      }
     });
   }
   window.__watchDom(pass,160);
@@ -10384,7 +10393,7 @@ window.addEventListener('DOMContentLoaded', () => {
   
   function recolour(root,col){ if(!root||!col) return; var T=h2rgb(col);
     [root].concat([].slice.call(root.querySelectorAll('*'))).forEach(function(e){
-      if(e.closest&&e.closest('.rc-box,.sms-card,.sms-sub')) return;
+      if(e.closest&&e.closest('.rc-box,.s-card,.sms-sub')) return;
       var st=e.getAttribute&&e.getAttribute('style'); if(st){var n=fixStr(st,T); if(n!==st) e.setAttribute('style',n);}
       ['fill','stroke','color'].forEach(function(a){var v=e.getAttribute&&e.getAttribute(a); if(v&&v.charAt(0)==='#'){var n=fixVal(v,T,'text'); if(n!==v) e.setAttribute(a,n);}});
     });
@@ -10392,7 +10401,7 @@ window.addEventListener('DOMContentLoaded', () => {
   var SKIP={TD:1,TH:1,TR:1,THEAD:1,TBODY:1,TABLE:1,INPUT:1,SELECT:1,TEXTAREA:1,IMG:1,svg:1,SVG:1,path:1};
   function unifyShades(sec,col){ if(!col) return; var T=h2rgb(col); var H='rgb('+T.map(function(v){return Math.round(v*0.08+255*0.92);}).join(',')+')';
     [].slice.call(sec.querySelectorAll('*')).forEach(function(el){
-      if(SKIP[el.tagName]||el.closest('.ref-email-tag,.ref-sub-tab,.piTab,.br-it,.br-rg,.sms-card,.rc-box,.ref-brand-band,input')) return;
+      if(SKIP[el.tagName]||el.closest('.ref-email-tag,.ref-sub-tab,.piTab,.br-it,.br-rg,.s-card,.rc-box,.ref-brand-band,input')) return;
       var bg=getComputedStyle(el).backgroundColor; var m=bg.match(/rgba?\(([\d.]+),\s*([\d.]+),\s*([\d.]+)(?:,\s*([\d.]+))?\)/); if(!m) return;
       var a=m[4]===undefined?1:+m[4]; if(a<0.02) return;
       var r=+m[1]*a+255*(1-a), g=+m[2]*a+255*(1-a), b=+m[3]*a+255*(1-a); var l=(Math.max(r,g,b)+Math.min(r,g,b))/510;
@@ -10454,7 +10463,6 @@ window.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('#refContent .ref-brand-section').forEach(function(sec){
       var c=sec.getAttribute('data-brand-color'); try{convertEmailCards(sec,c||'#A07E62');}catch(e){} window.__DEEP_TEXT=(String(c).toUpperCase()==='#A07E62'); if(c){ var _T=h2rgb(c); window.__TT=window.__DEEP_TEXT?h2rgb('#A07E62'):_T; } if(c) { sec.style.setProperty('--tt',hex(window.__TT)); [].forEach.call(sec.querySelectorAll('tbody td:first-child'),function(td){ td.classList.toggle('td-code',/^\s*\d{2,6}\s*$/.test(td.textContent)); }); }
       dedupeHeads(sec);
-      [].forEach.call(sec.querySelectorAll('.sms-card:not(.sms-ready)'),function(k){k.classList.add('sms-ready');});
     });
     window.__TT=null; window.__DEEP_TEXT=false;
     var cp=document.getElementById('refCasePanel'); if(cp&&window.CASE_COLOR) recolour(cp,window.CASE_COLOR);
@@ -11311,7 +11319,7 @@ window.addEventListener('hashchange',aimOpenHash);
         c.onclick=function(e){ e.stopPropagation(); var v=b.textContent.replace(/\s/g,''); try{navigator.clipboard.writeText(v);}catch(x){} c.innerHTML='✓'; setTimeout(function(){c.innerHTML=CP;},1200); }; r.appendChild(c); }
     });
   }
-  new MutationObserver(function(){ clearTimeout(window.__xct); window.__xct=setTimeout(run,100); }).observe(document.body,{childList:true,subtree:true});
+  window.__pipe(run);
 })();
 </script>
 
@@ -11680,7 +11688,7 @@ function v22Plain(t,body){return body;}
     var root=document.getElementById('mainContent'); if(!root) return;
     [].forEach.call(root.querySelectorAll('b,strong,h2,h3,h4,th,[style*="font-weight:7"],[style*="font-weight:8"],[style*="font-weight: 7"],[style*="font-weight: 8"],.bd-title,.bd-nm'),function(el){
       if(el.getAttribute('data-v22t')) return;
-      if(el.closest('.v22-t,button,a,.v7-zone,.ref-sub-tab')) return;
+      if(el.closest('.v22-t,button,a,.v7-zone,.ref-sub-tab,.s-card')) return;
       el.setAttribute('data-v22t','1');
       var cs=getComputedStyle(el);
       if(cs.color===DARK && parseInt(cs.fontWeight,10)>=700){ el.style.setProperty('color','#5A5149','important'); el.style.setProperty('font-weight','600','important'); }
@@ -12211,7 +12219,7 @@ html body #page4 .x-unwrap>*:last-child{margin-bottom:0}
 </style>
 <script id="v44-unwrap">
 (function(){
-  var EXC='.x51,.x51-box,.rc-box,.rc-wrap,.br-md,.bd-box,.lk-wrap,.st-wt,.pi-sec,.ref-email-card,.sms-card,.bdx-c,table,.v22-tabs,.ref-sub-tabs,.td-top';
+  var EXC='.x51,.x51-box,.rc-box,.rc-wrap,.br-md,.bd-box,.lk-wrap,.st-wt,.pi-sec,.ref-email-card,.s-card,.bdx-c,table,.v22-tabs,.ref-sub-tabs,.td-top';
   function white(c){var m=(c.backgroundColor||'').match(/\d+(\.\d+)?/g);if(!m)return false;var a=m.length>3?+m[3]:1;return a>0.9&&+m[0]>=250&&+m[1]>=250&&+m[2]>=250;}
   function boxed(el){var c=getComputedStyle(el);return parseFloat(c.borderTopWidth)>0&&parseFloat(c.borderLeftWidth)>0&&parseFloat(c.borderBottomWidth)>0;}
   function score(el){var n=0;[].forEach.call(el.children,function(c){if(boxed(c)||c.matches(EXC))n++;else [].forEach.call(c.children,function(g){if(boxed(g)||g.matches(EXC))n++;});});return n;}
@@ -12401,20 +12409,6 @@ html body #page4 .loc-cp,html body #page4 .bd-cp[data-cp^="http"],html body #pag
 html body #page4 .rc-box .em-copy:not(.em-wide)>span{display:none!important}
 html body .xan-c{margin-bottom:16px!important}
 /* SMS cards (all brands): title outside, white box, beige cards, small pill toggles */
-html body #page4 div:has(>.ref-cards-grid>.sms-card)>div:first-child{background:transparent!important;border:0!important;padding:0 41px!important;margin:0 0 10px!important}
-html body #page4 div:has(>.ref-cards-grid>.sms-card)>div:first-child *{color:#4A423B!important;font-size:14px!important;font-weight:600!important}
-html body #page4 div:has(>.ref-cards-grid>.sms-card)>div:first-child .ic-done{display:none!important}
-html body #page4 .ref-cards-grid:has(>.sms-card){background:#FEFEFE;border:1px solid #E6DED5;border-radius:12px;padding:16px 22px!important;margin:0!important}
-html body #page4 #refContent .ref-cards-grid>.ref-card.sms-card{background:#FAF8F5!important;border:0!important;border-radius:10px!important;box-shadow:none!important}
-html body #page4 .sms-card>div:first-child{border:0!important}
-html body #page4 .sms-card>div:first-child b{color:#4A423B!important;font-weight:600!important}
-html body #page4 .sms-card>div:first-child span{color:#8A7F74!important;font-size:12px!important}
-html body #page4 .sms-card>div:nth-child(2){border:0!important;align-items:center}
-html body #page4 .sms-card>div:nth-child(2)>div{display:inline-flex;background:#EEE8E1;border-radius:8px;padding:2px;gap:2px}
-html body #page4 .sms-card .smsT{margin:0!important;box-shadow:none!important;color:#6F665D!important;font-weight:500!important}
-html body #page4 .sms-card .smsT[style*="inset"]{background:#FEFEFE!important;color:#4A423B!important;font-weight:600!important}
-html body #page4 .sms-card>div:last-child{justify-content:flex-start!important}
-html body #page4 .sms-card .smsCp{border:1px solid #E6DED5!important;background:#FEFEFE!important}
 /* email boxes / any brand block: no extra side inset, 16px between blocks */
 html body #page4 .ref-brand-section *:has(> .rc-box):not(.rc-wrap){padding:0!important}
 html body #page4 .ref-brand-section .rc-box,html body #page4 .ref-brand-section .rc-wrap{margin:0 0 16px!important}
@@ -12498,11 +12492,6 @@ html body #page4 .x51-row{padding:9px 18px}
 html body #page4 .x51-lb{font-size:12px}
 html body #page4 .x51-h{font-size:13px}
 /* SMS: smaller text, long links wrap, no inset when the cards sit inside a region */
-html body #page4 #refContent .ref-cards-grid>.ref-card.sms-card{font-size:12px}
-html body #page4 .sms-card .smsX{overflow-wrap:anywhere;word-break:break-word}
-html body #page4 .sms-card>div:nth-child(2){padding:4px 14px 8px!important}
-html body #page4 [onclick^="toggleRegion"]+div .ref-cards-grid:has(>.sms-card),html body #page4 .na-head~div .ref-cards-grid:has(>.sms-card){border:0!important;border-radius:0!important;padding:12px 0 0!important;background:transparent!important}
-html body #page4 [onclick^="toggleRegion"]+div:has(.sms-card){padding:12px 16px 16px!important}
 html body .lk-wrap.x51-lk{background:transparent!important;border:0!important;padding:0!important;box-shadow:none!important;margin:0!important}
 html body .ref-panel-body:has(>.x51-lk){padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
 html body .x51-lk .lk-ml{font-size:12px;line-height:1.8}
@@ -12706,30 +12695,8 @@ a.u-lkc:hover{border-color:#EBDCCB}
 </style>
 
 <style id="v60-sms">
-html body #page4 .ref-cards-grid:has(>.sms-card){display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}
-html body #page4 .sms-card{position:relative;font-size:12px}
-html body #page4 .sms-card>div:first-child{padding:10px 90px 2px 14px!important}
-html body #page4 .sms-card>div:first-child b{font-size:12.5px!important}
-html body #page4 .sms-card>div:last-child{position:absolute;top:8px;right:10px;padding:0!important}
-html body #page4 .sms-card .smsCp{font-size:11px!important;padding:2px 10px!important;color:var(--u-ac)!important;border-color:var(--u-line)!important}
-html body #page4 .sms-card .smsX{font-size:11.5px!important;line-height:1.85!important;background:var(--u-soft)!important;margin:0 12px 12px!important;padding:10px 12px!important;border-radius:8px}
-.sms-card .u-url{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom;color:var(--u-ac);direction:ltr}
-@media(max-width:1100px){html body #page4 .ref-cards-grid:has(>.sms-card){grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 </style>
-<script id="v60-sms-js">
-/* show long map links on one line (display only — Copy still copies the full text) */
-(function(){
-  function run(){
-    [].forEach.call(document.querySelectorAll('.sms-card .smsX'),function(x){
-      if(x.querySelector('.u-url')) return; var t=x.textContent; if(!/https?:\/\//.test(t)) return;
-      var esc=function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
-      x.innerHTML=esc(t).replace(/(https?:\/\/[^\s]+)/g,'<span class="u-url">$1</span>');
-    });
-  }
-  if(window.__watchDom) window.__watchDom(run,250);
-  document.addEventListener('click',function(e){ if(e.target.closest&&e.target.closest('.smsT')) setTimeout(run,0); });
-})();
-</script>
+
 
 <style id="v60-requests">
 .to-wrap .to-hero{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px;flex-wrap:wrap;padding:12px 16px!important}
@@ -12937,22 +12904,6 @@ html body #page4 #refContent .x51-erow .x51-chip{padding:2px 9px!important}
 #refContent .em-cell .u7-ew{display:flex;align-items:center;gap:10px}
 
 /* ===== SMS cards ===== */
-html body #page4 #refContent .ref-cards-grid:has(>.sms-card){padding:16px!important;gap:16px!important;grid-template-columns:repeat(4,minmax(0,1fr))!important}
-html body #page4 #refContent :has(>.ref-cards-grid>.sms-card){padding:0!important}
-html body #page4 #refContent .ref-cards-grid>.ref-card.sms-card[class]{background:#FAF8F5!important;border:1px solid #EEE8E1!important;border-radius:12px!important;box-shadow:none!important;padding:0!important}
-html body #page4 #refContent .ref-cards-grid>.sms-card[class]>div{background:transparent!important}
-html body #page4 #refContent .ref-cards-grid>.sms-card[class]>div:first-child{background:#FEFEFE!important;box-shadow:inset 0 1px 0 #EEE8E1!important;display:flex!important;align-items:center;justify-content:space-between;padding:9px 14px!important;border:0!important;border-bottom:1px solid #EEE8E1!important;margin-bottom:10px}
-html body #page4 #refContent .ref-cards-grid>.sms-card>div:first-child b{font-size:12.5px!important;font-weight:600!important;color:#4A423B!important}
-html body #page4 #refContent .ref-cards-grid>.sms-card>div:first-child span{font-size:11.5px!important;color:#8A7F74!important;font-weight:400!important}
-html body #page4 #refContent .ref-cards-grid>.sms-card>div:nth-child(2){display:flex!important;justify-content:space-between;align-items:center;padding:0 14px 9px!important;border:0!important;border-bottom:1px solid #EAE3DB!important}
-html body #page4 #refContent .ref-cards-grid>.sms-card>div:nth-child(2)>div{display:inline-flex!important;background:#F1ECE6!important;border-radius:7px!important;padding:2px!important;border:0!important}
-html body #page4 #refContent .ref-cards-grid>.sms-card .smsT{font-size:10.5px!important;font-weight:500!important;padding:2px 8px!important;margin:0!important;border-radius:5px!important;color:#8A7F74!important;box-shadow:none!important;background:transparent!important;border:0!important;line-height:1.4!important}
-html body #page4 #refContent .ref-cards-grid>.sms-card .smsT[style*="inset"]{background:#FEFEFE!important;color:#4A423B!important;box-shadow:0 0 0 1px #E9E2DA!important}
-html body #page4 #refContent .ref-cards-grid>.sms-card .smsX,html body #page4 #refContent .ref-cards-grid>.sms-card .smsX *{font-size:11.5px!important;font-weight:400!important}
-html body #page4 #refContent .ref-cards-grid>.sms-card .smsX{line-height:1.7!important;color:#5A5048!important;padding:10px 14px!important}
-html body #page4 #refContent .ref-cards-grid>.sms-card .smsX .u-url{color:#A07E62!important;word-break:break-all}
-html body #page4 #refContent .ref-cards-grid>.sms-card>div:last-child:has(.smsCp){display:none!important}
-@media(max-width:1300px){html body #page4 #refContent .ref-cards-grid:has(>.sms-card){grid-template-columns:repeat(3,minmax(0,1fr))!important}}
 
 /* ===== Week / month navigators ===== */
 #dow_prev,#dow_next,button[onclick^="stepVacMonth"]{width:34px!important;height:34px!important;border:1px solid #E6DED5!important;border-radius:8px!important;background:#FEFEFE!important;color:#8A7F74!important;font-size:15px!important}
@@ -13097,7 +13048,6 @@ window.RC_POS='over'; window.RC_STYLE='box';
   document.addEventListener('click',function(e){
     var b=e.target.closest&&e.target.closest('.u7-gcp'); if(!b) return;
     e.preventDefault(); e.stopPropagation();
-    if(b.hasAttribute('data-sms')){ var c=b.closest('.sms-card'); var o=c&&c.querySelector('.smsCp'); if(o) o.click(); b.classList.add('ok'); setTimeout(function(){b.classList.remove('ok');},900); return; }
     var scope=b.closest('.x51-erow')||b.closest('.em-cell')||b.parentNode;
     copyText(emailsIn(scope).join('; '),b);
   },true);
@@ -13123,18 +13073,6 @@ window.RC_POS='over'; window.RC_STYLE='box';
       var ts=[].filter.call(g.children,function(t){return t.classList.contains('x51-card');});
       var ar=ts.some(function(t){var l=t.querySelector('.x51-lb');return AR.test(t.textContent.replace(l?l.textContent:'',''));});
       ts.forEach(function(t){ if(ar){t.style.setProperty('direction','rtl','important');t.style.setProperty('text-align','right','important');[].forEach.call(t.querySelectorAll('*'),function(e){var tx=(e.textContent||'').trim(),en=!!tx&&/[A-Za-z]/.test(tx)&&!AR.test(tx);e.style.setProperty('text-align',en?'left':'right','important');if(en)e.style.setProperty('direction','ltr','important');});} });
-    });
-  }
-  function sms(root){
-    [].forEach.call(root.querySelectorAll('.ref-cards-grid>.sms-card'),function(c){
-      var h=c.firstElementChild; if(h&&!h.querySelector('.u7-gcp')){
-        var w=document.createElement('span'); w.style.cssText='display:inline-flex;align-items:baseline;gap:6px;min-width:0';
-        while(h.firstChild) w.appendChild(h.firstChild); h.appendChild(w); var b=gbtn(); b.setAttribute('data-sms','1'); h.appendChild(b);
-      }
-      var x=c.querySelector('.smsX'); if(!x) return;
-      if(x.getAttribute('data-u7')===x.innerHTML) return;
-      var t=x.innerHTML.split('\n').map(function(l){return l.replace(/^\s+|\s+$/g,'');}).join('\n').replace(/\n{3,}/g,'\n\n').replace(/^\n+|\n+$/g,'');
-      x.innerHTML=t; x.setAttribute('data-u7',x.innerHTML);
     });
   }
   function titles(root){
@@ -13168,7 +13106,7 @@ window.RC_POS='over'; window.RC_STYLE='box';
   }
   function run(){
     var r=document.getElementById('refContent');
-    if(r){ emailsTab(r); tire(r); cardsSide(r); sms(r); titles(r); }
+    if(r){ emailsTab(r); tire(r); cardsSide(r); titles(r); }
     team();
   }
   if(window.__watchDom) window.__watchDom(run,300);
@@ -13238,7 +13176,7 @@ html body #page4 .ref-tab-content > .x-card{margin-top:18px!important}
       t.setAttribute('data-cc','1'); t.classList.add('cc-title'); t.style.setProperty('--cc',m[1]); t.style.setProperty('color',m[1],'important'); t.style.setProperty('font-weight','700','important');
     });
   }
-  new MutationObserver(function(){ clearTimeout(window.__cct); window.__cct=setTimeout(run,120); }).observe(document.body,{childList:true,subtree:true});
+  window.__pipe(run);
 })();
 </script>
 <style id="contact-title-colors-css">
@@ -13291,7 +13229,7 @@ html body #page4 .x51-exsec .x51-chip{background:#FEFEFE!important;padding:3px 1
     if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(v).then(done,done);
     else{var t=document.createElement('textarea');t.value=v;document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(x){}t.remove();done();}
   },true);
-  new MutationObserver(function(){if(!window.__batr){window.__batr=requestAnimationFrame(function(){window.__batr=0;run();});}}).observe(document.body,{childList:true,subtree:true});
+  window.__pipe(run);
 })();
 </script>
 <style id="batch-b">
@@ -13326,7 +13264,7 @@ html body #page4 .ref-brand-section div[onclick^="toggleRegion"]:not(.zz) span[i
       var d=t.nextElementSibling; if(d){d.style.setProperty('text-align','center','important');d.style.setProperty('font-size','13px','important');d.style.setProperty('color','#6F665D','important');d.style.setProperty('line-height','1.9','important');}
     });
   }
-  new MutationObserver(function(){if(!window.__bstr){window.__bstr=requestAnimationFrame(function(){window.__bstr=0;run();});}}).observe(document.body,{childList:true,subtree:true});
+  window.__pipe(run);
 })();
 </script>
 <style id="batch-d">
@@ -13364,7 +13302,7 @@ html body #page4 .x51-card .x51-lb.x51-ltr{display:table!important;margin-right:
     });
   }
   function run(){ eng(); gaps(); }
-  new MutationObserver(function(){if(!window.__bdr){window.__bdr=requestAnimationFrame(function(){window.__bdr=0;run();});}}).observe(document.body,{childList:true,subtree:true});
+  window.__pipe(run);
   window.addEventListener('resize',function(){if(!window.__bdr){window.__bdr=requestAnimationFrame(function(){window.__bdr=0;run();});}});
 })();
 </script>
@@ -13435,7 +13373,7 @@ html body #page4 .x51-card .x51-lb.x51-ltr{display:table!important;margin-right:
       paint(tab);
     });
   }
-  new MutationObserver(function(){if(!window.__bkr){window.__bkr=requestAnimationFrame(function(){window.__bkr=0;run();});}}).observe(document.body,{childList:true,subtree:true});
+  window.__pipe(run,1); window.__pipe(function(){ clearTimeout(window.__bf2); window.__bf2=setTimeout(run,450); },1); /* runs last, and once more after the title pass: these labels keep their colour */
 })();
 </script>
 <style id="inner-cards-bg">
@@ -13520,7 +13458,7 @@ html body #page4 #refContent .rc-box:not(:has(>div[style*="grid-template-columns
     });
   }
   function run(){ var mc=document.getElementById('mainContent'); if(!mc) return; appt(); emails(mc); }
-  new MutationObserver(function(){if(!window.__bfr){window.__bfr=requestAnimationFrame(function(){window.__bfr=0;run();});} clearTimeout(window.__bf2);window.__bf2=setTimeout(run,450);}).observe(document.body,{childList:true,subtree:true});
+  window.__pipe(run);
 })();
 </script>
 <style id="design-v2">
@@ -13546,27 +13484,14 @@ html body #page4 .x51-appt .u-mc .x51-lcp{width:22px!important;height:20px!impor
       var b=document.createElement('button'); b.type='button'; b.className='x51-lcp'; b.title='Copy'; b.setAttribute('aria-label','Copy'); b.setAttribute('data-v',v); b.innerHTML=CP; c.appendChild(b);
     });
   }
-  new MutationObserver(function(){ if(!window.__d2r){window.__d2r=requestAnimationFrame(function(){window.__d2r=0;run();});} }).observe(document.body,{childList:true,subtree:true});
+  window.__pipe(run);
 })();
 </script>
 <style id="sms-unify">
 /* SMS pages: same frame everywhere — section title on the left, cards inside one white box */
 html body #page4 .u7-dt{justify-content:flex-start!important;gap:8px!important}
-html body #page4 .sms-boxed{background:#FEFEFE!important;border:1px solid #E6DED5!important;border-radius:14px!important;padding:18px!important;margin-top:0!important}
 </style>
-<script id="sms-unify-js">
-(function(){
-  function run(){
-    [].forEach.call(document.querySelectorAll('#page4 .ref-cards-grid:not([data-sb])'),function(g){
-      if(!g.querySelector('.sms-card')) return; g.setAttribute('data-sb','1');
-      var tab=g.closest('[id^="refTab_"]'); if(!tab) return;
-      for(var p=g.parentElement;p&&p!==tab;p=p.parentElement){ var cs=getComputedStyle(p); if(parseFloat(cs.borderTopWidth)>0||parseFloat(cs.borderBottomWidth)>0||!/rgba\(0, 0, 0, 0\)|transparent/.test(cs.backgroundColor)) return; }
-      g.classList.add('sms-boxed'); ['background:#FEFEFE','border:1px solid #E6DED5','border-radius:14px','padding:18px','margin-top:0'].forEach(function(d){var i=d.indexOf(':');g.style.setProperty(d.slice(0,i),d.slice(i+1),'important');});
-    });
-  }
-  new MutationObserver(function(){ if(!window.__smr){window.__smr=requestAnimationFrame(function(){window.__smr=0;run();});} }).observe(document.body,{childList:true,subtree:true});
-})();
-</script>
+
 <style id="extra-table">
 /* Extra Information = same white table with thin lines as Appointment Script */
 html body #page4 .x51-exsec .x51-grid{display:block!important;gap:0!important}
@@ -13586,7 +13511,7 @@ html body #page4 .x51-exsec .x51-tc>div{display:flex!important;flex-wrap:wrap!im
       [].forEach.call(g.querySelectorAll('.x51-tc'),function(tc){ var ks=tc.querySelectorAll(':scope>.x51-k'); if(ks.length===1&&/CC/.test(ks[0].textContent)){ var sp=document.createElement('div'); tc.insertBefore(sp,ks[0]); } });
     });
   }
-  new MutationObserver(function(){ if(!window.__etr){window.__etr=requestAnimationFrame(function(){window.__etr=0;run();});} }).observe(document.body,{childList:true,subtree:true});
+  window.__pipe(run);
 })();
 </script>
 <style id="email-final">
@@ -13607,7 +13532,7 @@ html body #mainContent .x51-chip>*,html body #mainContent .x51-chip{background-i
       ['text-decoration:underline dotted #D8C7B5','text-underline-offset:3px','text-decoration-thickness:1px'].forEach(function(d){var i=d.indexOf(':');sp.style.setProperty(d.slice(0,i),d.slice(i+1),'important');});
     });
   }
-  new MutationObserver(function(){ run(); }).observe(document.body,{childList:true,subtree:true}); run();
+  window.__pipe(run); run();
 })();
 </script>
 <style id="design-system">
@@ -13633,9 +13558,9 @@ html body #page4 .bk-sec small{font-weight:500;color:#8A7F74;font-size:13px}
 html body #page4 #tbPirelli>div:first-child,html body #page4 .x51-th,html body #page4 .x51-exh,html body #blWrap th,html body #page4 .x51-emails .x51-sec>div:not(.x51-h)>div:first-child:not(.x51-erow){background:#FEFEFE!important;font-size:11px!important;font-weight:700!important;color:#8A7F74!important;text-transform:none!important;letter-spacing:0!important;border:0!important;border-bottom:1px solid #E6DED5!important}
 
 /* 3) copy buttons: one 24×24 square */
-html body #mainContent :is(.bd-cp,.x51-cp,.x51-lcp,.bdx-cp,.smsCp,.em-copy){width:24px!important;height:24px!important;min-width:24px!important;padding:0!important;margin-left:6px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border:1px solid #E6DED5!important;border-radius:6px!important;background:#FEFEFE!important;color:#6F665D!important;box-shadow:none!important;font-size:0!important;vertical-align:middle!important;flex:none!important}
-html body #mainContent :is(.bd-cp,.x51-cp,.x51-lcp,.bdx-cp,.smsCp,.em-copy) svg{width:12px!important;height:12px!important}
-html body #mainContent :is(.bd-cp,.x51-cp,.x51-lcp,.bdx-cp,.smsCp,.em-copy):hover{background:#F4F0EB!important}
+html body #mainContent :is(.bd-cp,.x51-cp,.x51-lcp,.bdx-cp,.em-copy){width:24px!important;height:24px!important;min-width:24px!important;padding:0!important;margin-left:6px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;border:1px solid #E6DED5!important;border-radius:6px!important;background:#FEFEFE!important;color:#6F665D!important;box-shadow:none!important;font-size:0!important;vertical-align:middle!important;flex:none!important}
+html body #mainContent :is(.bd-cp,.x51-cp,.x51-lcp,.bdx-cp,.em-copy) svg{width:12px!important;height:12px!important}
+html body #mainContent :is(.bd-cp,.x51-cp,.x51-lcp,.bdx-cp,.em-copy):hover{background:#F4F0EB!important}
 
 html body #page4 .x51-appt .u-mc .x51-lcp,html body #page4 .x51-exsec .x51-tc>div .x51-lcp{margin-left:auto!important}
 html body #page4 .x51-emails .x51-sec>div:not(.x51-h)>div:first-child:not(.x51-erow){text-transform:uppercase!important}
@@ -13651,10 +13576,6 @@ html body #page4 .x51-card>.x51-lb.x51-lb.x51-lb{display:block!important;width:a
 html body #page4 .x51-card>*:not(.x51-lb){padding-left:16px!important;padding-right:16px!important}
 html body #page4 .x51-card.bk-card{padding:12px 18px!important}
 /* SMS cards: white title, light beige message */
-html body #page4 .sms-card{background:#F7F3EE!important;border:1px solid #E9E2D9!important;border-radius:10px!important;overflow:hidden!important}
-html body #page4 .sms-card>div:first-child{background:#FEFEFE!important;border-bottom:1px solid #E9E2D9!important}
-html body #page4 .sms-card>div:first-child>*:first-child,html body #page4 .sms-card>div:first-child b{font-size:13px!important;font-weight:700!important;color:#4A423B!important}
-html body #page4 .sms-card>div:nth-child(2){background:#FEFEFE!important;border-bottom:1px solid #E9E2D9!important}
 /* manager / person panels: white title, beige body */
 html body #page4 .bdx-c{border:1px solid #E9E2D9!important;border-radius:10px!important;padding:0 0 12px!important;overflow:hidden!important;box-shadow:none!important}
 html body #page4 .bdx-c>*{justify-content:flex-start!important;text-align:left!important;padding-left:16px!important;padding-right:16px!important}
@@ -13688,7 +13609,6 @@ html body #mainContent .bk-tag.ok{background:#E6F0E4!important;color:#4D7E4F!imp
 html body #mainContent .bk-tag.off{background:#F4F0EB!important;color:#B3A89C!important;text-decoration:line-through}
 
 /* 8) switches: one medium size */
-html body #page4 .sms-card .smsT{font-size:12px!important;padding:5px 12px!important;border-radius:6px!important}
 
 /* 9) notes / information rows → white table with thin lines */
 html body #page4 .x51-note{background:#FEFEFE!important;border:0!important;border-top:1px solid #E9E2D9!important;border-radius:0!important;padding:9px 12px!important;margin:0!important;font-size:12.5px!important;color:#4A423B!important;text-align:right!important;box-shadow:none!important}
@@ -13696,12 +13616,11 @@ html body #page4 .x51-note:first-of-type{border-top:0!important}
 
 /* 10) font sizes */
 html body #page4 :is(.x51-sub,.x51-foot,.x51-det,.x51-det>div,.u-mc,.bdx-addr,.bdx-lt,.x51-tt,.x51-kv){font-size:12.5px!important}
-html body #page4 .sms-card [id^="sms_"],html body #page4 .sms-card pre{font-size:12.5px!important;line-height:1.8!important}
 html body #page4 .x51-card .x51-big{font-size:13px!important}
 
 /* 11) corners: sections 14 · boxes 10 · buttons & tags 6 */
-html body #page4 :is(.x51-box,.rc-box,.br-md,.sms-boxed){border-radius:14px!important}
-html body #page4 :is(.x51-tile,.bdx-c,.bdx-loc,.sms-card){border-radius:10px!important}
+html body #page4 :is(.x51-box,.rc-box,.br-md){border-radius:14px!important}
+html body #page4 :is(.x51-tile,.bdx-c,.bdx-loc){border-radius:10px!important}
 html body #page4 :is(.ref-sub-tabs~* button,.x51-btn,.bdx-ol){border-radius:6px!important}
 
 /* 13) tabs without icons */
@@ -13718,7 +13637,7 @@ html body #page4 .x51-sec{margin-bottom:18px!important}
 html body #page4 .x51-sec:last-child{margin-bottom:0!important}
 
 /* 16) links like emails; location button 24px */
-html body #page4 .sms-card a,html body #page4 .bk-link{color:#4A423B!important;text-decoration:underline dotted #D8C7B5!important;text-underline-offset:3px!important}
+html body #page4 .bk-link{color:#4A423B!important;text-decoration:underline dotted #D8C7B5!important;text-underline-offset:3px!important}
 html body #page4 .bdx-ol{height:24px!important;padding:0 10px!important;font-size:12px!important;font-weight:600!important;display:inline-flex!important;align-items:center!important;gap:6px!important;border:1px solid #E6DED5!important;background:#FEFEFE!important}
 
 /* 17) empty / loading */
@@ -13777,7 +13696,7 @@ html body #page4 .br-it.on,html body #page4 .br-it.active{background:#F4F0EB!imp
     return null;
   }
   function fmtTime(h,m,ap){ h=+h; m=m||'00'; ap=(ap||'').toUpperCase(); if(!ap){ ap=(h>=7&&h<12)?'AM':'PM'; if(h===12) ap='PM'; } if(h>12){h-=12;ap='PM';} if(h===0){h=12;ap='AM';} return h+':'+m+' '+ap; }
-  var SKIP='textarea,input,[id^="sms_"],.sms-card pre,.x51-note,.bk-noformat,script,style';
+  var SKIP='textarea,input,[id^="sms_"],.s-card,.x51-note,.bk-noformat,script,style';
   function texts(root,fn){
     var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:function(n){var p=n.parentNode; return (p&&p.closest&&!p.closest(SKIP)&&/\d/.test(n.nodeValue))?1:2;}});
     var L=[],n; while((n=w.nextNode())) L.push(n); L.forEach(fn);
@@ -13851,12 +13770,6 @@ html body #page4 .br-it.on,html body #page4 .br-it.active{background:#F4F0EB!imp
       if(e.children.length) return; var d=(e.textContent||'').replace(/\s/g,''); if(/^\d{8,12}$/.test(d)) S(e,{'font-size':'13px','font-weight':'600','color':'#4A423B'});
     });
   }
-  function smsBody(root){
-    [].forEach.call(root.querySelectorAll('#page4 .sms-card'),function(c){
-      [].forEach.call(c.children,function(k,i){ if(i>=2) S(k,{'background':'#F7F3EE'}); });
-      [].forEach.call(c.querySelectorAll('[id^="sms_"]'),function(k){ S(k,{'background':'transparent'}); });
-    });
-  }
   function panels(root){
     [].forEach.call(root.querySelectorAll('#page4 .rc-box'),function(b){
       if(b.querySelector(':scope>div[style*="grid-template-columns"]')) return;
@@ -13875,12 +13788,11 @@ html body #page4 .br-it.on,html body #page4 .br-it.active{background:#F4F0EB!imp
       if(/^\s*maintenance\s+schedule\s*$/i.test(l.textContent||'')){ S(l,{'display':'none'}); S(l.parentElement,{'padding-top':'12px'}); }
     });
   }
-  function run(){ var r=ROOT(); if(!r) return; noSched(r); bars(r); panels(r); smsBody(r); contactNums(); arrows(r); phones(r); times(r); titleCase(r); empties(r); accent(r); tags(r); names(r); }
-  var pend=0; function sched(){ if(pend) return; pend=requestAnimationFrame(function(){pend=0; run();}); }
+  function run(){ var r=ROOT(); if(!r) return; noSched(r); bars(r); panels(r); contactNums(); arrows(r); phones(r); times(r); titleCase(r); empties(r); accent(r); tags(r); names(r); }
+  window.__pipe(run);
   new MutationObserver(function(ms){
     for(var i=0;i<ms.length;i++){ var m=ms[i]; if(m.type==='characterData'){ var p=m.target.parentNode; if(p&&p.id&&p.id.indexOf('ico_')===0){ var t=(p.textContent||'').trim(); p.setAttribute('data-dir',/[▶▸]/.test(t)?'right':'down'); } } }
-    sched();
-  }).observe(document.body,{childList:true,subtree:true,characterData:true});
+  }).observe(document.body,{subtree:true,characterData:true});
   setTimeout(run,600);
 })();
 </script>
@@ -13898,6 +13810,32 @@ html body #page4 .bdx-c{background:#FEFEFE!important;text-align:center!important
 html body #page4 .bdx-c>*:not(.bdx-lb){justify-content:center!important;text-align:center!important}
 html body #page4 .bdx-c>.bdx-lb{text-align:center!important}
 html body #page4 .bdx-pn,html body #page4 .bdx-nm{font-weight:400!important;text-transform:none!important}
+</style>
+<style id="sms-card">
+/* ===== SMS cards: the only styles for them ===== */
+#page4 .ref-cards-grid.s-grid,.s-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:16px!important;padding:16px!important;margin:0!important}
+@media(max-width:1300px){#page4 .ref-cards-grid.s-grid,.s-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media(max-width:1100px){#page4 .ref-cards-grid.s-grid,.s-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:900px){#page4 .ref-cards-grid.s-grid,.s-grid{grid-template-columns:1fr!important}}
+#page4 .ref-cards-grid>div.s-card,.s-card{display:flex;flex-direction:column;background:#FAF8F5!important;border:1px solid #EEE8E1!important;border-radius:12px!important;box-shadow:none!important;overflow:hidden;text-align:left;color:#4A423B}
+.s-hd{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 14px;margin-bottom:10px;background:#FEFEFE;border-bottom:1px solid #EEE8E1}
+.s-ttl{display:flex;align-items:baseline;gap:6px;min-width:0}
+.s-ttl b{font-size:12.5px;font-weight:600;color:#4A423B}
+.s-ttl span{font-size:11.5px;font-weight:400;color:#8A7F74;margin-left:6px}
+.s-cpy{flex:0 0 auto;display:flex;align-items:center;justify-content:center;width:26px;height:26px;padding:0;background:#FEFEFE;border:1px solid #E6DED5;border-radius:6px;color:#4A423B;cursor:pointer}
+.s-cpy:hover{border-color:#A07E62;color:#A07E62}
+.s-cpy.ok{color:#5E8C6A;border-color:#5E8C6A}
+.s-sw{display:flex;justify-content:space-between;align-items:center;padding:0 14px 9px;border-bottom:1px solid #EAE3DB}
+.s-seg{display:flex;gap:2px;padding:2px;background:#F1ECE6;border-radius:7px}
+.s-t{display:block;padding:2px 8px;border-radius:5px;font-size:10.5px;font-weight:500;line-height:1.4;color:#8A7F74;cursor:pointer}
+.s-t.on{background:#FEFEFE;color:#4A423B;box-shadow:0 0 0 1px #E9E2DA}
+.s-msg{flex:1;margin:0 12px 12px;padding:10px 14px;background:#F7F3EE;border-radius:8px;color:#5A5048;font-size:11.5px;font-weight:400;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;text-align:left}
+.s-msg[dir="rtl"]{text-align:right}
+.s-url{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom;color:#A07E62;direction:ltr}
+/* SMS tab inside a brand: Service / Showroom / PAC switch */
+.sms-sub{display:inline-flex;background:color-mix(in srgb,var(--brand,#A07E62) 8%,#FEFEFE);border-radius:9px;padding:3px;margin:0 0 14px}
+.sms-sub span{font-size:12px;padding:6px 16px;border-radius:7px;cursor:pointer;color:#6F665D}
+.sms-sub span.on{background:#FEFEFE;color:var(--brand,#A07E62);font-weight:700;box-shadow:0 0 0 1px color-mix(in srgb,var(--brand,#A07E62) 30%,#E6DED5)}
 </style>
 </body>
 </html>
