@@ -11947,8 +11947,11 @@ window.RC_POS='over'; window.RC_STYLE='box';
   function gaps(){
     [].forEach.call(document.querySelectorAll('#page4 .ref-tab-content'),function(tc){
       var sub=tc.previousElementSibling, el=tc.firstElementChild; if(!sub||!el||!el.offsetParent||el.classList.contains('x-card')||el.classList.contains('ins')) return;
-      var cur=parseFloat(el.style.marginTop)||0, g=firstTop(el)-sub.getBoundingClientRect().bottom; if(g===Infinity||isNaN(g)) return;
-      if(g<12||cur>0){ var m=Math.max(0,Math.round(cur+GAP-g)); if(Math.abs(m-cur)>1) el.style.setProperty('margin-top',m+'px','important'); }
+      var cur=parseFloat(el.style.marginTop)||0, sr=sub.getBoundingClientRect();
+      /* tabs bar not shown: nothing to measure against (measuring against the window made the gap grow with scrolling) */
+      if(!sr.width||!sr.height){ if(cur>0) el.style.removeProperty('margin-top'); return; }
+      var g=firstTop(el)-sr.bottom; if(g===Infinity||isNaN(g)) return;
+      if(g<12||cur>0){ var m=Math.min(GAP*2,Math.max(0,Math.round(cur+GAP-g))); if(Math.abs(m-cur)>1) el.style.setProperty('margin-top',m+'px','important'); }
     });
   }
   function run(){ gaps(); }
