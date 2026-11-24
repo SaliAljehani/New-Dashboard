@@ -5629,19 +5629,20 @@ function renderBaicShowroomTab(arr){
     return '<div class="x51-tile x51-ctr"><div class="x51-lb">'+x51Esc(regClean(String(r[regionCol]||'').trim()))+'</div><div class="x51-city">'+x51Esc(city)+'</div><div class="x51-sub2">'+x51Esc(name)+'</div>'+(dist?'<div class="x51-lb" dir="rtl">'+x51Esc(dist)+'</div>':'')+(gps.startsWith('http')?'<a class="x51-btn" href="'+x51Esc(gps)+'" target="_blank" rel="noopener">Open Location</a>':'')+'</div>';
   }).join('')+'</div>',_hh)+'</div>';
 }
-function renderBaicServiceTab(arr, apptArr){
+function renderBaicServiceTab(arr, apptArr, opts){
+  opts=opts||{};
   if(!arr||!arr.length) return '<div style="text-align:center;padding:24px;color:#4F4640">No data</div>';
   const color='#A07E62';
   const amRows=[];
   const keys=Object.keys(arr[0]||{});
   const _bk=(re,d)=>keys.find(k=>re.test(String(k).trim()))||keys[d];
-  const regionCol=keys[0], cityCol=keys[1], branchCol=keys[2], mgrCol=_bk(/manager name/i,3), phoneCol=_bk(/number|mobile|phone/i,4), emailCol=_bk(/^email/i,5), gpsLinkCol=_bk(/map link|google map/i,7), distCol=keys.find(k=>/^district/i.test(String(k).trim()));
+  const regionCol=keys[0], cityCol=keys[1], branchCol=keys[2], mgrCol=_bk(/manager name/i,3), phoneCol=keys.find(k=>/number|mobile|phone/i.test(String(k).trim()))||(/manager|email/i.test(String(keys[4]||''))?null:keys[4]), emailCol=_bk(/^email/i,5), gpsLinkCol=_bk(/map link|google map/i,7), distCol=keys.find(k=>/^district/i.test(String(k).trim()));
   const svcCol=keys.find(k=>/^services?$/i.test(String(k).trim()))||keys.find(k=>arr.some(r=>/\b(PMS|Recall|Warranty)\b/i.test(String(r[k]||''))));
   const SVC_ALL=['PMS','Recall','Warranty'];
   const svcHtml=r=>{const raw=svcCol?String(r[svcCol]||'').trim():'';if(!raw)return '';const have=raw.split(/\s*[-–,\/\n]\s*/).map(x=>x.trim()).filter(Boolean);const hl=have.map(x=>x.toLowerCase());const list=SVC_ALL.concat(have.filter(x=>SVC_ALL.map(y=>y.toLowerCase()).indexOf(x.toLowerCase())<0));return '<div style="margin-top:6px">'+list.map(x=>'<div style="font-size:11px">'+x.toUpperCase()+(hl.indexOf(x.toLowerCase())>-1?' ✓':' ✗')+'</div>').join('')+'</div>';};
   const fmtNum=n=>{const s=String(n||'').trim();if(/[eE]\+/.test(s)){const p=parseFloat(s);if(!isNaN(p))return String(Math.round(p));}return s;};
   const fmtE=v=>String(v||'').split(/,|;/).map(e=>{const s=e.trim();if(!s)return'';if(!s.includes('@'))return'<span style="font-size:11px;color:'+color+';font-weight:700;padding:3px 8px;margin:2px;display:inline-flex;background:'+color+'22;border-radius:5px">'+s+'</span>';return'<a href="mailto:'+s+'" style="display:inline-flex;background:'+color+'15;color:'+color+';padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;text-decoration:none;margin:2px">'+s+'</a>';}).filter(Boolean).join('');
-  const VALID_REGIONS=new Set(['West','Western','Central','Center','East','Eastern','South','Southern','North','Northern']);
+  const VALID_REGIONS=new Set(['West','Western','Central','Center','Centeral','East','Eastern','South','Southern','North','Northern']);
   const REGION_ORDER=['West','Western','Central','Center','East','Eastern','South','Southern','North','Northern'];
   const REGION_COLORS=new Proxy({}, {get:()=>'#A07E62'});
   let instruction='', emTo={complaint:'',request:'',spare:''}, emCc={complaint:'',request:'',spare:''};
@@ -5683,7 +5684,7 @@ function renderBaicServiceTab(arr, apptArr){
     +'</div>';
   const hasSpare=emTo.spare||emCc.spare;
   const emailHtml='<div style="margin-bottom:16px">'
-    +emGroupBox(color,'SERVICE',[{title:'Request',to:rcChips(emTo.request,color),cc:rcChips(emCc.request,color)},{title:'Complaint',to:rcChips(emTo.complaint,color),cc:rcChips(emCc.complaint,color)}])
+    +emGroupBox(color,opts.title||'SERVICE',[{title:'Request',to:rcChips(emTo.request,color),cc:rcChips(emCc.request,color)},{title:'Complaint',to:rcChips(emTo.complaint,color),cc:rcChips(emCc.complaint,color)}])
     +(hasSpare?emGroupBox(color,'SPARE PARTS',[{title:'Request - Complaint',to:rcChips(emTo.spare,color),cc:rcChips(emCc.spare,color)}]):'')
     +'</div>';
   const REGION_ALIAS={Eastern:'East',Western:'West',Northern:'North',Southern:'South',Center:'Central',Centeral:'Central'};
@@ -5721,7 +5722,7 @@ function renderBaicServiceTab(arr, apptArr){
   const regHTML=REGION_ORDER.filter(r=>regions[r]).map(reg=>{
     const rows=regions[reg];
     const rc=REGION_COLORS[reg]||color;
-    const regId='baicSvc_'+reg.replace(/\s/g,'');
+    const regId=(opts.idp||'baicSvc_')+reg.replace(/\s/g,'');
     const hpill=hoursPill(rows,rc);
     return '<div style="margin-bottom:14px">'
       +'<div onclick="toggleRegion(\''+regId+'\')" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:'+rc+'12;border-radius:8px;border-left:4px solid '+rc+';cursor:pointer;margin-bottom:8px">'
@@ -8219,7 +8220,7 @@ async function renderRefBrand(brand,tabIdx){
       return;
     }
     if(brand==='baic' && sheetName.trim()==='Showroom'){
-      __setHTML(container,renderBaicShowroomTab(arr));
+      __setHTML(container,renderBaicServiceTab(arr,[],{title:'SHOWROOM',idp:'baicSr_'}));
       return;
     }
     if(brand==='baic' && sheetName.trim()==='Service'){
