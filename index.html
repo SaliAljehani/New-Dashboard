@@ -9454,6 +9454,34 @@ async function loadVehicleModels(brand){
   }
 }
 var DAILY_OFF_CACHE = null;
+/* The Weekly Schedule sheet can be laid out wide (weeks side by side, names only in the first column).
+   Turn it into the stacked week blocks the readers below expect; the old stacked layout passes through unchanged. */
+function wkStack(raw){
+  if(!raw||!raw.length) return raw;
+  var DK=['sun','mon','tue','wed','thu','fri','sat'],MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var dk=function(c){ var t=String(c||'').trim().toLowerCase(); if(/break/.test(t)) return ''; t=t.replace(/[^a-z]/g,''); return (t.length<=9&&DK.indexOf(t.slice(0,3))>=0)?t.slice(0,3):''; };
+  var hr=-1; for(var i=0;i<raw.length;i++){ if((raw[i]||[]).filter(dk).length>=8){ hr=i; break; } }
+  if(hr<0) return raw;
+  var H=raw[hr], D=raw[hr+1]||[], starts=[], nameCol=0;
+  H.forEach(function(c,ci){ if(dk(c)==='sun') starts.push(ci); if(/agent/i.test(String(c||''))) nameCol=ci; });
+  var nd=function(c){ c=String(c||'').trim(); var m;
+    if((m=c.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/))) return (+m[2])+' '+MN[(+m[1])-1];
+    if((m=c.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/))) return (+m[3])+' '+MN[(+m[2])-1];
+    return c; };
+  var out=[];
+  starts.forEach(function(s,wi){
+    var e=wi+1<starts.length?starts[wi+1]:H.length;
+    out.push([String(H[nameCol]||'Agent Name')].concat(H.slice(s,e).map(function(c){return String(c||'').trim();})));
+    out.push(['' ].concat(D.slice(s,e).map(nd)));
+    for(var r=hr+2;r<raw.length;r++){
+      var row=raw[r]||[], nm=String(row[nameCol]||'').trim();
+      if(!nm||/\//.test(nm)||/^(coverage|total)/i.test(nm)) continue;
+      out.push([nm].concat(row.slice(s,e).map(function(c){return String(c||'').trim();})));
+    }
+    out.push([]);
+  });
+  return out;
+}
 async function renderDailyOff(){
   var el = document.getElementById('schedule_dailyoff');
   if(!el) return;
@@ -9463,14 +9491,14 @@ async function renderDailyOff(){
       try{
         var raw2d = await fetchCSVExportByGid(SHEET_ID, '920710775');
         if(!raw2d||raw2d.length<2) throw new Error('empty');
-        DAILY_OFF_CACHE = raw2d.map(function(row){return row.map(function(c){return String(c||'').trim();});});
+        DAILY_OFF_CACHE = raw2d.map(function(row){return row.map(function(c){return String(c||'').trim();});}); DAILY_OFF_CACHE=wkStack(DAILY_OFF_CACHE);
       }catch(e){
         console.warn('Daily Off GID failed, trying proxy:', e);
         try{
           var proxyRows = await loadSheet('Weekly Schedule');
           if(!proxyRows||proxyRows.length<2) throw new Error('proxy empty');
           var pk=Object.keys(proxyRows[0]||{});
-          DAILY_OFF_CACHE=[pk].concat(proxyRows.map(function(r){return pk.map(function(k){return String(r[k]||'').trim();});}));
+          DAILY_OFF_CACHE=[pk].concat(proxyRows.map(function(r){return pk.map(function(k){return String(r[k]||'').trim();});})); DAILY_OFF_CACHE=wkStack(DAILY_OFF_CACHE);
         }catch(e2){
           console.warn('Daily Off proxy also failed:', e2);
           __setHTML(el,'<div style="text-align:center;padding:40px;color:#4F4640">⚠️ No data — تأكدي إن الشيت مشارك "Anyone with the link can view"</div>');
@@ -11221,12 +11249,12 @@ async function bkSchedRaw(){
   try{
     var raw2d=await fetchCSVExportByGid(SHEET_ID,'920710775');
     if(!raw2d||raw2d.length<2) throw new Error('empty');
-    DAILY_OFF_CACHE=raw2d.map(function(row){return row.map(function(c){return String(c||'').trim();});});
+    DAILY_OFF_CACHE=raw2d.map(function(row){return row.map(function(c){return String(c||'').trim();});}); DAILY_OFF_CACHE=wkStack(DAILY_OFF_CACHE);
   }catch(e){
     try{
       var pr=await loadSheet('Weekly Schedule'); if(!pr||pr.length<2) return null;
       var pk=Object.keys(pr[0]||{});
-      DAILY_OFF_CACHE=[pk].concat(pr.map(function(r){return pk.map(function(k){return String(r[k]||'').trim();});}));
+      DAILY_OFF_CACHE=[pk].concat(pr.map(function(r){return pk.map(function(k){return String(r[k]||'').trim();});})); DAILY_OFF_CACHE=wkStack(DAILY_OFF_CACHE);
     }catch(e2){ return null; }
   }
   return DAILY_OFF_CACHE;
@@ -11257,8 +11285,9 @@ function bkParse(raw,date){
       var row=raw[r]||[]; if(row.filter(bkDayKey).length>=3) break;
       var nm=String(row[nameCol]||'').trim(); if(!nm||/agent/i.test(nm)||/\d{1,2}\s*[a-z]{3}\s*-/i.test(nm)) continue;
       var v=String(row[col[dk]]||'').trim();
+      var _fl=slots.filter(function(s){var x=String(row[s.col]||'').trim();return x&&!/^[-–—]+$/.test(x);}).length, _one=slots.length>1&&_fl===1;
       agents.push({name:nm,val:v,away:/^(off|vac|sick|absent|el)\b|vacation/i.test(v),chat:/chat|live/i.test(v),
-        br:slots.map(function(s){return bkRange(row[s.col],s.len);}), raw:slots.map(function(s){return String(row[s.col]||'').trim();})});
+        br:slots.map(function(s){return bkRange(row[s.col],_one?60:s.len);}), raw:slots.map(function(s){return String(row[s.col]||'').trim();})});
     }
     return {slots:slots,agents:agents};
   }
