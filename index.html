@@ -11063,13 +11063,39 @@ async function cvFetchDirect(){
       o[c]=(v==null?'':v);});return o;});
   }finally{clearTimeout(tid);}
 }
+/* Read the tab as the plain CSV export: every cell comes through as written.
+   (gviz drops numbers that were typed/pasted as text, which made whole days show 0.) */
+var CV_GID='903692081';
+async function cvFetchCSV(){
+  const url='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/export?format=csv&gid='+CV_GID;
+  const ctrl=new AbortController(); const tid=setTimeout(function(){ctrl.abort();},10000);
+  try{
+    const res=await fetch(url,{signal:ctrl.signal,cache:'no-store'});
+    if(!res.ok) throw new Error('csv '+res.status);
+    const txt=await res.text();
+    const rows=[]; let row=[],f='',q=false;
+    for(let i=0;i<txt.length;i++){const ch=txt[i];
+      if(q){ if(ch==='"'){ if(txt[i+1]==='"'){f+='"';i++;} else q=false; } else f+=ch; }
+      else if(ch==='"') q=true;
+      else if(ch===','){row.push(f);f='';}
+      else if(ch==='\n'||ch==='\r'){ if(ch==='\r'&&txt[i+1]==='\n') i++; row.push(f);f='';rows.push(row);row=[]; }
+      else f+=ch; }
+    if(f!==''||row.length){row.push(f);rows.push(row);}
+    if(rows.length<2) throw new Error('csv empty');
+    const head=rows[0].map(function(h,i){return String(h).trim()||('__col'+i);});
+    if(!head.some(function(h){return /date/i.test(h);})) throw new Error('csv wrong tab');
+    return rows.slice(1).filter(function(r){return r.some(function(x){return String(x).trim();});}).map(function(r){var o={};head.forEach(function(h,i){o[h]=r[i]==null?'':r[i];});return o;});
+  }finally{clearTimeout(tid);}
+}
 function cvOpen(){
   if(CV_ROWS){ renderCV(); return; }
   if(CV_LOADING) return;
   CV_LOADING=true; CV_ERR='';
   __setHTML(document.getElementById('page14'),'<div class="cv-empty">Loading contact volume…</div>');
-  cvFetchDirect().then(function(r){ if(!r||!r.length||!cvParse(r).length) throw new Error('empty'); return r; }).catch(function(){
+  cvFetchCSV().then(function(r){ if(!r||!r.length||!cvParse(r).length) throw new Error('empty'); return r; }).catch(function(){
     return fetchSheet(SHEET_ID, CV_TAB);
+  }).then(function(r){ if(!r||!r.length||(r&&r.error)) throw new Error('empty'); return r; }).catch(function(){
+    return cvFetchDirect();
   }).catch(function(){
     return fetchGvizSheet(SHEET_ID, '', CV_TAB);
   }).then(function(rows){
@@ -12224,5 +12250,45 @@ window.RC_POS='over'; window.RC_STYLE='box';
 })();
 </script>
 
+<script>/* backup CSV reader: used only if the PapaParse file from the CDN did not load */
+(function(){function mini(txt,o){o=o||{};var rows=[],row=[],f='',q=false;txt=String(txt||'');
+for(var i=0;i<txt.length;i++){var ch=txt[i];
+ if(q){if(ch==='"'){if(txt[i+1]==='"'){f+='"';i++;}else q=false;}else f+=ch;}
+ else if(ch==='"')q=true; else if(ch===','){row.push(f);f='';}
+ else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&txt[i+1]==='\n')i++;row.push(f);f='';rows.push(row);row=[];}
+ else f+=ch;}
+if(f!==''||row.length){row.push(f);rows.push(row);}
+if(o.skipEmptyLines)rows=rows.filter(function(r){return r.some(function(x){return String(x).trim()!=='';});});
+return {data:rows,errors:[],meta:{}};}
+function ensure(){if(typeof window.Papa==='undefined'||!window.Papa||typeof window.Papa.parse!=='function')window.Papa={parse:mini,__mini:true};}
+document.addEventListener('DOMContentLoaded',ensure);window.addEventListener('load',ensure);setTimeout(ensure,4000);})();</script>
+<style>
+#xClock{display:inline-flex;align-items:center;gap:10px;background:transparent;border:0;border-right:1px solid #E6DED5;border-radius:0;padding:2px 12px 2px 9px;margin-right:4px;flex-shrink:0;color:#2A2420;font-variant-numeric:tabular-nums;user-select:none}
+#xClock .xc-i{display:inline-flex;color:#A07E62}
+#xClock .xc-t{font-size:16px;font-weight:800;min-width:76px;text-align:center;white-space:nowrap}
+#xClock .xc-d{font-size:11px;line-height:1.3;color:#4F4640;font-weight:600;border-left:1px solid #E6DED5;padding-left:10px;white-space:nowrap}
+@media (max-width:760px){#xClock .xc-d{display:none}}
+</style>
+<script>/* header clock (idea 2), inside the same box as the bell and refresh buttons */
+(function(){
+  var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var el,tEl,dEl,last='';
+  function build(){
+    var g=document.querySelector('.x-ig'); if(!g) return false;
+    if(document.getElementById('xClock')) return true;
+    el=document.createElement('div'); el.id='xClock';
+    el.innerHTML='<span class="xc-i"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="xc-t"></span><span class="xc-d"></span>';
+    g.insertBefore(el,g.firstChild); tEl=el.querySelector('.xc-t'); dEl=el.querySelector('.xc-d'); last=''; tick(); return true;
+  }
+  function tick(){
+    if(!el||!document.body.contains(el)){ if(!build()) return; }
+    var n=new Date(),h=n.getHours(),m=n.getMinutes(),ap=h<12?'AM':'PM',hh=h%12||12;
+    var t=hh+':'+(m<10?'0':'')+m+' '+ap, d=DAYS[n.getDay()]+'<br>'+n.getDate()+' '+MS[n.getMonth()]+' '+n.getFullYear();
+    if(t+d===last) return; last=t+d; tEl.textContent=t; dEl.innerHTML=d;
+  }
+  var tries=0,iv=setInterval(function(){ if(build()||++tries>60) clearInterval(iv); },500);
+  setInterval(tick,1000);
+})();
+</script>
 </body>
 </html>
