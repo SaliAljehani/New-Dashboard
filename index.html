@@ -1797,6 +1797,10 @@ html body #page4 #refContent .rc-box:not(:has(>div[style*="grid-template-columns
 #page4 .ib-op{flex:0 0 auto;font-size:12px;font-weight:700;color:#A07E62!important;border:1px solid #E6DED5;border-radius:8px;padding:6px 12px;white-space:nowrap}
 #page4 .ib-row:hover .ib-op{border-color:#A07E62}
 @media (max-width:760px){#page4 .ib-row{flex-wrap:wrap}#page4 .ib-ds{flex:1 1 100%;text-align:right;order:3}}
+
+/* date/time now lives in the header box, so hide the copy in the footer and keep the credit on the right */
+#lupd_footer{display:none!important}
+body>footer{justify-content:space-between!important}
 </style>
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap">
@@ -12288,6 +12292,53 @@ document.addEventListener('DOMContentLoaded',ensure);window.addEventListener('lo
   }
   var tries=0,iv=setInterval(function(){ if(build()||++tries>60) clearInterval(iv); },500);
   setInterval(tick,1000);
+})();
+</script>
+<style>
+#xLive{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:#3E6545;cursor:default}
+#xLive b{font-weight:800}
+#xLive.up{color:#A07E62}#xLive.off{color:#6A6058}
+#xLive i{width:8px;height:8px;border-radius:50%;background:#4CAF6A;box-shadow:0 0 0 0 rgba(76,175,106,.5);animation:xcPulse 2s infinite}
+#xLive.up i{background:#D9A54A;animation:none}
+#xLive.off i{background:#C9BFB5;animation:none}
+@keyframes xcPulse{0%{box-shadow:0 0 0 0 rgba(76,175,106,.5)}70%{box-shadow:0 0 0 6px rgba(76,175,106,0)}100%{box-shadow:0 0 0 0 rgba(76,175,106,0)}}
+@media (prefers-reduced-motion:reduce){#xLive i{animation:none}}
+</style>
+<script>/* smart auto-refresh + Live indicator:
+   every 15 min while the dashboard is on screen; paused when the tab is hidden;
+   refreshes at once on return if the last update is older than 5 min */
+(function(){
+  var EVERY=15*60*1000, ON_RETURN=5*60*1000, last=Date.now(), busy=false, lv=null;
+  function fmt(d){var h=d.getHours(),m=d.getMinutes();return (h%12||12)+':'+(m<10?'0':'')+m+' '+(h<12?'AM':'PM');}
+  function set(state){
+    var f=document.querySelector('body>footer'); if(!f) return;
+    lv=document.getElementById('xLive');
+    if(!lv){ lv=document.createElement('span'); lv.id='xLive'; f.insertBefore(lv,f.firstChild); }
+    lv.className=state==='up'?'up':state==='off'?'off':'';
+    lv.innerHTML='<i></i>'+(state==='up'?'<b>Updating…</b>':state==='off'?'Last update '+fmt(new Date(last)):'<b>Live</b> · Last update '+fmt(new Date(last)));
+    lv.title='Updates automatically every 15 minutes';
+  }
+  /* track every data load (automatic or the refresh button) */
+  var orig=window.loadAllData;
+  if(typeof orig==='function'){
+    window.loadAllData=function(){
+      var args=arguments; busy=true; set('up');
+      var p; try{ p=Promise.resolve(orig.apply(this,args)); }catch(e){ p=Promise.reject(e); }
+      return p.then(function(r){ busy=false; last=Date.now(); set(navigator.onLine===false?'off':'live'); return r; },
+                    function(e){ busy=false; set('off'); throw e; });
+    };
+  }
+  function refresh(){
+    if(busy||document.visibilityState!=='visible') return;
+    if(navigator.onLine===false){ set('off'); return; }
+    try{ window.loadAllData(true); }catch(e){ set('off'); }
+  }
+  setInterval(function(){ if(Date.now()-last>=EVERY) refresh(); },30000);
+  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible'&&Date.now()-last>=ON_RETURN) refresh(); });
+  window.addEventListener('offline',function(){ set('off'); });
+  window.addEventListener('online',function(){ refresh(); });
+  /* draw the indicator once the clock exists, and keep the tooltip time fresh */
+  var tries=0,iv=setInterval(function(){ if(document.querySelector('body>footer')){ set(navigator.onLine===false?'off':'live'); clearInterval(iv);} else if(++tries>80) clearInterval(iv); },500);
 })();
 </script>
 </body>
