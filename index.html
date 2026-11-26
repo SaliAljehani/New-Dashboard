@@ -1610,6 +1610,11 @@ html body #blWrap td{border-bottom:0!important;border-top:1px solid #E9E2D9!impo
 html body #blWrap tbody tr:first-child td{border-top:0!important}
 html body #blWrap .onb{background:#F3ECE4!important;color:#A07E62!important;border-radius:6px!important;font-size:10.5px!important;font-weight:700!important;padding:2px 6px!important}
 html body #blWrap .late{color:#A85A5A!important}
+html body #blWrap .bl2 th,html body #blWrap .bl2 td{text-align:center!important;vertical-align:middle}
+html body #blWrap .bl2 td.l,html body #blWrap .bl2 th.l{text-align:left!important}
+#blWrap .bl2 .bp{font-size:11px;color:#8A8078;margin-bottom:2px}
+#blWrap .bl2 .ba{font-size:12.5px;color:#2A2420}
+#blWrap .bl2 .late{font-size:11.5px}
 html body #page4 :is(.x51-city,.br-ct,.br-rg,.x51-h,.x51-lb,.x51-tt){text-transform:none!important;letter-spacing:0!important}
 html body #page4 .br-rg .br-ar{margin-right:6px!important;display:inline-flex!important}
 html body #page4 .br-it:hover{background:#F4F0EB!important;box-shadow:none!important}
@@ -2578,22 +2583,45 @@ async function blRender(){
   rows=rows.filter(function(r){return String(r.Date||'').slice(0,10)===BL.date;});
   var day=raw?bkParse(raw,BL.date):null, plan=[];
   if(day&&D0.getDay()!==5) day.agents.forEach(function(a){ brAgentBreaks(day,a).forEach(function(b){ plan.push({n:a.name.trim(),lbl:brLabel(b.lbl),pl:brHM(b.r.s)+' – '+brHM(b.r.e),s:b.r.s}); }); });
-  var used={}, out=[];
-  plan.sort(function(x,y){return x.s-y.s;}).forEach(function(p){
-    var r=rows.filter(function(x,ix){ return !used[ix]&&String(x.Agent||'').trim().toLowerCase()===p.n.toLowerCase()&&String(x.Break||'')===p.lbl&&(used[ix]=true); })[0];
-    out.push({n:p.n,lbl:p.lbl,pl:p.pl,r:r});
+  var _hm=function(x){ x=String(x||''); var m=x.match(/^(\d{1,2}):(\d{2})/); return m?bkShort(+m[1]*60+ +m[2]):x; };
+  var ag={}, order=[];
+  var getA=function(n){ var k=n.toLowerCase(); if(!ag[k]){ ag[k]={n:n,pl:[],logs:[]}; order.push(k); } return ag[k]; };
+  plan.forEach(function(p){ getA(p.n).pl.push(p); });
+  rows.forEach(function(r){ var n=String(r.Agent||'').trim(); if(n) getA(n).logs.push(r); });
+  var taken=0,onb=0,late=0,lateM=0,maxB=1;
+  order.forEach(function(k){
+    var A=ag[k], used={};
+    A.pl.sort(function(x,y){return x.s-y.s;});
+    A.logs.sort(function(x,y){return String(x.Started||'').localeCompare(String(y.Started||''));});
+    A.cells=A.pl.map(function(p){
+      var ix=-1, best=1e9, _pn=function(x){return String(x||'').replace(/\s/g,'');};
+      A.logs.forEach(function(r,i){ if(ix<0&&!used[i]&&_pn(r.Planned)===_pn(p.pl)) ix=i; });
+      if(ix<0) A.logs.forEach(function(r,i){ if(used[i]) return; var m=String(r.Started||'').match(/^(\d{1,2}):(\d{2})/); var d=m?Math.abs(+m[1]*60+ +m[2]-p.s):5e8; if(d<best&&d<=90){ best=d; ix=i; } });
+      if(ix>=0) used[ix]=1;
+      return {pl:p.pl,r:ix>=0?A.logs[ix]:null};
+    });
+    A.logs.forEach(function(r,i){ if(!used[i]) A.cells.push({pl:String(r.Planned||''),r:r}); });
+    maxB=Math.max(maxB,A.cells.length);
   });
-  rows.forEach(function(r,ix){ if(!out.some(function(o){return o.r===r;})) out.push({n:String(r.Agent||''),lbl:String(r.Break||''),pl:String(r.Planned||''),r:r}); });
-  var taken=0,onb=0,late=0,lateM=0;
-  var trs=out.map(function(o){
-    var r=o.r, st='', bk='', tk='', lt='';
-    if(!r||!r.Started){ st='<span class="ns">not started</span>'; }
-    else{ var _hm=function(x){ x=String(x||''); var m=x.match(/^(\d{1,2}:\d{2}):\d{2}$/); return m?m[1]:x; }; st=_hm(r.Started); r.Back=_hm(r.Back); if(!r.Back){ bk='<span class="onb">On break</span>'; onb++; } else { bk=r.Back; taken++; tk=(r.Took||'')+' min'; var L=+r.Late||0; if(L>0){ late++; lateM+=L; lt='<span class="late">+'+L+' min</span>'; } else lt='<span class="ok">—</span>'; } }
-    return '<tr><td class="l">'+toEsc(o.n)+'</td><td>'+toEsc(o.lbl)+'</td><td>'+toEsc(o.pl)+'</td><td>'+st+'</td><td>'+bk+'</td><td>'+tk+'</td><td>'+lt+'</td></tr>';
+  order.sort(function(x,y){return ag[x].n.localeCompare(ag[y].n);});
+  var trs=order.map(function(k){
+    var A=ag[k], aL=0, tds='';
+    for(var i=0;i<maxB;i++){
+      var c=A.cells[i];
+      if(!c){ tds+='<td><span class="ns">—</span></td>'; continue; }
+      var r=c.r, act;
+      if(!r||!r.Started) act='<span class="ns">not started</span>';
+      else if(!_hm(r.Back)){ act=_hm(r.Started)+' → <span class="onb">On break</span>'; onb++; }
+      else{ taken++; var L=+r.Late||0; if(L>0){ late++; lateM+=L; aL+=L; }
+        act=_hm(r.Started)+' → '+_hm(r.Back)+' · '+(r.Took||'')+' min'+(L>0?' <span class="late">+'+L+'</span>':''); }
+      tds+='<td><div class="bp">'+toEsc(c.pl)+'</div><div class="ba">'+act+'</div></td>';
+    }
+    return '<tr><td class="l">'+toEsc(A.n)+'</td>'+tds+'<td>'+(aL>0?'<span class="late">+'+aL+' min</span>':'<span class="ok">—</span>')+'</td></tr>';
   }).join('');
+  var ths=''; for(var j=1;j<=maxB;j++) ths+='<th>Break '+(maxB>1?j:'')+'</th>';
   __setHTML(wrap,'<div class="card">'+head
     +'<div class="top"><div>Breaks taken<b>'+taken+'</b></div><div>On break now<b>'+onb+'</b></div><div>Late<b>'+late+'</b></div><div>Total late time<b>'+lateM+' min</b></div></div>'
-    +(out.length?'<table><thead><tr><th class="l">Agent</th><th>Break</th><th>Planned</th><th>Started</th><th>Back</th><th>Took</th><th>Late</th></tr></thead><tbody>'+trs+'</tbody></table>':'<div style="text-align:center;padding:30px;color:#4F4640">No breaks for this day.</div>')
+    +(order.length?'<table class="bl2"><thead><tr><th class="l">Agent</th>'+ths+'<th>Late</th></tr></thead><tbody>'+trs+'</tbody></table>':'<div style="text-align:center;padding:30px;color:#4F4640">No breaks for this day.</div>')
     +'</div>');
 }
 function brLoop(){ brStripRender(); brCapRender(); }
@@ -12216,7 +12244,7 @@ window.RC_POS='over'; window.RC_STYLE='box';
     });
   }
   function times(root){
-    [].forEach.call(root.querySelectorAll('.br-hours,#blWrap td:nth-child(3),#blWrap td:nth-child(4),#blWrap td:nth-child(5)'),function(box){
+    [].forEach.call(root.querySelectorAll('.br-hours,#blWrap table:not(.bl2) td:nth-child(3),#blWrap table:not(.bl2) td:nth-child(4),#blWrap table:not(.bl2) td:nth-child(5)'),function(box){
       texts(box,function(n){
         var v=n.nodeValue;
         var nv=v.replace(/\b(\d{1,2})(?::(\d{2}))?\s*(AM|PM|am|pm)\b/g,function(a,h,m,ap){return fmtTime(h,m,ap);})
@@ -12257,7 +12285,7 @@ window.RC_POS='over'; window.RC_STYLE='box';
   }
   /* 7 tags: break type, services, RM, region names in SMS pages */
   function tags(root){
-    [].forEach.call(root.querySelectorAll('#blWrap td:nth-child(2):not([data-tg])'),function(td){ td.setAttribute('data-tg','1'); var t=td.textContent.trim(); if(t) __setHTML(td,'<span class="bk-tag">'+t.replace(/</g,'&lt;')+'</span>'); });
+    [].forEach.call(root.querySelectorAll('#blWrap table:not(.bl2) td:nth-child(2):not([data-tg])'),function(td){ td.setAttribute('data-tg','1'); var t=td.textContent.trim(); if(t) __setHTML(td,'<span class="bk-tag">'+t.replace(/</g,'&lt;')+'</span>'); });
     [].forEach.call(root.querySelectorAll('#page4 span'),function(s){ if(s.children.length||s.classList.contains('bk-tag')) return; if(s.textContent.trim()==='RM'&&getComputedStyle(s).borderStyle==='dashed') s.classList.add('bk-tag'); });
   }
   /* 6 escalation lines (↑ name) */
