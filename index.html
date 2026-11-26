@@ -2172,20 +2172,22 @@ function ytdRender(){
   var el=document.getElementById('page17'); if(!el) return;
   var MS=ytdMonths(), WORK={Office:1,Remote:1,'Saturday Shift':1};
   var f=function(x){return x==null?'—':fmtS(Math.round(x));};
-  var rows=TO_ROSTER.map(function(p){
+  var SKIP=['Asmaa M. Bawayan','Bayan Jazzar','Walaa Meezi'];
+  var rows=TO_ROSTER.filter(function(p){return SKIP.indexOf(p[0])<0;}).map(function(p){
     var name=p[0], mon=MS.map(function(k){return msAgg(name,k);}).filter(Boolean);
     var av=function(key,mul){ var v=mon.filter(function(x){return x[key]>0;}); return v.length? v.reduce(function(s,x){return s+x[key];},0)/v.length*(mul||1):null; };
     var sm=function(key){ return mon.reduce(function(s,x){return s+(x[key]||0);},0); };
+    var dials=(apFind(D,name)||[]).filter(function(r){var m=String(r[0]).slice(0,7);return m>=YTD_FROM&&m<=YTD_TO;}).reduce(function(s,r){return s+(r[4]||0);},0);
     var att=apFind(ATT,name)||{}, days=0;
     Object.keys(att).forEach(function(d){ var m=String(d).slice(0,7); if(m>=YTD_FROM&&m<=YTD_TO&&WORK[att[d]]) days++; });
-    return [p[1],name,days,f(av('talk')),f(av('acw')),f(av('aht')),f(av('ready',60)),f(av('brk',60)),sm('inb').toLocaleString(),sm('tic').toLocaleString(),sm('wa').toLocaleString()];
+    return [p[1],name,days,f(av('login',60)),f(av('ready',60)),f(mon.length?sm('acof')/mon.length:null),f(av('brk',60)),f(av('talk')),f(av('acw')),f(av('aht')),dials.toLocaleString(),sm('inb').toLocaleString(),sm('tic').toLocaleString(),sm('wa').toLocaleString()];
   });
-  var H=['Badge','Agent','Working Days','Avg. Talk Time','Avg. ACW','Avg. Handling Time','Avg. Ready Duration','Avg. Break','Connected Inbound','Tickets','WhatsApp'];
-  var cls=function(i){return i===1?'nm':(i===3||i===8?'sep':'');};
+  var H=['Badge','Agent','Working Days','Login Time','Total Ready Duration','Auto Call-Off','Total Break Duration','Avg. Talk Time','Avg. ACW','Avg. Handling Time','Manual Dials','Connected Inbound','Tickets','WhatsApp'];
+  var cls=function(i){return i===1?'nm':(i===3||i===7||i===10?'sep':'');};
   window.__YTD_TSV=[H].concat(rows).map(function(r){return r.join('\t');}).join('\n');
   __setHTML(el,'<div class="ytd-card"><div class="ytd-hd"><div><h2>YTD Performance</h2><div class="ytd-sub">January – October 2026 · average of all months</div></div>'
     +'<div class="ytd-r"><span class="ytd-until">Available until 10 Dec</span><button class="ytd-btn" onclick="ytdCopy()">Copy table</button><span class="ytd-ok" id="ytdOk">✓ Copied</span></div></div>'
-    +'<table><thead><tr>'+H.map(function(h,i){return '<th class="'+cls(i)+'">'+h+'</th>';}).join('')+'</tr></thead><tbody>'
+    +'<table><thead><tr><th colspan="3"></th><th class="sep" colspan="4">TIME</th><th class="sep" colspan="3">QUALITY</th><th class="sep" colspan="4">VOLUME</th></tr><tr>'+H.map(function(h,i){return '<th class="'+cls(i)+'">'+h+'</th>';}).join('')+'</tr></thead><tbody>'
     +rows.map(function(r){return '<tr>'+r.map(function(v,i){return '<td class="'+(i===0?'mu':cls(i))+'">'+v+'</td>';}).join('')+'</tr>';}).join('')
     +'</tbody></table></div>');
 }
