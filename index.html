@@ -1797,7 +1797,7 @@ html body #page4 #refContent .rc-box:not(:has(>div[style*="grid-template-columns
 #page4 .ib-row:first-child{border-top:0}
 #page4 .ib-row:hover{background:#FAF8F5}
 #page4 .ib-ic{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:#A07E621A;color:#A07E62}
-#page4 .ib-nm{flex:1;min-width:0;font-size:13.5px;font-weight:700!important;color:#2A2420!important}
+#page4 .ib-nm{flex:1;min-width:0;font-size:12.5px;font-weight:600!important;color:#2A2420!important}
 #page4 .ib-ds{flex:0 0 280px;text-align:right;font-size:12.5px;color:#4F4640!important}
 #page4 .ib-op{flex:0 0 auto;font-size:12px;font-weight:700;color:#A07E62!important;border:1px solid #E6DED5;border-radius:8px;padding:6px 12px;white-space:nowrap}
 #page4 .ib-row:hover .ib-op{border-color:#A07E62}
@@ -1849,6 +1849,7 @@ body>footer{justify-content:space-between!important}
     <button class="pnav" id="navTeam" onclick="showTeamTab(TEAM_TAB||'perf')"><span class="ic-done" style="display:inline-flex"><svg viewBox="0 0 24 24" width="1.1em" height="1.1em" fill="none" stroke="#7E6A9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a2 2 0 1 0 4 0a2 2 0 0 0-4 0M8 21v-1a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1M15 5a2 2 0 1 0 4 0a2 2 0 0 0-4 0M17 10h2a2 2 0 0 1 2 2v1M5 5a2 2 0 1 0 4 0a2 2 0 0 0-4 0M3 13v-1a2 2 0 0 1 2-2h2"/></svg></span>Team</button>
     <button class="pnav" id="navCV" onclick="showPage(14,this)"><span class="ic-done" data-emo="📊" style="display: inline-flex; margin-right: 0.35em;"><svg viewBox="0 0 24 24" width="1.1em" height="1.1em" fill="none" stroke="#3f8f5f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.18em;flex-shrink:0" aria-hidden="true"><path d="M3 13h6v7H3zM15 8h6v12h-6zM9 4h6v16H9zM3 20h18"></path></svg></span>Contact Volume</button>
     <button class="pnav" id="navReq" onclick="showReq('off')" style="position:relative"><span class="ic-done" data-emo="📝" style="display: inline-flex; margin-right: 0.35em;"><svg viewBox="0 0 24 24" width="1.1em" height="1.1em" fill="none" stroke="#6b7b8c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.18em;flex-shrink:0" aria-hidden="true"><path d="M4 20h4L18.5 9.5a2.8 2.8 0 1 0-4-4L4 16v4M13.5 6.5l4 4"></path></svg></span>Requests<span id="reqNavBadge" style="display:none;position:absolute;top:-6px;right:-6px;min-width:16px;height:16px;background:var(--accent);border-radius:8px;font-size:11px;font-weight:700;color:#FEFEFE;text-align:center;line-height:16px;padding:0 4px;box-sizing:border-box"></span></button>
+    <button class="pnav" id="navYTD" onclick="showPage(17,this)"><span class="ic-done" style="display:inline-flex;margin-right:0.35em"><svg viewBox="0 0 24 24" width="1.1em" height="1.1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.18em;flex-shrink:0" aria-hidden="true"><path d="M3 3v18h18M7 15l4-4l3 3l5-6"/></svg></span>YTD Performance</button>
   </div>
   <div id="teamSubNav" class="team-subnav" style="display:none">
     <button class="tsub" data-t="perf" onclick="showTeamTab('perf')"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><path d="M3 13a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM15 9a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1zM9 5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1zM4 20h14"/></svg>Team Performance</button>
@@ -2127,6 +2128,75 @@ body>footer{justify-content:space-between!important}
 
 </div>
 <div id="page16" style="display:none;max-width:1200px;margin:0 auto;padding:24px 24px"><div id="blWrap"><div style="text-align:center;padding:40px;color:#4F4640" class="bk-empty">Loading…</div></div></div>
+<div id="page17" style="display:none"></div>
+<!-- YTD Performance (temporary page for HR: Jan–Oct 2026; hides itself on YTD_END) -->
+<style>
+#page17{padding:20px 20px 32px!important;max-width:none!important;width:auto!important;margin:0!important;box-sizing:border-box}
+#xSide #navYTD .ic-done{color:#D9BC94}
+#page17 .ytd-card{background:#FEFEFE;border:1px solid #E6DED5;border-radius:12px;padding:18px 18px 14px}
+#page17 .ytd-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px}
+#page17 .ytd-hd h2{margin:0;font-size:16px;font-weight:600;color:#4A3528}
+#page17 .ytd-sub{font-size:11.5px;color:#8A7F75;margin-top:2px}
+#page17 .ytd-r{display:flex;gap:8px;align-items:center}
+#page17 .ytd-until{font-size:11px;color:#8A857C;background:#F6F4F0;border:1px solid #EDE4DA;border-radius:20px;padding:4px 10px}
+#page17 .ytd-btn{background:#A07E62;color:#fff;border:0;border-radius:8px;padding:7px 14px;font-size:12px;cursor:pointer}
+#page17 .ytd-btn:hover{background:#8E6E54}
+#page17 .ytd-ok{display:none;color:#6B8A5A;font-size:11.5px}
+#page17 table{width:100%;border-collapse:collapse;font-size:12.5px}
+#page17 th{padding:9px 6px;text-align:center;white-space:nowrap}
+#page17 td{padding:8px 6px;text-align:center;border-bottom:1px solid #F0EAE3;white-space:nowrap;color:#4A423C}
+#page17 tbody tr:nth-child(even) td{background:#FCFBF9}
+#page17 td.nm,#page17 th.nm{text-align:left;padding-left:10px}
+#page17 td.nm{font-weight:500;color:#4A3528}
+#page17 td.mu{color:#9A9088}
+#page17 .sep{border-left:1px solid #EDE4DA}
+#page17 .ytd-empty{text-align:center;padding:40px;color:#4F4640;font-size:12px}
+</style>
+<script>
+var YTD_END='2026-12-10', YTD_FROM='2026-01', YTD_TO='2026-10', YTD_LOADING=false;
+function ytdActive(){ return (typeof apToday==='function'?apToday():new Date().toISOString().slice(0,10))<YTD_END; }
+function ytdMonths(){ var o=[],y=+YTD_FROM.slice(0,4),m=+YTD_FROM.slice(5,7); while(true){ var k=y+'-'+('0'+m).slice(-2); o.push(k); if(k===YTD_TO) break; m++; if(m>12){m=1;y++;} } return o; }
+function ytdOpen(){
+  var el=document.getElementById('page17'); if(!el) return;
+  if(window.__PERF_LOADING__ || !PERF_FULL){
+    __setHTML(el,'<div class="ytd-empty">⏳ Loading January – October data…</div>');
+    if(!PERF_FULL && !YTD_LOADING){
+      YTD_LOADING=true; PERF_FULL=true; window.__KEEP_RANGE=true;
+      Promise.resolve(loadAllData(true)).catch(function(){}).then(function(){ window.__KEEP_RANGE=false; YTD_LOADING=false; if(CP===17) ytdRender(); });
+    } else if(window.__PERF_LOADING__){ setTimeout(function(){ if(CP===17) ytdOpen(); },600); }
+    return;
+  }
+  ytdRender();
+}
+function ytdRender(){
+  var el=document.getElementById('page17'); if(!el) return;
+  var MS=ytdMonths(), WORK={Office:1,Remote:1,'Saturday Shift':1};
+  var f=function(x){return x==null?'—':fmtS(Math.round(x));};
+  var rows=TO_ROSTER.map(function(p){
+    var name=p[0], mon=MS.map(function(k){return msAgg(name,k);}).filter(Boolean);
+    var av=function(key,mul){ var v=mon.filter(function(x){return x[key]>0;}); return v.length? v.reduce(function(s,x){return s+x[key];},0)/v.length*(mul||1):null; };
+    var sm=function(key){ return mon.reduce(function(s,x){return s+(x[key]||0);},0); };
+    var att=apFind(ATT,name)||{}, days=0;
+    Object.keys(att).forEach(function(d){ var m=String(d).slice(0,7); if(m>=YTD_FROM&&m<=YTD_TO&&WORK[att[d]]) days++; });
+    return [p[1],name,days,f(av('talk')),f(av('acw')),f(av('aht')),f(av('ready',60)),f(av('brk',60)),sm('inb').toLocaleString(),sm('tic').toLocaleString(),sm('wa').toLocaleString()];
+  });
+  var H=['Badge','Agent','Working Days','Avg. Talk Time','Avg. ACW','Avg. Handling Time','Avg. Ready Duration','Avg. Break','Connected Inbound','Tickets','WhatsApp'];
+  var cls=function(i){return i===1?'nm':(i===3||i===8?'sep':'');};
+  window.__YTD_TSV=[H].concat(rows).map(function(r){return r.join('\t');}).join('\n');
+  __setHTML(el,'<div class="ytd-card"><div class="ytd-hd"><div><h2>YTD Performance</h2><div class="ytd-sub">January – October 2026 · average of all months</div></div>'
+    +'<div class="ytd-r"><span class="ytd-until">Available until 10 Dec</span><button class="ytd-btn" onclick="ytdCopy()">Copy table</button><span class="ytd-ok" id="ytdOk">✓ Copied</span></div></div>'
+    +'<table><thead><tr>'+H.map(function(h,i){return '<th class="'+cls(i)+'">'+h+'</th>';}).join('')+'</tr></thead><tbody>'
+    +rows.map(function(r){return '<tr>'+r.map(function(v,i){return '<td class="'+(i===0?'mu':cls(i))+'">'+v+'</td>';}).join('')+'</tr>';}).join('')
+    +'</tbody></table></div>');
+}
+function ytdCopy(){
+  var s=window.__YTD_TSV||'', done=function(){var e=document.getElementById('ytdOk'); if(e){e.style.display='inline';setTimeout(function(){e.style.display='none';},1600);}};
+  var fb=function(){var t=document.createElement('textarea');t.value=s;document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(e){}t.remove();done();};
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(s).then(done,fb); else fb();
+}
+(function(){ if(ytdActive()) return; var go=function(){ ['navYTD','page17'].forEach(function(id){var e=document.getElementById(id); if(e) e.remove();}); };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',go); else go(); })();
+</script>
 <div id="page15" style="display:none;max-width:1200px;margin:0 auto;padding:24px 24px" class="to-wrap">
 
   <div class="to-hero">
@@ -3604,6 +3674,8 @@ function showPage(n,btn){CP=n;
   if(n===15) renderOffRequests(false);
   var _p16=document.getElementById('page16'); if(_p16) _p16.style.display=n===16?'block':'none';
   if(n===16) blRender();
+  var _p17=document.getElementById('page17'); if(_p17) _p17.style.display=n===17?'block':'none';
+  if(n===17) ytdOpen();
   teamSync(n);
   if(typeof aimSubSync==='function') aimSubSync(n);
 }
